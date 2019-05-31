@@ -16,7 +16,7 @@ OpenWebStart offers a user friendly installer to use Web Start / JNLP functional
 The first goal of the project is to target Java 8 LTS versions while support for Java 11 LTS will come in near future.
 
 While we ([Karakun](https://dev.karakun.com)) develop user friendly installers to use a Java vendor independ approach for Web Start we help to integrate Web Start functionally in the Java 8 LTS releases of AdoptOpenJDK.
-Based on this all Web Start functionality is developed in the [IcedTea-Web](https://github.com/AdoptOpenJDK/IcedTea-Web) repository of the AdoptOpenJDK organization together with RedHat and other members of the AdoptOpenJDK community.
+Therefor all Web Start functionality is developed in the [IcedTea-Web](https://github.com/AdoptOpenJDK/IcedTea-Web) repository of the AdoptOpenJDK organization together with RedHat and other members of the AdoptOpenJDK community.
 Therefore this repository only contains sources that are needed to create enterprise ready and user friendly native installers for OpenWebStart.
 
 ## Issue tracker
