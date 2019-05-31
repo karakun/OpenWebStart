@@ -19,11 +19,6 @@ While we ([Karakun](https://dev.karakun.com)) develop user friendly installers t
 Therefor all Web Start functionality is developed in the [IcedTea-Web](https://github.com/AdoptOpenJDK/IcedTea-Web) repository of the AdoptOpenJDK organization together with RedHat and other members of the AdoptOpenJDK community.
 Therefore this repository only contains sources that are needed to create enterprise ready and user friendly native installers for OpenWebStart.
 
-## Issue tracker
-
-All issues that are based on bugs or missing functionality in JNLP handling or the control center of OpenWebStart should be created at the [IcedTea-Web](https://github.com/AdoptOpenJDK/IcedTea-Web) repository.
-If you have issues with the OpenWebStart installers please report such issues in this repository.
-
 ## License
 
 The project is released as open source under the [GPLv2 with exceptions](LICENSE.md).
