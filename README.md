@@ -1,6 +1,8 @@
-# OpenWebStart
+# OpenWebStart 🚀
 
 This repository contains all sources that are needed to build [OpenWebStart](https://openwebstart.com) releases based on the [IcedTea-Web](https://github.com/AdoptOpenJDK/IcedTea-Web) core functionallity that is developed at the [AdoptOpenJDK community](https://adoptopenjdk.net).
+
+![Rocket](readme/rocket.png)
 
 ## About OpenWebStart
 
@@ -17,3 +19,5 @@ All issues that are based on bugs or missing functionallity in JNLP handling or 
 ## License
 
 The project is released as open source under the GPLv2 with exceptions.
+
+![Footer](readme/footer.png)
