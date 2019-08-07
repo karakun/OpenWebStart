@@ -1,0 +1,67 @@
+{
+  "runtimes": [
+    {
+      "version": "1.8.230",
+      "vendor": "adopt",
+      "javaHome": "{CACHE_FOLDER}/1.8.230-adopt-mac",
+      "active": false,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "1.8.220",
+      "vendor": "adopt",
+      "javaHome": "{CACHE_FOLDER}/1.8.220-adopt-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "1.8.210",
+      "vendor": "adopt",
+      "javaHome": "{CACHE_FOLDER}/1.8.210-adopt-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "11.0.1",
+      "vendor": "adopt",
+      "javaHome": "{CACHE_FOLDER}/11.0.1-adopt-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "1.8.219",
+      "vendor": "oracle",
+      "javaHome": "{CACHE_FOLDER}/1.8.219-oracle-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "1.8.209",
+      "vendor": "oracle",
+      "javaHome": "{CACHE_FOLDER}/1.8.209-oracle-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    },
+    {
+      "version": "11.0.0",
+      "vendor": "oracle",
+      "javaHome": "{CACHE_FOLDER}/11.0.0-oracle-mac",
+      "active": true,
+      "os": "MAC64",
+      "managed": true,
+      "lastUsage": 1565046006408
+    }
+  ]
+}
