@@ -356,7 +356,7 @@ public final class LocalRuntimeManager {
 
         return runtimes.stream()
                 .filter(r -> r.isActive())
-                .filter(r -> Objects.equals(operationSystem, OperationSystem.getLocalSystem()))
+                .filter(r -> Objects.equals(operationSystem, r.getOperationSystem()))
                 .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
