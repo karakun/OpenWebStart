@@ -107,6 +107,7 @@
                                         <OWS-Build-Time>${maven.build.timestamp}</OWS-Build-Time>
                                     </manifestEntries>
                                 </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                         </configuration>
                     </execution>
