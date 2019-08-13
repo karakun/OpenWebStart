@@ -2,8 +2,8 @@ package com.openwebstart.jvm.io;
 
 import dev.rico.core.functional.Subscription;
 import dev.rico.core.http.HttpResponse;
-import dev.rico.internal.core.Assert;
 import dev.rico.internal.core.http.ConnectionUtils;
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
