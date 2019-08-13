@@ -3,10 +3,9 @@ package com.openwebstart.jvm.ui.dialogs;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
-import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -26,7 +25,8 @@ public class AskForRuntimeUpdateDialog extends JDialog {
         setModalityType(ModalityType.APPLICATION_MODAL);
         setResizable(false);
 
-        final IconComponent downloadIcon = new IconComponent(FontIcon.of(MaterialDesign.MDI_INFORMATION, 64, Color.RED));
+        final ImageIcon imageIcon = new ImageIcon(IconComponent.class.getResource("settings-64.png"));
+        final IconComponent downloadIcon = new IconComponent(imageIcon);
 
         final JLabel messageLabel = new JLabel("A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() +"') is available. Do you want to download this version?");
 

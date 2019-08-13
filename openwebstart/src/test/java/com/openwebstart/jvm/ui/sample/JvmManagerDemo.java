@@ -4,6 +4,7 @@ import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeManagerConstants;
+import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
@@ -14,7 +15,6 @@ import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import dev.rico.client.SwingToolkit;
-import com.openwebstart.rico.http.DownloadInputStream;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import spark.Spark;
 

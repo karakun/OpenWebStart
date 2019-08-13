@@ -1,27 +1,26 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.jvm.io.ByteUnit;
+import com.openwebstart.jvm.io.DownloadInputStream;
+import com.openwebstart.jvm.io.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.IconComponent;
-import com.openwebstart.rico.http.DownloadInputStream;
-import com.openwebstart.rico.http.DownloadType;
-import com.openwebstart.rico.http.ByteUnit;
 import net.adoptopenjdk.icedteaweb.Assert;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
-import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Objects;
 
 public class RuntimeDownloadDialog extends JDialog {
 
-    public RuntimeDownloadDialog(final RemoteJavaRuntime remoteRuntime,  final DownloadInputStream inputStream) {
+    public RuntimeDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
         Assert.requireNonNull(inputStream, "inputStream");
 
@@ -29,18 +28,16 @@ public class RuntimeDownloadDialog extends JDialog {
         setTitle("Download");
         setResizable(false);
 
-
-
         final JLabel messageLabel = new JLabel("Downloading runtime " + remoteRuntime.getVersion() + "-" + remoteRuntime.getVendor());
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
         if (Objects.equals(inputStream.getDownloadType(), DownloadType.INDETERMINATE)) {
             progressBar.setIndeterminate(true);
         }
-        final IconComponent downloadIcon = new IconComponent(FontIcon.of(MaterialDesign.MDI_DOWNLOAD, 64, Color.DARK_GRAY));
+        final ImageIcon imageIcon = new ImageIcon(IconComponent.class.getResource("network-64.png"));
+        final IconComponent downloadIcon = new IconComponent(imageIcon);
 
         final JLabel progressLabel = new JLabel("0 KB from ?");
-
 
         final JPanel progressLabelWrapper = new JPanel();
         progressLabelWrapper.setLayout(new BorderLayout());
@@ -60,11 +57,10 @@ public class RuntimeDownloadDialog extends JDialog {
         panel.add(innerPanel, BorderLayout.CENTER);
         add(panel);
 
-
         inputStream.setUpdateChunkSize(10_000);
-        inputStream.addDownloadDoneListener(s -> close());
-        inputStream.addDownloadErrorListener(e -> close());
-        inputStream.addDownloadPercentageListener(p -> {
+        inputStream.addDownloadDoneListener(e -> SwingUtilities.invokeLater(() -> close()));
+        inputStream.addDownloadErrorListener(e -> SwingUtilities.invokeLater(() -> close()));
+        inputStream.addDownloadPercentageListener(p -> SwingUtilities.invokeLater(() -> {
             if (Objects.equals(inputStream.getDownloadType(), DownloadType.INDETERMINATE)) {
                 final long downloadSize = inputStream.getDownloaded();
                 final ByteUnit unit = ByteUnit.findBestUnit(downloadSize);
@@ -79,9 +75,9 @@ public class RuntimeDownloadDialog extends JDialog {
                 final long completeSize = inputStream.getDataSize();
                 final ByteUnit completeSizeUnit = ByteUnit.findBestUnit(completeSize);
 
-                progressLabel.setText(String.format("%.0f", downloadSizeUnit.convertBytesToUnit(downloadSize)) + " " + downloadSizeUnit.getDecimalShortName() + " from " +  String.format("%.2f", completeSizeUnit.convertBytesToUnit(completeSize)) + " " + completeSizeUnit.getDecimalShortName());
+                progressLabel.setText(String.format("%.0f", downloadSizeUnit.convertBytesToUnit(downloadSize)) + " " + downloadSizeUnit.getDecimalShortName() + " from " + String.format("%.2f", completeSizeUnit.convertBytesToUnit(completeSize)) + " " + completeSizeUnit.getDecimalShortName());
             }
-        });
+        }));
 
         pack();
         setLocationRelativeTo(null);

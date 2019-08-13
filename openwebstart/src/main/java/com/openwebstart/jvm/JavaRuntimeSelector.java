@@ -1,10 +1,10 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import com.openwebstart.rico.http.DownloadInputStream;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
