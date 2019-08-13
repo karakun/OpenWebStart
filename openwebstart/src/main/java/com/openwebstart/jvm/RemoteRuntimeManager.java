@@ -2,25 +2,24 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.func.Sucess;
+import com.openwebstart.jvm.io.HttpRequest;
+import com.openwebstart.jvm.io.HttpResponse;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.util.RemoteRuntimeManagerCache;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import dev.rico.client.Client;
-import com.openwebstart.jvm.func.CheckedSupplier;
-import dev.rico.core.http.HttpClient;
-import dev.rico.core.http.HttpResponse;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RemoteRuntimeManager {
@@ -62,14 +61,9 @@ public class RemoteRuntimeManager {
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
                 .map(c -> (Result<RemoteRuntimeList>) new Sucess(c.getList()))
                 .orElseGet(Result.of(() -> {
-                    final HttpClient client = Client.getService(HttpClient.class);
-                    final HttpResponse<String> response = client.get(endpointForRequest)
-                            .withoutContent()
-                            .readString()
-                            .execute()
-                            .get(RuntimeManagerConstants.HTTP_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS);
-
-                    final String jsonContent = response.getContent();
+                    final HttpRequest request = new HttpRequest(endpointForRequest);
+                    final HttpResponse response = request.handle();
+                    final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), Charset.forName("UTF-8"));
 
                     final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
                     cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));

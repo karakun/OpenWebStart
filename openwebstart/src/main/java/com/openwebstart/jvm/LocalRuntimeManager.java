@@ -2,13 +2,14 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.io.DownloadInputStream;
+import com.openwebstart.jvm.io.HttpRequest;
+import com.openwebstart.jvm.io.HttpResponse;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
@@ -18,9 +19,6 @@ import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
-import dev.rico.client.Client;
-import dev.rico.core.http.HttpClient;
-import dev.rico.core.http.HttpResponse;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -292,26 +290,13 @@ public final class LocalRuntimeManager {
 
 
         final URI downloadRequest = remoteRuntime.getEndpoint();
-
-        //TODO: HTTP request runtime
-        final HttpClient client = Client.getService(HttpClient.class);
-
-        final HttpResponse<InputStream> response = client.get(downloadRequest)
-                .withoutContent()
-                .streamBytes()
-                .execute()
-                .get(RuntimeManagerConstants.HTTP_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS);
-
-        final DownloadInputStream inputStream = DownloadInputStream.map(response.getContent(), response.getContentSize());
+        final HttpRequest request = new HttpRequest(downloadRequest);
+        final HttpResponse response = request.handle();
+        final DownloadInputStream inputStream = DownloadInputStream.map(response.getContentStream(), response.getContentSize());
 
         if(downloadConsumer != null) {
             downloadConsumer.accept(inputStream);
         }
-
-        SwingUtilities.invokeAndWait(() -> {
-            final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
-            downloadDialog.setVisible(true);
-        });
 
         try {
             LOG.debug("Trying to download and extract runtime");

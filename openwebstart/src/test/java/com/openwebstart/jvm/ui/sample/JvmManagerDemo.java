@@ -14,7 +14,6 @@ import com.openwebstart.jvm.ui.RuntimeManagerPanel;
 import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
-import dev.rico.client.SwingToolkit;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import spark.Spark;
 
@@ -44,8 +43,6 @@ import static com.openwebstart.jvm.os.OperationSystem.WIN64;
 public class JvmManagerDemo {
 
     public static void main(String[] args) throws Exception {
-
-        SwingToolkit.init();
 
         final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
         final Path cacheDir = tempDir.resolve("ows-jvm-demo-cache");

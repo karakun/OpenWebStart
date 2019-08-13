@@ -3,16 +3,13 @@ package com.openwebstart.jvm.io;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import static dev.rico.internal.core.RicoConstants.HASH_ALGORITHM;
-import static dev.rico.internal.core.http.HttpHeaderConstants.CHARSET;
 
 public class ConnectionUtils {
 
@@ -33,17 +30,26 @@ public class ConnectionUtils {
 
     public static DigestInputStream createMD5HashStream(final InputStream inputStream) throws NoSuchAlgorithmException {
         Assert.requireNonNull(inputStream, "inputStream");
-        final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
+        final MessageDigest digest = MessageDigest.getInstance("MD5");
         return new DigestInputStream(inputStream, digest);
     }
 
-
     public static String readUTF8Content(final InputStream inputStream) throws IOException {
-        return new String(IOUtils.readContent(inputStream), CHARSET);
+        return new String(IOUtils.readContent(inputStream), "UTF-8");
     }
 
     public static void writeUTF8Content(final OutputStream outputStream, final String content) throws IOException {
         Assert.requireNonNull(content, "content");
-        IOUtils.writeContent(outputStream, content.getBytes(CHARSET));
+        IOUtils.writeContent(outputStream, content.getBytes("UTF-8"));
+    }
+
+    public static InputStream getContentStream(final HttpURLConnection connection) throws IOException {
+        Assert.requireNonNull(connection, "connection");
+        final InputStream errorstream = connection.getErrorStream();
+        if (errorstream == null) {
+            return connection.getInputStream();
+        } else {
+            return errorstream;
+        }
     }
 }
