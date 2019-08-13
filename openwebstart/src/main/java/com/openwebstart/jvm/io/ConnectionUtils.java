@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.io;
 
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class ConnectionUtils {
     }
 
     public static String toHex(final byte[] bytes) {
-        return printHexBinary(bytes).toUpperCase();
+        return printHexBinary(bytes);
     }
 
     public static DigestInputStream createMD5HashStream(final InputStream inputStream) throws NoSuchAlgorithmException {
@@ -36,44 +37,13 @@ public class ConnectionUtils {
         return new DigestInputStream(inputStream, digest);
     }
 
-    public static long copy(final InputStream inputStream, final OutputStream outputStream, final int bufferSize) throws IOException {
-        Assert.requireNonNull(inputStream, "inputStream");
-        Assert.requireNonNull(outputStream, "outputStream");
-
-        final byte[] buffer = new byte[bufferSize];
-        long finalLength = 0;
-        int len;
-        while ((len = inputStream.read(buffer)) > 0) {
-            outputStream.write(buffer, 0, len);
-            finalLength = finalLength  + len;
-        }
-        return finalLength;
-    }
-
-    public static long copy(final InputStream inputStream, final OutputStream outputStream) throws IOException {
-        return copy(inputStream, outputStream, 1024);
-    }
-
-    public static byte[] readContent(final InputStream inputStream) throws IOException {
-        Assert.requireNonNull(inputStream, "inputStream");
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        copy(inputStream, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    public static void writeContent(final OutputStream outputStream, final byte[] rawData) throws IOException {
-        Assert.requireNonNull(outputStream, "outputStream");
-        Assert.requireNonNull(rawData, "rawData");
-        outputStream.write(rawData);
-        outputStream.flush();
-    }
 
     public static String readUTF8Content(final InputStream inputStream) throws IOException {
-        return new String(readContent(inputStream), CHARSET);
+        return new String(IOUtils.readContent(inputStream), CHARSET);
     }
 
     public static void writeUTF8Content(final OutputStream outputStream, final String content) throws IOException {
         Assert.requireNonNull(content, "content");
-        writeContent(outputStream, content.getBytes(CHARSET));
+        IOUtils.writeContent(outputStream, content.getBytes(CHARSET));
     }
 }
