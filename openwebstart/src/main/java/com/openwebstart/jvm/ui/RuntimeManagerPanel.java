@@ -66,6 +66,7 @@ public final class RuntimeManagerPanel extends JPanel {
             fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setMultiSelectionEnabled(false);
+            fileChooser.setFileHidingEnabled(false);
             fileChooser.setAcceptAllFileFilterUsed(false);
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final Path selected = fileChooser.getSelectedFile().toPath();
