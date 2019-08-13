@@ -1,9 +1,9 @@
 package com.openwebstart.jvm.localfinder;
 
+import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.util.WebstartUtils;
-import dev.rico.core.functional.Result;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -38,8 +38,8 @@ public class MacRuntimeFinder implements RuntimeFinder {
                         final Path releaseDocPath = Paths.get(p.toString(), "release");
                         return Files.exists(releaseDocPath);
                     }).map(Result.of(p -> {
-                        final String version = RuntimeFinder.readVersion(p);
-                        final String vendor = RuntimeFinder.readVendor(p);
+                        final String version = RuntimeFinderUtils.readVersion(p);
+                        final String vendor = RuntimeFinderUtils.readVendor(p);
                         final String formatedVersion = WebstartUtils.convertJavaVersion(version);
                         return new LocalJavaRuntime(formatedVersion, OperationSystem.MAC64, vendor, p, LocalDateTime.now(), false, false);
                     })).collect(Collectors.toList());

@@ -1,9 +1,7 @@
 package com.openwebstart.jvm.io;
 
-import dev.rico.core.functional.Subscription;
-import dev.rico.core.http.HttpResponse;
-import dev.rico.internal.core.Assert;
-import dev.rico.internal.core.http.ConnectionUtils;
+import com.openwebstart.jvm.func.Subscription;
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -218,10 +216,6 @@ public class DownloadInputStream extends InputStream {
 
     public long getDataSize() {
         return dataSize;
-    }
-
-    public static DownloadInputStream map(final HttpResponse<InputStream> response) {
-        return map(response.getContent(), response.getContentSize());
     }
 
     public static DownloadInputStream map(final InputStream inputStream, final long length) {

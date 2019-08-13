@@ -1,8 +1,8 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.io.ConnectionUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import dev.rico.internal.core.http.ConnectionUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
