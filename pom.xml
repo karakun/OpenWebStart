@@ -47,6 +47,13 @@
                     <shortRevisionLength>8</shortRevisionLength>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
