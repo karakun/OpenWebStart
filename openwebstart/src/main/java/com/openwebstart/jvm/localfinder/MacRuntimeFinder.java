@@ -38,8 +38,8 @@ public class MacRuntimeFinder implements RuntimeFinder {
                         final Path releaseDocPath = Paths.get(p.toString(), "release");
                         return Files.exists(releaseDocPath);
                     }).map(Result.of(p -> {
-                        final String version = RuntimeFinder.readVersion(p);
-                        final String vendor = RuntimeFinder.readVendor(p);
+                        final String version = RuntimeFinderUtils.readVersion(p);
+                        final String vendor = RuntimeFinderUtils.readVendor(p);
                         final String formatedVersion = WebstartUtils.convertJavaVersion(version);
                         return new LocalJavaRuntime(formatedVersion, OperationSystem.MAC64, vendor, p, LocalDateTime.now(), false, false);
                     })).collect(Collectors.toList());

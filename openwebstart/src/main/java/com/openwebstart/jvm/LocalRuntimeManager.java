@@ -7,7 +7,7 @@ import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
+import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
@@ -17,7 +17,6 @@ import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
 import dev.rico.client.Client;
-import dev.rico.client.concurrent.UiExecutor;
 import dev.rico.core.functional.Result;
 import dev.rico.core.http.HttpClient;
 import dev.rico.core.http.HttpResponse;
@@ -262,7 +261,7 @@ public final class LocalRuntimeManager {
     }
 
     public List<Result<LocalJavaRuntime>> findAndAddLocalRuntimes() {
-        final List<Result<LocalJavaRuntime>> result = RuntimeFinder.findRuntimesOnSystem();
+        final List<Result<LocalJavaRuntime>> result = RuntimeFinderUtils.findRuntimesOnSystem();
         result.stream()
                 .forEach(r -> {
                     if (r.iSuccessful()) {

@@ -2,7 +2,7 @@ package com.openwebstart.jvm.ui;
 
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
+import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
@@ -65,14 +65,15 @@ public final class RuntimeManagerPanel extends JPanel {
             fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setMultiSelectionEnabled(false);
+            fileChooser.setFileHidingEnabled(false);
             fileChooser.setAcceptAllFileFilterUsed(false);
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final Path selected = fileChooser.getSelectedFile().toPath();
                 backgroundExecutor.execute(() -> {
                     try {
-                        final String version = RuntimeFinder.readVersion(selected);
+                        final String version = RuntimeFinderUtils.readVersion(selected);
                         if(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                            final String vendor = RuntimeFinder.readVendor(selected);
+                            final String vendor = RuntimeFinderUtils.readVendor(selected);
                             final LocalJavaRuntime runtime = new LocalJavaRuntime(version, OperationSystem.getLocalSystem(), vendor, selected, LocalDateTime.now(), false, false);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {
