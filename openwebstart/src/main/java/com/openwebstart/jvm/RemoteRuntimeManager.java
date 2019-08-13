@@ -1,5 +1,7 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.func.Result;
+import com.openwebstart.jvm.func.Sucess;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
@@ -7,11 +9,9 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.util.RemoteRuntimeManagerCache;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import dev.rico.client.Client;
-import com.openwebstart.rico.functional.CheckedSupplier;
-import dev.rico.core.functional.Result;
+import com.openwebstart.jvm.func.CheckedSupplier;
 import dev.rico.core.http.HttpClient;
 import dev.rico.core.http.HttpResponse;
-import dev.rico.internal.core.functional.Sucess;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -61,7 +61,7 @@ public class RemoteRuntimeManager {
                 .filter(c -> c.isStillValid())
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
                 .map(c -> (Result<RemoteRuntimeList>) new Sucess(c.getList()))
-                .orElseGet(CheckedSupplier.of(() -> {
+                .orElseGet(Result.of(() -> {
                     final HttpClient client = Client.getService(HttpClient.class);
                     final HttpResponse<String> response = client.get(endpointForRequest)
                             .withoutContent()
@@ -76,7 +76,7 @@ public class RemoteRuntimeManager {
                     return receivedList;
                 }));
 
-        if (result.iSuccessful()) {
+        if (result.isSuccessful()) {
             final String vendorForRequest = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
             Assert.requireNonBlank(vendorForRequest, "vendorForRequest");
 

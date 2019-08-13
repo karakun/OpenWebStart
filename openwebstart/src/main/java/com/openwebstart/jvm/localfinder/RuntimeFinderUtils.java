@@ -1,9 +1,9 @@
 package com.openwebstart.jvm.localfinder;
 
+import com.openwebstart.jvm.func.Result;
+import com.openwebstart.jvm.io.ConnectionUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import dev.rico.core.functional.Result;
-import dev.rico.internal.core.http.ConnectionUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.nio.file.Files;

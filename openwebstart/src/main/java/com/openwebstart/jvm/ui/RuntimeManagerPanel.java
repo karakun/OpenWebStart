@@ -2,12 +2,13 @@ package com.openwebstart.jvm.ui;
 
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
+import com.openwebstart.jvm.func.Result;
+import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
-import dev.rico.core.functional.Result;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -49,7 +50,7 @@ public final class RuntimeManagerPanel extends JPanel {
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 final List<Result<LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
-                result.stream().filter(r -> !r.iSuccessful()).map(r -> r.getException()).forEach(ex -> SwingUtilities.invokeLater(() -> new ErrorDialog("Can not add runtime!", ex).showAndWait()));
+                result.stream().filter(r -> !r.isSuccessful()).map(r -> r.getException()).forEach(ex -> SwingUtilities.invokeLater(() -> new ErrorDialog("Can not add runtime!", ex).showAndWait()));
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }

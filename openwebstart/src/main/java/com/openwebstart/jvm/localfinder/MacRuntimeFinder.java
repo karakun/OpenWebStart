@@ -1,9 +1,9 @@
 package com.openwebstart.jvm.localfinder;
 
+import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.util.WebstartUtils;
-import dev.rico.core.functional.Result;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 

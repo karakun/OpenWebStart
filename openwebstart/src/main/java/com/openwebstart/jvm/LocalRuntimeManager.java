@@ -1,5 +1,6 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
@@ -7,6 +8,7 @@ import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
+import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
@@ -17,7 +19,6 @@ import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
 import dev.rico.client.Client;
-import dev.rico.core.functional.Result;
 import dev.rico.core.http.HttpClient;
 import dev.rico.core.http.HttpResponse;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -264,7 +265,7 @@ public final class LocalRuntimeManager {
         final List<Result<LocalJavaRuntime>> result = RuntimeFinderUtils.findRuntimesOnSystem();
         result.stream()
                 .forEach(r -> {
-                    if (r.iSuccessful()) {
+                    if (r.isSuccessful()) {
                         final LocalJavaRuntime runtime = r.getResult();
                         if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
                             add(runtime);
@@ -301,7 +302,7 @@ public final class LocalRuntimeManager {
                 .execute()
                 .get(RuntimeManagerConstants.HTTP_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS);
 
-        final DownloadInputStream inputStream = DownloadInputStream.map(response);
+        final DownloadInputStream inputStream = DownloadInputStream.map(response.getContent(), response.getContentSize());
 
         if(downloadConsumer != null) {
             downloadConsumer.accept(inputStream);
