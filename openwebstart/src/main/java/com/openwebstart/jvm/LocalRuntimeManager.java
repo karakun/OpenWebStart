@@ -1,5 +1,6 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.listener.Registration;
@@ -15,11 +16,9 @@ import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
-import com.openwebstart.rico.http.DownloadInputStreamImpl;
 import dev.rico.client.Client;
 import dev.rico.client.concurrent.UiExecutor;
 import dev.rico.core.functional.Result;
-import com.openwebstart.rico.http.DownloadInputStream;
 import dev.rico.core.http.HttpClient;
 import dev.rico.core.http.HttpResponse;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -303,7 +302,7 @@ public final class LocalRuntimeManager {
                 .execute()
                 .get(RuntimeManagerConstants.HTTP_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS);
 
-        final DownloadInputStream inputStream = DownloadInputStreamImpl.map(response, Client.getService(UiExecutor.class));
+        final DownloadInputStream inputStream = DownloadInputStream.map(response);
 
         if(downloadConsumer != null) {
             downloadConsumer.accept(inputStream);

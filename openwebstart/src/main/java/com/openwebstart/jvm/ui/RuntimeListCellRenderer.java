@@ -2,11 +2,9 @@ package com.openwebstart.jvm.ui;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.os.OperationSystem;
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.materialdesign.MaterialDesign;
-import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -21,20 +19,16 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
     private final JPanel cellContent;
 
-    private final IconComponent osIcon;
-
     private final JLabel versionLabel;
 
     public RuntimeListCellRenderer() {
         cellContent = new JPanel();
         cellContent.setLayout(new BorderLayout(12, 12));
 
-        osIcon = new IconComponent();
         versionLabel = new JLabel();
-        final IconComponent actionsIcon = new IconComponent(FontIcon.of(MaterialDesign.MDI_DOTS_HORIZONTAL, 32, Color.BLUE));
 
+        final IconComponent actionsIcon = new IconComponent(new ImageIcon(IconComponent.class.getResource("settings-32.png")));
 
-        cellContent.add(osIcon, BorderLayout.WEST);
         cellContent.add(versionLabel, BorderLayout.CENTER);
         cellContent.add(actionsIcon, BorderLayout.EAST);
 
@@ -44,15 +38,6 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion()).orElse("UNKNOWN"));
-        final Ikon icon = Optional.ofNullable(value).map(v -> v.getOperationSystem()).map(os -> {
-            if (Objects.equals(os, OperationSystem.MAC64)) {
-                return MaterialDesign.MDI_APPLE;
-            } else if (Objects.equals(os, OperationSystem.WIN32) || Objects.equals(os, OperationSystem.WIN64)) {
-                return MaterialDesign.MDI_WINDOWS;
-            }
-            return MaterialDesign.MDI_DO_NOT_DISTURB;
-        }).orElse(MaterialDesign.MDI_DO_NOT_DISTURB);
-        osIcon.setIcon(FontIcon.of(icon, 32, Color.DARK_GRAY));
 
         if (!isSelected) {
             if(index%2 == 0) {

@@ -1,4 +1,4 @@
-package com.openwebstart.rico.http;
+package com.openwebstart.jvm.io;
 
 import java.util.Objects;
 
