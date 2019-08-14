@@ -1,18 +1,20 @@
 package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
-import com.openwebstart.jvm.ui.IconComponent;
+import com.openwebstart.jvm.ui.Images;
+import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AskForRuntimeUpdateDialog extends JDialog {
@@ -25,7 +27,7 @@ public class AskForRuntimeUpdateDialog extends JDialog {
         setModalityType(ModalityType.APPLICATION_MODAL);
         setResizable(false);
 
-        final ImageIcon imageIcon = new ImageIcon(IconComponent.class.getResource("settings-64.png"));
+        final ImageIcon imageIcon = new ImageIcon(Images.QUESTION_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
 
         final JLabel messageLabel = new JLabel("A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() +"') is available. Do you want to download this version?");
@@ -46,7 +48,10 @@ public class AskForRuntimeUpdateDialog extends JDialog {
         panel.add(messageWrapperPanel, BorderLayout.NORTH);
 
         final JPanel actionWrapperPanel = new JPanel();
-        actionWrapperPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+
+        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
+        actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        actionWrapperPanel.add(Box.createHorizontalGlue());
         actionWrapperPanel.add(noUpdateButton);
         actionWrapperPanel.add(updateButton);
 

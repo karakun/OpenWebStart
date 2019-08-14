@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui;
+package com.openwebstart.jvm.ui.list;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.actions.Action;

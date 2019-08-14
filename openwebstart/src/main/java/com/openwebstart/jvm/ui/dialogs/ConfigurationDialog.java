@@ -6,6 +6,8 @@ import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.net.URI;
@@ -86,7 +89,9 @@ public class ConfigurationDialog extends JDialog {
         mainPanel.add(supportedVersionRangeField);
 
         final JPanel actionWrapperPanel = new JPanel();
-        actionWrapperPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
+        actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        actionWrapperPanel.add(Box.createHorizontalGlue());
         actionWrapperPanel.add(okButton);
         actionWrapperPanel.add(cancelButton);
 
