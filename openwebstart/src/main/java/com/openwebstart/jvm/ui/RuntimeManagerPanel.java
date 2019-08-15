@@ -9,6 +9,7 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
+import com.openwebstart.jvm.vendor.VendorManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -74,7 +75,7 @@ public final class RuntimeManagerPanel extends JPanel {
                     try {
                         final String version = RuntimeFinderUtils.readVersion(selected);
                         if(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                            final String vendor = RuntimeFinderUtils.readVendor(selected);
+                            final String vendor = VendorManager.getInstance().getInternalName(RuntimeFinderUtils.readVendor(selected));
                             final LocalJavaRuntime runtime = new LocalJavaRuntime(version, OperationSystem.getLocalSystem(), vendor, selected, LocalDateTime.now(), false, false);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {

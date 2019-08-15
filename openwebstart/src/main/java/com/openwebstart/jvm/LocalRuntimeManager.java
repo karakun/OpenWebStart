@@ -18,6 +18,7 @@ import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
+import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -308,7 +309,8 @@ public final class LocalRuntimeManager {
             }
         }
 
-        final LocalJavaRuntime newRuntime = new LocalJavaRuntime(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), remoteRuntime.getVendor(), runtimePath);
+        final String vendor = VendorManager.getInstance().getInternalName(remoteRuntime.getVendor());
+        final LocalJavaRuntime newRuntime = new LocalJavaRuntime(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), vendor, runtimePath);
         add(newRuntime);
         return newRuntime;
     }
@@ -326,8 +328,9 @@ public final class LocalRuntimeManager {
         Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorForRequest = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
 
+        final String vendorForRequest = Objects.equals(vendorName, RuntimeManagerConstants.VENDOR_ANY) ? RuntimeManagerConstants.VENDOR_ANY : VendorManager.getInstance().getInternalName(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
 
