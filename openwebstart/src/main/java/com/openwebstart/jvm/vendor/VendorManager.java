@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 
 public class VendorManager {
 
-    private static final String UNKNOWN_VENDOR = "Unknown vendor";
-
     private static final VendorManager INSTANCE = new VendorManager();
 
     private final List<VendorResolver> resolver;
@@ -25,6 +23,7 @@ public class VendorManager {
     }
 
     public String getInternalName(final String name) {
+        Assert.requireNonBlank(name, "name");
         if (Objects.equals(name, RuntimeManagerConstants.VENDOR_ANY)) {
             return RuntimeManagerConstants.VENDOR_ANY;
         }
@@ -33,7 +32,7 @@ public class VendorManager {
                 .collect(Collectors.toList());
 
         if (possibleResolvers.isEmpty()) {
-            return UNKNOWN_VENDOR;
+            return name;
         }
         if (possibleResolvers.size() > 1) {
             throw new IllegalStateException("More than 1 possible vendor for '" + name + "'");
