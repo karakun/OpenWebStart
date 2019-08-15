@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui;
+package com.openwebstart.jvm.ui.util;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -30,6 +30,7 @@ public class IconComponent extends JComponent {
     public void setIcon(final Icon icon) {
         this.icon = icon;
         revalidate();
+        repaint();
     }
 
     @Override

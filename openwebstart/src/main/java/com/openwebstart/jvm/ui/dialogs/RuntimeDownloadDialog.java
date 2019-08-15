@@ -4,7 +4,8 @@ import com.openwebstart.jvm.io.ByteUnit;
 import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.io.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
-import com.openwebstart.jvm.ui.IconComponent;
+import com.openwebstart.jvm.ui.Images;
+import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -34,7 +35,7 @@ public class RuntimeDownloadDialog extends JDialog {
         if (Objects.equals(inputStream.getDownloadType(), DownloadType.INDETERMINATE)) {
             progressBar.setIndeterminate(true);
         }
-        final ImageIcon imageIcon = new ImageIcon(IconComponent.class.getResource("network-64.png"));
+        final ImageIcon imageIcon = new ImageIcon(Images.NETWORK_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
 
         final JLabel progressLabel = new JLabel("0 KB from ?");

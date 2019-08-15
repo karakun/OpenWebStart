@@ -3,21 +3,27 @@ package com.openwebstart.jvm.ui;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.func.Result;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
+import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.vendor.VendorManager;
 
+import com.openwebstart.jvm.ui.list.RuntimeListComponent;
+import com.openwebstart.jvm.ui.list.RuntimeListModel;
+
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -34,10 +40,8 @@ public final class RuntimeManagerPanel extends JPanel {
 
     public RuntimeManagerPanel() {
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
-        RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
-        listModel = new RuntimeListModel();
-        runtimeListComponent.setModel(listModel);
-
+        final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
+        listModel = runtimeListComponent.getModel();
         final JButton refreshButton = new JButton("refresh");
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
@@ -46,7 +50,6 @@ public final class RuntimeManagerPanel extends JPanel {
                 throw new RuntimeException("Error", ex);
             }
         }));
-
         final JButton findLocalRuntimesButton = new JButton("find local");
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
@@ -57,7 +60,7 @@ public final class RuntimeManagerPanel extends JPanel {
             }
         }));
 
-        final JButton configureButton = new JButton("configurae");
+        final JButton configureButton = new JButton("settings");
         configureButton.addActionListener(e -> new ConfigurationDialog().showAndWait());
 
         final JButton addLocalRuntimesButton = new JButton("add local");
@@ -89,14 +92,13 @@ public final class RuntimeManagerPanel extends JPanel {
         });
 
 
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(12, 12));
 
         add(new JScrollPane(runtimeListComponent), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new
-
-                FlowLayout(FlowLayout.RIGHT, 4, 4));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(refreshButton);
         buttonPanel.add(addLocalRuntimesButton);
         buttonPanel.add(findLocalRuntimesButton);
