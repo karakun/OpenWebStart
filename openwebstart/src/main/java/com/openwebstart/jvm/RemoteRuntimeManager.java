@@ -2,7 +2,7 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.func.Sucess;
-import com.openwebstart.jvm.io.HttpRequest;
+import com.openwebstart.jvm.io.HttpGetRequest;
 import com.openwebstart.jvm.io.HttpResponse;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
@@ -17,7 +17,7 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,13 +61,16 @@ public class RemoteRuntimeManager {
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
                 .map(c -> (Result<RemoteRuntimeList>) new Sucess(c.getList()))
                 .orElseGet(Result.of(() -> {
-                    final HttpRequest request = new HttpRequest(endpointForRequest);
+                    final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
                     final HttpResponse response = request.handle();
-                    final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), Charset.forName("UTF-8"));
-
-                    final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
-                    cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
-                    return receivedList;
+                    try {
+                        final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), StandardCharsets.UTF_8);
+                        final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
+                        cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
+                        return receivedList;
+                    } finally {
+                        response.closeConnection();
+                    }
                 }));
 
         if (result.isSuccessful()) {

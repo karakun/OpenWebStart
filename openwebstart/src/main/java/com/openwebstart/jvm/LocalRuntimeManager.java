@@ -2,7 +2,7 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.io.DownloadInputStream;
-import com.openwebstart.jvm.io.HttpRequest;
+import com.openwebstart.jvm.io.HttpGetRequest;
 import com.openwebstart.jvm.io.HttpResponse;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
@@ -14,7 +14,6 @@ import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
-import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
@@ -25,12 +24,10 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +37,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -290,7 +286,7 @@ public final class LocalRuntimeManager {
 
 
         final URI downloadRequest = remoteRuntime.getEndpoint();
-        final HttpRequest request = new HttpRequest(downloadRequest);
+        final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         final HttpResponse response = request.handle();
         final DownloadInputStream inputStream = DownloadInputStream.map(response.getContentStream(), response.getContentSize());
 
@@ -313,6 +309,8 @@ public final class LocalRuntimeManager {
             } else {
                 throw new IOException("Error in runtime download", e);
             }
+        } finally {
+            response.closeConnection();
         }
 
         final LocalJavaRuntime newRuntime = new LocalJavaRuntime(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), remoteRuntime.getVendor(), runtimePath);
