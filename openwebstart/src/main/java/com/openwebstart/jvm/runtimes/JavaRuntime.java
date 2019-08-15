@@ -13,11 +13,15 @@ public abstract class JavaRuntime implements Serializable {
 
     private final OperationSystem operationSystem;
 
+    public JavaRuntime(final JavaRuntime other) {
+        this(other.version, other.operationSystem, other.vendor);
+    }
+
     public JavaRuntime(final String version, final OperationSystem operationSystem, final String vendor) {
         this(version, operationSystem, Vendor.fromString(vendor));
     }
 
-    public JavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor) {
+    private JavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor) {
         this.version = Assert.requireNonBlank(version, "version");
         this.operationSystem = Assert.requireNonNull(operationSystem, "operationSystem");
         this.vendor = Assert.requireNonNull(vendor, "vendor");
