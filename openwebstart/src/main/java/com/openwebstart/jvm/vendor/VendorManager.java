@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.vendor;
 
-import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeManagerConstants;
 import net.adoptopenjdk.icedteaweb.Assert;
 
@@ -13,30 +12,30 @@ import java.util.stream.Collectors;
 
 public class VendorManager {
 
-    private final static String UNKNOWN_VENDOR = "Unknown vendor";
+    private static final String UNKNOWN_VENDOR = "Unknown vendor";
 
-    private final static VendorManager INSTANCE = new VendorManager();
+    private static final VendorManager INSTANCE = new VendorManager();
 
     private final List<VendorResolver> resolver;
 
-    public VendorManager() {
+    private VendorManager() {
         final List<VendorResolver> loaded = new ArrayList<>();
-        ServiceLoader.load(VendorResolver.class).iterator().forEachRemaining(r -> loaded.add(r));
+        ServiceLoader.load(VendorResolver.class).iterator().forEachRemaining(loaded::add);
         resolver = Collections.unmodifiableList(loaded);
     }
 
     public String getInternalName(final String name) {
-        if(Objects.equals(name, RuntimeManagerConstants.VENDOR_ANY)) {
+        if (Objects.equals(name, RuntimeManagerConstants.VENDOR_ANY)) {
             return RuntimeManagerConstants.VENDOR_ANY;
         }
         List<VendorResolver> possibleResolvers = resolver.stream()
                 .filter(r -> r.isVendor(name))
                 .collect(Collectors.toList());
 
-        if(possibleResolvers.isEmpty()) {
+        if (possibleResolvers.isEmpty()) {
             return UNKNOWN_VENDOR;
         }
-        if(possibleResolvers.size() > 1) {
+        if (possibleResolvers.size() > 1) {
             throw new IllegalStateException("More than 1 possible vendor for '" + name + "'");
         }
         return possibleResolvers.get(0).getVendorName();

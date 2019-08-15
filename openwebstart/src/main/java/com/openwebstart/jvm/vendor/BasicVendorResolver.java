@@ -1,9 +1,9 @@
 package com.openwebstart.jvm.vendor;
 
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 public class BasicVendorResolver implements VendorResolver {
 
@@ -23,12 +23,9 @@ public class BasicVendorResolver implements VendorResolver {
 
     @Override
     public boolean isVendor(final String name) {
-        if(name == null || name.isEmpty()) {
+        if(StringUtils.isBlank(name)) {
             return false;
         }
-        return matchingNames.stream()
-                .filter(n -> Objects.equals(n.toLowerCase(), name.toLowerCase()))
-                .findAny()
-                .isPresent();
+        return matchingNames.stream().anyMatch(name::equalsIgnoreCase);
     }
 }
