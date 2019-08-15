@@ -330,7 +330,7 @@ public final class LocalRuntimeManager {
 
         final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
 
-        final String vendorForRequest = Objects.equals(vendorName, RuntimeManagerConstants.VENDOR_ANY) ? RuntimeManagerConstants.VENDOR_ANY : VendorManager.getInstance().getInternalName(vendorName);
+        final String vendorForRequest = VendorManager.getInstance().getInternalName(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
 

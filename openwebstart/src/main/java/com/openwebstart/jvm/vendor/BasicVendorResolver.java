@@ -23,7 +23,9 @@ public class BasicVendorResolver implements VendorResolver {
 
     @Override
     public boolean isVendor(final String name) {
-        Assert.requireNonNull(name, "name");
+        if(name == null || name.isEmpty()) {
+            return false;
+        }
         return matchingNames.stream()
                 .filter(n -> Objects.equals(n.toLowerCase(), name.toLowerCase()))
                 .findAny()

@@ -73,7 +73,7 @@ public class RemoteRuntimeManager {
 
         if (result.isSuccessful()) {
             final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
-            final String vendorForRequest = Objects.equals(vendorName, RuntimeManagerConstants.VENDOR_ANY) ? RuntimeManagerConstants.VENDOR_ANY : VendorManager.getInstance().getInternalName(vendorName);
+            final String vendorForRequest = VendorManager.getInstance().getInternalName(vendorName);
             Assert.requireNonBlank(vendorForRequest, "vendorForRequest");
 
             LOG.debug("Received " + result.getResult().getRuntimes().size() + " possible runtime defintions from server");

@@ -1,5 +1,7 @@
 package com.openwebstart.jvm.vendor;
 
+import com.openwebstart.jvm.RuntimeManagerConfig;
+import com.openwebstart.jvm.RuntimeManagerConstants;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 public class VendorManager {
 
@@ -23,9 +26,20 @@ public class VendorManager {
     }
 
     public String getInternalName(final String name) {
-        return resolver.stream().filter(r -> r.isVendor(name))
-                .findAny().map(r -> r.getVendorName())
-                .orElse(UNKNOWN_VENDOR);
+        if(Objects.equals(name, RuntimeManagerConstants.VENDOR_ANY)) {
+            return RuntimeManagerConstants.VENDOR_ANY;
+        }
+        List<VendorResolver> possibleResolvers = resolver.stream()
+                .filter(r -> r.isVendor(name))
+                .collect(Collectors.toList());
+
+        if(possibleResolvers.isEmpty()) {
+            return UNKNOWN_VENDOR;
+        }
+        if(possibleResolvers.size() > 1) {
+            throw new IllegalStateException("More than 1 possible vendor for '" + name + "'");
+        }
+        return possibleResolvers.get(0).getVendorName();
     }
 
     public boolean equals(final String nameA, final String nameB) {
