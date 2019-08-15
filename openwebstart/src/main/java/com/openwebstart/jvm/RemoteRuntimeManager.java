@@ -10,6 +10,7 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.util.RemoteRuntimeManagerCache;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
+import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -71,14 +72,15 @@ public class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            final String vendorForRequest = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
+            final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
+            final String vendorForRequest = VendorManager.getInstance().getInternalName(vendorName);
             Assert.requireNonBlank(vendorForRequest, "vendorForRequest");
 
             LOG.debug("Received " + result.getResult().getRuntimes().size() + " possible runtime defintions from server");
 
             return result.getResult().getRuntimes().stream()
                     .filter(r -> Objects.equals(r.getOperationSystem(), operationSystem))
-                    .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
+                    .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || VendorManager.getInstance().equals(vendorForRequest, r.getVendor()))
                     .filter(r -> versionString.contains(r.getVersion()))
                     .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                     .sorted(new RuntimeVersionComparator(versionString).reversed())

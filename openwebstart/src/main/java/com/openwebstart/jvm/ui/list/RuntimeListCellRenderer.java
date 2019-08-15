@@ -4,6 +4,7 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.CenterLayout;
 import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -82,6 +83,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
     private JPanel createCenterPanel() {
         versionLabel.setFont(versionLabel.getFont().deriveFont(22.0f));
+        versionLabel.setMinimumSize(new Dimension(100, versionLabel.getPreferredSize().height));
         vendorLabel.setFont(vendorLabel.getFont().deriveFont(22.0f).deriveFont(Font.ITALIC));
         archLabel.setFont(archLabel.getFont().deriveFont(10.0f).deriveFont(Font.ITALIC));
         archLabel.setForeground(Color.DARK_GRAY);
@@ -90,7 +92,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
         firstLinePanel.setBackground(null);
         firstLinePanel.setLayout(new BoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
         firstLinePanel.add(versionLabel);
-        firstLinePanel.add(Box.createHorizontalStrut(10));
+        firstLinePanel.add(Box.createHorizontalStrut(6));
         firstLinePanel.add(vendorLabel);
         firstLinePanel.add(Box.createHorizontalGlue());
 
@@ -133,7 +135,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion()).orElse("unknown version"));
-        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor()).orElse("unknown vendor"));
+        vendorLabel.setText(VendorManager.getInstance().getInternalName(Optional.ofNullable(value).map(v -> v.getVendor()).orElse(null)));
         archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem()).map(o -> o.getName()).orElse("unknown arch"));
 
         if(this.listHighlighter.getHoverIndex() == index) {

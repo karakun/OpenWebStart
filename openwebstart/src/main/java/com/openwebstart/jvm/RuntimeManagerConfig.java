@@ -16,9 +16,9 @@ public class RuntimeManagerConfig {
 
     private final AtomicBoolean specificVendorEnabled = new AtomicBoolean();
 
-    private final AtomicReference<String> defaultVendor = new AtomicReference();
+    private final AtomicReference<String> defaultVendor = new AtomicReference<>();
 
-    private final AtomicReference<URI> defaultRemoteEndpoint = new AtomicReference();
+    private final AtomicReference<URI> defaultRemoteEndpoint = new AtomicReference<>();
 
     private final AtomicReference<RuntimeUpdateStrategy> strategy = new AtomicReference<>(RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH);
 

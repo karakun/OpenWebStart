@@ -67,7 +67,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("adopt", runtime.getVendor());
+        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -86,7 +86,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("11.0.1", runtime.getVersion());
-        Assertions.assertEquals("adopt", runtime.getVendor());
+        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -111,7 +111,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("oracle", runtime.getVendor());
+        Assertions.assertEquals("Oracle", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -130,7 +130,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("oracle", runtime.getVendor());
+        Assertions.assertEquals("Oracle", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -150,7 +150,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("adopt", runtime.getVendor());
+        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -171,7 +171,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("adopt", runtime.getVendor());
+        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -192,7 +192,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("oracle", runtime.getVendor());
+        Assertions.assertEquals("Oracle", runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
