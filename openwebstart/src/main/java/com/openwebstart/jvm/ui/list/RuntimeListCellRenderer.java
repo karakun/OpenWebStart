@@ -83,6 +83,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
     private JPanel createCenterPanel() {
         versionLabel.setFont(versionLabel.getFont().deriveFont(22.0f));
+        versionLabel.setMinimumSize(new Dimension(100, versionLabel.getPreferredSize().height));
         vendorLabel.setFont(vendorLabel.getFont().deriveFont(22.0f).deriveFont(Font.ITALIC));
         archLabel.setFont(archLabel.getFont().deriveFont(10.0f).deriveFont(Font.ITALIC));
         archLabel.setForeground(Color.DARK_GRAY);
@@ -91,7 +92,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
         firstLinePanel.setBackground(null);
         firstLinePanel.setLayout(new BoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
         firstLinePanel.add(versionLabel);
-        firstLinePanel.add(Box.createHorizontalStrut(10));
+        firstLinePanel.add(Box.createHorizontalStrut(6));
         firstLinePanel.add(vendorLabel);
         firstLinePanel.add(Box.createHorizontalGlue());
 
