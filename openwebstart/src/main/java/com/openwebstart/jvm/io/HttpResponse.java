@@ -3,6 +3,7 @@ package com.openwebstart.jvm.io;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HttpResponse {
+public class HttpResponse implements Closeable {
 
     private final HttpURLConnection connection;
 
@@ -52,5 +53,10 @@ public class HttpResponse {
 
     public void closeConnection() {
         connection.disconnect();
+    }
+
+    @Override
+    public void close() throws IOException {
+        closeConnection();
     }
 }

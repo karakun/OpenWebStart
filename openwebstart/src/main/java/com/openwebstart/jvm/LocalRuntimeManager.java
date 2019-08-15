@@ -284,17 +284,14 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Runtime will be installed in " + runtimePath);
 
-
         final URI downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
-        final HttpResponse response = request.handle();
-        final DownloadInputStream inputStream = DownloadInputStream.map(response.getContentStream(), response.getContentSize());
+        try (final HttpResponse response = request.handle()) {
+            final DownloadInputStream inputStream = DownloadInputStream.map(response.getContentStream(), response.getContentSize());
 
-        if(downloadConsumer != null) {
-            downloadConsumer.accept(inputStream);
-        }
-
-        try {
+            if (downloadConsumer != null) {
+                downloadConsumer.accept(inputStream);
+            }
             LOG.debug("Trying to download and extract runtime");
             ZipUtil.unzip(inputStream, runtimePath);
         } catch (final Exception e) {
@@ -309,8 +306,6 @@ public final class LocalRuntimeManager {
             } else {
                 throw new IOException("Error in runtime download", e);
             }
-        } finally {
-            response.closeConnection();
         }
 
         final LocalJavaRuntime newRuntime = new LocalJavaRuntime(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), remoteRuntime.getVendor(), runtimePath);

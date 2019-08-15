@@ -62,14 +62,11 @@ public class RemoteRuntimeManager {
                 .map(c -> (Result<RemoteRuntimeList>) new Sucess(c.getList()))
                 .orElseGet(Result.of(() -> {
                     final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
-                    final HttpResponse response = request.handle();
-                    try {
+                    try(final HttpResponse response = request.handle()) {
                         final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), StandardCharsets.UTF_8);
                         final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
                         cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
                         return receivedList;
-                    } finally {
-                        response.closeConnection();
                     }
                 }));
 
