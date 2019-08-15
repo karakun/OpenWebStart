@@ -12,6 +12,6 @@ public class DeactivateRuntimeAction extends BasicMutationAction<LocalJavaRuntim
 
     @Override
     protected LocalJavaRuntime mutate(final LocalJavaRuntime item) {
-        return new LocalJavaRuntime(item.getVersion(), item.getOperationSystem(), item.getVendor(), item.getJavaHome(), item.getLastUsage(), false, item.isManaged());
+        return item.getDeactivatedCopy();
     }
 }

@@ -12,6 +12,6 @@ public class ActivateRuntimeAction extends BasicMutationAction<LocalJavaRuntime>
 
     @Override
     protected LocalJavaRuntime mutate(final LocalJavaRuntime item) {
-        return new LocalJavaRuntime(item.getVersion(), item.getOperationSystem(), item.getVendor(), item.getJavaHome(), item.getLastUsage(), true, item.isManaged());
+        return item.getActivatedCopy();
     }
 }
