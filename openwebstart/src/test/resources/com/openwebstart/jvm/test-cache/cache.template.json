@@ -11,7 +11,7 @@
     },
     {
       "version": "1.8.220",
-      "vendor": "adopt",
+      "vendor": "AdoptOpenJDK",
       "javaHome": "{CACHE_FOLDER}/1.8.220-adopt-mac",
       "active": true,
       "os": "MAC64",
@@ -29,7 +29,7 @@
     },
     {
       "version": "11.0.1",
-      "vendor": "adopt",
+      "vendor": "AdoptOpenJDK",
       "javaHome": "{CACHE_FOLDER}/11.0.1-adopt-mac",
       "active": true,
       "os": "MAC64",
@@ -38,7 +38,7 @@
     },
     {
       "version": "1.8.219",
-      "vendor": "oracle",
+      "vendor": "Oracle",
       "javaHome": "{CACHE_FOLDER}/1.8.219-oracle-mac",
       "active": true,
       "os": "MAC64",

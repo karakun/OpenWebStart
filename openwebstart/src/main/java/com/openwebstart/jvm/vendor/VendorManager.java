@@ -1,8 +1,11 @@
 package com.openwebstart.jvm.vendor;
 
+import net.adoptopenjdk.icedteaweb.Assert;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 
 public class VendorManager {
@@ -23,6 +26,12 @@ public class VendorManager {
         return resolver.stream().filter(r -> r.isVendor(name))
                 .findAny().map(r -> r.getVendorName())
                 .orElse(UNKNOWN_VENDOR);
+    }
+
+    public boolean equals(final String nameA, final String nameB) {
+        Assert.requireNonNull(nameA, "nameA");
+        Assert.requireNonNull(nameB, "nameB");
+        return Objects.equals(getInternalName(nameA), getInternalName(nameB));
     }
 
     public static VendorManager getInstance() {
