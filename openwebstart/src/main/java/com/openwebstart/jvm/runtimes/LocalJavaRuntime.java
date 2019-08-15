@@ -46,7 +46,7 @@ public class LocalJavaRuntime extends JavaRuntime {
     public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
         super(version, operationSystem, vendor);
         this.javaHome = Assert.requireNonNull(javaHome, "javaHome");
-        this.lastUsage = lastUsage;
+        this.lastUsage = Assert.requireNonNull(lastUsage, "lastUsage");
         this.active = active;
         this.managed = managed;
     }
