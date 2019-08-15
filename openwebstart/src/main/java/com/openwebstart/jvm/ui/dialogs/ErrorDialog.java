@@ -1,11 +1,14 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-import com.openwebstart.jvm.ui.IconComponent;
+import com.openwebstart.jvm.ui.Images;
+import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -30,7 +32,7 @@ public class ErrorDialog extends JDialog {
         setModalityType(ModalityType.APPLICATION_MODAL);
         setTitle("Error");
 
-        final ImageIcon imageIcon = new ImageIcon(IconComponent.class.getResource("error-64.png"));
+        final ImageIcon imageIcon = new ImageIcon(Images.ERROR_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
 
         final JLabel messageLabel = new JLabel(message);
@@ -56,8 +58,11 @@ public class ErrorDialog extends JDialog {
         panel.add(new JScrollPane(exceptionDetailsArea), BorderLayout.CENTER);
 
         final JPanel actionPanel = new JPanel();
-        actionPanel.setLayout(new BorderLayout());
-        actionPanel.add(okButton, BorderLayout.EAST);
+        actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.LINE_AXIS));
+        actionPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        actionPanel.add(Box.createHorizontalGlue());
+        actionPanel.add(okButton);
+
         panel.add(actionPanel, BorderLayout.SOUTH);
         add(panel);
     }
