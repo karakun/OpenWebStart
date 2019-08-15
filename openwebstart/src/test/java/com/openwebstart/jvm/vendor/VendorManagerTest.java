@@ -132,6 +132,6 @@ public class VendorManagerTest {
 
         //than
         Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Unknown vendor", internalName);
+        Assertions.assertEquals("Karakun", internalName);
     }
 }

@@ -14,10 +14,11 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.temporal.TemporalAccessor;
 import java.util.Optional;
+
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>, JsonDeserializer<LocalJavaRuntime> {
 
@@ -31,13 +32,7 @@ public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>,
         jsonObject.addProperty(JsonConstants.ACTIVE_PROPERTY, localJavaRuntime.isActive());
         jsonObject.addProperty(JsonConstants.OS_PROPERTY, localJavaRuntime.getOperationSystem().name());
         jsonObject.addProperty(JsonConstants.MANAGED_PROPERTY, localJavaRuntime.isManaged());
-
-        final long millis = Optional.ofNullable(localJavaRuntime.getLastUsage())
-                .map(t -> t.atZone(ZoneId.of(JsonConstants.TIMEZONE)))
-                .map(t -> t.toInstant())
-                .map(t -> t.toEpochMilli())
-                .orElse(-1L);
-        jsonObject.addProperty(JsonConstants.LAST_USAGE_PROPERTY, millis);
+        jsonObject.addProperty(JsonConstants.LAST_USAGE_PROPERTY, ISO_LOCAL_DATE_TIME.format(localJavaRuntime.getLastUsage()));
 
         return jsonObject;
     }
@@ -53,14 +48,22 @@ public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>,
             final boolean active = jsonObject.get(JsonConstants.ACTIVE_PROPERTY).getAsBoolean();
             final boolean managed = jsonObject.get(JsonConstants.MANAGED_PROPERTY).getAsBoolean();
 
-
             final OperationSystem os = OperationSystem.valueOf(jsonObject.get(JsonConstants.OS_PROPERTY).getAsString());
-            final LocalDateTime lastUsage = LocalDateTime.ofInstant(Instant.ofEpochMilli(jsonObject.get(JsonConstants.LAST_USAGE_PROPERTY).getAsLong()), ZoneId.of(JsonConstants.TIMEZONE));
+            final LocalDateTime lastUsage = toLocalDate(jsonObject.get(JsonConstants.LAST_USAGE_PROPERTY).getAsString());
 
             return new LocalJavaRuntime(version, os, vendor, javaHome, lastUsage, active, managed);
 
         } catch (final Exception e) {
             throw new JsonParseException("Can not parse LocalJavaRuntime", e);
+        }
+    }
+
+    private LocalDateTime toLocalDate(String t) {
+        try {
+            final TemporalAccessor parsed = ISO_LOCAL_DATE_TIME.parse(t);
+            return LocalDateTime.from(parsed);
+        } catch (Exception e) {
+            return LocalDateTime.now();
         }
     }
 }

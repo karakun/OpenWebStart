@@ -42,7 +42,7 @@ public class MacRuntimeFinder implements RuntimeFinder {
                         final String version = RuntimeFinderUtils.readVersion(p);
                         final String vendor = VendorManager.getInstance().getInternalName(RuntimeFinderUtils.readVendor(p));
                         final String formatedVersion = WebstartUtils.convertJavaVersion(version);
-                        return new LocalJavaRuntime(formatedVersion, OperationSystem.MAC64, vendor, p, LocalDateTime.now(), false, false);
+                        return LocalJavaRuntime.createPreInstalled(formatedVersion, OperationSystem.MAC64, vendor, p);
                     })).collect(Collectors.toList());
         } else {
             LOG.debug("No runtime found");

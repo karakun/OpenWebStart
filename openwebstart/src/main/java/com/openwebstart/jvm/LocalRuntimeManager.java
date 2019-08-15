@@ -310,7 +310,7 @@ public final class LocalRuntimeManager {
         }
 
         final String vendor = VendorManager.getInstance().getInternalName(remoteRuntime.getVendor());
-        final LocalJavaRuntime newRuntime = new LocalJavaRuntime(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), vendor, runtimePath);
+        final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), vendor, runtimePath);
         add(newRuntime);
         return newRuntime;
     }

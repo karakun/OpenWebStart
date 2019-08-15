@@ -24,6 +24,14 @@ import java.util.Objects;
 
 public class LocalJavaRuntime extends JavaRuntime {
 
+    public static LocalJavaRuntime createManaged(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
+        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), true, true);
+    }
+
+    public static LocalJavaRuntime createPreInstalled(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
+        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), false, false);
+    }
+
     private final Path javaHome;
 
     private final boolean active;
@@ -38,21 +46,9 @@ public class LocalJavaRuntime extends JavaRuntime {
     public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
         super(version, operationSystem, vendor);
         this.javaHome = Assert.requireNonNull(javaHome, "javaHome");
+        this.lastUsage = Assert.requireNonNull(lastUsage, "lastUsage");
         this.active = active;
-        this.lastUsage = lastUsage;
         this.managed = managed;
-    }
-
-    public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active) {
-        this(version, operationSystem, vendor, javaHome, lastUsage, active, true);
-    }
-
-    public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage) {
-        this(version, operationSystem, vendor, javaHome, lastUsage, true);
-    }
-
-    public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
-        this(version, operationSystem, vendor, javaHome, LocalDateTime.now());
     }
 
     public Path getJavaHome() {
@@ -88,5 +84,9 @@ public class LocalJavaRuntime extends JavaRuntime {
 
     public LocalJavaRuntime getDeactivatedCopy() {
         return new LocalJavaRuntime(getVersion(), getOperationSystem(), getVendor(), getJavaHome(), getLastUsage(), false, isManaged());
+    }
+
+    public LocalJavaRuntime getActivatedCopy() {
+        return new LocalJavaRuntime(getVersion(), getOperationSystem(), getVendor(), getJavaHome(), getLastUsage(), true, isManaged());
     }
 }

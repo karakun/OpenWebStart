@@ -23,6 +23,4 @@ public interface JsonConstants {
     String RUNTIMES_PROPERTY = "runtimes";
 
     String CACHE_TIME_PROPERTY = "cacheTimeInMillis";
-
-    String TIMEZONE = "America/Los_Angeles";
 }
