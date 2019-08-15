@@ -4,6 +4,7 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.CenterLayout;
 import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -133,7 +134,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion()).orElse("unknown version"));
-        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor()).orElse("unknown vendor"));
+        vendorLabel.setText(Optional.ofNullable(value).map(v -> VendorManager.getInstance().getInternalName(v.getVendor())).orElse("unknown vendor"));
         archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem()).map(o -> o.getName()).orElse("unknown arch"));
 
         if(this.listHighlighter.getHoverIndex() == index) {
