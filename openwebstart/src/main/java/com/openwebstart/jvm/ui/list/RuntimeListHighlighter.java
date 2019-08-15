@@ -57,7 +57,7 @@ public class RuntimeListHighlighter extends MouseAdapter {
 
         final Rectangle bounds = listComponent.getCellBounds(index, index);
 
-        if(e.getPoint().getX() >= bounds.width - 44 && e.getPoint().getY() >= bounds.y + (bounds.height / 2) - 22 && e.getPoint().getY() <= bounds.y + (bounds.height / 2) + 22 ) {
+        if(bounds != null && e.getPoint().getX() >= bounds.width - 44 && e.getPoint().getY() >= bounds.y + (bounds.height / 2) - 22 && e.getPoint().getY() <= bounds.y + (bounds.height / 2) + 22 ) {
             setInActionArea(true);
         } else {
             setInActionArea(false);
