@@ -287,7 +287,7 @@ public final class LocalRuntimeManager {
         final URI downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         try (final HttpResponse response = request.handle()) {
-            final DownloadInputStream inputStream = DownloadInputStream.map(response.getContentStream(), response.getContentSize());
+            final DownloadInputStream inputStream = new DownloadInputStream(response);
 
             if (downloadConsumer != null) {
                 downloadConsumer.accept(inputStream);

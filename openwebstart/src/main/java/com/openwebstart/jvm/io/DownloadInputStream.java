@@ -43,6 +43,10 @@ public class DownloadInputStream extends InputStream {
 
     private final DownloadType downloadType;
 
+    public DownloadInputStream(HttpResponse response) throws IOException {
+        this(response.getContentStream(), response.getContentSize());
+    }
+
     public DownloadInputStream(final InputStream inputStream, final long dataSize) {
         this.dataSize = dataSize > 0 ? dataSize : -1;
         if (dataSize > 0) {
@@ -216,10 +220,5 @@ public class DownloadInputStream extends InputStream {
 
     public long getDataSize() {
         return dataSize;
-    }
-
-    public static DownloadInputStream map(final InputStream inputStream, final long length) {
-        final DownloadInputStream downloadInputStream = new DownloadInputStream(inputStream, length);
-        return downloadInputStream;
     }
 }
