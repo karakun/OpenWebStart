@@ -133,7 +133,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-        versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion()).orElse("unknown version"));
+        versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse("unknown version"));
         vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse("unknown vendor"));
         archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse("unknown operating system"));
 
