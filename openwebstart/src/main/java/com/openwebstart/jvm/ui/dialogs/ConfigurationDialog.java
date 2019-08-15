@@ -1,7 +1,6 @@
 package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.RuntimeManagerConstants;
 import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
@@ -16,12 +15,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
+
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
+import static com.openwebstart.jvm.runtimes.Vendor.AMAZON;
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.BELLSOFT;
+import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 
 public class ConfigurationDialog extends JDialog {
 
@@ -35,7 +38,7 @@ public class ConfigurationDialog extends JDialog {
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Default vendor:");
-        final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{RuntimeManagerConstants.VENDOR_ANY.getName(), RuntimeManagerConstants.VENDOR_ADOPT.getName(), RuntimeManagerConstants.VENDOR_AMAZON.getName(), RuntimeManagerConstants.VENDOR_BELLSOFT.getName(), RuntimeManagerConstants.VENDOR_ORACLE.getName()});
+        final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
         defaultVendorComboBox.setEditable(true);
         defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getDefaultVendor());
 

@@ -1,10 +1,10 @@
 package com.openwebstart.jvm.vendor;
 
-import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ADOPT;
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 
 public class AdoptResolver extends BasicVendorResolver {
 
     public AdoptResolver() {
-        super(VENDOR_ADOPT, "adopt", "AdoptOpenJDK");
+        super(ADOPT, "adopt", "AdoptOpenJDK");
     }
 }

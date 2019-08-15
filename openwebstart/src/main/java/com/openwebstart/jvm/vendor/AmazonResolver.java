@@ -1,11 +1,11 @@
 package com.openwebstart.jvm.vendor;
 
-import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_AMAZON;
+import static com.openwebstart.jvm.runtimes.Vendor.AMAZON;
 
 public class AmazonResolver extends BasicVendorResolver {
 
     public AmazonResolver() {
-        super(VENDOR_AMAZON, "amazon", "Amazon Inc.");
+        super(AMAZON, "amazon", "Amazon Inc.");
     }
 
 }

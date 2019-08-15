@@ -11,7 +11,6 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.RemoteRuntimeManagerCache;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -23,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 
 public class RemoteRuntimeManager {
 
@@ -72,14 +73,14 @@ public class RemoteRuntimeManager {
 
         if (result.isSuccessful()) {
             final String vendorName = runtimeManagerConfig.isSpecificVendorEnabled() ? vendor : runtimeManagerConfig.getDefaultVendor();
-            final Vendor vendorForRequest = VendorManager.getInstance().getVendor(vendorName);
+            final Vendor vendorForRequest = Vendor.fromString(vendorName);
             Assert.requireNonNull(vendorForRequest, "vendorForRequest");
 
             LOG.debug("Received " + result.getResult().getRuntimes().size() + " possible runtime defintions from server");
 
             return result.getResult().getRuntimes().stream()
                     .filter(r -> r.getOperationSystem() == operationSystem)
-                    .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
+                    .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
                     .filter(r -> versionString.contains(r.getVersion()))
                     .filter(r -> Optional.ofNullable(runtimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                     .max(new RuntimeVersionComparator(versionString));

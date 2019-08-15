@@ -4,7 +4,6 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.CenterLayout;
 import com.openwebstart.jvm.ui.util.IconComponent;
-import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;

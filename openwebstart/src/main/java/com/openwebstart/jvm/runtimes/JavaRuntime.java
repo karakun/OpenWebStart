@@ -1,7 +1,6 @@
 package com.openwebstart.jvm.runtimes;
 
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ public abstract class JavaRuntime implements Serializable {
     private final OperationSystem operationSystem;
 
     public JavaRuntime(final String version, final OperationSystem operationSystem, final String vendor) {
-        this(version, operationSystem, VendorManager.getInstance().getVendor(vendor));
+        this(version, operationSystem, Vendor.fromString(vendor));
     }
 
     public JavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor) {

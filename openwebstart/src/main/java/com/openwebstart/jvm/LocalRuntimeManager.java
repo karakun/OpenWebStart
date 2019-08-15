@@ -19,7 +19,6 @@ import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
-import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -41,6 +40,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 
 public final class LocalRuntimeManager {
 
@@ -325,14 +326,14 @@ public final class LocalRuntimeManager {
         Assert.requireNonNull(operationSystem, "operationSystem");
 
         final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
-        final Vendor vendorForRequest = VendorManager.getInstance().getVendor(vendorName);
+        final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
 
         return runtimes.stream()
                 .filter(LocalJavaRuntime::isActive)
                 .filter(r -> operationSystem == r.getOperationSystem())
-                .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
+                .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))

@@ -1,8 +1,5 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.RemoteRuntimeManager;
-import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.RuntimeManagerConstants;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
@@ -20,9 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ADOPT;
-import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ANY;
-import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ORACLE;
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static com.openwebstart.jvm.os.OperationSystem.ARM32;
 import static com.openwebstart.jvm.os.OperationSystem.LINUX64;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
@@ -97,7 +94,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URI specificServerEndpoint = null;
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
         //when
@@ -106,7 +103,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.225", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ORACLE, runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
@@ -115,7 +112,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URI specificServerEndpoint = null;
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = WIN64;
 
         //when
@@ -124,7 +121,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.225", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ORACLE, runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(WIN64, runtime.getOperationSystem());
     }
 
@@ -142,7 +139,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.224", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ADOPT, runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
@@ -151,7 +148,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URI specificServerEndpoint = null;
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
         //when
@@ -160,7 +157,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("11.0.2", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ORACLE, runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
@@ -178,7 +175,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("11.0.1", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ADOPT, runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
@@ -187,7 +184,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("20+");
         final URI specificServerEndpoint = null;
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
         //when
@@ -217,7 +214,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URI specificServerEndpoint = null;
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = ARM32;
 
         //when
@@ -243,7 +240,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.224", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ADOPT, runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
@@ -264,7 +261,7 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URI specificServerEndpoint = new URI("http://do.not.exists/error");
-        final String vendor = VENDOR_ANY.getName();
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
         //when
@@ -274,7 +271,7 @@ public class RemoteRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.225", runtime.getVersion());
-        Assertions.assertEquals(VENDOR_ORACLE, runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 }
