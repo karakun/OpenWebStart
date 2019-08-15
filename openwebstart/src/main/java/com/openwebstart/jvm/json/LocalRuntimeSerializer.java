@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAccessor;
-import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -27,7 +26,7 @@ public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>,
         final JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, localJavaRuntime.getVersion());
-        jsonObject.addProperty(JsonConstants.VENDOR_PROPERTY, localJavaRuntime.getVendor());
+        jsonObject.addProperty(JsonConstants.VENDOR_PROPERTY, localJavaRuntime.getVendor().getName());
         jsonObject.addProperty(JsonConstants.JAVA_HOME_PROPERTY, localJavaRuntime.getJavaHome().toUri().toString());
         jsonObject.addProperty(JsonConstants.ACTIVE_PROPERTY, localJavaRuntime.isActive());
         jsonObject.addProperty(JsonConstants.OS_PROPERTY, localJavaRuntime.getOperationSystem().name());

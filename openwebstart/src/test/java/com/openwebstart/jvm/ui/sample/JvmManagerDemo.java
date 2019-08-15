@@ -52,7 +52,7 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
         RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(RuntimeManagerConstants.VENDOR_ANY);
+        RuntimeManagerConfig.getInstance().setDefaultVendor(RuntimeManagerConstants.VENDOR_ANY.getName());
         RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
 
         JavaRuntimeSelector.getInstance().setDownloadHandler((runtime, stream) -> showDownloadDialog(runtime, stream));
@@ -185,7 +185,7 @@ public class JvmManagerDemo {
                     final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(VersionString.fromString(requestedVersionField.getText()), requestedVendorField.getText(), new URI(requestedEndpointField.getText()));
                     SwingUtilities.invokeLater(() -> {
                         responseVersionLabel.setText(runtime.getVersion());
-                        responseVendorLabel.setText(runtime.getVendor());
+                        responseVendorLabel.setText(runtime.getVendor().getName());
                         responseOsLabel.setText(runtime.getOperationSystem().getName());
                         responsePathLabel.setText(runtime.getJavaHome().toString());
                         responseActiveLabel.setText(runtime.isActive() + "");

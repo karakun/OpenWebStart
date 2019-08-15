@@ -24,8 +24,8 @@ import java.util.Objects;
 
 public class LocalJavaRuntime extends JavaRuntime {
 
-    public static LocalJavaRuntime createManaged(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
-        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), true, true);
+    public static LocalJavaRuntime createManaged(final RemoteJavaRuntime remoteJavaRuntime, final Path javaHome) {
+        return new LocalJavaRuntime(remoteJavaRuntime.getVersion(), remoteJavaRuntime.getOperationSystem(), remoteJavaRuntime.getVendor(), javaHome, LocalDateTime.now(), true, true);
     }
 
     public static LocalJavaRuntime createPreInstalled(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
@@ -42,6 +42,14 @@ public class LocalJavaRuntime extends JavaRuntime {
      * false if runtime is installed on system and not by JVM manager
      */
     private final boolean managed;
+
+    public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
+        super(version, operationSystem, vendor);
+        this.javaHome = Assert.requireNonNull(javaHome, "javaHome");
+        this.lastUsage = Assert.requireNonNull(lastUsage, "lastUsage");
+        this.active = active;
+        this.managed = managed;
+    }
 
     public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
         super(version, operationSystem, vendor);

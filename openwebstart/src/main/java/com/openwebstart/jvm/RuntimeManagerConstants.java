@@ -1,20 +1,18 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.jvm.runtimes.Vendor;
+
 public interface RuntimeManagerConstants {
 
     String JSON_STORE_FILENAME = "cache.json";
 
-    String UTF_8 = "UTF-8";
+    Vendor VENDOR_ANY = Vendor.fromString("*");
 
-    long HTTP_TIMEOUT_IN_MS = 5_000;
+    Vendor VENDOR_ORACLE = Vendor.fromString("Oracle Corporation");
 
-    String VENDOR_ANY = "*";
+    Vendor VENDOR_AMAZON = Vendor.fromString("Amazon.com Inc.");
 
-    String VENDOR_ORACLE = "Oracle Corporation";
+    Vendor VENDOR_BELLSOFT = Vendor.fromString("BellSoft");
 
-    String VENDOR_AMAZON = "Amazon.com Inc.";
-
-    String VENDOR_BELLSOFT = "BellSoft";
-
-    String VENDOR_ADOPT = "AdoptOpenJDK";
+    Vendor VENDOR_ADOPT = Vendor.fromString("AdoptOpenJDK");
 }

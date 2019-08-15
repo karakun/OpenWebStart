@@ -1,7 +1,13 @@
 package com.openwebstart.jvm.vendor;
 
+import com.openwebstart.jvm.runtimes.Vendor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ADOPT;
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_AMAZON;
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_BELLSOFT;
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ORACLE;
 
 public class VendorManagerTest {
 
@@ -11,11 +17,11 @@ public class VendorManagerTest {
         final String givenName = "oracle";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Oracle", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_ORACLE, vendor);
     }
 
     @Test
@@ -24,11 +30,11 @@ public class VendorManagerTest {
         final String givenName = "Oracle";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Oracle", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_ORACLE, vendor);
     }
 
     @Test
@@ -37,11 +43,11 @@ public class VendorManagerTest {
         final String givenName = "adopt";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("AdoptOpenJDK", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_ADOPT, vendor);
     }
 
     @Test
@@ -50,11 +56,11 @@ public class VendorManagerTest {
         final String givenName = "amazon";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Amazon Inc.", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_AMAZON, vendor);
     }
 
     @Test
@@ -63,11 +69,11 @@ public class VendorManagerTest {
         final String givenName = "amazon inc.";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Amazon Inc.", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_AMAZON, vendor);
     }
 
     @Test
@@ -76,11 +82,11 @@ public class VendorManagerTest {
         final String givenName = "Amazon Inc.";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Amazon Inc.", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_AMAZON, vendor);
     }
 
     @Test
@@ -89,11 +95,11 @@ public class VendorManagerTest {
         final String givenName = "liberica";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Bellsoft", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_BELLSOFT, vendor);
     }
 
     @Test
@@ -102,11 +108,11 @@ public class VendorManagerTest {
         final String givenName = "Bellsoft LIBERICA";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Bellsoft", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_BELLSOFT, vendor);
     }
 
     @Test
@@ -115,11 +121,11 @@ public class VendorManagerTest {
         final String givenName = "BELLsoFT";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Bellsoft", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(VENDOR_BELLSOFT, vendor);
     }
 
     @Test
@@ -128,10 +134,10 @@ public class VendorManagerTest {
         final String givenName = "Karakun";
 
         //when
-        final String internalName = VendorManager.getInstance().getInternalName(givenName);
+        final Vendor vendor = VendorManager.getInstance().getVendor(givenName);
 
         //than
-        Assertions.assertNotNull(internalName);
-        Assertions.assertEquals("Karakun", internalName);
+        Assertions.assertNotNull(vendor);
+        Assertions.assertEquals(Vendor.fromString("Karakun"), vendor);
     }
 }

@@ -14,6 +14,7 @@ import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
@@ -30,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -113,7 +113,7 @@ public final class LocalRuntimeManager {
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
                 try (final FileInputStream fileInputStream = new FileInputStream(jsonFile)) {
-                    final String content = IOUtils.readContentAsString(fileInputStream, Charset.forName(RuntimeManagerConstants.UTF_8));
+                    final String content = IOUtils.readContentAsString(fileInputStream, StandardCharsets.UTF_8);
                     final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
 
                     clear();
@@ -309,14 +309,10 @@ public final class LocalRuntimeManager {
             }
         }
 
-        final String vendor = VendorManager.getInstance().getInternalName(remoteRuntime.getVendor());
-        final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime.getVersion(), remoteRuntime.getOperationSystem(), vendor, runtimePath);
+        final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
+
         add(newRuntime);
         return newRuntime;
-    }
-
-    public LocalJavaRuntime getBestRuntime(final VersionString versionString) {
-        return getBestRuntime(versionString, RuntimeManagerConstants.VENDOR_ANY);
     }
 
     public LocalJavaRuntime getBestRuntime(final VersionString versionString, final String vendor) {
@@ -329,19 +325,17 @@ public final class LocalRuntimeManager {
         Assert.requireNonNull(operationSystem, "operationSystem");
 
         final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
-
-        final String vendorForRequest = VendorManager.getInstance().getInternalName(vendorName);
+        final Vendor vendorForRequest = VendorManager.getInstance().getVendor(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
 
         return runtimes.stream()
-                .filter(r -> r.isActive())
-                .filter(r -> Objects.equals(operationSystem, r.getOperationSystem()))
-                .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || VendorManager.getInstance().equals(vendorForRequest, r.getVendor()))
+                .filter(LocalJavaRuntime::isActive)
+                .filter(r -> operationSystem == r.getOperationSystem())
+                .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
-                .sorted(new RuntimeVersionComparator(versionString).reversed())
-                .findFirst()
+                .max(new RuntimeVersionComparator(versionString))
                 .orElse(null);
     }
 }

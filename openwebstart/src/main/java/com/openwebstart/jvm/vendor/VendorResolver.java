@@ -1,8 +1,10 @@
 package com.openwebstart.jvm.vendor;
 
+import com.openwebstart.jvm.runtimes.Vendor;
+
 public interface VendorResolver {
 
-    String getVendorName();
+    Vendor getVendor();
 
     boolean isVendor(String name);
 }

@@ -8,6 +8,7 @@ import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.RemoteRuntimeManagerCache;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.vendor.VendorManager;
@@ -34,10 +35,6 @@ public class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URI specificServerEndpoint) throws Exception {
-        return getBestRuntime(versionString, specificServerEndpoint, RuntimeManagerConstants.VENDOR_ANY);
-    }
-
     public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URI specificServerEndpoint, final String vendor) throws Exception {
         return getBestRuntime(versionString, specificServerEndpoint, vendor, OperationSystem.getLocalSystem());
     }
@@ -49,21 +46,23 @@ public class RemoteRuntimeManager {
 
         LOG.debug("Trying to find remote Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "' requested os: '" + operationSystem + "'");
 
+        final RuntimeManagerConfig runtimeManagerConfig = RuntimeManagerConfig.getInstance();
+
         final URI endpointForRequest = Optional.ofNullable(specificServerEndpoint)
-                .map(e -> RuntimeManagerConfig.getInstance().isSpecificRemoteEndpointsEnabled() ? specificServerEndpoint : RuntimeManagerConfig.getInstance().getDefaultRemoteEndpoint())
-                .orElse(RuntimeManagerConfig.getInstance().getDefaultRemoteEndpoint());
+                .filter(e -> runtimeManagerConfig.isSpecificRemoteEndpointsEnabled())
+                .orElse(runtimeManagerConfig.getDefaultRemoteEndpoint());
 
         Assert.requireNonNull(endpointForRequest, "endpointForRequest");
 
         LOG.debug("Endpoint to request for Java runtimes: " + endpointForRequest);
 
         final Result<RemoteRuntimeList> result = Optional.ofNullable(cache.get())
-                .filter(c -> c.isStillValid())
+                .filter(RemoteRuntimeManagerCache::isStillValid)
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
-                .map(c -> (Result<RemoteRuntimeList>) new Sucess(c.getList()))
+                .map(c -> (Result<RemoteRuntimeList>) new Sucess<>(c.getList()))
                 .orElseGet(Result.of(() -> {
                     final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
-                    try(final HttpResponse response = request.handle()) {
+                    try (final HttpResponse response = request.handle()) {
                         final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), StandardCharsets.UTF_8);
                         final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
                         cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
@@ -72,19 +71,18 @@ public class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
-            final String vendorForRequest = VendorManager.getInstance().getInternalName(vendorName);
-            Assert.requireNonBlank(vendorForRequest, "vendorForRequest");
+            final String vendorName = runtimeManagerConfig.isSpecificVendorEnabled() ? vendor : runtimeManagerConfig.getDefaultVendor();
+            final Vendor vendorForRequest = VendorManager.getInstance().getVendor(vendorName);
+            Assert.requireNonNull(vendorForRequest, "vendorForRequest");
 
             LOG.debug("Received " + result.getResult().getRuntimes().size() + " possible runtime defintions from server");
 
             return result.getResult().getRuntimes().stream()
-                    .filter(r -> Objects.equals(r.getOperationSystem(), operationSystem))
-                    .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || VendorManager.getInstance().equals(vendorForRequest, r.getVendor()))
+                    .filter(r -> r.getOperationSystem() == operationSystem)
+                    .filter(r -> Objects.equals(vendorForRequest, RuntimeManagerConstants.VENDOR_ANY) || Objects.equals(vendorForRequest, r.getVendor()))
                     .filter(r -> versionString.contains(r.getVersion()))
-                    .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
-                    .sorted(new RuntimeVersionComparator(versionString).reversed())
-                    .findFirst();
+                    .filter(r -> Optional.ofNullable(runtimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
+                    .max(new RuntimeVersionComparator(versionString));
         } else {
             throw new Exception("Error while trying to find a remote version", result.getException());
         }

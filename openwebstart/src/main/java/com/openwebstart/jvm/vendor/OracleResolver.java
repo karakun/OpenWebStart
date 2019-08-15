@@ -1,10 +1,10 @@
 package com.openwebstart.jvm.vendor;
 
-import java.util.Arrays;
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_ORACLE;
 
 public class OracleResolver extends BasicVendorResolver {
 
     public OracleResolver() {
-        super("Oracle", Arrays.asList("oracle", "Oracle corporation"));
+        super(VENDOR_ORACLE, "oracle", "Oracle corporation");
     }
 }

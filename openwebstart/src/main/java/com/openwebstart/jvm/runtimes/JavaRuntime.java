@@ -1,22 +1,27 @@
 package com.openwebstart.jvm.runtimes;
 
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.Serializable;
 
-public class JavaRuntime implements Serializable {
+public abstract class JavaRuntime implements Serializable {
 
     private final String version;
 
-    private final String vendor;
+    private final Vendor vendor;
 
     private final OperationSystem operationSystem;
 
     public JavaRuntime(final String version, final OperationSystem operationSystem, final String vendor) {
+        this(version, operationSystem, VendorManager.getInstance().getVendor(vendor));
+    }
+
+    public JavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor) {
         this.version = Assert.requireNonBlank(version, "version");
         this.operationSystem = Assert.requireNonNull(operationSystem, "operationSystem");
-        this.vendor = Assert.requireNonBlank(vendor, "vendor");
+        this.vendor = Assert.requireNonNull(vendor, "vendor");
     }
 
     public String getVersion() {
@@ -27,7 +32,7 @@ public class JavaRuntime implements Serializable {
         return operationSystem;
     }
 
-    public String getVendor() {
+    public Vendor getVendor() {
         return vendor;
     }
 

@@ -35,7 +35,7 @@ public class ConfigurationDialog extends JDialog {
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Default vendor:");
-        final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{RuntimeManagerConstants.VENDOR_ANY, RuntimeManagerConstants.VENDOR_ADOPT, RuntimeManagerConstants.VENDOR_AMAZON, RuntimeManagerConstants.VENDOR_BELLSOFT, RuntimeManagerConstants.VENDOR_ORACLE});
+        final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{RuntimeManagerConstants.VENDOR_ANY.getName(), RuntimeManagerConstants.VENDOR_ADOPT.getName(), RuntimeManagerConstants.VENDOR_AMAZON.getName(), RuntimeManagerConstants.VENDOR_BELLSOFT.getName(), RuntimeManagerConstants.VENDOR_ORACLE.getName()});
         defaultVendorComboBox.setEditable(true);
         defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getDefaultVendor());
 

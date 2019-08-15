@@ -1,11 +1,10 @@
 package com.openwebstart.jvm.vendor;
 
-import java.util.Arrays;
-import java.util.List;
+import static com.openwebstart.jvm.RuntimeManagerConstants.VENDOR_BELLSOFT;
 
 public class BellsoftResolver extends BasicVendorResolver {
 
     public BellsoftResolver() {
-        super("Bellsoft", Arrays.asList("Bellsoft", "BellSoft Liberica", "Liberica"));
+        super(VENDOR_BELLSOFT, "Bellsoft", "BellSoft Liberica", "Liberica");
     }
 }

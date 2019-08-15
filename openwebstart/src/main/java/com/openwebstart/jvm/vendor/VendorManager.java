@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.vendor;
 
 import com.openwebstart.jvm.RuntimeManagerConstants;
+import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class VendorManager {
         resolver = Collections.unmodifiableList(loaded);
     }
 
-    public String getInternalName(final String name) {
+    public Vendor getVendor(final String name) {
         Assert.requireNonBlank(name, "name");
         if (Objects.equals(name, RuntimeManagerConstants.VENDOR_ANY)) {
             return RuntimeManagerConstants.VENDOR_ANY;
@@ -32,18 +33,12 @@ public class VendorManager {
                 .collect(Collectors.toList());
 
         if (possibleResolvers.isEmpty()) {
-            return name;
+            return Vendor.fromString(name);
         }
         if (possibleResolvers.size() > 1) {
             throw new IllegalStateException("More than 1 possible vendor for '" + name + "'");
         }
-        return possibleResolvers.get(0).getVendorName();
-    }
-
-    public boolean equals(final String nameA, final String nameB) {
-        Assert.requireNonNull(nameA, "nameA");
-        Assert.requireNonNull(nameB, "nameB");
-        return Objects.equals(getInternalName(nameA), getInternalName(nameB));
+        return possibleResolvers.get(0).getVendor();
     }
 
     public static VendorManager getInstance() {

@@ -135,8 +135,8 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion()).orElse("unknown version"));
-        vendorLabel.setText(VendorManager.getInstance().getInternalName(Optional.ofNullable(value).map(v -> v.getVendor()).orElse(null)));
-        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem()).map(o -> o.getName()).orElse("unknown arch"));
+        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse("unknown vendor"));
+        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse("unknown arch"));
 
         if(this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);
@@ -148,7 +148,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
             }
         }
 
-        if(Optional.ofNullable(value).map(v -> v.isActive()).orElse(false)) {
+        if(Optional.ofNullable(value).map(LocalJavaRuntime::isActive).orElse(false)) {
             deactivatedIcon.setVisible(false);
         } else {
             deactivatedIcon.setVisible(true);
