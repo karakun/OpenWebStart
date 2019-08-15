@@ -1,12 +1,11 @@
 package com.openwebstart.jvm.runtimes;
 
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.util.VersionUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.Serializable;
 
-public class JavaRuntime implements Comparable<JavaRuntime>, Serializable {
+public class JavaRuntime implements Serializable {
 
     private final String version;
 
@@ -32,12 +31,5 @@ public class JavaRuntime implements Comparable<JavaRuntime>, Serializable {
         return vendor;
     }
 
-    @Override
-    public int compareTo(final JavaRuntime o) {
-        if (o != null) {
-            return VersionUtil.versionCompare(o.getVersion(), getVersion());
-        }
-        return 1;
-    }
 }
 
