@@ -27,13 +27,13 @@ import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.OS_NAME;
 /**
  * Algorithm to extract the Java Runtime Properties by executing "java -XshowSettings:properties -version"
  */
-class JavaRuntimePropertiesDetector {
+public class JavaRuntimePropertiesDetector {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimePropertiesDetector.class);
 
     private static final Set<String> REQUIRED_PROPS = unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
 
-    static JavaRuntimeProperties getProperties(Path javaHome) {
+    public static JavaRuntimeProperties getProperties(Path javaHome) {
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
@@ -82,7 +82,7 @@ class JavaRuntimePropertiesDetector {
         return props;
     }
 
-    static class JavaRuntimeProperties {
+    public static class JavaRuntimeProperties {
         private final String vendor;
         private final String version;
         private final String osName;

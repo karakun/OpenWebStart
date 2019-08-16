@@ -3,7 +3,8 @@ package com.openwebstart.jvm.ui;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.func.Result;
-import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
+import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector;
+import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
@@ -71,10 +72,10 @@ public final class RuntimeManagerPanel extends JPanel {
                 final Path selected = fileChooser.getSelectedFile().toPath();
                 backgroundExecutor.execute(() -> {
                     try {
-                        final String version = RuntimeFinderUtils.readVersion(selected);
+                        final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(selected);
+                        final String version = jreProps.getVersion();
                         if(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                            final String vendor = RuntimeFinderUtils.readVendor(selected);
-                            final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), vendor, selected);
+                            final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), jreProps.getVendor(), selected);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {
                             SwingUtilities.invokeLater(() -> new ErrorDialog("Version '" + version + "' of runtime not supported", new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getInstance().getSupportedVersionRange())).showAndWait());
