@@ -19,7 +19,8 @@ public class JavaExecutableFinder {
 
     public static String findJavaExecutable(Path javaHome) {
         try {
-            final List<String> possibleJavaExecutables = Files.find(javaHome, 5, JavaExecutableFinder::isJavaExecutable)
+            final Path binFolder = javaHome.resolve("bin");
+            final List<String> possibleJavaExecutables = Files.find(binFolder, 1, JavaExecutableFinder::isJavaExecutable)
                     .filter(Files::isRegularFile)
                     .filter(Files::isExecutable)
                     .map(Path::toAbsolutePath)
