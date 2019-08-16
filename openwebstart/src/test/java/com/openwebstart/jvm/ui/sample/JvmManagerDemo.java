@@ -3,7 +3,6 @@ package com.openwebstart.jvm.ui.sample;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.RuntimeManagerConstants;
 import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
@@ -39,6 +38,7 @@ import java.util.concurrent.Executors;
 import static com.openwebstart.jvm.os.OperationSystem.LINUX64;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.os.OperationSystem.WIN64;
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 
 public class JvmManagerDemo {
 
@@ -52,7 +52,7 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
         RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(RuntimeManagerConstants.VENDOR_ANY);
+        RuntimeManagerConfig.getInstance().setDefaultVendor(ANY_VENDOR.getName());
         RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
 
         JavaRuntimeSelector.getInstance().setDownloadHandler((runtime, stream) -> showDownloadDialog(runtime, stream));
@@ -185,7 +185,7 @@ public class JvmManagerDemo {
                     final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(VersionString.fromString(requestedVersionField.getText()), requestedVendorField.getText(), new URI(requestedEndpointField.getText()));
                     SwingUtilities.invokeLater(() -> {
                         responseVersionLabel.setText(runtime.getVersion());
-                        responseVendorLabel.setText(runtime.getVendor());
+                        responseVendorLabel.setText(runtime.getVendor().getName());
                         responseOsLabel.setText(runtime.getOperationSystem().getName());
                         responsePathLabel.setText(runtime.getJavaHome().toString());
                         responseActiveLabel.setText(runtime.isActive() + "");

@@ -17,6 +17,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
+
 public class LocalRuntimeManagerTest {
 
     @BeforeEach
@@ -58,7 +62,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_1() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem os = OperationSystem.MAC64;
 
         //when
@@ -67,7 +71,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -77,7 +81,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_2() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem os = OperationSystem.MAC64;
 
         //when
@@ -86,7 +90,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("11.0.1", runtime.getVersion());
-        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -96,7 +100,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_3() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem os = OperationSystem.MAC64;
 
         //when
@@ -111,7 +115,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("Oracle", runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -130,7 +134,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("Oracle", runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -140,7 +144,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_5() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        final String vendor = ANY_VENDOR.getName();
         final OperationSystem os = OperationSystem.MAC64;
 
         //when
@@ -150,7 +154,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -171,7 +175,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.220", runtime.getVersion());
-        Assertions.assertEquals("AdoptOpenJDK", runtime.getVendor());
+        Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -181,7 +185,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_7() {
         //given
         VersionString versionString = VersionString.fromString("1.8*");
-        String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        String vendor = ANY_VENDOR.getName();
         OperationSystem os = OperationSystem.MAC64;
 
         //when
@@ -192,7 +196,7 @@ public class LocalRuntimeManagerTest {
         //than
         Assertions.assertNotNull(runtime);
         Assertions.assertEquals("1.8.219", runtime.getVersion());
-        Assertions.assertEquals("Oracle", runtime.getVendor());
+        Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(OperationSystem.MAC64, runtime.getOperationSystem());
         Assertions.assertTrue(runtime.isManaged());
         Assertions.assertTrue(runtime.isActive());
@@ -216,7 +220,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_9() {
         //given
         VersionString versionString = VersionString.fromString("1.8*");
-        String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        String vendor = ANY_VENDOR.getName();
         OperationSystem os = OperationSystem.ARM32;
 
         //when
@@ -230,7 +234,7 @@ public class LocalRuntimeManagerTest {
     public void checkBestRuntime_10() {
         //given
         VersionString versionString = VersionString.fromString("20*");
-        String vendor = RuntimeManagerConstants.VENDOR_ANY;
+        String vendor = ANY_VENDOR.getName();
         OperationSystem os = OperationSystem.MAC64;
 
         //when

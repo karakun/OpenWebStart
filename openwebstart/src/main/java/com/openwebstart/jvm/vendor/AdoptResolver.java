@@ -1,11 +1,10 @@
 package com.openwebstart.jvm.vendor;
 
-import java.util.Arrays;
-import java.util.List;
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 
 public class AdoptResolver extends BasicVendorResolver {
 
     public AdoptResolver() {
-        super("AdoptOpenJDK", Arrays.asList("adopt", "AdoptOpenJDK"));
+        super(ADOPT, "adopt", "AdoptOpenJDK");
     }
 }

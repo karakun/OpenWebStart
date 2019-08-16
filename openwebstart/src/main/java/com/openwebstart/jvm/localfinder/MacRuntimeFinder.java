@@ -1,17 +1,15 @@
 package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.jvm.func.Result;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.WebstartUtils;
-import com.openwebstart.jvm.vendor.VendorManager;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +38,9 @@ public class MacRuntimeFinder implements RuntimeFinder {
                         return Files.exists(releaseDocPath);
                     }).map(Result.of(p -> {
                         final String version = RuntimeFinderUtils.readVersion(p);
-                        final String vendor = VendorManager.getInstance().getInternalName(RuntimeFinderUtils.readVendor(p));
-                        final String formatedVersion = WebstartUtils.convertJavaVersion(version);
-                        return LocalJavaRuntime.createPreInstalled(formatedVersion, OperationSystem.MAC64, vendor, p);
+                        final String vendor = RuntimeFinderUtils.readVendor(p);
+                        final String formattedVersion = WebstartUtils.convertJavaVersion(version);
+                        return LocalJavaRuntime.createPreInstalled(formattedVersion, OperationSystem.MAC64, vendor, p);
                     })).collect(Collectors.toList());
         } else {
             LOG.debug("No runtime found");

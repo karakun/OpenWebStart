@@ -1,12 +1,11 @@
 package com.openwebstart.jvm.vendor;
 
-import java.util.Arrays;
-import java.util.List;
+import static com.openwebstart.jvm.runtimes.Vendor.AMAZON;
 
 public class AmazonResolver extends BasicVendorResolver {
 
     public AmazonResolver() {
-        super("Amazon Inc.", Arrays.asList("amazon", "Amazon Inc."));
+        super(AMAZON, "amazon", "Amazon Inc.");
     }
 
 }

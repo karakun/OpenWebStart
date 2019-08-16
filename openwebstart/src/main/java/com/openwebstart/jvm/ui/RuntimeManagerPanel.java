@@ -9,8 +9,6 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
-import com.openwebstart.jvm.vendor.VendorManager;
-
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.jvm.ui.list.RuntimeListModel;
 
@@ -23,10 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -78,7 +73,7 @@ public final class RuntimeManagerPanel extends JPanel {
                     try {
                         final String version = RuntimeFinderUtils.readVersion(selected);
                         if(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                            final String vendor = VendorManager.getInstance().getInternalName(RuntimeFinderUtils.readVendor(selected));
+                            final String vendor = RuntimeFinderUtils.readVendor(selected);
                             final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), vendor, selected);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {

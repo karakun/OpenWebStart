@@ -24,8 +24,8 @@ import java.util.Objects;
 
 public class LocalJavaRuntime extends JavaRuntime {
 
-    public static LocalJavaRuntime createManaged(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
-        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), true, true);
+    public static LocalJavaRuntime createManaged(final RemoteJavaRuntime remoteJavaRuntime, final Path javaHome) {
+        return new LocalJavaRuntime(remoteJavaRuntime, javaHome, LocalDateTime.now(), true, true);
     }
 
     public static LocalJavaRuntime createPreInstalled(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
@@ -42,6 +42,14 @@ public class LocalJavaRuntime extends JavaRuntime {
      * false if runtime is installed on system and not by JVM manager
      */
     private final boolean managed;
+
+    private LocalJavaRuntime(final JavaRuntime javaRuntime, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
+        super(javaRuntime);
+        this.javaHome = Assert.requireNonNull(javaHome, "javaHome");
+        this.lastUsage = Assert.requireNonNull(lastUsage, "lastUsage");
+        this.active = active;
+        this.managed = managed;
+    }
 
     public LocalJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome, final LocalDateTime lastUsage, boolean active, boolean managed) {
         super(version, operationSystem, vendor);
@@ -83,10 +91,10 @@ public class LocalJavaRuntime extends JavaRuntime {
     }
 
     public LocalJavaRuntime getDeactivatedCopy() {
-        return new LocalJavaRuntime(getVersion(), getOperationSystem(), getVendor(), getJavaHome(), getLastUsage(), false, isManaged());
+        return new LocalJavaRuntime(this, getJavaHome(), getLastUsage(), false, isManaged());
     }
 
     public LocalJavaRuntime getActivatedCopy() {
-        return new LocalJavaRuntime(getVersion(), getOperationSystem(), getVendor(), getJavaHome(), getLastUsage(), true, isManaged());
+        return new LocalJavaRuntime(this, getJavaHome(), getLastUsage(), true, isManaged());
     }
 }
