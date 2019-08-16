@@ -33,8 +33,8 @@ class JavaRuntimePropertiesDetector {
 
     private static final Set<String> REQUIRED_PROPS = unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
 
-    static JavaRuntimeProperties getProperties(Path javaExecutable) {
-        final String java = javaExecutable.toAbsolutePath().normalize().toString();
+    static JavaRuntimeProperties getProperties(Path javaHome) {
+        final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
             StreamUtils.waitForSafely(p);

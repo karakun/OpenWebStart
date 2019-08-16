@@ -2,14 +2,10 @@ package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
 import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.stream.Stream;
 
 import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.JAVA_HOME;
 import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.JAVA_VENDOR;
@@ -22,12 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class JavaRuntimePropertiesDetectorTest {
 
     @Test
-    void testExtractionOfRuntime() throws Exception {
+    void testExtractionOfRuntime() {
         final String javaHome = System.getProperty(JAVA_HOME);
         final Path home = FileSystems.getDefault().getPath(javaHome);
-        final Stream<Path> files = Files.find(home, 5, this::isJavaExecutable, FileVisitOption.FOLLOW_LINKS);
-        final Path javaExecutable = files.findFirst().orElseThrow(() -> new AssertionFailedError("could not find java executable"));
-        final JavaRuntimeProperties result = JavaRuntimePropertiesDetector.getProperties(javaExecutable);
+        final JavaRuntimeProperties result = JavaRuntimePropertiesDetector.getProperties(home);
 
         assertNotNull(result);
         assertEquals(System.getProperty(JAVA_VENDOR), result.getVendor());
