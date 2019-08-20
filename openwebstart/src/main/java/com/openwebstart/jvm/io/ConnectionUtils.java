@@ -1,13 +1,10 @@
 package com.openwebstart.jvm.io;
 
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,15 +30,6 @@ public class ConnectionUtils {
         Assert.requireNonNull(inputStream, "inputStream");
         final MessageDigest digest = MessageDigest.getInstance("MD5");
         return new DigestInputStream(inputStream, digest);
-    }
-
-    public static String readUTF8Content(final InputStream inputStream) throws IOException {
-        return new String(IOUtils.readContent(inputStream), StandardCharsets.UTF_8);
-    }
-
-    public static void writeUTF8Content(final OutputStream outputStream, final String content) throws IOException {
-        Assert.requireNonNull(content, "content");
-        IOUtils.writeContent(outputStream, content.getBytes(StandardCharsets.UTF_8));
     }
 
     public static InputStream getContentStream(final HttpURLConnection connection) throws IOException {

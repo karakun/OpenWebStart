@@ -1,9 +1,10 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.io.ConnectionUtils;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.util.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,10 +36,9 @@ public class LocalRuntimeManagerTest {
         }
 
         final FileInputStream templateInputStream = new FileInputStream(cacheConfigTemplateFile);
-        final String content = ConnectionUtils.readUTF8Content(templateInputStream);
+        final String content = IOUtils.readContentAsUtf8String(templateInputStream);
         final String cacheConfig = content.replace("{CACHE_FOLDER}", cacheFolder.toUri().toString());
-        final FileOutputStream cacheConfigFileOutputStream = new FileOutputStream(cacheConfigFile);
-        ConnectionUtils.writeUTF8Content(cacheConfigFileOutputStream, cacheConfig);
+        FileUtils.saveFileUtf8(cacheConfig, cacheConfigFile);
 
 
         RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.JAVA_VENDOR;
@@ -38,8 +37,8 @@ public class JavaRuntimePropertiesDetector {
         try {
             final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
             StreamUtils.waitForSafely(p);
-            final String stdErr = IOUtils.readContentAsString(p.getErrorStream(), UTF_8);
-            final String stdOut = IOUtils.readContentAsString(p.getInputStream(), UTF_8);
+            final String stdErr = IOUtils.readContentAsUtf8String(p.getErrorStream());
+            final String stdOut = IOUtils.readContentAsUtf8String(p.getInputStream());
             final int returnCode = p.exitValue();
             if (returnCode != 0) {
                 throw new RuntimeException("");
