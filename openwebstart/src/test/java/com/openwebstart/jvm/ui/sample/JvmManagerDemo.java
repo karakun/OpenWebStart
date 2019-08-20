@@ -184,7 +184,7 @@ public class JvmManagerDemo {
                 try {
                     final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(VersionString.fromString(requestedVersionField.getText()), requestedVendorField.getText(), new URI(requestedEndpointField.getText()));
                     SwingUtilities.invokeLater(() -> {
-                        responseVersionLabel.setText(runtime.getVersion());
+                        responseVersionLabel.setText(runtime.getVersion().toString());
                         responseVendorLabel.setText(runtime.getVendor().getName());
                         responseOsLabel.setText(runtime.getOperationSystem().getName());
                         responsePathLabel.setText(runtime.getJavaHome().toString());

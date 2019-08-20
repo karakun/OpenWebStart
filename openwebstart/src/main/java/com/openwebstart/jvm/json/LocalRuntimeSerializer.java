@@ -25,7 +25,7 @@ public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>,
     public JsonElement serialize(final LocalJavaRuntime localJavaRuntime, final Type type, final JsonSerializationContext jsonSerializationContext) {
         final JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, localJavaRuntime.getVersion());
+        jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, localJavaRuntime.getVersion().toString());
         jsonObject.addProperty(JsonConstants.VENDOR_PROPERTY, localJavaRuntime.getVendor().getName());
         jsonObject.addProperty(JsonConstants.JAVA_HOME_PROPERTY, localJavaRuntime.getJavaHome().toUri().toString());
         jsonObject.addProperty(JsonConstants.ACTIVE_PROPERTY, localJavaRuntime.isActive());
