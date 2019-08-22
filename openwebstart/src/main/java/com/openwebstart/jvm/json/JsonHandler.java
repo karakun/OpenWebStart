@@ -12,7 +12,7 @@ public class JsonHandler {
 
     private final Gson gson;
 
-    public JsonHandler() {
+    private JsonHandler() {
         gson = new GsonBuilder()
                 .registerTypeAdapter(LocalJavaRuntime.class, new LocalRuntimeSerializer())
                 .registerTypeAdapter(RemoteJavaRuntime.class, new RemoteRuntimeSerializer())
