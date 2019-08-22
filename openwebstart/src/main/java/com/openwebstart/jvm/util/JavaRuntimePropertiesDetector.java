@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.localfinder;
+package com.openwebstart.jvm.util;
 
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;

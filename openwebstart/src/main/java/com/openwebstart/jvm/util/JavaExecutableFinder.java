@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.localfinder;
+package com.openwebstart.jvm.util;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;

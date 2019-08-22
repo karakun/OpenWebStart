@@ -3,8 +3,6 @@ package com.openwebstart.jvm.ui;
 import com.openwebstart.func.Result;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector;
-import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
@@ -12,6 +10,8 @@ import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.jvm.ui.list.RuntimeListModel;
+import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
+import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;

@@ -1,9 +1,10 @@
 package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.func.Result;
-import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
+import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
