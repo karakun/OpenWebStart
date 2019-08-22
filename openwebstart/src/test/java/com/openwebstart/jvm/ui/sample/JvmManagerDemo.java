@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class JvmManagerDemo {
 
         final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
         final Path cacheDir = tempDir.resolve("ows-jvm-demo-cache");
-        cacheDir.toFile().mkdirs();
+        Files.createDirectories(cacheDir);
         RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
 
         RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
@@ -55,8 +56,8 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.getInstance().setDefaultVendor(ANY_VENDOR.getName());
         RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
 
-        JavaRuntimeSelector.getInstance().setDownloadHandler((runtime, stream) -> showDownloadDialog(runtime, stream));
-        JavaRuntimeSelector.getInstance().setAskForUpdateFunction(r -> askForUpdate(r));
+        JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
+        JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);
 
         LocalRuntimeManager.getInstance().loadRuntimes();
 
@@ -71,7 +72,7 @@ public class JvmManagerDemo {
         });
     }
 
-    private static Boolean askForUpdate(final RemoteJavaRuntime remoteJavaRuntime) {
+    private static boolean askForUpdate(final RemoteJavaRuntime remoteJavaRuntime) {
         try {
             final CompletableFuture<Boolean> result = new CompletableFuture<>();
             SwingUtilities.invokeLater(() -> {
@@ -97,7 +98,7 @@ public class JvmManagerDemo {
         }
     }
 
-    public static void startServer() throws Exception {
+    private static void startServer() throws Exception {
 
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
         final URI theOneAndOnlyJdkZip = new URI("http://localhost:8090/jvms/jdk.zip");
@@ -155,7 +156,7 @@ public class JvmManagerDemo {
 
     }
 
-    public static void showManagerWindow() {
+    private static void showManagerWindow() {
         final JFrame frame = new JFrame("JVM Manager");
         final RuntimeManagerPanel panel = new RuntimeManagerPanel();
         frame.add(panel);
@@ -164,7 +165,7 @@ public class JvmManagerDemo {
         frame.setVisible(true);
     }
 
-    public static void showDummyRequestWindow() {
+    private static void showDummyRequestWindow() {
         final JFrame frame = new JFrame("Request Version");
 
         final JButton requestButton = new JButton("request");
@@ -179,24 +180,25 @@ public class JvmManagerDemo {
         final JLabel responseManagedLabel = new JLabel("XXXXXX");
 
 
-        requestButton.addActionListener(event -> {
-            Executors.newSingleThreadExecutor().execute(() -> {
-                try {
-                    final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(VersionString.fromString(requestedVersionField.getText()), requestedVendorField.getText(), new URI(requestedEndpointField.getText()));
-                    SwingUtilities.invokeLater(() -> {
-                        responseVersionLabel.setText(runtime.getVersion().toString());
-                        responseVendorLabel.setText(runtime.getVendor().getName());
-                        responseOsLabel.setText(runtime.getOperationSystem().getName());
-                        responsePathLabel.setText(runtime.getJavaHome().toString());
-                        responseActiveLabel.setText(runtime.isActive() + "");
-                        responseManagedLabel.setText(runtime.isManaged() + "");
-                    });
-                } catch (Exception e) {
-                    new ErrorDialog("Error while getting matching runtime", e).showAndWait();
-                }
-            });
+        requestButton.addActionListener(event -> Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                final VersionString version = VersionString.fromString(requestedVersionField.getText());
+                final String vendor = requestedVendorField.getText();
+                final URI serverEndpoint = new URI(requestedEndpointField.getText());
+                final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, vendor, serverEndpoint);
 
-        });
+                SwingUtilities.invokeLater(() -> {
+                    responseVersionLabel.setText(runtime.getVersion().toString());
+                    responseVendorLabel.setText(runtime.getVendor().getName());
+                    responseOsLabel.setText(runtime.getOperationSystem().getName());
+                    responsePathLabel.setText(runtime.getJavaHome().toString());
+                    responseActiveLabel.setText(runtime.isActive() + "");
+                    responseManagedLabel.setText(runtime.isManaged() + "");
+                });
+            } catch (Exception e) {
+                new ErrorDialog("Error while getting matching runtime", e).showAndWait();
+            }
+        }));
 
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 2, 6, 2));
