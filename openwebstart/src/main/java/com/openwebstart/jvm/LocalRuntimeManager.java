@@ -17,7 +17,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import com.openwebstart.jvm.util.ZipUtil;
+import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
