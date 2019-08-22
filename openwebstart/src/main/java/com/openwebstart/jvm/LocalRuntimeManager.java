@@ -15,7 +15,6 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
-import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
@@ -84,7 +83,7 @@ public final class LocalRuntimeManager {
         jsonStoreLock.lock();
         try {
             LOG.debug("Saving runtime cache to filesystem");
-            final File cachePath = RuntimeManagerConfig.getInstance().getCachePath().toFile();
+            final File cachePath = cacheBaseDir();
             if (!cachePath.exists()) {
                 final boolean dirCreated = cachePath.mkdirs();
                 if (!dirCreated) {
@@ -107,8 +106,7 @@ public final class LocalRuntimeManager {
         jsonStoreLock.lock();
         try {
             LOG.debug("Loading runtime cache from filesystem");
-            final File cachePath = RuntimeManagerConfig.getInstance().getCachePath().toFile();
-            final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
+            final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
@@ -208,9 +206,10 @@ public final class LocalRuntimeManager {
 
             if (removed && localJavaRuntime.isManaged()) {
                 final Path runtimeDir = localJavaRuntime.getJavaHome();
-                final boolean deleted = FileUtil.deleteDirectory(runtimeDir.toFile());
-                if (!deleted) {
-                    throw new RuntimeException("Can not delete " + runtimeDir);
+                try {
+                    FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
             if (removed) {
@@ -282,11 +281,11 @@ public final class LocalRuntimeManager {
         LOG.debug("Installing remote runtime on local cache");
 
 
-        if (!Objects.equals(remoteRuntime.getOperationSystem(), OperationSystem.getLocalSystem())) {
+        if (remoteRuntime.getOperationSystem() != OperationSystem.getLocalSystem()) {
             throw new IllegalArgumentException("Can not install JVM for another os than " + OperationSystem.getLocalSystem().getName());
         }
 
-        final FolderFactory folderFactory = new FolderFactory(RuntimeManagerConfig.getInstance().getCachePath());
+        final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
         final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "-" + remoteRuntime.getVersion());
 
         LOG.debug("Runtime will be installed in " + runtimePath);
@@ -302,17 +301,12 @@ public final class LocalRuntimeManager {
             LOG.debug("Trying to download and extract runtime");
             ZipUtil.unzip(inputStream, runtimePath);
         } catch (final Exception e) {
-            final File runtimeDir = runtimePath.toFile();
-            if (runtimeDir.exists()) {
-                final boolean deleted = FileUtil.deleteDirectory(runtimeDir);
-                if (deleted) {
-                    throw e;
-                } else {
-                    throw new IOException("Error in Download + Can not delegte directory", e);
-                }
-            } else {
-                throw new IOException("Error in runtime download", e);
+            try {
+                FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
+            } catch (IOException ex) {
+                throw new IOException("Error in Download + Can not delete directory", e);
             }
+            throw new IOException("Error in runtime download", e);
         }
 
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
@@ -343,5 +337,13 @@ public final class LocalRuntimeManager {
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))
                 .orElse(null);
+    }
+
+    private File cacheBaseDir() {
+        return cacheBasePath().toFile();
+    }
+
+    private Path cacheBasePath() {
+        return RuntimeManagerConfig.getInstance().getCachePath();
     }
 }
