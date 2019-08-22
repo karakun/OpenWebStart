@@ -1,6 +1,6 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.jvm.func.Result;
+import com.openwebstart.func.Result;
 import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;

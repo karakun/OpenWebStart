@@ -1,8 +1,8 @@
 package com.openwebstart.jvm.ui;
 
+import com.openwebstart.func.Result;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector;
 import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;

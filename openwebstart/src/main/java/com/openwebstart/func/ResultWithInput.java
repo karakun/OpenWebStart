@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 /**
  * Extension for the {@link Result} interface that provides access to the input

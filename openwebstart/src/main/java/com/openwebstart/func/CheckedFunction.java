@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 /**
  * Functional interface like {@link java.util.function.Function} that can throw a checked exception at runtime.

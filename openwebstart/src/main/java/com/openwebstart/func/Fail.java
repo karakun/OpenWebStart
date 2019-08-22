@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 
 import net.adoptopenjdk.icedteaweb.Assert;

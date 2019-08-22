@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 /**
  * Implementation of a {@link Result} that is based

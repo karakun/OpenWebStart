@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
