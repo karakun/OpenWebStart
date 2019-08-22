@@ -1,7 +1,7 @@
 package com.openwebstart.launcher;
 
 import net.adoptopenjdk.icedteaweb.JvmPropertyConstants;
-import net.adoptopenjdk.icedteaweb.StreamUtils;
+import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -55,7 +55,7 @@ class OwsJvmLauncher implements JvmLauncher {
                 .inheritIO()
                 .start();
 
-        StreamUtils.waitForSafely(p);
+        ProcessUtils.waitForSafely(p);
     }
 
     private static String getPathToOpenWebStartJar() {
