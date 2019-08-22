@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.io;
+package com.openwebstart.jvm.ui.dialogs;
 
 import java.util.Objects;
 
