@@ -19,7 +19,7 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
     public JsonElement serialize(final RemoteJavaRuntime remoteJavaRuntime, final Type type, final JsonSerializationContext jsonSerializationContext) {
         final JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, remoteJavaRuntime.getVersion());
+        jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, remoteJavaRuntime.getVersion().toString());
         jsonObject.addProperty(JsonConstants.VENDOR_PROPERTY, remoteJavaRuntime.getVendor().getName());
         jsonObject.addProperty(JsonConstants.OS_PROPERTY, remoteJavaRuntime.getOperationSystem().name());
         jsonObject.addProperty(JsonConstants.ENDPOINT_PROPERTY, remoteJavaRuntime.getEndpoint().toString());

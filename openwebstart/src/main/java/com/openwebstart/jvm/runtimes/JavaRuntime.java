@@ -1,13 +1,15 @@
 package com.openwebstart.jvm.runtimes;
 
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.jvm.util.JvmVersionUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 
 import java.io.Serializable;
 
 public abstract class JavaRuntime implements Serializable {
 
-    private final String version;
+    private final VersionId version;
 
     private final Vendor vendor;
 
@@ -18,16 +20,16 @@ public abstract class JavaRuntime implements Serializable {
     }
 
     public JavaRuntime(final String version, final OperationSystem operationSystem, final String vendor) {
-        this(version, operationSystem, Vendor.fromString(vendor));
+        this(JvmVersionUtils.fromString(version), operationSystem, Vendor.fromString(vendor));
     }
 
-    private JavaRuntime(final String version, final OperationSystem operationSystem, final Vendor vendor) {
-        this.version = Assert.requireNonBlank(version, "version");
+    private JavaRuntime(final VersionId version, final OperationSystem operationSystem, final Vendor vendor) {
+        this.version = Assert.requireNonNull(version, "version");
         this.operationSystem = Assert.requireNonNull(operationSystem, "operationSystem");
         this.vendor = Assert.requireNonNull(vendor, "vendor");
     }
 
-    public String getVersion() {
+    public VersionId getVersion() {
         return version;
     }
 

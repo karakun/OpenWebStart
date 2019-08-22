@@ -4,6 +4,7 @@ import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +27,11 @@ import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.os.OperationSystem.WIN64;
 
 public class RemoteRuntimeManagerTest {
+
+    private static final VersionId VERSION_1_8_224 = VersionId.fromString("1.8.224");
+    private static final VersionId VERSION_1_8_225 = VersionId.fromString("1.8.225");
+    private static final VersionId VERSION_11_0_1 = VersionId.fromString("11.0.1");
+    private static final VersionId VERSION_11_0_2 = VersionId.fromString("11.0.2");
 
     private static int getFreePort() {
         final int freePort;
@@ -102,7 +108,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("1.8.225", runtime.getVersion());
+        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
         Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
@@ -120,7 +126,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("1.8.225", runtime.getVersion());
+        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
         Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(WIN64, runtime.getOperationSystem());
     }
@@ -138,7 +144,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("1.8.224", runtime.getVersion());
+        Assertions.assertEquals(VERSION_1_8_224, runtime.getVersion());
         Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
@@ -156,7 +162,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("11.0.2", runtime.getVersion());
+        Assertions.assertEquals(VERSION_11_0_2, runtime.getVersion());
         Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
@@ -174,7 +180,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("11.0.1", runtime.getVersion());
+        Assertions.assertEquals(VERSION_11_0_1, runtime.getVersion());
         Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
@@ -239,7 +245,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("1.8.224", runtime.getVersion());
+        Assertions.assertEquals(VERSION_1_8_224, runtime.getVersion());
         Assertions.assertEquals(ADOPT, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
@@ -270,7 +276,7 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals("1.8.225", runtime.getVersion());
+        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
         Assertions.assertEquals(ORACLE, runtime.getVendor());
         Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }

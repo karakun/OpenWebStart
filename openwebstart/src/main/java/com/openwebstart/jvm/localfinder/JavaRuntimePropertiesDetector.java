@@ -1,7 +1,7 @@
 package com.openwebstart.jvm.localfinder;
 
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
-import net.adoptopenjdk.icedteaweb.StreamUtils;
+import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -36,7 +36,7 @@ public class JavaRuntimePropertiesDetector {
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
-            StreamUtils.waitForSafely(p);
+            ProcessUtils.waitForSafely(p);
             final String stdErr = IOUtils.readContentAsUtf8String(p.getErrorStream());
             final String stdOut = IOUtils.readContentAsUtf8String(p.getInputStream());
             final int returnCode = p.exitValue();
