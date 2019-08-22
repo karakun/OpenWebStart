@@ -1,9 +1,9 @@
 package com.openwebstart.jvm.ui.sample;
 
+import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.io.DownloadInputStream;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;

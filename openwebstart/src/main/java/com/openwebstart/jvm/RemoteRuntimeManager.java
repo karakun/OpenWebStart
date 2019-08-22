@@ -1,9 +1,9 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.http.HttpGetRequest;
+import com.openwebstart.http.HttpResponse;
 import com.openwebstart.jvm.func.Result;
 import com.openwebstart.jvm.func.Sucess;
-import com.openwebstart.jvm.io.HttpGetRequest;
-import com.openwebstart.jvm.io.HttpResponse;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;

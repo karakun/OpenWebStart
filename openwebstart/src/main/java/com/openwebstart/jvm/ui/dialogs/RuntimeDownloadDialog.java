@@ -1,8 +1,8 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.http.DownloadInputStream;
+import com.openwebstart.http.DownloadType;
 import com.openwebstart.jvm.io.ByteUnit;
-import com.openwebstart.jvm.io.DownloadInputStream;
-import com.openwebstart.jvm.io.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.IconComponent;

@@ -1,6 +1,6 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.io.DownloadInputStream;
+import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;

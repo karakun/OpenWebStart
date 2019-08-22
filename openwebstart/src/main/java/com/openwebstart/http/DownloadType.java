@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.io;
+package com.openwebstart.http;
 
 //See https://github.com/rico-projects/rico/pull/70
 

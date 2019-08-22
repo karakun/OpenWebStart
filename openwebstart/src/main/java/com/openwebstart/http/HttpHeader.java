@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.io;
+package com.openwebstart.http;
 
 public class HttpHeader {
 

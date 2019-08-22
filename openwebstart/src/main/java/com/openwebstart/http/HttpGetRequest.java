@@ -1,14 +1,11 @@
-package com.openwebstart.jvm.io;
+package com.openwebstart.http;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class HttpGetRequest {
