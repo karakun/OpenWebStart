@@ -50,7 +50,11 @@ public final class RuntimeManagerPanel extends JPanel {
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 final List<Result<LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
-                result.stream().filter(r -> !r.isSuccessful()).map(r -> r.getException()).forEach(ex -> SwingUtilities.invokeLater(() -> new ErrorDialog("Can not add runtime!", ex).showAndWait()));
+                result.stream()
+                        .filter(r -> !r.isSuccessful())
+                        .map(Result::getException)
+                        .forEach(ex ->
+                                SwingUtilities.invokeLater(() -> new ErrorDialog("Can not add runtime!", ex).showAndWait()));
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }
@@ -74,7 +78,7 @@ public final class RuntimeManagerPanel extends JPanel {
                     try {
                         final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(selected);
                         final String version = jreProps.getVersion();
-                        if(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
+                        if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
                             final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), jreProps.getVendor(), selected);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {

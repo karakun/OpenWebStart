@@ -31,16 +31,19 @@ public class MacRuntimeFinder implements RuntimeFinder {
                     .filter(Files::isDirectory)
                     .map(p -> Paths.get(p.toString(), MAC_JVM_CONTENT_FOLDER))
                     .filter(Files::isDirectory)
-                    .map(Result.of(p -> {
-                        final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(p);
-                        final String version = jreProps.getVersion();
-                        final String vendor = jreProps.getVendor();
-                        return LocalJavaRuntime.createPreInstalled(version, OperationSystem.MAC64, vendor, p);
-                    })).collect(Collectors.toList());
+                    .map(Result.of(this::getLocalJavaRuntime))
+                    .collect(Collectors.toList());
         } else {
             LOG.debug("No runtime found");
             return Collections.emptyList();
         }
+    }
+
+    private LocalJavaRuntime getLocalJavaRuntime(Path javaHome) {
+        final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
+        final String version = jreProps.getVersion();
+        final String vendor = jreProps.getVendor();
+        return LocalJavaRuntime.createPreInstalled(version, OperationSystem.MAC64, vendor, javaHome);
     }
 
     @Override

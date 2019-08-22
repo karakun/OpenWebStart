@@ -59,7 +59,8 @@ public class JavaRuntimePropertiesDetector {
             throw new RuntimeException("Could not find all required properties. Only found " + props);
         }
         return new JavaRuntimeProperties(
-                props.get(JAVA_VENDOR), props.get(JAVA_VERSION),
+                props.get(JAVA_VENDOR),
+                props.get(JAVA_VERSION),
                 props.get(OS_NAME),
                 props.get(OS_ARCH)
         );
