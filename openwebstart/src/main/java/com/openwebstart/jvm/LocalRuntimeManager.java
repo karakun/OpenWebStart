@@ -10,7 +10,7 @@ import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
-import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
+import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
@@ -29,10 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -250,17 +252,28 @@ public final class LocalRuntimeManager {
     }
 
     public List<Result<LocalJavaRuntime>> findAndAddLocalRuntimes() {
-        final List<Result<LocalJavaRuntime>> result = RuntimeFinderUtils.findRuntimesOnSystem();
-        result.stream()
-                .forEach(r -> {
-                    if (r.isSuccessful()) {
-                        final LocalJavaRuntime runtime = r.getResult();
-                        if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
-                            add(runtime);
-                        }
-                    }
-                });
-        return result;
+        final OperationSystem currentOs = OperationSystem.getLocalSystem();
+
+        final List<Result<LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
+        ServiceLoader.load(RuntimeFinder.class).iterator().forEachRemaining(f -> {
+            if (f.getSupportedOperationSystems().contains(currentOs)) {
+                try {
+                    foundRuntimes.addAll(f.findLocalRuntimes());
+                } catch (final Exception e) {
+                    throw new RuntimeException("Error while searching for JVMs on the system", e);
+                }
+            }
+        });
+
+        for (Result<LocalJavaRuntime> r : foundRuntimes) {
+            if (r.isSuccessful()) {
+                final LocalJavaRuntime runtime = r.getResult();
+                if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
+                    add(runtime);
+                }
+            }
+        }
+        return Collections.unmodifiableList(foundRuntimes);
     }
 
     public LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, final Consumer<DownloadInputStream> downloadConsumer) throws Exception {
