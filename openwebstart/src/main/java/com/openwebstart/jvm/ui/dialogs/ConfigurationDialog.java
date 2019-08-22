@@ -1,7 +1,7 @@
 package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;

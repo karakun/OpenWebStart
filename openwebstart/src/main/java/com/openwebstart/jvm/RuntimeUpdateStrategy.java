@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.runtimes;
+package com.openwebstart.jvm;
 
 public enum RuntimeUpdateStrategy {
 
