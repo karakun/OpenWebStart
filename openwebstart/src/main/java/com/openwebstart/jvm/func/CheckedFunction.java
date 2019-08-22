@@ -1,7 +1,8 @@
 package com.openwebstart.jvm.func;
 
 /**
- * Functional interface like {@link java.util.function.Function} that can throw an exception at runtime
+ * Functional interface like {@link java.util.function.Function} that can throw a checked exception at runtime.
+ *
  * @param <T> input parameter type
  * @param <R> output parameter type
  */
@@ -9,11 +10,11 @@ package com.openwebstart.jvm.func;
 public interface CheckedFunction<T, R> {
 
     /**
-     * Method that handles the function
-     * @param t input parameter
+     * Applies this function to the given argument.
+     *
+     * @param t argument of the function
      * @return result of the function
-     * @throws Exception if the handling of the function throws an exception
+     * @throws Exception if the executing the function throws an exception
      */
     R apply(T t) throws Exception;
-
 }
