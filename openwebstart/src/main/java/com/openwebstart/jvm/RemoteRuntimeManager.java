@@ -18,7 +18,6 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,7 +63,7 @@ public class RemoteRuntimeManager {
                 .orElseGet(Result.of(() -> {
                     final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
                     try (final HttpResponse response = request.handle()) {
-                        final String jsonContent = IOUtils.readContentAsString(response.getContentStream(), StandardCharsets.UTF_8);
+                        final String jsonContent = IOUtils.readContentAsUtf8String(response.getContentStream());
                         final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
                         cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
                         return receivedList;

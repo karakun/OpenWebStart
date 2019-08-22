@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.jvm.func.Result;
+import com.openwebstart.jvm.localfinder.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -27,23 +28,22 @@ public class MacRuntimeFinder implements RuntimeFinder {
         final Path basePath = Paths.get(MAC_JVM_BASEFOLDER);
         if (Files.isDirectory(basePath)) {
             return Files.list(basePath)
-                    .filter(p -> Files.isDirectory(p))
-                    .filter(p -> {
-                        final Path jrePath = Paths.get(p.toString(), MAC_JVM_CONTENT_FOLDER);
-                        return Files.isDirectory(jrePath);
-                    }).map(p -> Paths.get(p.toString(), MAC_JVM_CONTENT_FOLDER))
-                    .filter(p -> {
-                        final Path releaseDocPath = Paths.get(p.toString(), "release");
-                        return Files.exists(releaseDocPath);
-                    }).map(Result.of(p -> {
-                        final String version = RuntimeFinderUtils.readVersion(p);
-                        final String vendor = RuntimeFinderUtils.readVendor(p);
-                        return LocalJavaRuntime.createPreInstalled(version, OperationSystem.MAC64, vendor, p);
-                    })).collect(Collectors.toList());
+                    .filter(Files::isDirectory)
+                    .map(p -> Paths.get(p.toString(), MAC_JVM_CONTENT_FOLDER))
+                    .filter(Files::isDirectory)
+                    .map(Result.of(this::getLocalJavaRuntime))
+                    .collect(Collectors.toList());
         } else {
             LOG.debug("No runtime found");
             return Collections.emptyList();
         }
+    }
+
+    private LocalJavaRuntime getLocalJavaRuntime(Path javaHome) {
+        final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
+        final String version = jreProps.getVersion();
+        final String vendor = jreProps.getVendor();
+        return LocalJavaRuntime.createPreInstalled(version, OperationSystem.MAC64, vendor, javaHome);
     }
 
     @Override

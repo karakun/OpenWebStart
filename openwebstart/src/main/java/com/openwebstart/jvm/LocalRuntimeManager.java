@@ -20,17 +20,14 @@ import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.jvm.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -96,11 +93,9 @@ public final class LocalRuntimeManager {
             if (jsonFile.exists()) {
                 jsonFile.delete();
             }
-            try (final FileOutputStream fileOutputStream = new FileOutputStream(jsonFile)) {
-                final CacheStore cacheStore = new CacheStore(runtimes);
-                final String jsonString = JsonHandler.getInstance().toJson(cacheStore);
-                IOUtils.writeContent(fileOutputStream, jsonString.getBytes(StandardCharsets.UTF_8));
-            }
+            final CacheStore cacheStore = new CacheStore(runtimes);
+            final String jsonString = JsonHandler.getInstance().toJson(cacheStore);
+            FileUtils.saveFileUtf8(jsonString, jsonFile);
         } finally {
             jsonStoreLock.unlock();
         }
@@ -113,13 +108,10 @@ public final class LocalRuntimeManager {
             final File cachePath = RuntimeManagerConfig.getInstance().getCachePath().toFile();
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
-                try (final FileInputStream fileInputStream = new FileInputStream(jsonFile)) {
-                    final String content = IOUtils.readContentAsString(fileInputStream, StandardCharsets.UTF_8);
-                    final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
-
-                    clear();
-                    cacheStore.getRuntimes().forEach(r -> add(r));
-                }
+                final String content = FileUtils.loadFileAsUtf8String(jsonFile);
+                final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
+                clear();
+                cacheStore.getRuntimes().forEach(r -> add(r));
             } else {
                 clear();
             }

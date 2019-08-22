@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.jvm.localfinder.JavaExecutableFinder;
 import net.adoptopenjdk.icedteaweb.JvmPropertyConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
@@ -25,8 +26,8 @@ class OwsJvmLauncher implements JvmLauncher {
 
     @Override
     public void launchExternal(JNLPFile jnlpFile, List<String> args) throws Exception {
-        final String javaBinary = "/bin/java".replace('/', File.separatorChar);
-        final String pathToJavaBinary = System.getProperty(JvmPropertyConstants.JAVA_HOME) + javaBinary;
+        final String javaHome = System.getProperty(JvmPropertyConstants.JAVA_HOME);
+        final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaHome);
         final String pathToJar = getPathToOpenWebStartJar();
         launchExternal(pathToJavaBinary, pathToJar, jnlpFile.getNewVMArgs(), args);
     }
