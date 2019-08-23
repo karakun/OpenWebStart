@@ -1,24 +1,23 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.func.Result;
-import com.openwebstart.jvm.io.DownloadInputStream;
-import com.openwebstart.jvm.io.HttpGetRequest;
-import com.openwebstart.jvm.io.HttpResponse;
+import com.openwebstart.func.Result;
+import com.openwebstart.http.DownloadInputStream;
+import com.openwebstart.http.HttpGetRequest;
+import com.openwebstart.http.HttpResponse;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
-import com.openwebstart.jvm.localfinder.RuntimeFinderUtils;
+import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
-import com.openwebstart.jvm.util.FileUtil;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import com.openwebstart.jvm.util.ZipUtil;
+import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -29,10 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -82,7 +83,7 @@ public final class LocalRuntimeManager {
         jsonStoreLock.lock();
         try {
             LOG.debug("Saving runtime cache to filesystem");
-            final File cachePath = RuntimeManagerConfig.getInstance().getCachePath().toFile();
+            final File cachePath = cacheBaseDir();
             if (!cachePath.exists()) {
                 final boolean dirCreated = cachePath.mkdirs();
                 if (!dirCreated) {
@@ -105,8 +106,7 @@ public final class LocalRuntimeManager {
         jsonStoreLock.lock();
         try {
             LOG.debug("Loading runtime cache from filesystem");
-            final File cachePath = RuntimeManagerConfig.getInstance().getCachePath().toFile();
-            final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
+            final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
@@ -206,9 +206,10 @@ public final class LocalRuntimeManager {
 
             if (removed && localJavaRuntime.isManaged()) {
                 final Path runtimeDir = localJavaRuntime.getJavaHome();
-                final boolean deleted = FileUtil.deleteDirectory(runtimeDir.toFile());
-                if (!deleted) {
-                    throw new RuntimeException("Can not delete " + runtimeDir);
+                try {
+                    FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
             if (removed) {
@@ -250,17 +251,28 @@ public final class LocalRuntimeManager {
     }
 
     public List<Result<LocalJavaRuntime>> findAndAddLocalRuntimes() {
-        final List<Result<LocalJavaRuntime>> result = RuntimeFinderUtils.findRuntimesOnSystem();
-        result.stream()
-                .forEach(r -> {
-                    if (r.isSuccessful()) {
-                        final LocalJavaRuntime runtime = r.getResult();
-                        if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
-                            add(runtime);
-                        }
-                    }
-                });
-        return result;
+        final OperationSystem currentOs = OperationSystem.getLocalSystem();
+
+        final List<Result<LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
+        ServiceLoader.load(RuntimeFinder.class).iterator().forEachRemaining(f -> {
+            if (f.getSupportedOperationSystems().contains(currentOs)) {
+                try {
+                    foundRuntimes.addAll(f.findLocalRuntimes());
+                } catch (final Exception e) {
+                    throw new RuntimeException("Error while searching for JVMs on the system", e);
+                }
+            }
+        });
+
+        for (Result<LocalJavaRuntime> r : foundRuntimes) {
+            if (r.isSuccessful()) {
+                final LocalJavaRuntime runtime = r.getResult();
+                if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
+                    add(runtime);
+                }
+            }
+        }
+        return Collections.unmodifiableList(foundRuntimes);
     }
 
     public LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, final Consumer<DownloadInputStream> downloadConsumer) throws Exception {
@@ -269,11 +281,11 @@ public final class LocalRuntimeManager {
         LOG.debug("Installing remote runtime on local cache");
 
 
-        if (!Objects.equals(remoteRuntime.getOperationSystem(), OperationSystem.getLocalSystem())) {
+        if (remoteRuntime.getOperationSystem() != OperationSystem.getLocalSystem()) {
             throw new IllegalArgumentException("Can not install JVM for another os than " + OperationSystem.getLocalSystem().getName());
         }
 
-        final FolderFactory folderFactory = new FolderFactory(RuntimeManagerConfig.getInstance().getCachePath());
+        final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
         final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "-" + remoteRuntime.getVersion());
 
         LOG.debug("Runtime will be installed in " + runtimePath);
@@ -289,17 +301,12 @@ public final class LocalRuntimeManager {
             LOG.debug("Trying to download and extract runtime");
             ZipUtil.unzip(inputStream, runtimePath);
         } catch (final Exception e) {
-            final File runtimeDir = runtimePath.toFile();
-            if (runtimeDir.exists()) {
-                final boolean deleted = FileUtil.deleteDirectory(runtimeDir);
-                if (deleted) {
-                    throw e;
-                } else {
-                    throw new IOException("Error in Download + Can not delegte directory", e);
-                }
-            } else {
-                throw new IOException("Error in runtime download", e);
+            try {
+                FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
+            } catch (IOException ex) {
+                throw new IOException("Error in Download + Can not delete directory", e);
             }
+            throw new IOException("Error in runtime download", e);
         }
 
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
@@ -330,5 +337,13 @@ public final class LocalRuntimeManager {
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))
                 .orElse(null);
+    }
+
+    private File cacheBaseDir() {
+        return cacheBasePath().toFile();
+    }
+
+    private Path cacheBasePath() {
+        return RuntimeManagerConfig.getInstance().getCachePath();
     }
 }

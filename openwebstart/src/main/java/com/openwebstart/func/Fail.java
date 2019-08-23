@@ -1,11 +1,12 @@
-package com.openwebstart.jvm.func;
+package com.openwebstart.func;
 
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
 /**
- * Implementation of a {@link dev.rico.core.functional.Result} that is based
- * on a not sucessfully executed function
+ * Implementation of a {@link Result} that is based
+ * on a not successfully executed function
+ *
  * @param <T> type of the input
  * @param <R> type of the output
  */

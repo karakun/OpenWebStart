@@ -43,8 +43,8 @@ public class ErrorDialog extends JDialog {
         error.printStackTrace(new PrintWriter(writer));
         exceptionDetailsArea.setText(writer.getBuffer().toString());
 
-        final JButton okButton = new JButton("close");
-        okButton.addActionListener(e -> dispose());
+        final JButton closeButton = new JButton("close");
+        closeButton.addActionListener(e -> close());
 
         final JPanel messageWrapperPanel = new JPanel();
         messageWrapperPanel.setLayout(new BorderLayout(12, 12));
@@ -61,7 +61,7 @@ public class ErrorDialog extends JDialog {
         actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.LINE_AXIS));
         actionPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         actionPanel.add(Box.createHorizontalGlue());
-        actionPanel.add(okButton);
+        actionPanel.add(closeButton);
 
         panel.add(actionPanel, BorderLayout.SOUTH);
         add(panel);
@@ -71,5 +71,10 @@ public class ErrorDialog extends JDialog {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void close() {
+        setVisible(false);
+        dispose();
     }
 }

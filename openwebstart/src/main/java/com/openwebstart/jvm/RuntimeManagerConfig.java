@@ -1,6 +1,5 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.runtimes.RuntimeUpdateStrategy;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import java.net.URI;

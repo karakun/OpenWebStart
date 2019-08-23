@@ -1,6 +1,6 @@
 package com.openwebstart.launcher;
 
-import com.openwebstart.jvm.localfinder.JavaExecutableFinder;
+import com.openwebstart.jvm.util.JavaExecutableFinder;
 import net.adoptopenjdk.icedteaweb.JvmPropertyConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
@@ -9,7 +9,6 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

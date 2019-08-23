@@ -11,23 +11,13 @@ import java.time.temporal.ChronoUnit;
 public class RemoteRuntimeManagerCache implements Serializable {
 
     private final URI endpointForRequest;
-
-    private final LocalDateTime creationTime;
-
     private final RemoteRuntimeList list;
+    private final LocalDateTime endOfCache;
 
     public RemoteRuntimeManagerCache(final URI endpointForRequest, final RemoteRuntimeList list) {
-        this(endpointForRequest, LocalDateTime.now(), list);
-    }
-
-    public RemoteRuntimeManagerCache(final URI endpointForRequest, final LocalDateTime creationTime, final RemoteRuntimeList list) {
         this.endpointForRequest = Assert.requireNonNull(endpointForRequest, "endpointForRequest");
-        this.creationTime = Assert.requireNonNull(creationTime, "creationTime");
         this.list = Assert.requireNonNull(list, "list");
-    }
-
-    public LocalDateTime getCreationTime() {
-        return creationTime;
+        this.endOfCache = LocalDateTime.now().plus(list.getCacheTimeInMillis(), ChronoUnit.MILLIS);
     }
 
     public RemoteRuntimeList getList() {
@@ -39,7 +29,6 @@ public class RemoteRuntimeManagerCache implements Serializable {
     }
 
     public boolean isStillValid() {
-        final LocalDateTime endOfCache = creationTime.plus(list.getCacheTimeInMillis(), ChronoUnit.MILLIS);
         return endOfCache.isAfter(LocalDateTime.now());
     }
 }

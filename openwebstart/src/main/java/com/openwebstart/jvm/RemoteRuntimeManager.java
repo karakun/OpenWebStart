@@ -1,9 +1,9 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.func.Result;
-import com.openwebstart.jvm.func.Sucess;
-import com.openwebstart.jvm.io.HttpGetRequest;
-import com.openwebstart.jvm.io.HttpResponse;
+import com.openwebstart.func.Result;
+import com.openwebstart.func.Success;
+import com.openwebstart.http.HttpGetRequest;
+import com.openwebstart.http.HttpResponse;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 
-public class RemoteRuntimeManager {
+class RemoteRuntimeManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteRuntimeManager.class);
 
@@ -59,7 +59,7 @@ public class RemoteRuntimeManager {
         final Result<RemoteRuntimeList> result = Optional.ofNullable(cache.get())
                 .filter(RemoteRuntimeManagerCache::isStillValid)
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
-                .map(c -> (Result<RemoteRuntimeList>) new Sucess<>(c.getList()))
+                .map(c -> (Result<RemoteRuntimeList>) new Success<>(c.getList()))
                 .orElseGet(Result.of(() -> {
                     final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
                     try (final HttpResponse response = request.handle()) {

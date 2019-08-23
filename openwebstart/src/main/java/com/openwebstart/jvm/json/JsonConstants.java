@@ -1,6 +1,6 @@
 package com.openwebstart.jvm.json;
 
-public interface JsonConstants {
+interface JsonConstants {
 
     String VERSION_PROPERTY = "version";
 

@@ -1,6 +1,5 @@
-package com.openwebstart.jvm.io;
+package com.openwebstart.http;
 
-import com.openwebstart.jvm.func.Subscription;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;

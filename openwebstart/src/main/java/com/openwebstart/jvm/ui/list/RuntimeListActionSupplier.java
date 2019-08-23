@@ -25,13 +25,13 @@ public class RuntimeListActionSupplier implements Function<LocalJavaRuntime, Lis
     public List<Action<LocalJavaRuntime>> apply(final LocalJavaRuntime localJavaRuntime) {
         final List<Action<LocalJavaRuntime>> list = new ArrayList<>();
 
-        if(localJavaRuntime.isActive()) {
+        if (localJavaRuntime.isActive()) {
             list.add(new DeactivateRuntimeAction(changedItemConsumer));
         } else {
             list.add(new ActivateRuntimeAction(changedItemConsumer));
         }
 
-        if(localJavaRuntime.isManaged()) {
+        if (localJavaRuntime.isManaged()) {
             list.add(new DeleteRuntimeAction());
         } else {
             list.add(new RemoveRuntimeAction());

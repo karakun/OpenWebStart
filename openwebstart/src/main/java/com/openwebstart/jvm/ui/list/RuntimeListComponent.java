@@ -8,7 +8,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -50,7 +49,7 @@ public class RuntimeListComponent extends JList<LocalJavaRuntime> {
     }
 
     private void clickButtonAt(Point point) {
-        if(highlighter.isInActionArea()) {
+        if (highlighter.isInActionArea()) {
             final int index = locationToIndex(point);
             final LocalJavaRuntime item = getModel().getElementAt(index);
             final JPopupMenu popupMenu = new JPopupMenu();

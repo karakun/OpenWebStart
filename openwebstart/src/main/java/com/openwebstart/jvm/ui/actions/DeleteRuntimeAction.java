@@ -19,7 +19,7 @@ public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
             try {
                 LocalRuntimeManager.getInstance().delete(item);
             } catch (final Exception e) {
-                SwingUtilities.invokeLater(() -> new ErrorDialog("Can not delte local folder", e).showAndWait());
+                SwingUtilities.invokeLater(() -> new ErrorDialog("Can not delete local folder", e).showAndWait());
             }
         });
     }

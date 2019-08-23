@@ -1,8 +1,7 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-import com.openwebstart.jvm.io.ByteUnit;
-import com.openwebstart.jvm.io.DownloadInputStream;
-import com.openwebstart.jvm.io.DownloadType;
+import com.openwebstart.http.DownloadInputStream;
+import com.openwebstart.http.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.IconComponent;
@@ -17,7 +16,6 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Objects;
 
 public class RuntimeDownloadDialog extends JDialog {
 
@@ -32,7 +30,7 @@ public class RuntimeDownloadDialog extends JDialog {
         final JLabel messageLabel = new JLabel("Downloading runtime " + remoteRuntime.getVersion() + "-" + remoteRuntime.getVendor());
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
-        if (Objects.equals(inputStream.getDownloadType(), DownloadType.INDETERMINATE)) {
+        if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
             progressBar.setIndeterminate(true);
         }
         final ImageIcon imageIcon = new ImageIcon(Images.NETWORK_64_URL);
@@ -59,10 +57,10 @@ public class RuntimeDownloadDialog extends JDialog {
         add(panel);
 
         inputStream.setUpdateChunkSize(10_000);
-        inputStream.addDownloadDoneListener(e -> SwingUtilities.invokeLater(() -> close()));
-        inputStream.addDownloadErrorListener(e -> SwingUtilities.invokeLater(() -> close()));
+        inputStream.addDownloadDoneListener(e -> SwingUtilities.invokeLater(this::close));
+        inputStream.addDownloadErrorListener(e -> SwingUtilities.invokeLater(this::close));
         inputStream.addDownloadPercentageListener(p -> SwingUtilities.invokeLater(() -> {
-            if (Objects.equals(inputStream.getDownloadType(), DownloadType.INDETERMINATE)) {
+            if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
                 final long downloadSize = inputStream.getDownloaded();
                 final ByteUnit unit = ByteUnit.findBestUnit(downloadSize);
 
