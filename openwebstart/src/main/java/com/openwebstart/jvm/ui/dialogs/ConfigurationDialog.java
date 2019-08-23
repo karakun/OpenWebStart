@@ -47,14 +47,14 @@ public class ConfigurationDialog extends JDialog {
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
-        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getDefaultRemoteEndpoint()).map(u -> u.toString()).orElse(""));
+        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getDefaultRemoteEndpoint()).map(URI::toString).orElse(""));
 
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow other servers");
         allowAnyVendorCheckBox.setState(!RuntimeManagerConfig.getInstance().isSpecificRemoteEndpointsEnabled());
 
         final JLabel supportedVersionRangeLabel = new JLabel("Supported runtime version range:");
         final JTextField supportedVersionRangeField = new JTextField();
-        supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(u -> u.toString()).orElse(""));
+        supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(VersionString::toString).orElse(""));
 
 
         final JButton okButton = new JButton("ok");
@@ -65,15 +65,15 @@ public class ConfigurationDialog extends JDialog {
                 RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(!allowAnyVendorCheckBox.getState());
                 RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(!allowAnyUpdateServerCheckBox.getState());
-                RuntimeManagerConfig.getInstance().setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(t -> VersionString.fromString(t)).orElse(null));
-                dispose();
+                RuntimeManagerConfig.getInstance().setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
+                close();
             } catch (URISyntaxException ex) {
                 new ErrorDialog("The URI for the default update server is invalid", ex).showAndWait();
             }
         });
 
         final JButton cancelButton = new JButton("cancel");
-        cancelButton.addActionListener(e -> dispose());
+        cancelButton.addActionListener(e -> close());
 
 
         final JPanel mainPanel = new JPanel();
@@ -111,5 +111,10 @@ public class ConfigurationDialog extends JDialog {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void close() {
+        setVisible(false);
+        dispose();
     }
 }

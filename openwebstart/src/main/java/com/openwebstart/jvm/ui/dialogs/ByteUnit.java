@@ -1,7 +1,5 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-import java.util.Objects;
-
 enum ByteUnit {
 
     BYTE("B", "B", "byte", 0),
@@ -47,12 +45,12 @@ enum ByteUnit {
     }
 
     public static ByteUnit findBestUnit(final long byteCount, boolean binary) {
-        final ByteUnit[] dictionary = { KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE, PETABYTE};
+        final ByteUnit[] dictionary = {KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE, PETABYTE};
         final int unit = binary ? 1024 : 1000;
         if (byteCount < unit) return BYTE;
 
         int exp = (int) (Math.log(byteCount) / Math.log(unit));
-        return dictionary[Math.min(Math.max(0, exp-1), dictionary.length -1)];
+        return dictionary[Math.min(Math.max(0, exp - 1), dictionary.length - 1)];
     }
 
     public double convertBytesToUnit(final long byteCount) {
@@ -60,7 +58,7 @@ enum ByteUnit {
     }
 
     public double convertBytesToUnit(final long byteCount, boolean binary) {
-        if(Objects.equals(this, ByteUnit.BYTE)) {
+        if (this == ByteUnit.BYTE) {
             return byteCount;
         }
         final int unit = binary ? 1024 : 1000;

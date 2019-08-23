@@ -14,7 +14,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AskForRuntimeUpdateDialog extends JDialog {
@@ -30,7 +29,7 @@ public class AskForRuntimeUpdateDialog extends JDialog {
         final ImageIcon imageIcon = new ImageIcon(Images.QUESTION_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
 
-        final JLabel messageLabel = new JLabel("A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() +"') is available. Do you want to download this version?");
+        final JLabel messageLabel = new JLabel("A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() + "') is available. Do you want to download this version?");
 
         final JButton noUpdateButton = new JButton("no");
         noUpdateButton.addActionListener(e -> close(false));
