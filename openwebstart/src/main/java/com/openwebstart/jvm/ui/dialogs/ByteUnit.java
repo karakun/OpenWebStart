@@ -2,15 +2,14 @@ package com.openwebstart.jvm.ui.dialogs;
 
 import java.util.Objects;
 
-//see https://github.com/rico-projects/rico/pull/71
-public enum ByteUnit {
+enum ByteUnit {
 
     BYTE("B", "B", "byte", 0),
     KILOBYTE("KB", "KiB", "kilobyte", 1),
     MEGABYTE("MB", "MiB", "megabyte", 2),
     GIGABYTE("GB", "GiB", "gigabyte", 3),
     TERABYTE("TB", "TiB", "terabyte", 4),
-    PEGTABYTE("PB", "PiB", "petabyte", 5);
+    PETABYTE("PB", "PiB", "petabyte", 5);
 
     private final String decimalShortName;
 
@@ -48,7 +47,7 @@ public enum ByteUnit {
     }
 
     public static ByteUnit findBestUnit(final long byteCount, boolean binary) {
-        final ByteUnit[] dictionary = { KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE, PEGTABYTE };
+        final ByteUnit[] dictionary = { KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE, PETABYTE};
         final int unit = binary ? 1024 : 1000;
         if (byteCount < unit) return BYTE;
 

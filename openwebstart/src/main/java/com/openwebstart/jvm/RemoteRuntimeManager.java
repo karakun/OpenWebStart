@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 
-public class RemoteRuntimeManager {
+class RemoteRuntimeManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteRuntimeManager.class);
 
