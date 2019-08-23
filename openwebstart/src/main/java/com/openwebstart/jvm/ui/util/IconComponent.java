@@ -1,43 +1,29 @@
 package com.openwebstart.jvm.ui.util;
 
+import net.adoptopenjdk.icedteaweb.Assert;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Optional;
 
 public class IconComponent extends JComponent {
 
-    private Icon icon;
-
-    public IconComponent() {
-    }
+    private final Icon icon;
 
     public IconComponent(final Icon icon) {
-        this.icon = icon;
+        this.icon = Assert.requireNonNull(icon, "icon");
     }
 
     @Override
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
-        Optional.ofNullable(icon).ifPresent(i -> i.paintIcon(this, g, 0, 0));
-    }
-
-    public Icon getIcon() {
-        return icon;
-    }
-
-    public void setIcon(final Icon icon) {
-        this.icon = icon;
-        revalidate();
-        repaint();
+        icon.paintIcon(this, g, 0, 0);
     }
 
     @Override
     public Dimension getPreferredSize() {
-        final int w =  Optional.ofNullable(icon).map(i -> i.getIconWidth()).orElse(0);
-        final int h = Optional.ofNullable(icon).map(i -> i.getIconHeight()).orElse(0);
-        return new Dimension(w, h);
+        return new Dimension(icon.getIconWidth(), icon.getIconHeight());
     }
 
     @Override
