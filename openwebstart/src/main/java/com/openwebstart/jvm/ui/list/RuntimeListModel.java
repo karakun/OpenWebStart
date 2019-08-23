@@ -9,7 +9,7 @@ public class RuntimeListModel extends DefaultListModel<LocalJavaRuntime> {
 
     public void replaceData(final List<LocalJavaRuntime> loadedData) {
         clear();
-        loadedData.forEach(item -> addElement(item));
+        loadedData.forEach(this::addElement);
     }
 
     public void replaceItem(final LocalJavaRuntime oldValue, final LocalJavaRuntime newValue) {

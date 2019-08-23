@@ -21,7 +21,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Optional;
 
-public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
+class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
     private final Color BACKGROUND_EVEN = Color.WHITE;
 
@@ -45,7 +45,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
     private final RuntimeListHighlighter listHighlighter;
 
-    public RuntimeListCellRenderer(final RuntimeListHighlighter listHighlighter) {
+    RuntimeListCellRenderer(final RuntimeListHighlighter listHighlighter) {
         this.listHighlighter = Assert.requireNonNull(listHighlighter, "listHighlighter");
 
         actionsIcon = new IconComponent(new ImageIcon(Images.MORE_OUTLINE_32_URL));
@@ -116,7 +116,7 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
 
         final JPanel deactivatedIconWrapper = new JPanel();
         deactivatedIconWrapper.setLayout(null);
-        deactivatedIconWrapper.setBackground(new Color(0, 0, 0,0));
+        deactivatedIconWrapper.setBackground(new Color(0, 0, 0, 0));
         deactivatedIconWrapper.setPreferredSize(new Dimension(64, 64));
         deactivatedIconWrapper.setMinimumSize(new Dimension(64, 64));
         deactivatedIconWrapper.add(deactivatedIcon);
@@ -137,23 +137,23 @@ public class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntim
         vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse("unknown vendor"));
         archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse("unknown operating system"));
 
-        if(this.listHighlighter.getHoverIndex() == index) {
+        if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);
         } else {
-            if(index%2 == 0) {
+            if (index % 2 == 0) {
                 cellContent.setBackground(BACKGROUND_EVEN);
             } else {
                 cellContent.setBackground(BACKGROUND_ODD);
             }
         }
 
-        if(Optional.ofNullable(value).map(LocalJavaRuntime::isActive).orElse(false)) {
+        if (Optional.ofNullable(value).map(LocalJavaRuntime::isActive).orElse(false)) {
             deactivatedIcon.setVisible(false);
         } else {
             deactivatedIcon.setVisible(true);
         }
 
-        if(this.listHighlighter.isInActionArea() && this.listHighlighter.getHoverIndex() == index) {
+        if (this.listHighlighter.isInActionArea() && this.listHighlighter.getHoverIndex() == index) {
             actionsHooverIcon.setVisible(true);
         } else {
             actionsHooverIcon.setVisible(false);
