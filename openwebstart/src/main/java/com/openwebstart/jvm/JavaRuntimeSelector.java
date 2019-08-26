@@ -42,7 +42,7 @@ public class JavaRuntimeSelector {
 
         LOG.debug("Trying to find Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor);
 
-        final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getInstance().getStrategy();
+        final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
         final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor);
         if (localRuntime == null) {
             LOG.debug("No local runtime found, will try to find remote runtime");

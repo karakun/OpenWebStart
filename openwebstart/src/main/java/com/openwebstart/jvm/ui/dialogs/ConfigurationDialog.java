@@ -35,37 +35,37 @@ public class ConfigurationDialog extends JDialog {
 
         final JLabel updateStrategyLabel = new JLabel("Update strategy:");
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
-        updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getStrategy());
+        updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Default vendor:");
         final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
         defaultVendorComboBox.setEditable(true);
-        defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getInstance().getDefaultVendor());
+        defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getDefaultVendor());
 
         final Checkbox allowAnyVendorCheckBox = new Checkbox("Allow other vendors");
-        allowAnyVendorCheckBox.setState(!RuntimeManagerConfig.getInstance().isSpecificVendorEnabled());
+        allowAnyVendorCheckBox.setState(RuntimeManagerConfig.isNonDefaultVendorsAllowed());
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
-        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getDefaultRemoteEndpoint()).map(URI::toString).orElse(""));
+        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URI::toString).orElse(""));
 
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow other servers");
-        allowAnyVendorCheckBox.setState(!RuntimeManagerConfig.getInstance().isSpecificRemoteEndpointsEnabled());
+        allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
         final JLabel supportedVersionRangeLabel = new JLabel("Supported runtime version range:");
         final JTextField supportedVersionRangeField = new JTextField();
-        supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(VersionString::toString).orElse(""));
+        supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
 
 
         final JButton okButton = new JButton("ok");
         okButton.addActionListener(e -> {
             try {
-                RuntimeManagerConfig.getInstance().setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
-                RuntimeManagerConfig.getInstance().setDefaultVendor((String) defaultVendorComboBox.getSelectedItem());
-                RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(!allowAnyVendorCheckBox.getState());
-                RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
-                RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(!allowAnyUpdateServerCheckBox.getState());
-                RuntimeManagerConfig.getInstance().setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
+                RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
+                RuntimeManagerConfig.setDefaultVendor((String) defaultVendorComboBox.getSelectedItem());
+                RuntimeManagerConfig.setNonDefaultVendorsAllowed(allowAnyVendorCheckBox.getState());
+                RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
+                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
+                RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (URISyntaxException ex) {
                 new ErrorDialog("The URI for the default update server is invalid", ex).showAndWait();

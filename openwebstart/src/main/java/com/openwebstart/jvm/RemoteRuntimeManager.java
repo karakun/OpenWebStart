@@ -46,11 +46,9 @@ class RemoteRuntimeManager {
 
         LOG.debug("Trying to find remote Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "' requested os: '" + operationSystem + "'");
 
-        final RuntimeManagerConfig runtimeManagerConfig = RuntimeManagerConfig.getInstance();
-
         final URI endpointForRequest = Optional.ofNullable(specificServerEndpoint)
-                .filter(e -> runtimeManagerConfig.isSpecificRemoteEndpointsEnabled())
-                .orElse(runtimeManagerConfig.getDefaultRemoteEndpoint());
+                .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
+                .orElse(RuntimeManagerConfig.getDefaultRemoteEndpoint());
 
         Assert.requireNonNull(endpointForRequest, "endpointForRequest");
 
@@ -71,7 +69,7 @@ class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            final String vendorName = runtimeManagerConfig.isSpecificVendorEnabled() ? vendor : runtimeManagerConfig.getDefaultVendor();
+            final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() ? vendor : RuntimeManagerConfig.getDefaultVendor();
             final Vendor vendorForRequest = Vendor.fromString(vendorName);
             Assert.requireNonNull(vendorForRequest, "vendorForRequest");
 
@@ -81,7 +79,7 @@ class RemoteRuntimeManager {
                     .filter(r -> r.getOperationSystem() == operationSystem)
                     .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
                     .filter(r -> versionString.contains(r.getVersion()))
-                    .filter(r -> Optional.ofNullable(runtimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
+                    .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                     .max(new RuntimeVersionComparator(versionString));
         } else {
             throw new Exception("Error while trying to find a remote version", result.getException());
