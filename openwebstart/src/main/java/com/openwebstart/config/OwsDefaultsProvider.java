@@ -1,5 +1,6 @@
 package com.openwebstart.config;
 
+import com.openwebstart.jvm.PathAndFiles;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import net.adoptopenjdk.icedteaweb.config.ValidatorFactory;
@@ -10,9 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * ...
- */
 public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "jvm.manager.server.default";
@@ -29,7 +27,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
         return Arrays.asList(
                 Setting.createDefault(
                         RuntimeManagerConfig.KEY_USER_JVM_CACHE_DIR,
-                        RuntimeManagerConfig.JVM_CACHE_DIR.getDefaultFullPath(),
+                        PathAndFiles.JVM_CACHE_DIR.getDefaultFullPath(),
                         ValidatorFactory.createFilePathValidator()
                 ),
                 Setting.createDefault(
@@ -57,8 +55,8 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         DEFAULT_UPDATE_STRATEGY.name(),
                         ValidatorFactory.createStringValidator(
                                 Stream.of(RuntimeUpdateStrategy.values())
-                                .map(Enum::name)
-                                .toArray(String[]::new)
+                                        .map(Enum::name)
+                                        .toArray(String[]::new)
                         )
                 ),
                 Setting.createDefault(

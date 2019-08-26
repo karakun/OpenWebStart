@@ -1,9 +1,7 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.config.OwsDefaultsProvider;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
-import net.sourceforge.jnlp.config.PathsAndFiles.ItwCacheFileDescriptor;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.net.URI;
@@ -22,14 +20,6 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 public class RuntimeManagerConfig {
 
     public static final String KEY_USER_JVM_CACHE_DIR = "deployment.user.jvmcachedir";
-
-    public static final ItwCacheFileDescriptor JVM_CACHE_DIR = new ItwCacheFileDescriptor("jvm-cache", "FILEjvmcache") {
-
-        @Override
-        public String getPropertiesKey() {
-            return KEY_USER_JVM_CACHE_DIR;
-        }
-    };
 
     private RuntimeManagerConfig() {
     }
@@ -91,7 +81,7 @@ public class RuntimeManagerConfig {
     }
 
     public static Path getCachePath() {
-        return Paths.get(JVM_CACHE_DIR.getFullPath());
+        return Paths.get(PathAndFiles.JVM_CACHE_DIR.getFullPath());
     }
 
     public static void setCachePath(final Path cachePath) {
