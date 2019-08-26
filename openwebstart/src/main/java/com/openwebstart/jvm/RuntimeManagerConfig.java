@@ -20,8 +20,13 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 public class RuntimeManagerConfig {
 
     public static final String KEY_USER_JVM_CACHE_DIR = "deployment.user.jvmcachedir";
+    private static DeploymentConfiguration deploymentConfiguration;
 
     private RuntimeManagerConfig() {
+    }
+
+    public static void setConfiguration(final DeploymentConfiguration deploymentConfiguration) {
+        RuntimeManagerConfig.deploymentConfiguration = deploymentConfiguration;
     }
 
     public static URI getDefaultRemoteEndpoint() {
@@ -92,6 +97,6 @@ public class RuntimeManagerConfig {
     }
 
     private static DeploymentConfiguration config() {
-        return JNLPRuntime.getConfiguration();
+        return deploymentConfiguration != null ? deploymentConfiguration : JNLPRuntime.getConfiguration();
     }
 }

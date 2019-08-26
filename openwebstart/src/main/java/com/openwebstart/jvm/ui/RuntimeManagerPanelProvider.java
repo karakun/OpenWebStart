@@ -19,6 +19,6 @@ public class RuntimeManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public JComponent createPanel(final DeploymentConfiguration deploymentConfiguration) {
-        return new RuntimeManagerPanel();
+        return new RuntimeManagerPanel(deploymentConfiguration);
     }
 }

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 public final class RuntimeManagerPanel extends JPanel {
 
@@ -35,6 +37,11 @@ public final class RuntimeManagerPanel extends JPanel {
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
     public RuntimeManagerPanel() {
+        this(JNLPRuntime.getConfiguration());
+    }
+
+    public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
+        RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
