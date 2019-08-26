@@ -23,7 +23,7 @@ public class OpenWebStartLauncher {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
         LOG.debug("OS detected: Win[{}], MacOS[{}], Linux[{}]",

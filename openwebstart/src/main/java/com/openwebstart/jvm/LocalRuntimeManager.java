@@ -101,11 +101,11 @@ public final class LocalRuntimeManager {
         }
     }
 
-    public void loadRuntimes() throws Exception {
+    public void loadRuntimes() {
+        LOG.debug("Loading runtime cache from filesystem");
         jsonStoreLock.lock();
+        final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
         try {
-            LOG.debug("Loading runtime cache from filesystem");
-            final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
@@ -114,6 +114,9 @@ public final class LocalRuntimeManager {
             } else {
                 clear();
             }
+        } catch (IOException e) {
+            LOG.error("Could not load file: " + jsonFile);
+            throw new RuntimeException(e);
         } finally {
             jsonStoreLock.unlock();
         }

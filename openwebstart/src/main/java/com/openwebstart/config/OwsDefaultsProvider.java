@@ -43,7 +43,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 Setting.createDefault(
                         DEFAULT_JVM_VENDOR,
                         "AdoptOpenJDK",
-                        ValidatorFactory.createUrlValidator()
+                        null
                 ),
                 Setting.createDefault(
                         ALLOWS_NON_DEFAULT_JVM_VENDOR,
