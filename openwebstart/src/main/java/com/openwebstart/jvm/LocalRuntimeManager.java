@@ -40,6 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 public final class LocalRuntimeManager {
 
@@ -50,9 +51,7 @@ public final class LocalRuntimeManager {
     private final List<LocalJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
 
     private final List<RuntimeRemovedListener> removedListeners = new CopyOnWriteArrayList<>();
-
     private final List<RuntimeAddedListener> addedListeners = new CopyOnWriteArrayList<>();
-
     private final List<RuntimeUpdateListener> updatedListeners = new CopyOnWriteArrayList<>();
 
     private final Lock jsonStoreLock = new ReentrantLock();
@@ -321,10 +320,9 @@ public final class LocalRuntimeManager {
 
     public LocalJavaRuntime getBestRuntime(final VersionString versionString, final String vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
-        Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() ? vendor : RuntimeManagerConfig.getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
