@@ -17,7 +17,7 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,18 +35,18 @@ class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URI specificServerEndpoint, final String vendor) throws Exception {
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor) throws Exception {
         return getBestRuntime(versionString, specificServerEndpoint, vendor, OperationSystem.getLocalSystem());
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URI specificServerEndpoint, final String vendor, final OperationSystem operationSystem) throws Exception {
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor, final OperationSystem operationSystem) throws Exception {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
         LOG.debug("Trying to find remote Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "' requested os: '" + operationSystem + "'");
 
-        final URI endpointForRequest = Optional.ofNullable(specificServerEndpoint)
+        final URL endpointForRequest = Optional.ofNullable(specificServerEndpoint)
                 .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
                 .orElse(RuntimeManagerConfig.getDefaultRemoteEndpoint());
 

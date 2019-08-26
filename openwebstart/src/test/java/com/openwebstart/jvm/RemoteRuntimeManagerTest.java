@@ -14,6 +14,7 @@ import spark.Spark;
 
 import java.net.ServerSocket;
 import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,7 +48,7 @@ public class RemoteRuntimeManagerTest {
     @BeforeEach
     public void init() throws Exception {
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
-        final URI theOneAndOnlyJdkZip = new URI("http://localhost:8090/jvms/jdk.zip");
+        final URL theOneAndOnlyJdkZip = new URL("http://localhost:8090/jvms/jdk.zip");
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
             runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", "4711", theOneAndOnlyJdkZip));
@@ -99,7 +100,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_1() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
@@ -117,7 +118,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_2() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = WIN64;
 
@@ -135,7 +136,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_3() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = "adopt";
         final OperationSystem operationSystem = MAC64;
 
@@ -153,7 +154,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_4() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
@@ -171,7 +172,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_5() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = "adopt";
         final OperationSystem operationSystem = MAC64;
 
@@ -189,7 +190,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_6() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("20+");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 
@@ -204,7 +205,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_7() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = "not_found";
         final OperationSystem operationSystem = MAC64;
 
@@ -219,7 +220,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_8() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = ARM32;
 
@@ -234,7 +235,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_9() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = null;
+        final URL specificServerEndpoint = null;
         final String vendor = "oracle";
         final OperationSystem operationSystem = MAC64;
 
@@ -254,7 +255,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_10() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = new URI("http://do.not.exists/error");
+        final URL specificServerEndpoint = new URL("http://do.not.exists/error");
         final String vendor = "oracle";
         final OperationSystem operationSystem = MAC64;
 
@@ -266,7 +267,7 @@ public class RemoteRuntimeManagerTest {
     public void testRemoteRuntime_11() throws Exception {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
-        final URI specificServerEndpoint = new URI("http://do.not.exists/error");
+        final URL specificServerEndpoint = new URL("http://do.not.exists/error");
         final String vendor = ANY_VENDOR.getName();
         final OperationSystem operationSystem = MAC64;
 

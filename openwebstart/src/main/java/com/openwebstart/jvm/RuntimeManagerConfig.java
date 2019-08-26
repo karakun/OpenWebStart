@@ -4,8 +4,9 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
+import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,12 +30,12 @@ public class RuntimeManagerConfig {
         RuntimeManagerConfig.deploymentConfiguration = deploymentConfiguration;
     }
 
-    public static URI getDefaultRemoteEndpoint() {
+    public static URL getDefaultRemoteEndpoint() {
         try {
 
             final String defaultServer = config().getProperty(DEFAULT_JVM_DOWNLOAD_SERVER);
-            return defaultServer != null ? new URI(defaultServer) : null;
-        } catch (URISyntaxException e) {
+            return defaultServer != null ? new URL(defaultServer) : null;
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }

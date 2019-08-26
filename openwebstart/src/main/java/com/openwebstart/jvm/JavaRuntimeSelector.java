@@ -9,7 +9,8 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -37,7 +38,7 @@ public class JavaRuntimeSelector {
         getInstance().askForUpdateFunction = askForUpdateFunction;
     }
 
-    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URI serverEndpoint) throws Exception {
+    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URL serverEndpoint) throws Exception {
         Assert.requireNonNull(versionString, "versionString");
 
         LOG.debug("Trying to find Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor);

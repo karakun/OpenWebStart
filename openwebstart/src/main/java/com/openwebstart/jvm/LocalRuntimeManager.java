@@ -26,7 +26,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -290,7 +290,7 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Runtime will be installed in " + runtimePath);
 
-        final URI downloadRequest = remoteRuntime.getEndpoint();
+        final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         try (final HttpResponse response = request.handle()) {
             final DownloadInputStream inputStream = new DownloadInputStream(response);

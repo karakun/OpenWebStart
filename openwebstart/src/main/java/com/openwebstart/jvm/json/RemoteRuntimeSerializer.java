@@ -11,7 +11,7 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 
 import java.lang.reflect.Type;
-import java.net.URI;
+import java.net.URL;
 
 public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime>, JsonDeserializer<RemoteJavaRuntime> {
 
@@ -38,7 +38,7 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
             final String vendor = jsonObject.get(JsonConstants.VENDOR_PROPERTY).getAsString();
             final OperationSystem os = OperationSystem.valueOf(jsonObject.get(JsonConstants.OS_PROPERTY).getAsString());
             final String hash = jsonObject.get(JsonConstants.HASH_PROPERTY).getAsString();
-            final URI endpoint = new URI(jsonObject.get(JsonConstants.ENDPOINT_PROPERTY).getAsString());
+            final URL endpoint = new URL(jsonObject.get(JsonConstants.ENDPOINT_PROPERTY).getAsString());
 
 
             return new RemoteJavaRuntime(version, os, vendor, hash, endpoint);

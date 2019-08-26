@@ -27,9 +27,7 @@ import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -44,11 +42,6 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 public class JvmManagerDemo {
 
     public static void main(String[] args) throws Exception {
-
-        final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
-        final Path cacheDir = tempDir.resolve("ows-jvm-demo-cache");
-        Files.createDirectories(cacheDir);
-        //RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
 
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
@@ -101,7 +94,7 @@ public class JvmManagerDemo {
     private static void startServer() throws Exception {
 
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
-        final URI theOneAndOnlyJdkZip = new URI("http://localhost:8090/jvms/jdk.zip");
+        final URL theOneAndOnlyJdkZip = new URL("http://localhost:8090/jvms/jdk.zip");
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
             runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", "4711", theOneAndOnlyJdkZip));
@@ -184,7 +177,7 @@ public class JvmManagerDemo {
             try {
                 final VersionString version = VersionString.fromString(requestedVersionField.getText());
                 final String vendor = requestedVendorField.getText();
-                final URI serverEndpoint = new URI(requestedEndpointField.getText());
+                final URL serverEndpoint = new URL(requestedEndpointField.getText());
                 final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, vendor, serverEndpoint);
 
                 SwingUtilities.invokeLater(() -> {
