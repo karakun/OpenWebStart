@@ -1,5 +1,6 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.config.PathsAndFiles.ItwCacheFileDescriptor;
@@ -14,6 +15,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 
@@ -69,19 +71,23 @@ public class RuntimeManagerConfig {
     }
 
     public static RuntimeUpdateStrategy getStrategy() {
-        return RuntimeUpdateStrategy.valueOf(config().getProperty(JVM_UPDATE_STRATEGY));
+        final String name = config().getProperty(JVM_UPDATE_STRATEGY);
+        return name != null ? RuntimeUpdateStrategy.valueOf(name) : DEFAULT_UPDATE_STRATEGY;
     }
 
     public static void setStrategy(final RuntimeUpdateStrategy strategy) {
-        config().setProperty(JVM_UPDATE_STRATEGY, strategy.name());
+        final String name = strategy != null ? strategy.name() : DEFAULT_UPDATE_STRATEGY.name();
+        config().setProperty(JVM_UPDATE_STRATEGY, name);
     }
 
     public static VersionString getSupportedVersionRange() {
-        return VersionString.fromString(config().getProperty(JVM_SUPPORTED_VERSION_RANGE));
+        final String version = config().getProperty(JVM_SUPPORTED_VERSION_RANGE);
+        return version != null ? VersionString.fromString(version) : null;
     }
 
     public static void setSupportedVersionRange(final VersionString supportedVersionRange) {
-        config().setProperty(JVM_SUPPORTED_VERSION_RANGE, supportedVersionRange.toString());
+        final String version = supportedVersionRange != null ? supportedVersionRange.toString() : null;
+        config().setProperty(JVM_SUPPORTED_VERSION_RANGE, version);
     }
 
     public static Path getCachePath() {
