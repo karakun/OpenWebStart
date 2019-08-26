@@ -47,7 +47,7 @@ class RemoteRuntimeManager {
         LOG.debug("Trying to find remote Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "' requested os: '" + operationSystem + "'");
 
         final URI endpointForRequest = Optional.ofNullable(specificServerEndpoint)
-                .filter(e -> RuntimeManagerConfig.isSpecificRemoteEndpointsEnabled())
+                .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
                 .orElse(RuntimeManagerConfig.getDefaultRemoteEndpoint());
 
         Assert.requireNonNull(endpointForRequest, "endpointForRequest");
@@ -69,7 +69,7 @@ class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            final String vendorName = RuntimeManagerConfig.isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getDefaultVendor();
+            final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() ? vendor : RuntimeManagerConfig.getDefaultVendor();
             final Vendor vendorForRequest = Vendor.fromString(vendorName);
             Assert.requireNonNull(vendorForRequest, "vendorForRequest");
 

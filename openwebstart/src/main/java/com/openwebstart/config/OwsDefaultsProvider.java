@@ -37,7 +37,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER,
-                        "true",
+                        Boolean.TRUE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
@@ -47,7 +47,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         ALLOWS_NON_DEFAULT_JVM_VENDOR,
-                        "true",
+                        Boolean.TRUE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(

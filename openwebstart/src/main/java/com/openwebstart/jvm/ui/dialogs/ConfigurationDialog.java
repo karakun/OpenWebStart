@@ -43,14 +43,14 @@ public class ConfigurationDialog extends JDialog {
         defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getDefaultVendor());
 
         final Checkbox allowAnyVendorCheckBox = new Checkbox("Allow other vendors");
-        allowAnyVendorCheckBox.setState(!RuntimeManagerConfig.isSpecificVendorEnabled());
+        allowAnyVendorCheckBox.setState(RuntimeManagerConfig.isNonDefaultVendorsAllowed());
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
         defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URI::toString).orElse(""));
 
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow other servers");
-        allowAnyVendorCheckBox.setState(!RuntimeManagerConfig.isSpecificRemoteEndpointsEnabled());
+        allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
         final JLabel supportedVersionRangeLabel = new JLabel("Supported runtime version range:");
         final JTextField supportedVersionRangeField = new JTextField();
@@ -62,9 +62,9 @@ public class ConfigurationDialog extends JDialog {
             try {
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) defaultVendorComboBox.getSelectedItem());
-                RuntimeManagerConfig.setSpecificVendorEnabled(!allowAnyVendorCheckBox.getState());
+                RuntimeManagerConfig.setNonDefaultVendorsAllowed(allowAnyVendorCheckBox.getState());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
-                RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(!allowAnyUpdateServerCheckBox.getState());
+                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (URISyntaxException ex) {

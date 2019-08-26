@@ -78,8 +78,8 @@ public class RemoteRuntimeManagerTest {
         Spark.awaitInitialization();
 
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
-        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setNonDefaultServerAllowed(true);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
     }
@@ -89,8 +89,8 @@ public class RemoteRuntimeManagerTest {
         Spark.stop();
         Spark.awaitStop();
 
-        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setNonDefaultServerAllowed(true);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
     }
@@ -239,7 +239,7 @@ public class RemoteRuntimeManagerTest {
         final OperationSystem operationSystem = MAC64;
 
         //when
-        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(false);
         RuntimeManagerConfig.setDefaultVendor("adopt");
         final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
 
@@ -271,7 +271,7 @@ public class RemoteRuntimeManagerTest {
         final OperationSystem operationSystem = MAC64;
 
         //when
-        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(false);
+        RuntimeManagerConfig.setNonDefaultServerAllowed(false);
         final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
 
         //than

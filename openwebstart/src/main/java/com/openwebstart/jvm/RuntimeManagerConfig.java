@@ -26,22 +26,25 @@ public class RuntimeManagerConfig {
 
     public static URI getDefaultRemoteEndpoint() {
         try {
-            return new URI(config().getProperty(DEFAULT_JVM_DOWNLOAD_SERVER));
+
+            final String defaultServer = config().getProperty(DEFAULT_JVM_DOWNLOAD_SERVER);
+            return defaultServer != null ? new URI(defaultServer) : null;
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static void setDefaultRemoteEndpoint(final URI defaultRemoteEndpoint) {
-        config().setProperty(DEFAULT_JVM_DOWNLOAD_SERVER, defaultRemoteEndpoint.toString());
+        final String defaultServer = defaultRemoteEndpoint != null ? defaultRemoteEndpoint.toString() : null;
+        config().setProperty(DEFAULT_JVM_DOWNLOAD_SERVER, defaultServer);
     }
 
-    public static boolean isSpecificRemoteEndpointsEnabled() {
+    public static boolean isNonDefaultServerAllowed() {
         return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER));
     }
 
-    public static void setSpecificRemoteEndpointsEnabled(final boolean specificRemoteEndpointsEnabled) {
-        config().setProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER, Boolean.toString(specificRemoteEndpointsEnabled));
+    public static void setNonDefaultServerAllowed(final boolean nonDefaultServerAllowed) {
+        config().setProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER, Boolean.toString(nonDefaultServerAllowed));
     }
 
     public static String getDefaultVendor() {
@@ -52,12 +55,12 @@ public class RuntimeManagerConfig {
         config().setProperty(DEFAULT_JVM_VENDOR, defaultVendor);
     }
 
-    public static boolean isSpecificVendorEnabled() {
+    public static boolean isNonDefaultVendorsAllowed() {
         return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR));
     }
 
-    public static void setSpecificVendorEnabled(final boolean specificVendorEnabled) {
-        config().setProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR, Boolean.toString(specificVendorEnabled));
+    public static void setNonDefaultVendorsAllowed(final boolean nonDefaultVendorsAllowed) {
+        config().setProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR, Boolean.toString(nonDefaultVendorsAllowed));
     }
 
     public static RuntimeUpdateStrategy getStrategy() {

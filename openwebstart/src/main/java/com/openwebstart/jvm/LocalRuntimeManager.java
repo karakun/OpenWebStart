@@ -324,7 +324,7 @@ public final class LocalRuntimeManager {
         Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");

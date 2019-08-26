@@ -52,9 +52,9 @@ public class JvmManagerDemo {
 
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
-        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
+        RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
-        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
 
         JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
         JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);

@@ -46,7 +46,7 @@ public class LocalRuntimeManagerTest {
         FileUtils.saveFileUtf8(cacheConfig, cacheConfigFile);
 
 
-        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
 
@@ -57,7 +57,7 @@ public class LocalRuntimeManagerTest {
 
     @AfterEach
     public void reset() {
-        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(false);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
     }
@@ -173,7 +173,7 @@ public class LocalRuntimeManagerTest {
 
         //when
         RuntimeManagerConfig.setDefaultVendor("adopt");
-        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(false);
         LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
 
         //than
@@ -194,7 +194,7 @@ public class LocalRuntimeManagerTest {
 
         //when
         RuntimeManagerConfig.setDefaultVendor("oracle");
-        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setNonDefaultVendorsAllowed(false);
         LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
 
         //than
