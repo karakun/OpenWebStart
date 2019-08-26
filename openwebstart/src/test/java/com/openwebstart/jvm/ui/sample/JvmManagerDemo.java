@@ -48,7 +48,7 @@ public class JvmManagerDemo {
         final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
         final Path cacheDir = tempDir.resolve("ows-jvm-demo-cache");
         Files.createDirectories(cacheDir);
-        RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
+        //RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
 
         RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
