@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
-import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
-import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static com.openwebstart.jvm.os.OperationSystem.ARM32;
 import static com.openwebstart.jvm.os.OperationSystem.LINUX64;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.os.OperationSystem.WIN64;
+import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
+import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 
 public class RemoteRuntimeManagerTest {
 
@@ -260,7 +260,10 @@ public class RemoteRuntimeManagerTest {
         final OperationSystem operationSystem = MAC64;
 
         //when
-        Assertions.assertThrows(Exception.class, () -> RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem));
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+
+        // then
+        Assertions.assertNull(runtime);
     }
 
     @Test
