@@ -267,7 +267,7 @@ public final class LocalRuntimeManager {
         for (Result<LocalJavaRuntime> r : foundRuntimes) {
             if (r.isSuccessful()) {
                 final LocalJavaRuntime runtime = r.getResult();
-                if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
+                if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
                     add(runtime);
                 }
             }
@@ -324,7 +324,7 @@ public final class LocalRuntimeManager {
         Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.getInstance().isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getInstance().getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.isSpecificVendorEnabled() ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
@@ -334,7 +334,7 @@ public final class LocalRuntimeManager {
                 .filter(r -> operationSystem == r.getOperationSystem())
                 .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
-                .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
+                .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))
                 .orElse(null);
     }
@@ -344,6 +344,6 @@ public final class LocalRuntimeManager {
     }
 
     private Path cacheBasePath() {
-        return RuntimeManagerConfig.getInstance().getCachePath();
+        return RuntimeManagerConfig.getCachePath();
     }
 }

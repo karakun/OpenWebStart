@@ -78,11 +78,11 @@ public final class RuntimeManagerPanel extends JPanel {
                     try {
                         final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(selected);
                         final String version = jreProps.getVersion();
-                        if (Optional.ofNullable(RuntimeManagerConfig.getInstance().getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
+                        if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
                             final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), jreProps.getVendor(), selected);
                             LocalRuntimeManager.getInstance().add(runtime);
                         } else {
-                            SwingUtilities.invokeLater(() -> new ErrorDialog("Version '" + version + "' of runtime not supported", new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getInstance().getSupportedVersionRange())).showAndWait());
+                            SwingUtilities.invokeLater(() -> new ErrorDialog("Version '" + version + "' of runtime not supported", new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange())).showAndWait());
                         }
                     } catch (final Exception ex) {
                         SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", ex).showAndWait());

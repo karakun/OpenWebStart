@@ -77,11 +77,11 @@ public class RemoteRuntimeManagerTest {
         Spark.init();
         Spark.awaitInitialization();
 
-        RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
-        RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(null);
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(null);
+        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
+        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
+        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setDefaultVendor(null);
+        RuntimeManagerConfig.setSupportedVersionRange(null);
     }
 
     @AfterEach
@@ -89,10 +89,10 @@ public class RemoteRuntimeManagerTest {
         Spark.stop();
         Spark.awaitStop();
 
-        RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(null);
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(null);
+        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
+        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setDefaultVendor(null);
+        RuntimeManagerConfig.setSupportedVersionRange(null);
     }
 
     @Test
@@ -239,8 +239,8 @@ public class RemoteRuntimeManagerTest {
         final OperationSystem operationSystem = MAC64;
 
         //when
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(false);
-        RuntimeManagerConfig.getInstance().setDefaultVendor("adopt");
+        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setDefaultVendor("adopt");
         final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
 
         //than
@@ -271,7 +271,7 @@ public class RemoteRuntimeManagerTest {
         final OperationSystem operationSystem = MAC64;
 
         //when
-        RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(false);
+        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(false);
         final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
 
         //than

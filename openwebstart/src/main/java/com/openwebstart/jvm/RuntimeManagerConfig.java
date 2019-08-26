@@ -29,12 +29,10 @@ public class RuntimeManagerConfig {
         }
     };
 
-    private static final RuntimeManagerConfig INSTANCE = new RuntimeManagerConfig();
-
     private RuntimeManagerConfig() {
     }
 
-    public URI getDefaultRemoteEndpoint() {
+    public static URI getDefaultRemoteEndpoint() {
         try {
             return new URI(config().getProperty(DEFAULT_JVM_DOWNLOAD_SERVER));
         } catch (URISyntaxException e) {
@@ -42,63 +40,59 @@ public class RuntimeManagerConfig {
         }
     }
 
-    public void setDefaultRemoteEndpoint(final URI defaultRemoteEndpoint) {
+    public static void setDefaultRemoteEndpoint(final URI defaultRemoteEndpoint) {
         config().setProperty(DEFAULT_JVM_DOWNLOAD_SERVER, defaultRemoteEndpoint.toString());
     }
 
-    public boolean isSpecificRemoteEndpointsEnabled() {
+    public static boolean isSpecificRemoteEndpointsEnabled() {
         return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER));
     }
 
-    public void setSpecificRemoteEndpointsEnabled(final boolean specificRemoteEndpointsEnabled) {
+    public static void setSpecificRemoteEndpointsEnabled(final boolean specificRemoteEndpointsEnabled) {
         config().setProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER, Boolean.toString(specificRemoteEndpointsEnabled));
     }
 
-    public String getDefaultVendor() {
+    public static String getDefaultVendor() {
         return config().getProperty(DEFAULT_JVM_VENDOR);
     }
 
-    public void setDefaultVendor(final String defaultVendor) {
+    public static void setDefaultVendor(final String defaultVendor) {
         config().setProperty(DEFAULT_JVM_VENDOR, defaultVendor);
     }
 
-    public boolean isSpecificVendorEnabled() {
+    public static boolean isSpecificVendorEnabled() {
         return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR));
     }
 
-    public void setSpecificVendorEnabled(final boolean specificVendorEnabled) {
+    public static void setSpecificVendorEnabled(final boolean specificVendorEnabled) {
         config().setProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR, Boolean.toString(specificVendorEnabled));
     }
 
-    public RuntimeUpdateStrategy getStrategy() {
+    public static RuntimeUpdateStrategy getStrategy() {
         return RuntimeUpdateStrategy.valueOf(config().getProperty(JVM_UPDATE_STRATEGY));
     }
 
-    public void setStrategy(final RuntimeUpdateStrategy strategy) {
+    public static void setStrategy(final RuntimeUpdateStrategy strategy) {
         config().setProperty(JVM_UPDATE_STRATEGY, strategy.name());
     }
 
-    public VersionString getSupportedVersionRange() {
+    public static VersionString getSupportedVersionRange() {
         return VersionString.fromString(config().getProperty(JVM_SUPPORTED_VERSION_RANGE));
     }
 
-    public void setSupportedVersionRange(final VersionString supportedVersionRange) {
+    public static void setSupportedVersionRange(final VersionString supportedVersionRange) {
         config().setProperty(JVM_SUPPORTED_VERSION_RANGE, supportedVersionRange.toString());
     }
 
-    public Path getCachePath() {
+    public static Path getCachePath() {
         return Paths.get(JVM_CACHE_DIR.getFullPath());
     }
 
-    public void setCachePath(final Path cachePath) {
+    public static void setCachePath(final Path cachePath) {
         config().setProperty(KEY_USER_JVM_CACHE_DIR, cachePath.normalize().toAbsolutePath().toString());
     }
 
-    public static RuntimeManagerConfig getInstance() {
-        return INSTANCE;
-    }
-
-    private DeploymentConfiguration config() {
+    private static DeploymentConfiguration config() {
         return JNLPRuntime.getConfiguration();
     }
 }

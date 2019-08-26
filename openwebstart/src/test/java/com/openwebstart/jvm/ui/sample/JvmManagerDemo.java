@@ -50,11 +50,11 @@ public class JvmManagerDemo {
         Files.createDirectories(cacheDir);
         //RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
 
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
-        RuntimeManagerConfig.getInstance().setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
-        RuntimeManagerConfig.getInstance().setSpecificRemoteEndpointsEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(ANY_VENDOR.getName());
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
+        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
+        RuntimeManagerConfig.setSpecificRemoteEndpointsEnabled(true);
+        RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
+        RuntimeManagerConfig.setSpecificVendorEnabled(true);
 
         JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
         JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);

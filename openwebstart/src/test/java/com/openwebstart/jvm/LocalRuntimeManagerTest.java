@@ -46,20 +46,20 @@ public class LocalRuntimeManagerTest {
         FileUtils.saveFileUtf8(cacheConfig, cacheConfigFile);
 
 
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(true);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(null);
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(null);
+        RuntimeManagerConfig.setSpecificVendorEnabled(true);
+        RuntimeManagerConfig.setDefaultVendor(null);
+        RuntimeManagerConfig.setSupportedVersionRange(null);
 
 
-        RuntimeManagerConfig.getInstance().setCachePath(cacheFolder);
+        RuntimeManagerConfig.setCachePath(cacheFolder);
         LocalRuntimeManager.getInstance().loadRuntimes();
     }
 
     @AfterEach
     public void reset() {
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(false);
-        RuntimeManagerConfig.getInstance().setDefaultVendor(null);
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(null);
+        RuntimeManagerConfig.setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setDefaultVendor(null);
+        RuntimeManagerConfig.setSupportedVersionRange(null);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class LocalRuntimeManagerTest {
         final OperationSystem os = OperationSystem.MAC64;
 
         //when
-        RuntimeManagerConfig.getInstance().setSupportedVersionRange(VersionString.fromString("1.8*"));
+        RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
         final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
 
         //than
@@ -172,8 +172,8 @@ public class LocalRuntimeManagerTest {
         OperationSystem os = OperationSystem.MAC64;
 
         //when
-        RuntimeManagerConfig.getInstance().setDefaultVendor("adopt");
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setDefaultVendor("adopt");
+        RuntimeManagerConfig.setSpecificVendorEnabled(false);
         LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
 
         //than
@@ -193,8 +193,8 @@ public class LocalRuntimeManagerTest {
         OperationSystem os = OperationSystem.MAC64;
 
         //when
-        RuntimeManagerConfig.getInstance().setDefaultVendor("oracle");
-        RuntimeManagerConfig.getInstance().setSpecificVendorEnabled(false);
+        RuntimeManagerConfig.setDefaultVendor("oracle");
+        RuntimeManagerConfig.setSpecificVendorEnabled(false);
         LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
 
         //than
