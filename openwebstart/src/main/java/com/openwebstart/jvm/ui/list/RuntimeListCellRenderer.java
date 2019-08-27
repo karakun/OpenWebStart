@@ -37,6 +37,8 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
     private final JLabel archLabel;
 
+    private final JLabel javaHomeLable;
+
     private final IconComponent deactivatedIcon;
 
     private final IconComponent actionsIcon;
@@ -55,6 +57,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
         versionLabel = new JLabel("VERSION");
         vendorLabel = new JLabel("VENDOR");
         archLabel = new JLabel("ARCH");
+        javaHomeLable = new JLabel("JAVA_HOME");
         deactivatedIcon = new IconComponent(new ImageIcon(Images.DEACTIVATED_24_URL));
 
 
@@ -86,6 +89,8 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
         vendorLabel.setFont(vendorLabel.getFont().deriveFont(22.0f).deriveFont(Font.ITALIC));
         archLabel.setFont(archLabel.getFont().deriveFont(10.0f).deriveFont(Font.ITALIC));
         archLabel.setForeground(Color.DARK_GRAY);
+        javaHomeLable.setFont(javaHomeLable.getFont().deriveFont(10.0f));
+        javaHomeLable.setForeground(Color.DARK_GRAY);
 
         final JPanel firstLinePanel = new JPanel();
         firstLinePanel.setBackground(null);
@@ -99,6 +104,8 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
         secondLine.setBackground(null);
         secondLine.setLayout(new BoxLayout(secondLine, BoxLayout.LINE_AXIS));
         secondLine.add(archLabel);
+        secondLine.add(Box.createHorizontalStrut(6));
+        secondLine.add(javaHomeLable);
         secondLine.add(Box.createHorizontalGlue());
 
         final JPanel centerPanel = new JPanel();
@@ -136,6 +143,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse("unknown version"));
         vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse("unknown vendor"));
         archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse("unknown operating system"));
+        javaHomeLable.setText(Optional.ofNullable(value).map(v -> v.getJavaHome().toString()).orElse("unknown location"));
 
         if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);
