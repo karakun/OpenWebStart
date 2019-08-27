@@ -116,7 +116,7 @@ public final class LocalRuntimeManager {
                 clear();
             }
         } catch (IOException e) {
-            LOG.error("Could not load file: " + jsonFile);
+            LOG.error("Could not load file: {}", jsonFile);
             throw new RuntimeException(e);
         } finally {
             jsonStoreLock.unlock();
@@ -295,7 +295,7 @@ public final class LocalRuntimeManager {
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
         final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "-" + remoteRuntime.getVersion());
 
-        LOG.debug("Runtime will be installed in " + runtimePath);
+        LOG.debug("Runtime will be installed in {}", runtimePath);
 
         final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
@@ -333,7 +333,7 @@ public final class LocalRuntimeManager {
         final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
-        LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
+        LOG.debug("Trying to find local Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendorForRequest, operationSystem);
 
         return runtimes.stream()
                 .filter(LocalJavaRuntime::isActive)

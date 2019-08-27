@@ -47,13 +47,13 @@ class RemoteRuntimeManager {
         final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
-        LOG.debug("Trying to find remote Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");
+        LOG.debug("Trying to find remote Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendorForRequest, operationSystem);
 
         final URL endpointForRequest = Optional.ofNullable(specificServerEndpoint)
                 .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
                 .orElse(RuntimeManagerConfig.getDefaultRemoteEndpoint());
 
-        LOG.debug("Endpoint to request for Java runtimes: " + endpointForRequest);
+        LOG.debug("Endpoint to request for Java runtimes: {}", endpointForRequest);
 
         final Result<RemoteRuntimeList> result = Optional.ofNullable(cache.get())
                 .filter(RemoteRuntimeManagerCache::isStillValid)
@@ -72,7 +72,7 @@ class RemoteRuntimeManager {
         if (result.isSuccessful()) {
             Assert.requireNonNull(vendorForRequest, "vendorForRequest");
 
-            LOG.debug("Received " + result.getResult().getRuntimes().size() + " possible runtime defintions from server");
+            LOG.debug("Received {} possible runtime definitions from server", result.getResult().getRuntimes().size());
 
             return result.getResult().getRuntimes().stream()
                     .filter(r -> r.getOperationSystem() == operationSystem)
