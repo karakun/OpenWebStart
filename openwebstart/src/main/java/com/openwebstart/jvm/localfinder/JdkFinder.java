@@ -4,6 +4,7 @@ import com.openwebstart.func.Result;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,11 +47,11 @@ public class JdkFinder {
             return false;
         }
 
-        if (Files.isRegularFile(path.resolve("bin/java"))) {
+        if (Files.isRegularFile(path.resolve("bin" + File.separatorChar + "java"))) {
             return true;
         }
 
-        if (Files.isRegularFile(path.resolve("bin/java.exe"))) {
+        if (Files.isRegularFile(path.resolve("bin" + File.separatorChar + "java.exe"))) {
             return true;
         }
 
