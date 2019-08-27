@@ -52,7 +52,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
     public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URL serverEndpoint) throws Exception {
         Assert.requireNonNull(versionString, "versionString");
 
-        LOG.debug("Trying to find Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "'");
+        LOG.debug("Trying to find Java runtime. Requested version: '{}' Requested vendor: '{}'", versionString, vendor);
 
         final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
         final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor);
