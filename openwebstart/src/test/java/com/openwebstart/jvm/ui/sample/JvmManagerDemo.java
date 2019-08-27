@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.ui.sample;
 
-import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
@@ -30,7 +29,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
@@ -49,8 +47,8 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
         RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
 
-        JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);
+        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
+        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
 
         LocalRuntimeManager.getInstance().loadRuntimes();
 
@@ -63,32 +61,6 @@ public class JvmManagerDemo {
                 e.printStackTrace();
             }
         });
-    }
-
-    private static boolean askForUpdate(final RemoteJavaRuntime remoteJavaRuntime) {
-        try {
-            final CompletableFuture<Boolean> result = new CompletableFuture<>();
-            SwingUtilities.invokeLater(() -> {
-                final AskForRuntimeUpdateDialog dialog = new AskForRuntimeUpdateDialog(remoteJavaRuntime);
-                final boolean update = dialog.showAndWait();
-                result.complete(update);
-            });
-            return result.get();
-        } catch (final Exception e) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while asking for update", e).showAndWait());
-            return true;
-        }
-    }
-
-    private static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
-        try {
-            SwingUtilities.invokeAndWait(() -> {
-                final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
-                downloadDialog.setVisible(true);
-            });
-        } catch (final Exception e) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while handling download dialog!", e).showAndWait());
-        }
     }
 
     private static void startServer() throws Exception {

@@ -13,14 +13,31 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AskForRuntimeUpdateDialog extends JDialog {
 
+    public static boolean askForUpdate(final RemoteJavaRuntime remoteJavaRuntime) {
+        try {
+            final CompletableFuture<Boolean> result = new CompletableFuture<>();
+            SwingUtilities.invokeLater(() -> {
+                final AskForRuntimeUpdateDialog dialog = new AskForRuntimeUpdateDialog(remoteJavaRuntime);
+                final boolean update = dialog.showAndWait();
+                result.complete(update);
+            });
+            return result.get();
+        } catch (final Exception e) {
+            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while asking for update", e).showAndWait());
+            return true;
+        }
+    }
+
     private final AtomicBoolean result = new AtomicBoolean(false);
 
-    public AskForRuntimeUpdateDialog(final RemoteJavaRuntime runtime) {
+    private AskForRuntimeUpdateDialog(final RemoteJavaRuntime runtime) {
         Assert.requireNonNull(runtime, "runtime");
         setModal(true);
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -64,7 +81,7 @@ public class AskForRuntimeUpdateDialog extends JDialog {
         this.dispose();
     }
 
-    public boolean showAndWait() {
+    private boolean showAndWait() {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

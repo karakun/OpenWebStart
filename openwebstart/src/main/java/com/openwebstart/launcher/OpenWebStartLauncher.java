@@ -4,6 +4,8 @@ import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
+import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
+import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -33,9 +35,8 @@ public class OpenWebStartLauncher {
         final JavaHomeProvider javaHomeProvider = JavaRuntimeSelector.getInstance();
         LocalRuntimeManager.getInstance().loadRuntimes();
 
-        // TODO:
-        //  JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
-        //  JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);
+        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
+        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
 
         /**
          * Listener will be called when the executable is started again or when a file open event is received.

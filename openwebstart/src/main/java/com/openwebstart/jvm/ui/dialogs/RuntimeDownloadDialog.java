@@ -19,7 +19,18 @@ import java.awt.Dimension;
 
 public class RuntimeDownloadDialog extends JDialog {
 
-    public RuntimeDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
+    public static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
+                downloadDialog.setVisible(true);
+            });
+        } catch (final Exception e) {
+            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while handling download dialog!", e).showAndWait());
+        }
+    }
+
+    private RuntimeDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
         Assert.requireNonNull(inputStream, "inputStream");
 
