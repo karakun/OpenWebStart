@@ -18,12 +18,6 @@ import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.util.ZipUtil;
-import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.io.FileUtils;
-import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -38,6 +32,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
@@ -265,6 +266,10 @@ public final class LocalRuntimeManager {
                 }
             }
         });
+
+        if (foundRuntimes.isEmpty()) {
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "No Java runtime found on your local machine.", "Local JVM Search", JOptionPane.INFORMATION_MESSAGE));
+        }
 
         for (Result<LocalJavaRuntime> r : foundRuntimes) {
             if (r.isSuccessful()) {
