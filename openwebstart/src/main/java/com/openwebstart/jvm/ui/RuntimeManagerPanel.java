@@ -3,16 +3,20 @@ package com.openwebstart.jvm.ui;
 import com.openwebstart.func.Result;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
-import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.jvm.localfinder.JdkFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.jvm.ui.list.RuntimeListModel;
-import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
-import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector.JavaRuntimeProperties;
-
+import java.awt.BorderLayout;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,16 +25,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 public final class RuntimeManagerPanel extends JPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerPanel.class);
 
     private final RuntimeListModel listModel;
 
@@ -81,23 +83,9 @@ public final class RuntimeManagerPanel extends JPanel {
             fileChooser.setAcceptAllFileFilterUsed(false);
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final Path selected = fileChooser.getSelectedFile().toPath();
-                backgroundExecutor.execute(() -> {
-                    try {
-                        final JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(selected);
-                        final String version = jreProps.getVersion();
-                        if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                            final LocalJavaRuntime runtime = LocalJavaRuntime.createPreInstalled(version, OperationSystem.getLocalSystem(), jreProps.getVendor(), selected);
-                            LocalRuntimeManager.getInstance().add(runtime);
-                        } else {
-                            SwingUtilities.invokeLater(() -> new ErrorDialog("Version '" + version + "' of runtime not supported", new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange())).showAndWait());
-                        }
-                    } catch (final Exception ex) {
-                        SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", ex).showAndWait());
-                    }
-                });
+                backgroundExecutor.execute(() -> addLocalRuntimes(selected));
             }
         });
-
 
         setLayout(new BorderLayout(12, 12));
 
@@ -129,6 +117,42 @@ public final class RuntimeManagerPanel extends JPanel {
 
         refreshModel();
 
+    }
+
+    private void addLocalRuntimes(final Path selected) {
+        try {
+            final List<Result<LocalJavaRuntime>> localJdks = JdkFinder.findLocalJdks(selected).stream()
+                    .map(this::checkSupportedVersionRange)
+                    .collect(Collectors.toList());
+
+            localJdks.stream()
+                    .filter(Result::isSuccessful)
+                    .map(Result::getResult)
+                    .forEach(LocalRuntimeManager.getInstance()::add);
+
+            localJdks.stream()
+                    .filter(Result::isFailed)
+                    .map(Result::getException)
+                    .peek(e1 -> LOG.info("Exception while find local JDKs", e1))
+                    .findFirst()
+                    .ifPresent(e2 -> SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", e2).showAndWait()));
+
+        } catch (final Exception ex) {
+            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", ex).showAndWait());
+        }
+    }
+
+    private Result<LocalJavaRuntime> checkSupportedVersionRange(final Result<LocalJavaRuntime> result) {
+        if (result.isSuccessful()) {
+            final VersionId version = result.getResult().getVersion();
+            if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
+                return result;
+            }
+            else {
+                return Result.fail(new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange()));
+            }
+        }
+        return result;
     }
 
     private void refreshModel() {
