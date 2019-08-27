@@ -6,23 +6,23 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.USER_HOME;
 
-public class MacRuntimeFinder implements RuntimeFinder {
-    private static final Logger LOG = LoggerFactory.getLogger(MacRuntimeFinder.class);
+public class LinuxRuntimeFinder implements RuntimeFinder {
+    private static final Logger LOG = LoggerFactory.getLogger(LinuxRuntimeFinder.class);
 
-    private static final String MAC_JVM_BASEFOLDER = "/Library/Java/JavaVirtualMachines";
+    private static final String JVM_BASEFOLDER = "/usr/lib/jvm/";
 
     @Override
     public List<Result<LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
-        final Path systemPath = Paths.get(MAC_JVM_BASEFOLDER);
+        final Path systemPath = Paths.get(JVM_BASEFOLDER);
         final Path sdkmanPath = Paths.get(System.getProperty(USER_HOME) + File.separatorChar + ".sdkman");
 
         return JdkFinder.findLocalJdks(systemPath, sdkmanPath);
@@ -30,6 +30,6 @@ public class MacRuntimeFinder implements RuntimeFinder {
 
     @Override
     public List<OperationSystem> getSupportedOperationSystems() {
-        return Collections.singletonList(OperationSystem.MAC64);
+        return Arrays.asList(OperationSystem.LINUX32, OperationSystem.LINUX64);
     }
 }
