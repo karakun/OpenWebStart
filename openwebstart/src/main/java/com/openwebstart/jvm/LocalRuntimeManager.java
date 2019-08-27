@@ -268,6 +268,7 @@ public final class LocalRuntimeManager {
         });
 
         if (foundRuntimes.isEmpty()) {
+            LOG.debug("No Java runtime found on your local machine.");
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "No Java runtime found on your local machine.", "Local JVM Search", JOptionPane.INFORMATION_MESSAGE));
         }
 
