@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.ui.sample;
 
-import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
@@ -27,12 +26,9 @@ import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
@@ -45,19 +41,14 @@ public class JvmManagerDemo {
 
     public static void main(String[] args) throws Exception {
 
-        final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
-        final Path cacheDir = tempDir.resolve("ows-jvm-demo-cache");
-        Files.createDirectories(cacheDir);
-        //RuntimeManagerConfig.getInstance().setCachePath(cacheDir);
-
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
         RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
 
-        JavaRuntimeSelector.setDownloadHandler(JvmManagerDemo::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(JvmManagerDemo::askForUpdate);
+        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
+        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
 
         LocalRuntimeManager.getInstance().loadRuntimes();
 
@@ -72,36 +63,10 @@ public class JvmManagerDemo {
         });
     }
 
-    private static boolean askForUpdate(final RemoteJavaRuntime remoteJavaRuntime) {
-        try {
-            final CompletableFuture<Boolean> result = new CompletableFuture<>();
-            SwingUtilities.invokeLater(() -> {
-                final AskForRuntimeUpdateDialog dialog = new AskForRuntimeUpdateDialog(remoteJavaRuntime);
-                final boolean update = dialog.showAndWait();
-                result.complete(update);
-            });
-            return result.get();
-        } catch (final Exception e) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while asking for update", e).showAndWait());
-            return true;
-        }
-    }
-
-    private static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
-        try {
-            SwingUtilities.invokeAndWait(() -> {
-                final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
-                downloadDialog.setVisible(true);
-            });
-        } catch (final Exception e) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while handling download dialog!", e).showAndWait());
-        }
-    }
-
     private static void startServer() throws Exception {
 
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
-        final URI theOneAndOnlyJdkZip = new URI("http://localhost:8090/jvms/jdk.zip");
+        final URL theOneAndOnlyJdkZip = new URL("http://localhost:8090/jvms/jdk.zip");
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
             runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", "4711", theOneAndOnlyJdkZip));
@@ -184,7 +149,7 @@ public class JvmManagerDemo {
             try {
                 final VersionString version = VersionString.fromString(requestedVersionField.getText());
                 final String vendor = requestedVendorField.getText();
-                final URI serverEndpoint = new URI(requestedEndpointField.getText());
+                final URL serverEndpoint = new URL(requestedEndpointField.getText());
                 final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, vendor, serverEndpoint);
 
                 SwingUtilities.invokeLater(() -> {

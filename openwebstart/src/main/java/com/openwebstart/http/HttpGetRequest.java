@@ -4,7 +4,7 @@ import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
+import java.net.URL;
 import java.net.URLConnection;
 
 
@@ -12,12 +12,12 @@ public class HttpGetRequest {
 
     private final HttpURLConnection connection;
 
-    private final URI url;
+    private final URL url;
 
-    public HttpGetRequest(final URI url) throws IOException {
+    public HttpGetRequest(final URL url) throws IOException {
         this.url = Assert.requireNonNull(url, "url");
 
-        final URLConnection connection = url.toURL().openConnection();
+        final URLConnection connection = url.openConnection();
         if (connection instanceof HttpURLConnection) {
             this.connection = (HttpURLConnection) connection;
             this.connection.setRequestMethod("GET");

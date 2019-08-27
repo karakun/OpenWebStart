@@ -1,14 +1,15 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.util.JavaExecutableFinder;
-import net.adoptopenjdk.icedteaweb.JvmPropertyConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,12 +24,35 @@ import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
+    private final JavaHomeProvider javaHomeProvider;
+
+    OwsJvmLauncher(JavaHomeProvider javaHomeProvider) {
+        this.javaHomeProvider = javaHomeProvider;
+    }
+
     @Override
     public void launchExternal(JNLPFile jnlpFile, List<String> args) throws Exception {
-        final String javaHome = System.getProperty(JvmPropertyConstants.JAVA_HOME);
+
+        final Path javaHome = getJavaHome(jnlpFile);
+
+        LOG.info("using java runtime at '{}' for launching managed application", javaHome);
+
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaHome);
         final String pathToJar = getPathToOpenWebStartJar();
         launchExternal(pathToJavaBinary, pathToJar, jnlpFile.getNewVMArgs(), args);
+    }
+
+    private Path getJavaHome(JNLPFile jnlpFile) {
+        for (JREDesc jre : jnlpFile.getResources().getJREs()) {
+            LOG.debug("searching for JRE with version string '{}'", jre.getVersion());
+
+            final Path javaHome = javaHomeProvider.getJavaHome(jre.getVersion(), jre.getLocation());
+            if (javaHome != null) {
+                return javaHome;
+            }
+        }
+
+        throw new IllegalStateException("could not find any suitable runtime");
     }
 
     /**

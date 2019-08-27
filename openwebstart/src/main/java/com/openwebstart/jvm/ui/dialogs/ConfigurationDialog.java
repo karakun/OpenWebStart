@@ -18,6 +18,7 @@ import java.awt.Checkbox;
 import java.awt.GridLayout;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Optional;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
@@ -47,7 +48,7 @@ public class ConfigurationDialog extends JDialog {
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
-        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URI::toString).orElse(""));
+        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
 
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow other servers");
         allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());

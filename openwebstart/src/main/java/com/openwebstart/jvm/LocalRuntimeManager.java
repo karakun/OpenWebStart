@@ -26,7 +26,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 public final class LocalRuntimeManager {
 
@@ -50,9 +51,7 @@ public final class LocalRuntimeManager {
     private final List<LocalJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
 
     private final List<RuntimeRemovedListener> removedListeners = new CopyOnWriteArrayList<>();
-
     private final List<RuntimeAddedListener> addedListeners = new CopyOnWriteArrayList<>();
-
     private final List<RuntimeUpdateListener> updatedListeners = new CopyOnWriteArrayList<>();
 
     private final Lock jsonStoreLock = new ReentrantLock();
@@ -102,11 +101,11 @@ public final class LocalRuntimeManager {
         }
     }
 
-    public void loadRuntimes() throws Exception {
+    public void loadRuntimes() {
+        LOG.debug("Loading runtime cache from filesystem");
         jsonStoreLock.lock();
+        final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
         try {
-            LOG.debug("Loading runtime cache from filesystem");
-            final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
@@ -115,6 +114,9 @@ public final class LocalRuntimeManager {
             } else {
                 clear();
             }
+        } catch (IOException e) {
+            LOG.error("Could not load file: " + jsonFile);
+            throw new RuntimeException(e);
         } finally {
             jsonStoreLock.unlock();
         }
@@ -290,7 +292,7 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Runtime will be installed in " + runtimePath);
 
-        final URI downloadRequest = remoteRuntime.getEndpoint();
+        final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         try (final HttpResponse response = request.handle()) {
             final DownloadInputStream inputStream = new DownloadInputStream(response);
@@ -321,10 +323,9 @@ public final class LocalRuntimeManager {
 
     public LocalJavaRuntime getBestRuntime(final VersionString versionString, final String vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
-        Assert.requireNonBlank(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() ? vendor : RuntimeManagerConfig.getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
         final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
         LOG.debug("Trying to find local Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendorForRequest + "' requested os: '" + operationSystem + "'");

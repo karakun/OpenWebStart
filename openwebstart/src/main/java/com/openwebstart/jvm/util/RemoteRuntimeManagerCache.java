@@ -4,17 +4,17 @@ import com.openwebstart.jvm.json.RemoteRuntimeList;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.io.Serializable;
-import java.net.URI;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class RemoteRuntimeManagerCache implements Serializable {
 
-    private final URI endpointForRequest;
+    private final URL endpointForRequest;
     private final RemoteRuntimeList list;
     private final LocalDateTime endOfCache;
 
-    public RemoteRuntimeManagerCache(final URI endpointForRequest, final RemoteRuntimeList list) {
+    public RemoteRuntimeManagerCache(final URL endpointForRequest, final RemoteRuntimeList list) {
         this.endpointForRequest = Assert.requireNonNull(endpointForRequest, "endpointForRequest");
         this.list = Assert.requireNonNull(list, "list");
         this.endOfCache = LocalDateTime.now().plus(list.getCacheTimeInMillis(), ChronoUnit.MILLIS);
@@ -24,7 +24,7 @@ public class RemoteRuntimeManagerCache implements Serializable {
         return list;
     }
 
-    public URI getEndpointForRequest() {
+    public URL getEndpointForRequest() {
         return endpointForRequest;
     }
 

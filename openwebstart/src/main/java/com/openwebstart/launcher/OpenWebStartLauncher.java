@@ -2,15 +2,19 @@ package com.openwebstart.launcher;
 
 import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.openwebstart.jvm.JavaRuntimeSelector;
+import com.openwebstart.jvm.LocalRuntimeManager;
+import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
+import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.runtime.Boot;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -28,6 +32,11 @@ public class OpenWebStartLauncher {
                 InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
 
         final List<String> bootArgs = skipNotRelevantArgs(args);
+        final JavaHomeProvider javaHomeProvider = JavaRuntimeSelector.getInstance();
+        LocalRuntimeManager.getInstance().loadRuntimes();
+
+        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
+        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
 
         /**
          * Listener will be called when the executable is started again or when a file open event is received.
@@ -43,7 +52,7 @@ public class OpenWebStartLauncher {
                         Collections.addAll(bootArgs, parameters); // add file name at the end file to open
 
                         LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", bootArgs);
-                        Boot.main(new OwsJvmLauncher(), bootArgs.toArray(new String[0]));
+                        Boot.main(new OwsJvmLauncher(javaHomeProvider), bootArgs.toArray(new String[0]));
                     }
                 }
             }
@@ -52,7 +61,7 @@ public class OpenWebStartLauncher {
         // Windows and Linux are called here
         if (!InstallerUtil.isMacOS()) {
             LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
-            Boot.main(new OwsJvmLauncher(), bootArgs.toArray(new String[0]));
+            Boot.main(new OwsJvmLauncher(javaHomeProvider), bootArgs.toArray(new String[0]));
         }
     }
 

@@ -4,12 +4,14 @@ import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
+import com.openwebstart.launcher.JavaHomeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -17,7 +19,7 @@ import java.util.function.Predicate;
 
 import static com.openwebstart.jvm.RuntimeUpdateStrategy.DO_NOTHING_ON_LOCAL_MATCH;
 
-public class JavaRuntimeSelector {
+public class JavaRuntimeSelector implements JavaHomeProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimeSelector.class);
 
@@ -37,10 +39,20 @@ public class JavaRuntimeSelector {
         getInstance().askForUpdateFunction = askForUpdateFunction;
     }
 
-    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URI serverEndpoint) throws Exception {
+    @Override
+    public Path getJavaHome(VersionString version, URL url) {
+        try {
+            return getRuntime(version, null, url).getJavaHome();
+        } catch (Exception e) {
+            LOG.info("Exception while getting runtime - " + version + " - " + url, e);
+            return null;
+        }
+    }
+
+    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URL serverEndpoint) throws Exception {
         Assert.requireNonNull(versionString, "versionString");
 
-        LOG.debug("Trying to find Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor);
+        LOG.debug("Trying to find Java runtime. Requested version: '" + versionString + "' Requested vendor: '" + vendor + "'");
 
         final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
         final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor);
