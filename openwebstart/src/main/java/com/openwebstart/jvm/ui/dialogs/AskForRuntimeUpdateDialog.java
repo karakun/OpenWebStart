@@ -48,9 +48,9 @@ public class AskForRuntimeUpdateDialog extends JDialog {
 
         final JLabel messageLabel = new JLabel("A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() + "') is available. Do you want to download this version?");
 
-        final JButton noUpdateButton = new JButton("no");
+        final JButton noUpdateButton = new JButton("No");
         noUpdateButton.addActionListener(e -> close(false));
-        final JButton updateButton = new JButton("yes");
+        final JButton updateButton = new JButton("Yes");
         updateButton.addActionListener(e -> close(true));
 
         final JPanel messageWrapperPanel = new JPanel();

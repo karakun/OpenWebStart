@@ -58,7 +58,7 @@ public class ConfigurationDialog extends JDialog {
         supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
 
 
-        final JButton okButton = new JButton("ok");
+        final JButton okButton = new JButton("Ok");
         okButton.addActionListener(e -> {
             try {
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
@@ -73,7 +73,7 @@ public class ConfigurationDialog extends JDialog {
             }
         });
 
-        final JButton cancelButton = new JButton("cancel");
+        final JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> close());
 
 
