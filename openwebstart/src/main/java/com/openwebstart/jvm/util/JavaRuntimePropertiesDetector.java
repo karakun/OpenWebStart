@@ -1,12 +1,5 @@
 package com.openwebstart.jvm.util;
 
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
-import net.adoptopenjdk.icedteaweb.ProcessUtils;
-import net.adoptopenjdk.icedteaweb.StringUtils;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,6 +8,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
+import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
@@ -70,7 +68,7 @@ public class JavaRuntimePropertiesDetector {
         final Map<String, String> props = new HashMap<>();
         final BufferedReader reader = new BufferedReader(new StringReader(content));
         String line;
-        while (!StringUtils.isBlank(line = reader.readLine())) {
+        while ((line = reader.readLine()) != null) {
             if (line.contains("=")) {
                 final String[] parts = line.split("=", 2);
                 final String key = parts[0].trim().toLowerCase();
