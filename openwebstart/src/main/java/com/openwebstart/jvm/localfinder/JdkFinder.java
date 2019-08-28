@@ -9,16 +9,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 public class JdkFinder {
+    private static final Logger LOG = LoggerFactory.getLogger(JdkFinder.class);
+
     public static final OperationSystem LOCAL_OS = OperationSystem.getLocalSystem();
 
 
     public static List<Result<LocalJavaRuntime>> findLocalJdks(final Path... searchRoots) {
+        LOG.debug("About to look for local jdks at the following locations: {}",
+                Arrays.stream(searchRoots).map(path -> path.normalize().toAbsolutePath().toString()).collect(Collectors.toList()));
+
         return Stream.of(searchRoots)
                 .map(JdkFinder::findLocalJdks)
                 .flatMap(List::stream)

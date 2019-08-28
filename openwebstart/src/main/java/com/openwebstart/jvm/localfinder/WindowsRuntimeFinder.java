@@ -18,6 +18,7 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
 
     private static final String JVM_BASEFOLDER_32 = System.getenv("ProgramFiles(X86)") + File.separatorChar + "java";
     private static final String JVM_BASEFOLDER_64 = System.getenv("ProgramFiles") + File.separatorChar + "java";
+    public static final String CYGWIN_HOME = "cygwin64" + File.separatorChar + "home";
 
     @Override
     public List<Result<LocalJavaRuntime>> findLocalRuntimes() {
@@ -25,7 +26,10 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
 
         final Path systemPath32 = Paths.get(JVM_BASEFOLDER_32);
         final Path systemPath64 = Paths.get(JVM_BASEFOLDER_64);
-        final Path sdkmanPath = Paths.get(System.getProperty(USER_HOME) + File.separatorChar + ".sdkman");
+        // This is based on the assumption that the windows installation and the cygwin installation left the
+        // Windows' default user directory and the cygwin home directory pretty much to the defaults
+        final String cygwinUserHome = System.getProperty(USER_HOME).replace("Users", CYGWIN_HOME);
+        final Path sdkmanPath = Paths.get(cygwinUserHome + File.separatorChar + ".sdkman");
 
         return JdkFinder.findLocalJdks(systemPath32, systemPath64, sdkmanPath);
     }
