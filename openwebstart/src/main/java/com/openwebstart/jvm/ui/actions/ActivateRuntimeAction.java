@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 public class ActivateRuntimeAction extends BasicMutationAction<LocalJavaRuntime> {
 
     public ActivateRuntimeAction(final BiConsumer<LocalJavaRuntime, LocalJavaRuntime> onChangeConsumer) {
-        super("activate JVM", "active the JVM for usage as runtime for webstart applications", onChangeConsumer);
+        super("Activate JVM", "Active the JVM for usage as runtime for webstart applications", onChangeConsumer);
     }
 
     @Override

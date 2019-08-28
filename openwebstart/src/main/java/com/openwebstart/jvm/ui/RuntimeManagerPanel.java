@@ -47,7 +47,7 @@ public final class RuntimeManagerPanel extends JPanel {
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
-        final JButton refreshButton = new JButton("refresh");
+        final JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 LocalRuntimeManager.getInstance().loadRuntimes();
@@ -55,7 +55,7 @@ public final class RuntimeManagerPanel extends JPanel {
                 throw new RuntimeException("Error", ex);
             }
         }));
-        final JButton findLocalRuntimesButton = new JButton("find local");
+        final JButton findLocalRuntimesButton = new JButton("Find local");
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 final List<Result<LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
@@ -69,10 +69,10 @@ public final class RuntimeManagerPanel extends JPanel {
             }
         }));
 
-        final JButton configureButton = new JButton("settings");
+        final JButton configureButton = new JButton("Settings");
         configureButton.addActionListener(e -> new ConfigurationDialog().showAndWait());
 
-        final JButton addLocalRuntimesButton = new JButton("add local");
+        final JButton addLocalRuntimesButton = new JButton("Add local");
         addLocalRuntimesButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Select JVM");

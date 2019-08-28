@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 public class RemoveRuntimeAction extends BasicAction<LocalJavaRuntime> {
 
     public RemoveRuntimeAction() {
-        super("remove JVM", "remove the JVM from the list");
+        super("Remove JVM", "Remove the JVM from the list");
     }
 
     @Override

@@ -133,7 +133,7 @@ public class JvmManagerDemo {
     private static void showDummyRequestWindow() {
         final JFrame frame = new JFrame("Request Version");
 
-        final JButton requestButton = new JButton("request");
+        final JButton requestButton = new JButton("Request");
         final JTextField requestedVersionField = new JTextField();
         final JTextField requestedVendorField = new JTextField("*");
         final JTextField requestedEndpointField = new JTextField("http://localhost:8090/jvms");

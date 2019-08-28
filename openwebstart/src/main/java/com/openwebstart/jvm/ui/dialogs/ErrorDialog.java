@@ -43,7 +43,7 @@ public class ErrorDialog extends JDialog {
         error.printStackTrace(new PrintWriter(writer));
         exceptionDetailsArea.setText(writer.getBuffer().toString());
 
-        final JButton closeButton = new JButton("close");
+        final JButton closeButton = new JButton("Close");
         closeButton.addActionListener(e -> close());
 
         final JPanel messageWrapperPanel = new JPanel();
