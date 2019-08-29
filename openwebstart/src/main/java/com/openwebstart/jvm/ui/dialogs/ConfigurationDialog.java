@@ -47,7 +47,7 @@ public class ConfigurationDialog extends JDialog {
         final JTextField defaultUpdateServerField = new JTextField();
         defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
 
-        final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow other servers");
+        final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow server from JNLP file");
         allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
         final JLabel supportedVersionRangeLabel = new JLabel("Supported runtime version range:");
