@@ -3,16 +3,19 @@ package com.openwebstart.jvm;
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.launcher.JavaHomeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
+import javax.swing.SwingUtilities;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -44,12 +47,19 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
         try {
             return getRuntime(version, null, url).getJavaHome();
         } catch (Exception e) {
-            LOG.info("Exception while getting runtime - " + version + " - " + url, e);
+            final String msg = "Exception while getting runtime - " + version + " - " + url;
+            LOG.info(msg, e);
+            try {
+                SwingUtilities.invokeAndWait(() -> new ErrorDialog(msg, e).showAndWait());
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            JNLPRuntime.exit(1);
             return null;
         }
     }
 
-    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URL serverEndpoint) throws Exception {
+    public LocalJavaRuntime getRuntime(final VersionString versionString, final String vendor, final URL serverEndpoint) {
         Assert.requireNonNull(versionString, "versionString");
 
         LOG.debug("Trying to find Java runtime. Requested version: '{}' Requested vendor: '{}'", versionString, vendor);
@@ -99,7 +109,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
             }
 
             return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, serverEndpoint, consumer);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException("Can not install needed runtime", e);
         }
     }

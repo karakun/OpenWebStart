@@ -36,11 +36,11 @@ class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor) throws Exception {
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor) {
         return getBestRuntime(versionString, specificServerEndpoint, vendor, OperationSystem.getLocalSystem());
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor, final OperationSystem operationSystem) throws Exception {
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
