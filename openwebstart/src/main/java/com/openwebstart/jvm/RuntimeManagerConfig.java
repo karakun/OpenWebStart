@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER;
-import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
@@ -59,14 +58,6 @@ public class RuntimeManagerConfig {
 
     public static void setDefaultVendor(final String defaultVendor) {
         config().setProperty(DEFAULT_JVM_VENDOR, defaultVendor);
-    }
-
-    public static boolean isNonDefaultVendorsAllowed() {
-        return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR));
-    }
-
-    public static void setNonDefaultVendorsAllowed(final boolean nonDefaultVendorsAllowed) {
-        config().setProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR, Boolean.toString(nonDefaultVendorsAllowed));
     }
 
     public static RuntimeUpdateStrategy getStrategy() {

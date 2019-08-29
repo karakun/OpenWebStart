@@ -16,7 +16,6 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "jvm.manager.server.default";
     public static final String ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER = "jvm.manager.server.allowOthers";
     public static final String DEFAULT_JVM_VENDOR = "jvm.manager.vendor.default";
-    public static final String ALLOWS_NON_DEFAULT_JVM_VENDOR = "jvm.manager.vendor.allowOthers";
     public static final String JVM_UPDATE_STRATEGY = "jvm.manager.update.strategy";
     public static final String JVM_SUPPORTED_VERSION_RANGE = "jvm.manager.version.range";
 
@@ -44,11 +43,6 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         DEFAULT_JVM_VENDOR,
                         "AdoptOpenJDK",
                         null
-                ),
-                Setting.createDefault(
-                        ALLOWS_NON_DEFAULT_JVM_VENDOR,
-                        Boolean.TRUE.toString(),
-                        ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
                         JVM_UPDATE_STRATEGY,

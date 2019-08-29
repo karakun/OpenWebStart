@@ -36,18 +36,18 @@ class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor) {
-        return getBestRuntime(versionString, specificServerEndpoint, vendor, OperationSystem.getLocalSystem());
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint) {
+        final String vendorName = RuntimeManagerConfig.getDefaultVendor();
+        return getBestRuntime(versionString, specificServerEndpoint, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final String vendor, final OperationSystem operationSystem) {
+    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
+        Assert.requireNonNull(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
-        final Vendor vendorForRequest = Vendor.fromString(vendorName);
 
-        LOG.debug("Trying to find remote Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendorForRequest, operationSystem);
+        LOG.debug("Trying to find remote Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendor, operationSystem);
 
         final URL endpointForRequest = Optional.ofNullable(specificServerEndpoint)
                 .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
@@ -70,13 +70,13 @@ class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            Assert.requireNonNull(vendorForRequest, "vendorForRequest");
+            Assert.requireNonNull(vendor, "vendorForRequest");
 
             LOG.debug("Received {} possible runtime definitions from server", result.getResult().getRuntimes().size());
 
             return result.getResult().getRuntimes().stream()
                     .filter(r -> r.getOperationSystem() == operationSystem)
-                    .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
+                    .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
                     .filter(r -> versionString.contains(r.getVersion()))
                     .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                     .max(new RuntimeVersionComparator(versionString));

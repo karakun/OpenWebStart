@@ -4,6 +4,7 @@ import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import org.junit.jupiter.api.AfterEach;
@@ -80,7 +81,6 @@ public class RemoteRuntimeManagerTest {
 
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
-        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
     }
@@ -91,21 +91,18 @@ public class RemoteRuntimeManagerTest {
         Spark.awaitStop();
 
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
-        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
     }
 
     @Test
-    public void testRemoteRuntime_1() throws Exception {
+    public void testRemoteRuntime_1() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = null;
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -115,15 +112,13 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_2() throws Exception {
+    public void testRemoteRuntime_2()  {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = null;
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = WIN64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, WIN64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -133,15 +128,13 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_3() throws Exception {
+    public void testRemoteRuntime_3() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = null;
-        final String vendor = "adopt";
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ADOPT, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -151,15 +144,13 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_4() throws Exception {
+    public void testRemoteRuntime_4() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -169,15 +160,13 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_5() throws Exception {
+    public void testRemoteRuntime_5()  {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
-        final String vendor = "adopt";
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ADOPT, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -187,68 +176,43 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_6() throws Exception {
+    public void testRemoteRuntime_6() {
         //given
         final VersionString versionString = VersionString.fromString("20+");
         final URL specificServerEndpoint = null;
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, MAC64).orElse(null);
 
         //than
         Assertions.assertNull(runtime);
     }
 
     @Test
-    public void testRemoteRuntime_7() throws Exception {
+    public void testRemoteRuntime_7() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
-        final String vendor = "not_found";
-        final OperationSystem operationSystem = MAC64;
+        final Vendor vendor = Vendor.fromString("not_found");
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, MAC64).orElse(null);
 
         //than
         Assertions.assertNull(runtime);
     }
 
     @Test
-    public void testRemoteRuntime_8() throws Exception {
+    public void testRemoteRuntime_8()  {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = ARM32;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, ARM32).orElse(null);
 
         //than
         Assertions.assertNull(runtime);
-    }
-
-    @Test
-    public void testRemoteRuntime_9() throws Exception {
-        //given
-        final VersionString versionString = VersionString.fromString("1.8*");
-        final URL specificServerEndpoint = null;
-        final String vendor = "oracle";
-        final OperationSystem operationSystem = MAC64;
-
-        //when
-        RuntimeManagerConfig.setNonDefaultVendorsAllowed(false);
-        RuntimeManagerConfig.setDefaultVendor("adopt");
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
-
-        //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_224, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
     }
 
     @Test
@@ -256,11 +220,9 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = new URL("http://do.not.exists/error");
-        final String vendor = "oracle";
-        final OperationSystem operationSystem = MAC64;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ORACLE, MAC64).orElse(null);
 
         // then
         Assertions.assertNull(runtime);
@@ -271,12 +233,10 @@ public class RemoteRuntimeManagerTest {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = new URL("http://do.not.exists/error");
-        final String vendor = ANY_VENDOR.getName();
-        final OperationSystem operationSystem = MAC64;
 
         //when
         RuntimeManagerConfig.setNonDefaultServerAllowed(false);
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, vendor, operationSystem).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ANY_VENDOR, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);

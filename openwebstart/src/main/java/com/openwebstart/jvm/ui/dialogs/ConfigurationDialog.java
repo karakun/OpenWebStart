@@ -38,13 +38,10 @@ public class ConfigurationDialog extends JDialog {
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
-        final JLabel defaultVendorLabel = new JLabel("Default vendor:");
+        final JLabel defaultVendorLabel = new JLabel("Vendor:");
         final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
         defaultVendorComboBox.setEditable(true);
         defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getDefaultVendor());
-
-        final Checkbox allowAnyVendorCheckBox = new Checkbox("Allow other vendors");
-        allowAnyVendorCheckBox.setState(RuntimeManagerConfig.isNonDefaultVendorsAllowed());
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
@@ -63,7 +60,6 @@ public class ConfigurationDialog extends JDialog {
             try {
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) defaultVendorComboBox.getSelectedItem());
-                RuntimeManagerConfig.setNonDefaultVendorsAllowed(allowAnyVendorCheckBox.getState());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
@@ -83,8 +79,6 @@ public class ConfigurationDialog extends JDialog {
         mainPanel.add(updateStrategyComboBox);
         mainPanel.add(defaultVendorLabel);
         mainPanel.add(defaultVendorComboBox);
-        mainPanel.add(new JPanel());
-        mainPanel.add(allowAnyVendorCheckBox);
         mainPanel.add(defaultUpdateServerLabel);
         mainPanel.add(defaultUpdateServerField);
         mainPanel.add(new JPanel());
