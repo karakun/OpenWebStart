@@ -59,12 +59,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
         if (localRuntime == null) {
             LOG.debug("No local runtime found, will try to find remote runtime");
             final RemoteJavaRuntime remoteJavaRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor).orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" + versionString + "' and vendor '" + vendor + "'"));
-            try {
-                LOG.debug("Remote Runtime found. Will install it to local cache");
-                return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, s -> Optional.ofNullable(downloadHandler).ifPresent(h -> h.accept(remoteJavaRuntime, s)));
-            } catch (final Exception e) {
-                throw new RuntimeException("Can not install needed runtime", e);
-            }
+            return installRemoteRuntime(remoteJavaRuntime);
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
             LOG.debug("Local runtime found and will be used");
             return localRuntime;
