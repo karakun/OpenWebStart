@@ -283,7 +283,7 @@ public final class LocalRuntimeManager {
         return Collections.unmodifiableList(foundRuntimes);
     }
 
-    public LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, final Consumer<DownloadInputStream> downloadConsumer) throws Exception {
+    public LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws Exception {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
 
         LOG.debug("Installing remote runtime on local cache");
@@ -298,7 +298,7 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Runtime will be installed in {}", runtimePath);
 
-        final URL downloadRequest = remoteRuntime.getEndpoint();
+        final URL downloadRequest = remoteRuntime.getEndpoint(serverEndpoint);
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         try (final HttpResponse response = request.handle()) {
             final DownloadInputStream inputStream = new DownloadInputStream(response);

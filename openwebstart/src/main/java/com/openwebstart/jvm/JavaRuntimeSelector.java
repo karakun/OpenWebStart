@@ -59,7 +59,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
         if (localRuntime == null) {
             LOG.debug("No local runtime found, will try to find remote runtime");
             final RemoteJavaRuntime remoteJavaRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor).orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" + versionString + "' and vendor '" + vendor + "'"));
-            return installRemoteRuntime(remoteJavaRuntime);
+            return installRemoteRuntime(remoteJavaRuntime, serverEndpoint);
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
             LOG.debug("Local runtime found and will be used");
             return localRuntime;
@@ -68,7 +68,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
             return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor)
                     .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime, remoteRuntime))
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
-                    .map(this::installRemoteRuntime)
+                    .map((RemoteJavaRuntime remoteJavaRuntime) -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint))
                     .orElse(localRuntime);
         }
     }
@@ -87,7 +87,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
         return false;
     }
 
-    private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime) {
+    private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
         try {
             LOG.debug("Remote Runtime found. Will install it to local cache");
 
@@ -98,7 +98,7 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
                 consumer = null;
             }
 
-            return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, consumer);
+            return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, serverEndpoint, consumer);
         } catch (Exception e) {
             throw new RuntimeException("Can not install needed runtime", e);
         }

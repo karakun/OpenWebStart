@@ -48,7 +48,7 @@ public class RemoteRuntimeManagerTest {
     @BeforeEach
     public void init() throws Exception {
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
-        final URL theOneAndOnlyJdkZip = new URL("http://localhost:8090/jvms/jdk.zip");
+        final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
             runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", theOneAndOnlyJdkZip));
