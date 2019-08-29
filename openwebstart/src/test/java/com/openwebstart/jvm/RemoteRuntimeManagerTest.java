@@ -51,17 +51,17 @@ public class RemoteRuntimeManagerTest {
         final URL theOneAndOnlyJdkZip = new URL("http://localhost:8090/jvms/jdk.zip");
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
-            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", "4711", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "adopt", "471sddw1", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "adopt", "471sddw1", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "adopt", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "adopt", theOneAndOnlyJdkZip));
 
-            runtimes.add(new RemoteJavaRuntime("1.8.146", os, "oracle", "4711", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.221", os, "oracle", "471sddw1", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.225", os, "oracle", "471sddw1", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.146", os, "oracle", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.221", os, "oracle", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.225", os, "oracle", theOneAndOnlyJdkZip));
 
-            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "adopt", "471sddw1", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "adopt", theOneAndOnlyJdkZip));
 
-            runtimes.add(new RemoteJavaRuntime("11.0.2", os, "oracle", "471sddw1", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("11.0.2", os, "oracle", theOneAndOnlyJdkZip));
         }
 
         final int port = getFreePort();

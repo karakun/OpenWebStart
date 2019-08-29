@@ -14,7 +14,7 @@ interface JsonConstants {
 
     String OS_PROPERTY = "os";
 
-    String ENDPOINT_PROPERTY = "endpoint";
+    String HREF_PROPERTY = "href";
 
     String HASH_PROPERTY = "hash";
 

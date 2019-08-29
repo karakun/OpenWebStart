@@ -22,8 +22,7 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
         jsonObject.addProperty(JsonConstants.VERSION_PROPERTY, remoteJavaRuntime.getVersion().toString());
         jsonObject.addProperty(JsonConstants.VENDOR_PROPERTY, remoteJavaRuntime.getVendor().getName());
         jsonObject.addProperty(JsonConstants.OS_PROPERTY, remoteJavaRuntime.getOperationSystem().name());
-        jsonObject.addProperty(JsonConstants.ENDPOINT_PROPERTY, remoteJavaRuntime.getEndpoint().toString());
-        jsonObject.addProperty(JsonConstants.HASH_PROPERTY, remoteJavaRuntime.getHash());
+        jsonObject.addProperty(JsonConstants.HREF_PROPERTY, remoteJavaRuntime.getEndpoint().toString());
 
 
         return jsonObject;
@@ -37,11 +36,10 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
             final String version = jsonObject.get(JsonConstants.VERSION_PROPERTY).getAsString();
             final String vendor = jsonObject.get(JsonConstants.VENDOR_PROPERTY).getAsString();
             final OperationSystem os = OperationSystem.valueOf(jsonObject.get(JsonConstants.OS_PROPERTY).getAsString());
-            final String hash = jsonObject.get(JsonConstants.HASH_PROPERTY).getAsString();
-            final URL endpoint = new URL(jsonObject.get(JsonConstants.ENDPOINT_PROPERTY).getAsString());
+            final URL endpoint = new URL(jsonObject.get(JsonConstants.HREF_PROPERTY).getAsString());
 
 
-            return new RemoteJavaRuntime(version, os, vendor, hash, endpoint);
+            return new RemoteJavaRuntime(version, os, vendor, endpoint);
 
         } catch (final Exception e) {
             throw new JsonParseException("Can not parse RemoteJavaRuntime", e);
