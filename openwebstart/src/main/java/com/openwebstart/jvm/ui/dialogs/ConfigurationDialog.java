@@ -50,7 +50,7 @@ public class ConfigurationDialog extends JDialog {
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox("Allow server from JNLP file");
         allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
-        final JLabel supportedVersionRangeLabel = new JLabel("Supported runtime version range:");
+        final JLabel supportedVersionRangeLabel = new JLabel("Restrict JVM version range:");
         final JTextField supportedVersionRangeField = new JTextField();
         supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
 
