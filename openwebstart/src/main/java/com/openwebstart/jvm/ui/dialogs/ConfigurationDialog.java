@@ -2,6 +2,7 @@ package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;
@@ -36,12 +37,13 @@ public class ConfigurationDialog extends JDialog {
 
         final JLabel updateStrategyLabel = new JLabel("Update strategy:");
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
+        updateStrategyComboBox.setRenderer(new TranslatableEnumComboboxRenderer<>());
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Vendor:");
-        final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
-        defaultVendorComboBox.setEditable(true);
-        defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
+        final JComboBox<String> vendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
+        vendorComboBox.setEditable(true);
+        vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
@@ -59,7 +61,7 @@ public class ConfigurationDialog extends JDialog {
         okButton.addActionListener(e -> {
             try {
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
-                RuntimeManagerConfig.setDefaultVendor((String) defaultVendorComboBox.getSelectedItem());
+                RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
@@ -78,7 +80,7 @@ public class ConfigurationDialog extends JDialog {
         mainPanel.add(updateStrategyLabel);
         mainPanel.add(updateStrategyComboBox);
         mainPanel.add(defaultVendorLabel);
-        mainPanel.add(defaultVendorComboBox);
+        mainPanel.add(vendorComboBox);
         mainPanel.add(defaultUpdateServerLabel);
         mainPanel.add(defaultUpdateServerField);
         mainPanel.add(new JPanel());
