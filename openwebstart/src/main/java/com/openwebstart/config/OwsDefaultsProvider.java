@@ -31,7 +31,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         DEFAULT_JVM_DOWNLOAD_SERVER,
-                        "https://jvms.openwebstart.com/jvms",
+                        "https://download-openwebstart.com/jvms",
                         ValidatorFactory.createUrlValidator()
                 ),
                 Setting.createDefault(
