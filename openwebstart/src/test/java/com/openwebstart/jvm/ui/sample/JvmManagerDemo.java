@@ -45,7 +45,6 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
-        RuntimeManagerConfig.setNonDefaultVendorsAllowed(true);
 
         JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
         JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
@@ -63,7 +62,7 @@ public class JvmManagerDemo {
         });
     }
 
-    private static void startServer() throws Exception {
+    private static void startServer() {
 
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
         final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
@@ -135,7 +134,6 @@ public class JvmManagerDemo {
 
         final JButton requestButton = new JButton("Request");
         final JTextField requestedVersionField = new JTextField();
-        final JTextField requestedVendorField = new JTextField("*");
         final JTextField requestedEndpointField = new JTextField("http://localhost:8090/jvms");
         final JLabel responseVersionLabel = new JLabel("XXXXXX");
         final JLabel responseVendorLabel = new JLabel("XXXXXX");
@@ -148,9 +146,8 @@ public class JvmManagerDemo {
         requestButton.addActionListener(event -> Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 final VersionString version = VersionString.fromString(requestedVersionField.getText());
-                final String vendor = requestedVendorField.getText();
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());
-                final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, vendor, serverEndpoint);
+                final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, serverEndpoint);
 
                 SwingUtilities.invokeLater(() -> {
                     responseVersionLabel.setText(runtime.getVersion().toString());
@@ -171,8 +168,6 @@ public class JvmManagerDemo {
 
         mainPanel.add(new JLabel("Requested Version:"));
         mainPanel.add(requestedVersionField);
-        mainPanel.add(new JLabel("Requested Vendor:"));
-        mainPanel.add(requestedVendorField);
         mainPanel.add(new JLabel("Requested Endpoint:"));
         mainPanel.add(requestedEndpointField);
 

@@ -10,10 +10,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER;
-import static com.openwebstart.config.OwsDefaultsProvider.ALLOWS_NON_DEFAULT_JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
-import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
@@ -46,27 +45,19 @@ public class RuntimeManagerConfig {
     }
 
     public static boolean isNonDefaultServerAllowed() {
-        return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER));
+        return Boolean.parseBoolean(config().getProperty(ALLOW_DOWNLOAD_SERVER_FROM_JNLP));
     }
 
     public static void setNonDefaultServerAllowed(final boolean nonDefaultServerAllowed) {
-        config().setProperty(ALLOWS_NON_DEFAULT_JVM_DOWNLOAD_SERVER, Boolean.toString(nonDefaultServerAllowed));
+        config().setProperty(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, Boolean.toString(nonDefaultServerAllowed));
     }
 
-    public static String getDefaultVendor() {
-        return config().getProperty(DEFAULT_JVM_VENDOR);
+    public static String getVendor() {
+        return config().getProperty(JVM_VENDOR);
     }
 
     public static void setDefaultVendor(final String defaultVendor) {
-        config().setProperty(DEFAULT_JVM_VENDOR, defaultVendor);
-    }
-
-    public static boolean isNonDefaultVendorsAllowed() {
-        return Boolean.parseBoolean(config().getProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR));
-    }
-
-    public static void setNonDefaultVendorsAllowed(final boolean nonDefaultVendorsAllowed) {
-        config().setProperty(ALLOWS_NON_DEFAULT_JVM_VENDOR, Boolean.toString(nonDefaultVendorsAllowed));
+        config().setProperty(JVM_VENDOR, defaultVendor);
     }
 
     public static RuntimeUpdateStrategy getStrategy() {

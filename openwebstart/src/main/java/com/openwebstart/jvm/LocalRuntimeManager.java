@@ -42,7 +42,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
-import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 public final class LocalRuntimeManager {
 
@@ -324,23 +323,22 @@ public final class LocalRuntimeManager {
         return newRuntime;
     }
 
-    public LocalJavaRuntime getBestRuntime(final VersionString versionString, final String vendor) {
-        return getBestRuntime(versionString, vendor, OperationSystem.getLocalSystem());
+    public LocalJavaRuntime getBestRuntime(final VersionString versionString) {
+        final String vendorName = RuntimeManagerConfig.getVendor();
+        return getBestRuntime(versionString, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
     }
 
-    public LocalJavaRuntime getBestRuntime(final VersionString versionString, final String vendor, final OperationSystem operationSystem) {
+    public LocalJavaRuntime getBestRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
+        Assert.requireNonNull(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        final String vendorName = RuntimeManagerConfig.isNonDefaultVendorsAllowed() && !isBlank(vendor) ? vendor : RuntimeManagerConfig.getDefaultVendor();
-        final Vendor vendorForRequest = Vendor.fromString(vendorName);
-
-        LOG.debug("Trying to find local Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendorForRequest, operationSystem);
+        LOG.debug("Trying to find local Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendor, operationSystem);
 
         return runtimes.stream()
                 .filter(LocalJavaRuntime::isActive)
                 .filter(r -> operationSystem == r.getOperationSystem())
-                .filter(r -> Objects.equals(vendorForRequest, ANY_VENDOR) || Objects.equals(vendorForRequest, r.getVendor()))
+                .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))
