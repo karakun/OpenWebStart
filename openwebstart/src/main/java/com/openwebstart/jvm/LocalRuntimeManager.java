@@ -323,11 +323,6 @@ public final class LocalRuntimeManager {
         return newRuntime;
     }
 
-    public LocalJavaRuntime getBestRuntime(final VersionString versionString) {
-        final String vendorName = RuntimeManagerConfig.getVendor();
-        return getBestRuntime(versionString, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
-    }
-
     public LocalJavaRuntime getBestRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(vendor, "vendor");

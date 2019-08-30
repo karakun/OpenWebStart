@@ -35,11 +35,6 @@ class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint) {
-        final String vendorName = RuntimeManagerConfig.getVendor();
-        return getBestRuntime(versionString, specificServerEndpoint, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
-    }
-
     public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(vendor, "vendor");
