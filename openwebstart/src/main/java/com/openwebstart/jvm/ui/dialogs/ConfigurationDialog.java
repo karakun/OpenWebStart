@@ -2,6 +2,7 @@ package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;
@@ -36,6 +37,7 @@ public class ConfigurationDialog extends JDialog {
 
         final JLabel updateStrategyLabel = new JLabel("Update strategy:");
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
+        updateStrategyComboBox.setRenderer(new TranslatableEnumComboboxRenderer<>());
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Vendor:");
