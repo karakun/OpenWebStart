@@ -42,7 +42,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
-import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 public final class LocalRuntimeManager {
 
@@ -325,7 +324,7 @@ public final class LocalRuntimeManager {
     }
 
     public LocalJavaRuntime getBestRuntime(final VersionString versionString) {
-        final String vendorName = RuntimeManagerConfig.getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.getVendor();
         return getBestRuntime(versionString, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
     }
 

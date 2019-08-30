@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
-import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 class RemoteRuntimeManager {
 
@@ -37,7 +36,7 @@ class RemoteRuntimeManager {
     }
 
     public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint) {
-        final String vendorName = RuntimeManagerConfig.getDefaultVendor();
+        final String vendorName = RuntimeManagerConfig.getVendor();
         return getBestRuntime(versionString, specificServerEndpoint, Vendor.fromString(vendorName), OperationSystem.getLocalSystem());
     }
 

@@ -52,7 +52,7 @@ public class RuntimeManagerConfig {
         config().setProperty(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, Boolean.toString(nonDefaultServerAllowed));
     }
 
-    public static String getDefaultVendor() {
+    public static String getVendor() {
         return config().getProperty(JVM_VENDOR);
     }
 

@@ -41,7 +41,7 @@ public class ConfigurationDialog extends JDialog {
         final JLabel defaultVendorLabel = new JLabel("Vendor:");
         final JComboBox<String> defaultVendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
         defaultVendorComboBox.setEditable(true);
-        defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getDefaultVendor());
+        defaultVendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
 
         final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
         final JTextField defaultUpdateServerField = new JTextField();
