@@ -20,8 +20,15 @@ import static com.openwebstart.jvm.os.Architecture.X86;
 
 public enum OperationSystem {
 
-    ARM32("Linux ARM 32 Hard Float ABI", "arm-32", Architecture.ARM32), ARM64("Linux ARM 64 Hard Float ABI", "arm-64", Architecture.ARM64), LINUX32("Linux x86", "linux-32", X86), LINUX64("Linux x64", "linux-64", X64),
-    MAC64("Mac OS X x64", "mac-64", X64), WIN32("Windows x86", "win-32", X86), WIN64("Windows x64", "win-64", X64);
+    ARM32("Linux ARM 32 Hard Float ABI", "arm-32", Architecture.ARM32),
+    ARM64("Linux ARM 64 Hard Float ABI", "arm-64", Architecture.ARM64),
+    LINUX32("Linux x86", "linux-32", X86),
+    LINUX64("Linux x64", "linux-64", X64),
+    MAC64("Mac OS X x64", "mac-64", X64),
+    WIN32("Windows x86", "win-32", X86),
+    WIN64("Windows x64", "win-64", X64),
+
+    ;
 
     //TODO: Should be in ITW
     private final static String OS_SYSTEM_PROPERTY = "os.name";
