@@ -1,0 +1,54 @@
+:imagesdir: ./images
+
+JNLP Examples
+-------------
+
+
+The following list of publicly available JNLP demo applications gives an indication on compatibility with OpenWebSStart and a JVM version.
+Feel free to add more applications to the list with your experience for your OS, OWS version and JVMs.
+
+[options="header"]
+|=======================
+|# |JNLP Application |Description & Origin |OWS Version |Win10 |Mac |Linux |JVM(s) |Comments Constraints
+
+|1
+|https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/WallpaperProject/Wallpaper.jnlp[Wallpaper]
+|Example from the Java Tutorials (JDK 8)
+|0.3.1
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+|AdoptOpenJDK 1.8.0_222
+|
+
+|2
+|https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/AccessibleScrollDemoProject/AccessibleScrollDemo.jnlp[Accessible Scroll Demo]
+|Example from the Java Tutorials (JDK 8)
+|0.3.1
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+|AdoptOpenJDK 1.8.0_222
+|
+
+|3
+|https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/TablePrintDemo1Project/TablePrintDemo1.jnlp[TablePrintDemo1]
+|Example from the Java Tutorials (JDK 8)
+|0.3.1
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+|AdoptOpenJDK 1.8.0_222
+|
+
+|4
+|https://download.oracle.com/otndocs/products/javafx/8/samples/Ensemble/Ensemble.jnlp[JavaFX Ensemble Demo]
+|Ensemble provides a gallery of over 100 sample applications that use a wide range of JavaFX features, such as graphics, UI controls, animation, charts, media and WebView.
+|0.3.1
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+a| image::check_green.png[Check, 24]
+|Oracle Corporation 1.8.0_144
+| Needs a JVM that comes with JavaFX. https://www.oracle.com/technetwork/java/javase/overview/javafx-samples-2158687.html
+|=======================
+
