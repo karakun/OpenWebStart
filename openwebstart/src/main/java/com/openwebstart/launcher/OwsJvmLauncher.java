@@ -65,8 +65,7 @@ class OwsJvmLauncher implements JvmLauncher {
         final List<String> commands = new LinkedList<>();
 
         commands.add(quoteIfRequired(pathToJavaBinary));
-        commands.add("-cp");
-        commands.add(quoteIfRequired(pathToJar));
+        commands.add(quoteIfRequired("-Xbootclasspath/a:" + pathToJar));
 
         commands.addAll(vmArgs);
         commands.add(Boot.class.getName());
