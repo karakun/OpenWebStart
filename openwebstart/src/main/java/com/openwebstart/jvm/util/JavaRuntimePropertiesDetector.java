@@ -2,6 +2,7 @@ package com.openwebstart.jvm.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -34,15 +35,17 @@ public class JavaRuntimePropertiesDetector {
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
+            final OutputReader stdOutReader = new OutputReader(p.getInputStream());
+            final OutputReader stdErrReader = new OutputReader(p.getErrorStream());
+            new Thread(stdOutReader).start();
+            new Thread(stdErrReader).start();
             ProcessUtils.waitForSafely(p);
-            final String stdErr = IOUtils.readContentAsUtf8String(p.getErrorStream());
-            final String stdOut = IOUtils.readContentAsUtf8String(p.getInputStream());
             final int returnCode = p.exitValue();
             if (returnCode != 0) {
                 throw new RuntimeException("");
             }
 
-            return extractProperties(stdOut, stdErr);
+            return extractProperties(stdOutReader.content, stdErrReader.content);
         } catch (IOException ex) {
             LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, ex);
             throw new RuntimeException(ex);
@@ -107,6 +110,26 @@ public class JavaRuntimePropertiesDetector {
 
         public String getOsArch() {
             return osArch;
+        }
+    }
+
+    private static class OutputReader implements Runnable {
+
+        private final InputStream in;
+        private String content;
+
+        private OutputReader(InputStream in) {
+            this.in = in;
+        }
+
+        @Override
+        public void run() {
+            try {
+                content = IOUtils.readContentAsUtf8String(in);
+            } catch (IOException e) {
+                LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, e);
+                throw new RuntimeException(e);
+            }
         }
     }
 }
