@@ -10,11 +10,14 @@ import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.runtime.Boot;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
 
 
 /**
@@ -37,6 +40,7 @@ public class OpenWebStartLauncher {
 
         JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
         JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
+        JNLPRuntime.setForkingStrategy(ALWAYS);
 
         /**
          * Listener will be called when the executable is started again or when a file open event is received.
