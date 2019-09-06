@@ -13,7 +13,7 @@ Feel free to add more applications to the list with your experience for your OS,
 
 |1
 |https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/WallpaperProject/Wallpaper.jnlp[Wallpaper]
-|Example from the Java Tutorials (JDK 8)
+|Example from the https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/[Java Tutorials (JDK 8)]
 |0.3.1
 a| AdoptOpenJDK 1.8.0_222
 a| AdoptOpenJDK 1.8.0_222
@@ -22,7 +22,7 @@ a| AdoptOpenJDK 1.8.0_222
 
 |2
 |https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/AccessibleScrollDemoProject/AccessibleScrollDemo.jnlp[Accessible Scroll Demo]
-|Example from the Java Tutorials (JDK 8)
+|Example from the https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/[Java Tutorials (JDK 8)]
 |0.3.1
 a| AdoptOpenJDK 1.8.0_222
 a| AdoptOpenJDK 1.8.0_222
@@ -31,7 +31,7 @@ a| AdoptOpenJDK 1.8.0_222
 
 |3
 |https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/TablePrintDemo1Project/TablePrintDemo1.jnlp[TablePrintDemo1]
-|Example from the Java Tutorials (JDK 8)
+|Example from the https://docs.oracle.com/javase/tutorial/uiswing/examples/misc/[Java Tutorials (JDK 8)]
 |0.3.1
 a| AdoptOpenJDK 1.8.0_222
 a| AdoptOpenJDK 1.8.0_222
