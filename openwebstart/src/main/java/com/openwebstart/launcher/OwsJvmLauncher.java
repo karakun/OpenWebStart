@@ -81,7 +81,7 @@ class OwsJvmLauncher implements JvmLauncher {
         if (JAVA_1_8.contains(version)) {
             launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
-            vmArgs.add('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS);
+            vmArgs.add(quoteIfRequired('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS));
             launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
