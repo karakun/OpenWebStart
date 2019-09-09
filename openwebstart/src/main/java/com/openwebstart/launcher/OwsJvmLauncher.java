@@ -12,6 +12,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -30,6 +31,11 @@ class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
 
+    /**
+     * The file "itw-modularjdk.args" can be found in the icedtea-web source.
+     */
+    private static final String ITW_MODULARJDK_ARGS = "itw-modularjdk.args";
+
     private final JavaRuntimeProvider javaRuntimeProvider;
 
     OwsJvmLauncher(JavaRuntimeProvider javaRuntimeProvider) {
@@ -40,8 +46,8 @@ class OwsJvmLauncher implements JvmLauncher {
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
         final LocalJavaRuntime javaRuntime = getJavaRuntime(jnlpFile);
         LOG.info("using java runtime at '{}' for launching managed application", javaRuntime.getJavaHome());
-        final String pathToJar = getPathToOpenWebStartJar();
-        launchExternal(javaRuntime, pathToJar, jnlpFile.getNewVMArgs(), args);
+        final File webstartJar = getOpenWebStartJar();
+        launchExternal(javaRuntime, webstartJar, jnlpFile.getNewVMArgs(), args);
     }
 
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
@@ -59,23 +65,24 @@ class OwsJvmLauncher implements JvmLauncher {
 
     /**
      * @param javaRuntime the JRE in which to start OWS
-     * @param pathToJar   path to the openwebstart.jar included in OWS
+     * @param webstartJar the openwebstart.jar included in OWS
      * @param vmArgs      the arguments to pass to the jvm
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
     private void launchExternal(
             final LocalJavaRuntime javaRuntime,
-            final String pathToJar,
+            final File webstartJar,
             final List<String> vmArgs,
             final List<String> javawsArgs
     ) throws Exception {
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
-        if (JAVA_9_OR_GREATER.contains(version)) {
-            throw new RuntimeException("Java 9 and greater is currently not supported");
-        } else if (JAVA_1_8.contains(version)) {
-            launchExternalJava8(pathToJavaBinary, pathToJar, vmArgs, javawsArgs);
+        if (JAVA_1_8.contains(version)) {
+            launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+        } else if (JAVA_9_OR_GREATER.contains(version)) {
+            vmArgs.add('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS);
+            launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
@@ -106,15 +113,19 @@ class OwsJvmLauncher implements JvmLauncher {
         ProcessUtils.waitForSafely(p);
     }
 
-    private static String getPathToOpenWebStartJar() {
+    private static File getOpenWebStartJar() {
         final String classPath = System.getProperty("java.class.path");
         final String pathSeparator = System.getProperty("path.separator");
         final String javaHome = System.getProperty("java.home");
         final String[] classpathElements = classPath.split(Pattern.quote(pathSeparator));
 
-        final List<String> jarCandidates = Arrays.stream(classpathElements)
+        final List<File> jarCandidates = Arrays.stream(classpathElements)
                 .filter((e) -> e.endsWith("openwebstart.jar"))
                 .filter((e) -> !e.startsWith(javaHome))
+                .map(File::new)
+                .filter(File::exists)
+                .map(File::getAbsoluteFile)
+                .map(OwsJvmLauncher::canonicalFile)
                 .collect(Collectors.toList());
 
         if (jarCandidates.size() == 1) {
@@ -126,4 +137,11 @@ class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
+    private static File canonicalFile(File file) {
+        try {
+            return file.getCanonicalFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
