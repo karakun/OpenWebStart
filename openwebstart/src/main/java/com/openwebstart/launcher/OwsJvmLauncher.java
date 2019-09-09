@@ -27,6 +27,9 @@ import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
+    private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
+    private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
+
     private final JavaRuntimeProvider javaRuntimeProvider;
 
     OwsJvmLauncher(JavaRuntimeProvider javaRuntimeProvider) {
@@ -69,9 +72,9 @@ class OwsJvmLauncher implements JvmLauncher {
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
-        if (VersionString.fromString("9+").contains(version)) {
+        if (JAVA_9_OR_GREATER.contains(version)) {
             throw new RuntimeException("Java 9 and greater is currently not supported");
-        } else if (VersionString.fromString("1.8*").contains(version)) {
+        } else if (JAVA_1_8.contains(version)) {
             launchExternalJava8(pathToJavaBinary, pathToJar, vmArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
