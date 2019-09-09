@@ -1,15 +1,18 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,36 +22,32 @@ import java.util.stream.Collectors;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 
 /**
- * ...
+ * Launches OWS with a JNLP in a matching JRE.
  */
 class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
-    private final JavaHomeProvider javaHomeProvider;
+    private final JavaRuntimeProvider javaRuntimeProvider;
 
-    OwsJvmLauncher(JavaHomeProvider javaHomeProvider) {
-        this.javaHomeProvider = javaHomeProvider;
+    OwsJvmLauncher(JavaRuntimeProvider javaRuntimeProvider) {
+        this.javaRuntimeProvider = javaRuntimeProvider;
     }
 
     @Override
-    public void launchExternal(JNLPFile jnlpFile, List<String> args) throws Exception {
-
-        final Path javaHome = getJavaHome(jnlpFile);
-
-        LOG.info("using java runtime at '{}' for launching managed application", javaHome);
-
-        final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaHome);
+    public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
+        final LocalJavaRuntime javaRuntime = getJavaRuntime(jnlpFile);
+        LOG.info("using java runtime at '{}' for launching managed application", javaRuntime.getJavaHome());
         final String pathToJar = getPathToOpenWebStartJar();
-        launchExternal(pathToJavaBinary, pathToJar, jnlpFile.getNewVMArgs(), args);
+        launchExternal(javaRuntime, pathToJar, jnlpFile.getNewVMArgs(), args);
     }
 
-    private Path getJavaHome(JNLPFile jnlpFile) {
+    private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
         for (JREDesc jre : jnlpFile.getResources().getJREs()) {
             LOG.debug("searching for JRE with version string '{}'", jre.getVersion());
 
-            final Path javaHome = javaHomeProvider.getJavaHome(jre.getVersion(), jre.getLocation());
-            if (javaHome != null) {
-                return javaHome;
+            final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(jre.getVersion(), jre.getLocation());
+            if (javaRuntime != null) {
+                return javaRuntime;
             }
         }
 
@@ -56,12 +55,35 @@ class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param pathToJavaBinary path to the java binary of the JRE in which to start OWS
-     * @param pathToJar        path to the openwebstart.jar included in OWS
-     * @param vmArgs           the arguments to pass to the jvm
-     * @param javawsArgs       the arguments to pass to javaws (aka IcedTea-Web)
+     * @param javaRuntime the JRE in which to start OWS
+     * @param pathToJar   path to the openwebstart.jar included in OWS
+     * @param vmArgs      the arguments to pass to the jvm
+     * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
-    private void launchExternal(String pathToJavaBinary, String pathToJar, List<String> vmArgs, List<String> javawsArgs) throws Exception {
+    private void launchExternal(
+            final LocalJavaRuntime javaRuntime,
+            final String pathToJar,
+            final List<String> vmArgs,
+            final List<String> javawsArgs
+    ) throws Exception {
+        final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
+        final VersionId version = javaRuntime.getVersion();
+
+        if (VersionString.fromString("9+").contains(version)) {
+            throw new RuntimeException("Java 9 and greater is currently not supported");
+        } else if (VersionString.fromString("1.8*").contains(version)) {
+            launchExternalJava8(pathToJavaBinary, pathToJar, vmArgs, javawsArgs);
+        } else {
+            throw new RuntimeException("Java " + version + " is not supported");
+        }
+    }
+
+    private void launchExternalJava8(
+            final String pathToJavaBinary,
+            final String pathToJar,
+            final List<String> vmArgs,
+            final List<String> javawsArgs
+    ) throws IOException {
         final List<String> commands = new LinkedList<>();
 
         commands.add(quoteIfRequired(pathToJavaBinary));

@@ -35,7 +35,7 @@ public class OpenWebStartLauncher {
                 InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
 
         final List<String> bootArgs = skipNotRelevantArgs(args);
-        final JavaHomeProvider javaHomeProvider = JavaRuntimeSelector.getInstance();
+        final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeSelector.getInstance();
         LocalRuntimeManager.getInstance().loadRuntimes();
 
         JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
@@ -56,7 +56,7 @@ public class OpenWebStartLauncher {
                         Collections.addAll(bootArgs, parameters); // add file name at the end file to open
 
                         LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", bootArgs);
-                        Boot.main(new OwsJvmLauncher(javaHomeProvider), bootArgs.toArray(new String[0]));
+                        Boot.main(new OwsJvmLauncher(javaRuntimeProvider), bootArgs.toArray(new String[0]));
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class OpenWebStartLauncher {
         // Windows and Linux are called here
         if (!InstallerUtil.isMacOS()) {
             LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
-            Boot.main(new OwsJvmLauncher(javaHomeProvider), bootArgs.toArray(new String[0]));
+            Boot.main(new OwsJvmLauncher(javaRuntimeProvider), bootArgs.toArray(new String[0]));
         }
     }
 

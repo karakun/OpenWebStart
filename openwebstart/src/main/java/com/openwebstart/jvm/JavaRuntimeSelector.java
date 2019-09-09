@@ -7,7 +7,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
-import com.openwebstart.launcher.JavaHomeProvider;
+import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -17,14 +17,13 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import javax.swing.SwingUtilities;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.openwebstart.jvm.RuntimeUpdateStrategy.DO_NOTHING_ON_LOCAL_MATCH;
 
-public class JavaRuntimeSelector implements JavaHomeProvider {
+public class JavaRuntimeSelector implements JavaRuntimeProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimeSelector.class);
 
@@ -45,9 +44,9 @@ public class JavaRuntimeSelector implements JavaHomeProvider {
     }
 
     @Override
-    public Path getJavaHome(VersionString version, URL url) {
+    public LocalJavaRuntime getJavaRuntime(VersionString version, URL url) {
         try {
-            return getRuntime(version, url).getJavaHome();
+            return getRuntime(version, url);
         } catch (Exception e) {
             final String msg = "Exception while getting runtime - " + version + " - " + url;
             LOG.info(msg, e);
