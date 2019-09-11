@@ -2,7 +2,9 @@ package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
+import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.client.parts.splashscreen.SplashUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -105,7 +108,12 @@ class OwsJvmLauncher implements JvmLauncher {
 
         LOG.info("About to launch external with commands: '{}'", commands.toString());
 
-        final Process p = new ProcessBuilder()
+        final ProcessBuilder pb = new ProcessBuilder();
+
+        final Map<String, String> env = pb.environment();
+        env.put(IcedTeaWebConstants.ICEDTEA_WEB_SPLASH, SplashUtils.SplashType.NONE.value());
+
+        final Process p = pb
                 .command(commands)
                 .inheritIO()
                 .start();
