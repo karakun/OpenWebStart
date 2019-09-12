@@ -92,6 +92,10 @@
                                     <manifestEntries>
                                         <OWS-Scm-Commit>${buildNumber}</OWS-Scm-Commit>
                                         <OWS-Build-Time>${maven.build.timestamp}</OWS-Build-Time>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Implementation-Title>${project.name}</Implementation-Title>
+                                        <Specification-Title>${project.name}</Specification-Title>
                                     </manifestEntries>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
