@@ -111,7 +111,7 @@ class OwsJvmLauncher implements JvmLauncher {
         final ProcessBuilder pb = new ProcessBuilder();
 
         final Map<String, String> env = pb.environment();
-        env.put(IcedTeaWebConstants.ICEDTEA_WEB_SPLASH, SplashUtils.SplashType.NONE.value());
+        env.put(IcedTeaWebConstants.ICEDTEA_WEB_SPLASH, IcedTeaWebConstants.NO_SPLASH);
 
         final Process p = pb
                 .command(commands)
