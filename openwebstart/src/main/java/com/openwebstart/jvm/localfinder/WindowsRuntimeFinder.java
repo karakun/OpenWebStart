@@ -8,10 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.USER_HOME;
 
 public class WindowsRuntimeFinder implements RuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(WindowsRuntimeFinder.class);
@@ -28,7 +28,7 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
         final Path systemPath64 = Paths.get(JVM_BASEFOLDER_64);
         // This is based on the assumption that the windows installation and the cygwin installation left the
         // Windows' default user directory and the cygwin home directory pretty much to the defaults
-        final String cygwinUserHome = System.getProperty(USER_HOME).replace("Users", CYGWIN_HOME);
+        final String cygwinUserHome = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
         final Path sdkmanPath = Paths.get(cygwinUserHome + File.separatorChar + ".sdkman");
 
         return JdkFinder.findLocalJdks(systemPath32, systemPath64, sdkmanPath);

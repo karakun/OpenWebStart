@@ -8,10 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.USER_HOME;
 
 public class LinuxRuntimeFinder implements RuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(LinuxRuntimeFinder.class);
@@ -23,7 +23,7 @@ public class LinuxRuntimeFinder implements RuntimeFinder {
         LOG.debug("Searching for local runtimes");
 
         final Path systemPath = Paths.get(JVM_BASEFOLDER);
-        final Path sdkmanPath = Paths.get(System.getProperty(USER_HOME) + File.separatorChar + ".sdkman");
+        final Path sdkmanPath = Paths.get(JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman");
 
         return JdkFinder.findLocalJdks(systemPath, sdkmanPath);
     }

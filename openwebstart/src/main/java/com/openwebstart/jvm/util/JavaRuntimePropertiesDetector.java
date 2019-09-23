@@ -1,5 +1,11 @@
 package com.openwebstart.jvm.util;
 
+import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
+import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,18 +15,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
-import net.adoptopenjdk.icedteaweb.ProcessUtils;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.JAVA_VENDOR;
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.JAVA_VERSION;
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.OS_ARCH;
-import static net.adoptopenjdk.icedteaweb.JvmPropertyConstants.OS_NAME;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VENDOR;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VERSION;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_ARCH;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_NAME;
 
 /**
  * Algorithm to extract the Java Runtime Properties by executing "java -XshowSettings:properties -version"
