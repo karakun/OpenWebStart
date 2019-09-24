@@ -2,22 +2,16 @@ package com.openwebstart.launcher;
 
 import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
-import com.openwebstart.jvm.JavaRuntimeSelector;
-import com.openwebstart.jvm.LocalRuntimeManager;
-import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
-import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
-import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.runtime.Boot;
-import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
+import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 
 
 /**
@@ -29,54 +23,31 @@ public class OpenWebStartLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
     public static void main(String[] args) {
-
-        LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
-        LOG.debug("OS detected: Win[{}], MacOS[{}], Linux[{}]",
-                InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
-
-        final List<String> bootArgs = skipNotRelevantArgs(args);
-        final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeSelector.getInstance();
-        LocalRuntimeManager.getInstance().loadRuntimes();
-
-        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
-        JNLPRuntime.setForkingStrategy(ALWAYS);
-
-        /**
-         * Listener will be called when the executable is started again or when a file open event is received.
-         * Note that each invocation may be from a separate thread, therefore the implementation needs to be
-         * synchronized.
-         */
-        StartupNotification.registerStartupListener(new StartupNotification.Listener() {
-            public void startupPerformed(String parameters) {
-                synchronized (this) {
-
-                    if (InstallerUtil.isMacOS()) {
-                        LOG.info("MacOS detected, Launcher needs to add JNLP file name {} to the list of arguments.", parameters);
-                        Collections.addAll(bootArgs, parameters); // add file name at the end file to open
-
-                        LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", bootArgs);
-                        Boot.main(new OwsJvmLauncher(javaRuntimeProvider), bootArgs.toArray(new String[0]));
-                    }
-                }
-            }
-        });
-
-        // Windows and Linux are called here
         if (!InstallerUtil.isMacOS()) {
             LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
-            Boot.main(new OwsJvmLauncher(javaRuntimeProvider), bootArgs.toArray(new String[0]));
+            PhaseTwoWebStartLauncher.main(args);
+        } else {
+            StartupNotification.registerStartupListener(parameters -> {
+                try {
+                    final List<String> mergedArgs = new ArrayList<>(Arrays.asList(args));
+                    LOG.info("MacOS detected, Launcher needs to add JNLP file name {} to the list of arguments.", parameters);
+                    Collections.addAll(mergedArgs, parameters); // add file name at the end file to open
+                    LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", mergedArgs);
+
+                    final List<String> commands = new ArrayList<>();
+                    commands.add(quoteIfRequired(JavaSystemProperties.getJavaHome() + "/bin/java"));
+                    commands.add("-cp");
+                    commands.add(JavaSystemProperties.getJavaClassPath());
+                    commands.add(PhaseTwoWebStartLauncher.class.getName());
+                    commands.addAll(mergedArgs);
+
+                    LOG.info("Starting: " + commands);
+                    new ProcessBuilder().command(commands).inheritIO().start();
+                } catch (Exception e) {
+                    LOG.error("Error in starting JNLP application", e);
+                    throw new RuntimeException("Error in starting JNLP application", e);
+                }
+            });
         }
-    }
-
-
-    private static List<String> skipNotRelevantArgs(final String[] args) {
-        final List<String> relevantJavawsArgs = Arrays.stream(args)
-                .filter(arg -> !arg.equals(CommandLineOptions.NOFORK.getOption()))
-                .collect(Collectors.toList());
-
-        LOG.debug("RelevantJavawsArgs: '{}'", relevantJavawsArgs);
-
-        return relevantJavawsArgs;
     }
 }
