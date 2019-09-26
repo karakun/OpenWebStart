@@ -274,10 +274,9 @@ public final class LocalRuntimeManager {
 
         for (Result<LocalJavaRuntime> r : foundRuntimes) {
             if (r.isSuccessful()) {
-                final LocalJavaRuntime runtime = r.getResult();
-                if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(runtime.getVersion())).orElse(true)) {
-                    add(runtime);
-                }
+                    add(r.getResult());
+            } else {
+                LOG.warn("Can not add local runtime.", r.getException());
             }
         }
         return Collections.unmodifiableList(foundRuntimes);
