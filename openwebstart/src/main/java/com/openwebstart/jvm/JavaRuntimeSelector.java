@@ -2,10 +2,11 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.jvm.runtimes.JavaRuntime;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
-import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -14,9 +15,9 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
-import javax.swing.SwingUtilities;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -30,6 +31,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     private static final JavaRuntimeSelector INSTANCE = new JavaRuntimeSelector();
 
     private BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler;
+
     private Predicate<RemoteJavaRuntime> askForUpdateFunction;
 
     private JavaRuntimeSelector() {
@@ -50,11 +52,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
         } catch (Exception e) {
             final String msg = "Exception while getting runtime - " + version + " - " + url;
             LOG.info(msg, e);
-            try {
-                SwingUtilities.invokeAndWait(() -> new ErrorDialog(msg, e).showAndWait());
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
+            DialogFactory.showErrorDialog(msg, e);
             JNLPRuntime.exit(1);
             return null;
         }
@@ -82,12 +80,25 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
             return localRuntime;
         } else {
             LOG.debug("Local runtime found but remote endpoint is checked for newer versions");
-            return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
+            final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime, remoteRuntime))
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
-                    .map((RemoteJavaRuntime remoteJavaRuntime) -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint))
-                    .orElse(localRuntime);
+                    .orElse(null);
+            if (runtime == null) {
+                return localRuntime;
+            }
+            return installRemoteRuntime(runtime, serverEndpoint);
         }
+    }
+
+    private LocalJavaRuntime findMatchingDeactivatedAndManagedLocalRuntime(final JavaRuntime runtime) {
+        return LocalRuntimeManager.getInstance().getAll().stream()
+                .filter(l -> !l.isActive())
+                .filter(l -> l.isManaged())
+                .filter(l -> Objects.equals(l.getVersion(), runtime.getVersion()))
+                .filter(l -> Objects.equals(l.getVendor(), runtime.getVendor()))
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean remoteIsPreferredVersion(VersionString versionString, LocalJavaRuntime localRuntime, RemoteJavaRuntime remoteRuntime) {
@@ -105,9 +116,18 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
+
+        //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
+        final LocalJavaRuntime matchingLocalRuntime = findMatchingDeactivatedAndManagedLocalRuntime(remoteJavaRuntime);
+        if (matchingLocalRuntime != null) {
+            final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
+            if (useDeactivated) {
+                return matchingLocalRuntime;
+            }
+        }
+
         try {
             LOG.debug("Remote Runtime found. Will install it to local cache");
-
             final Consumer<DownloadInputStream> consumer;
             if (downloadHandler != null) {
                 consumer = t -> downloadHandler.accept(remoteJavaRuntime, t);

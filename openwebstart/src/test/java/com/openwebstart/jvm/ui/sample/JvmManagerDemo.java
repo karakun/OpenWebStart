@@ -9,7 +9,7 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.RuntimeManagerPanel;
-import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -47,7 +47,7 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
 
         JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
+        JavaRuntimeSelector.setAskForUpdateFunction(DialogFactory::askForRuntimeUpdate);
 
         LocalRuntimeManager.getInstance().loadRuntimes();
 
@@ -158,7 +158,7 @@ public class JvmManagerDemo {
                     responseManagedLabel.setText(runtime.isManaged() + "");
                 });
             } catch (Exception e) {
-                new ErrorDialog("Error while getting matching runtime", e).showAndWait();
+                DialogFactory.showErrorDialog("Error while getting matching runtime", e);
             }
         }));
 

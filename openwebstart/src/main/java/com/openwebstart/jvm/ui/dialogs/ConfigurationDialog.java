@@ -28,12 +28,10 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.BELLSOFT;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 
-public class ConfigurationDialog extends JDialog {
+public class ConfigurationDialog extends ModalDialog {
 
     public ConfigurationDialog() {
-        setModal(true);
-        setModalityType(ModalityType.APPLICATION_MODAL);
-        setTitle("JVM Manager Configuration");
+       setTitle("JVM Manager Configuration");
 
         final JLabel updateStrategyLabel = new JLabel("Update strategy:");
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
@@ -67,7 +65,7 @@ public class ConfigurationDialog extends JDialog {
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (URISyntaxException ex) {
-                new ErrorDialog("The URI for the default update server is invalid", ex).showAndWait();
+                DialogFactory.showErrorDialog("The URI for the default update server is invalid", ex);
             }
         });
 
@@ -104,14 +102,4 @@ public class ConfigurationDialog extends JDialog {
         add(panel);
     }
 
-    public void showAndWait() {
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private void close() {
-        setVisible(false);
-        dispose();
-    }
 }

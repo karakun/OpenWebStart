@@ -26,7 +26,7 @@ public class RuntimeDownloadDialog extends JDialog {
                 downloadDialog.setVisible(true);
             });
         } catch (final Exception e) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while handling download dialog!", e).showAndWait());
+            DialogFactory.showErrorDialog("Error while handling download dialog!", e);
         }
     }
 

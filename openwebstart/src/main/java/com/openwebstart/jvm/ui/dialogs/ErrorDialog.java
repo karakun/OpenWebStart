@@ -20,16 +20,14 @@ import java.awt.BorderLayout;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class ErrorDialog extends JDialog {
+public class ErrorDialog extends ModalDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErrorDialog.class);
 
     public ErrorDialog(final String message, final Exception error) {
         Assert.requireNonNull(error, "error");
-        LOG.error("Runtime Error", error);
+        LOG.error("Error: " + message, error);
 
-        setModal(true);
-        setModalityType(ModalityType.APPLICATION_MODAL);
         setTitle("Error");
 
         final ImageIcon imageIcon = new ImageIcon(Images.ERROR_64_URL);
@@ -65,16 +63,5 @@ public class ErrorDialog extends JDialog {
 
         panel.add(actionPanel, BorderLayout.SOUTH);
         add(panel);
-    }
-
-    public void showAndWait() {
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    private void close() {
-        setVisible(false);
-        dispose();
     }
 }
