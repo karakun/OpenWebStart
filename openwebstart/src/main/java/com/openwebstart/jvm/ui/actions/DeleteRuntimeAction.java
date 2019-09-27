@@ -2,6 +2,7 @@ package com.openwebstart.jvm.ui.actions;
 
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 
 import javax.swing.SwingUtilities;
@@ -19,7 +20,7 @@ public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
             try {
                 LocalRuntimeManager.getInstance().delete(item);
             } catch (final Exception e) {
-                SwingUtilities.invokeLater(() -> new ErrorDialog("Can not delete local folder", e).showAndWait());
+                DialogFactory.showErrorDialog("Can not delete local folder", e);
             }
         });
     }

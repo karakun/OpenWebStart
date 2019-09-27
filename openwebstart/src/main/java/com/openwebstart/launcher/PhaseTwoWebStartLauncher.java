@@ -3,7 +3,7 @@ package com.openwebstart.launcher;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.jvm.JavaRuntimeSelector;
 import com.openwebstart.jvm.LocalRuntimeManager;
-import com.openwebstart.jvm.ui.dialogs.AskForRuntimeUpdateDialog;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -36,7 +36,7 @@ public class PhaseTwoWebStartLauncher {
         LocalRuntimeManager.getInstance().loadRuntimes();
 
         JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(AskForRuntimeUpdateDialog::askForUpdate);
+        JavaRuntimeSelector.setAskForUpdateFunction(DialogFactory::askForRuntimeUpdate);
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
         LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));

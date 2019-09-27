@@ -6,6 +6,7 @@ import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.localfinder.JdkFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
@@ -62,8 +63,7 @@ public final class RuntimeManagerPanel extends JPanel {
                 result.stream()
                         .filter(r -> !r.isSuccessful())
                         .map(Result::getException)
-                        .forEach(ex ->
-                                SwingUtilities.invokeLater(() -> new ErrorDialog("Can not add runtime!", ex).showAndWait()));
+                        .forEach(ex -> DialogFactory.showErrorDialog("Can not add runtime!", ex));
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }
@@ -135,10 +135,10 @@ public final class RuntimeManagerPanel extends JPanel {
                     .map(Result::getException)
                     .peek(e1 -> LOG.info("Exception while find local JDKs", e1))
                     .findFirst()
-                    .ifPresent(e2 -> SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", e2).showAndWait()));
+                    .ifPresent(e2 -> DialogFactory.showErrorDialog("Error while adding runtime", e2));
 
         } catch (final Exception ex) {
-            SwingUtilities.invokeLater(() -> new ErrorDialog("Error while adding runtime", ex).showAndWait());
+            DialogFactory.showErrorDialog("Error while adding runtime", ex);
         }
     }
 
