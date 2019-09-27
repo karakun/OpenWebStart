@@ -31,6 +31,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     private static final JavaRuntimeSelector INSTANCE = new JavaRuntimeSelector();
 
     private BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler;
+
     private Predicate<RemoteJavaRuntime> askForUpdateFunction;
 
     private JavaRuntimeSelector() {
@@ -73,16 +74,6 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
             final RemoteJavaRuntime remoteJavaRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" +
                             versionString + "', vendor '" + vendor + "' and operating system '" + os + "'"));
-
-            //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
-            final LocalJavaRuntime matchingLocalRuntime = findMatchingDeactivatedAndManagedLocalRuntime(remoteJavaRuntime);
-            if (matchingLocalRuntime != null) {
-                final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
-                if (useDeactivated) {
-                    return matchingLocalRuntime;
-                }
-            }
-
             return installRemoteRuntime(remoteJavaRuntime, serverEndpoint);
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
             LOG.debug("Local runtime found and will be used");
@@ -96,16 +87,6 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
             if (runtime == null) {
                 return localRuntime;
             }
-
-            //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
-            final LocalJavaRuntime matchingLocalRuntime = findMatchingDeactivatedAndManagedLocalRuntime(runtime);
-            if (matchingLocalRuntime != null) {
-                final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
-                if (useDeactivated) {
-                    return matchingLocalRuntime;
-                }
-            }
-
             return installRemoteRuntime(runtime, serverEndpoint);
         }
     }
@@ -116,7 +97,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
                 .filter(l -> l.isManaged())
                 .filter(l -> Objects.equals(l.getVersion(), runtime.getVersion()))
                 .filter(l -> Objects.equals(l.getVendor(), runtime.getVendor()))
-                .findAny()
+                .findFirst()
                 .orElse(null);
     }
 
@@ -135,9 +116,18 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
+
+        //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
+        final LocalJavaRuntime matchingLocalRuntime = findMatchingDeactivatedAndManagedLocalRuntime(remoteJavaRuntime);
+        if (matchingLocalRuntime != null) {
+            final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
+            if (useDeactivated) {
+                return matchingLocalRuntime;
+            }
+        }
+
         try {
             LOG.debug("Remote Runtime found. Will install it to local cache");
-
             final Consumer<DownloadInputStream> consumer;
             if (downloadHandler != null) {
                 consumer = t -> downloadHandler.accept(remoteJavaRuntime, t);

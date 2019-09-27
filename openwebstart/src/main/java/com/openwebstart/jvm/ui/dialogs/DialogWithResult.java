@@ -20,11 +20,11 @@ public class DialogWithResult<R> extends JDialog {
 
     private R result;
 
-    public DialogWithResult(final String title, final String message,DialogButton<R>... buttons) {
+    public DialogWithResult(final String title, final String message, final DialogButton<R>... buttons) {
         this(title, message, new ImageIcon(Images.QUESTION_64_URL), buttons);
     }
 
-    public DialogWithResult(final String title, final String message, final ImageIcon imageIcon, DialogButton<R>... buttons) {
+    public DialogWithResult(final String title, final String message, final ImageIcon imageIcon, final DialogButton<R>... buttons) {
         setModal(true);
         setModalityType(ModalityType.APPLICATION_MODAL);
         setResizable(false);
