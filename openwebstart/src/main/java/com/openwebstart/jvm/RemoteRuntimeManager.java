@@ -75,7 +75,7 @@ class RemoteRuntimeManager {
                     .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                     .max(new RuntimeVersionComparator(versionString));
         } else {
-            LOG.error("Error while trying to find a remote version", result.getException());
+            LOG.error("Error while trying to find a remote version: {}", result.getException().getMessage());
             return Optional.empty();
         }
     }
