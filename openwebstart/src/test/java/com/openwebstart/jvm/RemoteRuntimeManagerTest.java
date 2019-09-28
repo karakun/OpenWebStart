@@ -11,11 +11,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import spark.Spark;
 
 import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,7 +49,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @BeforeEach
-    public void init() throws Exception {
+    public void init(@TempDir Path cacheFolder) throws Exception {
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
         final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
 
@@ -79,10 +81,13 @@ public class RemoteRuntimeManagerTest {
         Spark.init();
         Spark.awaitInitialization();
 
+        RuntimeManagerConfig.setCachePath(cacheFolder);
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
+
+        LocalRuntimeManager.getInstance().loadRuntimes();
     }
 
     @AfterEach
