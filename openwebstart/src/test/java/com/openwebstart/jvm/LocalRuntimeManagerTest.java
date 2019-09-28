@@ -63,12 +63,12 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_1() {
+    public void checkBestActiveRuntime_1() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, MAC64);
+        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -80,12 +80,12 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_2() {
+    public void checkBestActiveRuntime_2() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
 
         //when
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, MAC64);
+        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -97,7 +97,7 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_3() {
+    public void checkBestActiveRuntime_3() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
 
@@ -108,7 +108,7 @@ public class LocalRuntimeManagerTest {
                     final LocalJavaRuntime modified = r.getDeactivatedCopy();
                     LocalRuntimeManager.getInstance().replace(r, modified);
                 });
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, MAC64);
+        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -120,12 +120,12 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_4() {
+    public void checkBestActiveRuntime_4() {
         //given
         VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ORACLE, MAC64);
+        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ORACLE, MAC64);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -137,13 +137,13 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_5() {
+    public void checkBestActiveRuntime_5() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
 
         //when
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, MAC64);
+        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
         Assertions.assertNotNull(runtime);
@@ -155,37 +155,37 @@ public class LocalRuntimeManagerTest {
     }
 
     @Test
-    public void checkBestRuntime_8() {
+    public void checkBestActiveRuntime_8() {
         //given
         VersionString versionString = VersionString.fromString("1.8*");
         Vendor vendor = Vendor.fromString("not_found");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, MAC64);
+        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, MAC64);
 
         //than
         Assertions.assertNull(runtime);
     }
 
     @Test
-    public void checkBestRuntime_9() {
+    public void checkBestActiveRuntime_9() {
         //given
         VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, ARM32);
+        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, ARM32);
 
         //than
         Assertions.assertNull(runtime);
     }
 
     @Test
-    public void checkBestRuntime_10() {
+    public void checkBestActiveRuntime_10() {
         //given
         VersionString versionString = VersionString.fromString("20*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, ANY_VENDOR, MAC64);
+        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
         Assertions.assertNull(runtime);

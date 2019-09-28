@@ -20,6 +20,7 @@ import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -282,7 +283,7 @@ public final class LocalRuntimeManager {
         return Collections.unmodifiableList(foundRuntimes);
     }
 
-    public LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
+    LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
 
         LOG.debug("Installing remote runtime on local cache");
@@ -322,7 +323,7 @@ public final class LocalRuntimeManager {
         return newRuntime;
     }
 
-    public LocalJavaRuntime getBestRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
+    LocalJavaRuntime getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
@@ -336,6 +337,15 @@ public final class LocalRuntimeManager {
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
                 .max(new RuntimeVersionComparator(versionString))
+                .orElse(null);
+    }
+
+    LocalJavaRuntime findManagedLocalRuntime(final VersionId versionId, final Vendor vendor) {
+        return LocalRuntimeManager.getInstance().getAll().stream()
+                .filter(LocalJavaRuntime::isManaged)
+                .filter(l -> Objects.equals(l.getVersion(), versionId))
+                .filter(l -> Objects.equals(l.getVendor(), vendor))
+                .findFirst()
                 .orElse(null);
     }
 

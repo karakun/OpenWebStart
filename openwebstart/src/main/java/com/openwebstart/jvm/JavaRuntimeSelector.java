@@ -68,7 +68,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
         final Vendor vendor = Vendor.fromString(vendorName);
         final OperationSystem os = OperationSystem.getLocalSystem();
 
-        final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestRuntime(versionString, vendor, os);
+        final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, os);
         if (localRuntime == null) {
             LOG.debug("No local runtime found, will try to find remote runtime");
             final RemoteJavaRuntime remoteJavaRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
@@ -80,25 +80,12 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
             return localRuntime;
         } else {
             LOG.debug("Local runtime found but remote endpoint is checked for newer versions");
-            final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
+            return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime, remoteRuntime))
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
-                    .orElse(null);
-            if (runtime == null) {
-                return localRuntime;
-            }
-            return installRemoteRuntime(runtime, serverEndpoint);
+                    .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint))
+                    .orElse(localRuntime);
         }
-    }
-
-    private LocalJavaRuntime findMatchingDeactivatedAndManagedLocalRuntime(final JavaRuntime runtime) {
-        return LocalRuntimeManager.getInstance().getAll().stream()
-                .filter(l -> !l.isActive())
-                .filter(l -> l.isManaged())
-                .filter(l -> Objects.equals(l.getVersion(), runtime.getVersion()))
-                .filter(l -> Objects.equals(l.getVendor(), runtime.getVendor()))
-                .findFirst()
-                .orElse(null);
     }
 
     private boolean remoteIsPreferredVersion(VersionString versionString, LocalJavaRuntime localRuntime, RemoteJavaRuntime remoteRuntime) {
@@ -118,7 +105,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
 
         //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
-        final LocalJavaRuntime matchingLocalRuntime = findMatchingDeactivatedAndManagedLocalRuntime(remoteJavaRuntime);
+        final LocalJavaRuntime matchingLocalRuntime = LocalRuntimeManager.getInstance().findManagedLocalRuntime(remoteJavaRuntime.getVersion(), remoteJavaRuntime.getVendor());
         if (matchingLocalRuntime != null) {
             final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
             if (useDeactivated) {
