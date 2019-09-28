@@ -18,6 +18,8 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,20 +37,28 @@ class RemoteRuntimeManager {
     private RemoteRuntimeManager() {
     }
 
-    public Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final Vendor vendor, final OperationSystem operationSystem) {
+    Optional<RemoteJavaRuntime> getBestRuntime(final VersionString versionString, final URL specificServerEndpoint, final Vendor vendor, final OperationSystem operationSystem) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-
         LOG.debug("Trying to find remote Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendor, operationSystem);
 
+        final URL endpointForRequest = getEndpointForRequest(specificServerEndpoint);
+        final List<RemoteJavaRuntime> remoteRuntimes = loadListOfRemoteRuntimes(endpointForRequest);
+        return selectBestRuntime(remoteRuntimes, versionString, vendor, operationSystem);
+    }
+
+    private URL getEndpointForRequest(URL specificServerEndpoint) {
         final URL endpointForRequest = Optional.ofNullable(specificServerEndpoint)
                 .filter(e -> RuntimeManagerConfig.isNonDefaultServerAllowed())
                 .orElse(RuntimeManagerConfig.getDefaultRemoteEndpoint());
 
         LOG.debug("Endpoint to request for Java runtimes: {}", endpointForRequest);
+        return endpointForRequest;
+    }
 
+    private List<RemoteJavaRuntime> loadListOfRemoteRuntimes(URL endpointForRequest) {
         final Result<RemoteRuntimeList> result = Optional.ofNullable(cache.get())
                 .filter(RemoteRuntimeManagerCache::isStillValid)
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))
@@ -64,20 +74,22 @@ class RemoteRuntimeManager {
                 }));
 
         if (result.isSuccessful()) {
-            Assert.requireNonNull(vendor, "vendorForRequest");
-
             LOG.debug("Received {} possible runtime definitions from server", result.getResult().getRuntimes().size());
-
-            return result.getResult().getRuntimes().stream()
-                    .filter(r -> r.getOperationSystem() == operationSystem)
-                    .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
-                    .filter(r -> versionString.contains(r.getVersion()))
-                    .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
-                    .max(new RuntimeVersionComparator(versionString));
+            return result.getResult().getRuntimes();
         } else {
             LOG.error("Error while trying to find a remote version: {}", result.getException().getMessage());
-            return Optional.empty();
+            return Collections.emptyList();
         }
+
+    }
+
+    private Optional<RemoteJavaRuntime> selectBestRuntime(List<RemoteJavaRuntime> remoteRuntimes, VersionString versionString, Vendor vendor, OperationSystem operationSystem) {
+        return remoteRuntimes.stream()
+                .filter(r -> r.getOperationSystem() == operationSystem)
+                .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
+                .filter(r -> versionString.contains(r.getVersion()))
+                .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
+                .max(new RuntimeVersionComparator(versionString));
     }
 
     public static RemoteRuntimeManager getInstance() {
