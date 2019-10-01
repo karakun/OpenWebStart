@@ -324,29 +324,35 @@ public final class LocalRuntimeManager {
     }
 
     LocalJavaRuntime getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
+        return findBestRuntime(versionString, vendor, operationSystem, true).orElse(null);
+    }
+
+    Optional<LocalJavaRuntime> getBestDeactivatedRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
+        return findBestRuntime(versionString, vendor, operationSystem, false);
+    }
+
+    private Optional<LocalJavaRuntime> findBestRuntime(VersionString versionString, Vendor vendor, OperationSystem operationSystem, boolean active) {
         Assert.requireNonNull(versionString, "versionString");
         Assert.requireNonNull(vendor, "vendor");
         Assert.requireNonNull(operationSystem, "operationSystem");
 
-        LOG.debug("Trying to find local Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendor, operationSystem);
+        LOG.debug("Trying to find local Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}' active: '{}'",
+                versionString, vendor, operationSystem, active);
 
         return runtimes.stream()
-                .filter(LocalJavaRuntime::isActive)
-                .filter(r -> operationSystem == r.getOperationSystem())
+                .filter(r -> r.isActive() == active)
                 .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
-                .max(new RuntimeVersionComparator(versionString))
-                .orElse(null);
+                .filter(r -> operationSystem == r.getOperationSystem())
+                .max(new RuntimeVersionComparator(versionString));
     }
 
-    LocalJavaRuntime findManagedLocalRuntime(final VersionId versionId, final Vendor vendor) {
+    boolean hasManagedRuntime(final VersionId versionId, final Vendor vendor) {
         return LocalRuntimeManager.getInstance().getAll().stream()
                 .filter(LocalJavaRuntime::isManaged)
                 .filter(l -> Objects.equals(l.getVersion(), versionId))
-                .filter(l -> Objects.equals(l.getVendor(), vendor))
-                .findFirst()
-                .orElse(null);
+                .anyMatch(l -> Objects.equals(l.getVendor(), vendor));
     }
 
     private File cacheBaseDir() {

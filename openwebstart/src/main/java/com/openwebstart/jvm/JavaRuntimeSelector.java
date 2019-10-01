@@ -2,7 +2,6 @@ package com.openwebstart.jvm;
 
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.runtimes.JavaRuntime;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
@@ -17,7 +16,6 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -71,10 +69,9 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
         final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, os);
         if (localRuntime == null) {
             LOG.debug("No local runtime found, will try to find remote runtime");
-            final RemoteJavaRuntime remoteJavaRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
-                    .orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" +
-                            versionString + "', vendor '" + vendor + "' and operating system '" + os + "'"));
-            return installRemoteRuntime(remoteJavaRuntime, serverEndpoint);
+            return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
+                    .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint))
+                    .orElse(askForDeactivatedRuntime(versionString, vendor, os));
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
             LOG.debug("Local runtime found and will be used");
             return localRuntime;
@@ -86,6 +83,13 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
                     .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint))
                     .orElse(localRuntime);
         }
+    }
+
+    private LocalJavaRuntime askForDeactivatedRuntime(VersionString versionString, Vendor vendor, OperationSystem os) {
+        return LocalRuntimeManager.getInstance().getBestDeactivatedRuntime(versionString, vendor, os)
+                .filter(DialogFactory::askForDeactivatedRuntimeUsage)
+                .orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" +
+                        versionString + "', vendor '" + vendor + "' and operating system '" + os + "'"));
     }
 
     private boolean remoteIsPreferredVersion(VersionString versionString, LocalJavaRuntime localRuntime, RemoteJavaRuntime remoteRuntime) {
@@ -103,16 +107,6 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
-
-        //CHECK IF WE ALREADY HAVE THE SAME RUNTIME (DEACTIVATED & MANAGED) LOCALLY
-        final LocalJavaRuntime matchingLocalRuntime = LocalRuntimeManager.getInstance().findManagedLocalRuntime(remoteJavaRuntime.getVersion(), remoteJavaRuntime.getVendor());
-        if (matchingLocalRuntime != null) {
-            final boolean useDeactivated = DialogFactory.askForDeactivatedRuntimeUsage(matchingLocalRuntime);
-            if (useDeactivated) {
-                return matchingLocalRuntime;
-            }
-        }
-
         try {
             LOG.debug("Remote Runtime found. Will install it to local cache");
             final Consumer<DownloadInputStream> consumer;

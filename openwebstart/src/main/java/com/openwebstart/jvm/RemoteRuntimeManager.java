@@ -84,11 +84,13 @@ class RemoteRuntimeManager {
     }
 
     private Optional<RemoteJavaRuntime> selectBestRuntime(List<RemoteJavaRuntime> remoteRuntimes, VersionString versionString, Vendor vendor, OperationSystem operationSystem) {
+        final LocalRuntimeManager localRuntimeManager = LocalRuntimeManager.getInstance();
         return remoteRuntimes.stream()
                 .filter(r -> r.getOperationSystem() == operationSystem)
                 .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
+                .filter(r -> !localRuntimeManager.hasManagedRuntime(r.getVersion(), r.getVendor()))
                 .max(new RuntimeVersionComparator(versionString));
     }
 
