@@ -4,7 +4,6 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
-import net.adoptopenjdk.icedteaweb.client.parts.splashscreen.SplashUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -49,8 +48,8 @@ class OwsJvmLauncher implements JvmLauncher {
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
         final LocalJavaRuntime javaRuntime = getJavaRuntime(jnlpFile);
         LOG.info("using java runtime at '{}' for launching managed application", javaRuntime.getJavaHome());
-        final File webstartJar = getOpenWebStartJar();
-        launchExternal(javaRuntime, webstartJar, jnlpFile.getNewVMArgs(), args);
+        final File webStartJar = getOpenWebStartJar();
+        launchExternal(javaRuntime, webStartJar, jnlpFile.getNewVMArgs(), args);
     }
 
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
@@ -82,16 +81,16 @@ class OwsJvmLauncher implements JvmLauncher {
         final VersionId version = javaRuntime.getVersion();
 
         if (JAVA_1_8.contains(version)) {
-            launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             vmArgs.add(quoteIfRequired('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS));
-            launchExternalJava8(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
     }
 
-    private void launchExternalJava8(
+    private void launchExternal(
             final String pathToJavaBinary,
             final String pathToJar,
             final List<String> vmArgs,
