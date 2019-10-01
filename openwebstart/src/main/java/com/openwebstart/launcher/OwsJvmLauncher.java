@@ -16,6 +16,7 @@ import net.sourceforge.jnlp.runtime.Boot;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
+import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 /**
  * Launches OWS with a JNLP in a matching JRE.
@@ -102,6 +104,7 @@ class OwsJvmLauncher implements JvmLauncher {
         commands.add(quoteIfRequired("-Xbootclasspath/a:" + pathToJar));
 
         commands.addAll(vmArgs);
+        commands.addAll(getRemoteDebuggingArgs());
         commands.add(Boot.class.getName());
         commands.addAll(javawsArgs);
 
@@ -150,5 +153,18 @@ class OwsJvmLauncher implements JvmLauncher {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<String> getRemoteDebuggingArgs() {
+        try {
+            final String remoteDebuggingPort = System.getProperty("OWS_REMOTE_DEBUGGING_PORT");
+            if (!isBlank(remoteDebuggingPort)) {
+                final int port = Integer.parseInt(remoteDebuggingPort);
+                return Collections.singletonList("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + port);
+            }
+        } catch (Exception e) {
+            LOG.error("Failed in adding remote debug args.", e);
+        }
+        return Collections.emptyList();
     }
 }
