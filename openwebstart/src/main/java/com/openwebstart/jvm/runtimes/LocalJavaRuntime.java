@@ -29,7 +29,7 @@ public class LocalJavaRuntime extends JavaRuntime {
     }
 
     public static LocalJavaRuntime createPreInstalled(final String version, final OperationSystem operationSystem, final String vendor, final Path javaHome) {
-        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), false, false);
+        return new LocalJavaRuntime(version, operationSystem, vendor, javaHome, LocalDateTime.now(), true, false);
     }
 
     private final Path javaHome;
