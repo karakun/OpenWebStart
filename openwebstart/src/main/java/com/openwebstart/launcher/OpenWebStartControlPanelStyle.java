@@ -2,6 +2,9 @@ package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
@@ -18,10 +21,22 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
+import java.util.Objects;
 
 public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     private final Logger LOG = LoggerFactory.getLogger(OpenWebStartControlPanelStyle.class);
+
+    @Override
+    public boolean isPanelActive(final String panelName) {
+        if(Objects.equals(panelName, AboutPanelProvider.NAME)) {
+            return false;
+        }
+        if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String getDialogTitle() {
