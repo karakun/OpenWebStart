@@ -6,6 +6,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -26,7 +27,7 @@ public class RuntimeDownloadDialog extends JDialog {
                 downloadDialog.setVisible(true);
             });
         } catch (final Exception e) {
-            DialogFactory.showErrorDialog("Error while handling download dialog!", e);
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.download"), e);
         }
     }
 
@@ -34,11 +35,13 @@ public class RuntimeDownloadDialog extends JDialog {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
         Assert.requireNonNull(inputStream, "inputStream");
 
+        final Translator translator = Translator.getInstance();
+
         setAlwaysOnTop(true);
-        setTitle("Download");
+        setTitle(translator.translate("dialog.jvmDownload.title"));
         setResizable(false);
 
-        final JLabel messageLabel = new JLabel("Downloading runtime " + remoteRuntime.getVersion() + "-" + remoteRuntime.getVendor());
+        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor()));
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
         if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
@@ -47,7 +50,7 @@ public class RuntimeDownloadDialog extends JDialog {
         final ImageIcon imageIcon = new ImageIcon(Images.NETWORK_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
 
-        final JLabel progressLabel = new JLabel("0 KB from ?");
+        final JLabel progressLabel = new JLabel(translator.translate("dialog.jvmDownload.progressDefault"));
 
         final JPanel progressLabelWrapper = new JPanel();
         progressLabelWrapper.setLayout(new BorderLayout());

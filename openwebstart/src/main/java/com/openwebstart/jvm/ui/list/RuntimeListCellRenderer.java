@@ -5,6 +5,7 @@ import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.CenterLayout;
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -140,10 +141,11 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
     @Override
     public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-        versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse("unknown version"));
-        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse("unknown vendor"));
-        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse("unknown operating system"));
-        javaHomeLabel.setText(Optional.ofNullable(value).map(this::getJavaHome).orElse("unknown location"));
+        final Translator translator = Translator.getInstance();
+        versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse(translator.translate("jvmManager.unknownVersion")));
+        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse(translator.translate("jvmManager.unknownVendor")));
+        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse(translator.translate("jvmManager.unknownOs")));
+        javaHomeLabel.setText(Optional.ofNullable(value).map(this::getJavaHome).orElse(translator.translate("jvmManager.unknownLocation")));
 
         if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);

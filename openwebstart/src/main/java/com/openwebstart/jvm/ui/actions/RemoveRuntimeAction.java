@@ -4,6 +4,7 @@ import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.SwingUtilities;
 import java.util.concurrent.Executors;
@@ -20,7 +21,7 @@ public class RemoveRuntimeAction extends BasicAction<LocalJavaRuntime> {
             try {
                 LocalRuntimeManager.getInstance().remove(item);
             } catch (final Exception e) {
-                DialogFactory.showErrorDialog("Can not remove local folder", e);
+                DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.deleteFolder"), e);
             }
         });
     }

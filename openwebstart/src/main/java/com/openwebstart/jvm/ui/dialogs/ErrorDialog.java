@@ -3,6 +3,7 @@ package com.openwebstart.jvm.ui.dialogs;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -28,7 +29,9 @@ public class ErrorDialog extends ModalDialog {
         Assert.requireNonNull(error, "error");
         LOG.error("Error: " + message, error);
 
-        setTitle("Error");
+        final Translator translator = Translator.getInstance();
+
+        setTitle(translator.translate("dialog.error.title"));
 
         final ImageIcon imageIcon = new ImageIcon(Images.ERROR_64_URL);
         final IconComponent downloadIcon = new IconComponent(imageIcon);
@@ -41,7 +44,7 @@ public class ErrorDialog extends ModalDialog {
         error.printStackTrace(new PrintWriter(writer));
         exceptionDetailsArea.setText(writer.getBuffer().toString());
 
-        final JButton closeButton = new JButton("Close");
+        final JButton closeButton = new JButton(translator.translate("action.close"));
         closeButton.addActionListener(e -> close());
 
         final JPanel messageWrapperPanel = new JPanel();

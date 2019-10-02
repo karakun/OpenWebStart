@@ -3,6 +3,7 @@ package com.openwebstart.jvm.ui.dialogs;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 
 import javax.swing.SwingUtilities;
@@ -56,18 +57,20 @@ public class DialogFactory {
 
     public static boolean askForDeactivatedRuntimeUsage(final LocalJavaRuntime runtime) {
         Assert.requireNonNull(runtime, "runtime");
+        final Translator translator = Translator.getInstance();
 
-        final String title = "Version check";
-        final String message = "Java version " + runtime.getVersion().toString() + " is already installed on your system but deactiveated. Should it be used?";
+        final String title = translator.translate("dialog.versionCheck.title");
+        final String message = translator.translate("dialog.versionCheck.text", runtime.getVersion().toString());
 
         return handleYesNoDialogEdtConform(title, message);
     }
 
     public static boolean askForRuntimeUpdate(final RemoteJavaRuntime runtime) {
         Assert.requireNonNull(runtime, "runtime");
+        final Translator translator = Translator.getInstance();
 
-            final String title = "Runtime Update";
-            final String message = "A new Java runtime (version '" + runtime.getVersion() + "' / vendor '" + runtime.getVendor() + "') is available. Do you want to download this version?";
+            final String title = translator.translate("dialog.updateCheck.title");
+            final String message = translator.translate("dialog.updateCheck.text", runtime.getVersion(), runtime.getVendor());
 
         return handleYesNoDialogEdtConform(title, message);
     }
