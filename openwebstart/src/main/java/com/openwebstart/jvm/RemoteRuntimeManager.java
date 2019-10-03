@@ -58,7 +58,7 @@ class RemoteRuntimeManager {
         return endpointForRequest;
     }
 
-    private List<RemoteJavaRuntime> loadListOfRemoteRuntimes(URL endpointForRequest) {
+    List<RemoteJavaRuntime> loadListOfRemoteRuntimes(URL endpointForRequest) {
         final Result<RemoteRuntimeList> result = Optional.ofNullable(cache.get())
                 .filter(RemoteRuntimeManagerCache::isStillValid)
                 .filter(c -> Objects.equals(endpointForRequest, c.getEndpointForRequest()))

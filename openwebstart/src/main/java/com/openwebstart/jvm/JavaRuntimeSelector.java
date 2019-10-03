@@ -16,6 +16,7 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -124,5 +125,21 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
 
     public static JavaRuntimeSelector getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * @return List of locally available Java Runtimes
+     */
+    public List<LocalJavaRuntime> getLocalJavaRuntimes() {
+        return LocalRuntimeManager.getInstance().getAll();
+    }
+
+    /**
+     *
+     * @param jvmServerEndpoint URL at which Java Runtimes are available
+     * @return List of remotely available Java Runtimes
+     */
+    public List<RemoteJavaRuntime> getRemoteJavaRuntimes(URL jvmServerEndpoint) {
+        return RemoteRuntimeManager.getInstance().loadListOfRemoteRuntimes(jvmServerEndpoint);
     }
 }
