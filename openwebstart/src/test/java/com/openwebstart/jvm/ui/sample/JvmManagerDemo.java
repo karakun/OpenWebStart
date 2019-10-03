@@ -1,7 +1,6 @@
 package com.openwebstart.jvm.ui.sample;
 
-import com.openwebstart.jvm.JavaRuntimeSelector;
-import com.openwebstart.jvm.LocalRuntimeManager;
+import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.json.RemoteRuntimeList;
@@ -10,8 +9,8 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.RuntimeManagerPanel;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
+import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import spark.Spark;
 
@@ -45,11 +44,6 @@ public class JvmManagerDemo {
         RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
-
-        JavaRuntimeSelector.setDownloadHandler(RuntimeDownloadDialog::showDownloadDialog);
-        JavaRuntimeSelector.setAskForUpdateFunction(DialogFactory::askForRuntimeUpdate);
-
-        LocalRuntimeManager.getInstance().loadRuntimes();
 
         SwingUtilities.invokeLater(() -> {
             try {
@@ -143,11 +137,16 @@ public class JvmManagerDemo {
         final JLabel responseManagedLabel = new JLabel("XXXXXX");
 
 
+        final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
+                RuntimeDownloadDialog::showDownloadDialog,
+                DialogFactory::askForRuntimeUpdate
+        );
+
         requestButton.addActionListener(event -> Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 final VersionString version = VersionString.fromString(requestedVersionField.getText());
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());
-                final LocalJavaRuntime runtime = JavaRuntimeSelector.getInstance().getRuntime(version, serverEndpoint);
+                final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, serverEndpoint);
 
                 SwingUtilities.invokeLater(() -> {
                     responseVersionLabel.setText(runtime.getVersion().toString());
