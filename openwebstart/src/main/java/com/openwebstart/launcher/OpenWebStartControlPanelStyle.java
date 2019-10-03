@@ -57,16 +57,36 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
         logoLabel2.setForeground(Color.WHITE);
         logoLabel2.setBackground(null);
 
-        final JPanel logoPanel = new JPanel();
-        logoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        logoPanel.setBackground(null);
-        final JPanel someSpace = new JPanel();
-        someSpace.setBackground(null);
-        someSpace.setPreferredSize(new Dimension(10, 1));
+        final JLabel logoLabel3 = new JLabel();
+        try {
+            logoLabel3.setFont(Font.createFont(Font.TRUETYPE_FONT, OpenWebStartControlPanelStyle.class.getResourceAsStream("OpenSans-Light.ttf")));
+        } catch (final Exception e) {
+            LOG.warn("Unable to load font", e);
+        }
+        logoLabel3.setFont(logoLabel3.getFont().deriveFont(11.0f));
+        logoLabel3.setText("powered by IcedTeaWeb");
+        logoLabel3.setForeground(Color.WHITE);
+        logoLabel3.setBackground(null);
 
-        logoPanel.add(someSpace);
+
+        final JPanel logoPanel = new JPanel();
+        logoPanel.setLayout(null);
+        logoPanel.setBackground(null);
+
+        logoLabel1.setSize(new Dimension(logoLabel1.getPreferredSize().width + 2, logoLabel1.getPreferredSize().height + 2));
+        logoLabel2.setSize(new Dimension(logoLabel2.getPreferredSize().width + 2, logoLabel2.getPreferredSize().height + 2));
+        logoLabel3.setSize(new Dimension(logoLabel3.getPreferredSize().width + 2, logoLabel3.getPreferredSize().height + 2));
+
+        logoLabel1.setLocation(6, 2);
         logoPanel.add(logoLabel1);
+
+        logoLabel2.setLocation(84, 2);
         logoPanel.add(logoLabel2);
+
+        logoLabel3.setLocation(86, 34);
+        logoPanel.add(logoLabel3);
+
+        logoPanel.setPreferredSize(new Dimension(300, 64));
 
         try {
             final ImageIcon icon = new ImageIcon(ImageIO.read(OpenWebStartControlPanelStyle.class.getResourceAsStream("bean-42.png")));
