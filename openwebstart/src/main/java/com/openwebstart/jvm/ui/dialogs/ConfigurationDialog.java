@@ -1,10 +1,8 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-import com.openwebstart.jvm.JavaRuntimeSelector;
+import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
@@ -22,10 +20,7 @@ import java.awt.GridLayout;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class ConfigurationDialog extends ModalDialog {
 
@@ -38,14 +33,7 @@ public class ConfigurationDialog extends ModalDialog {
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Vendor:");
-        List<LocalJavaRuntime> localList = JavaRuntimeSelector.getInstance().getLocalJavaRuntimes();
-        List<RemoteJavaRuntime> remoteList = JavaRuntimeSelector.getInstance().getRemoteJavaRuntimes(RuntimeManagerConfig.getDefaultRemoteEndpoint());
-        String[] combinedList = Stream.of(localList, remoteList)
-            .flatMap(Collection::stream)
-            .map(javart -> javart.getVendor().getName())
-            .distinct()
-            .sorted()
-            .toArray(String[]::new);
+        final String[] combinedList = JavaRuntimeManager.getAllVendors(RuntimeManagerConfig.getDefaultRemoteEndpoint());
         final JComboBox<String> vendorComboBox = new JComboBox<>(combinedList);
         vendorComboBox.setEditable(true);
         vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());

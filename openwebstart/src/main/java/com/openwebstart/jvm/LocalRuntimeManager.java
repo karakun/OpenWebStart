@@ -103,7 +103,7 @@ public final class LocalRuntimeManager {
         }
     }
 
-    public void loadRuntimes() {
+    void loadRuntimes() {
         LOG.debug("Loading runtime cache from filesystem");
         jsonStoreLock.lock();
         final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);

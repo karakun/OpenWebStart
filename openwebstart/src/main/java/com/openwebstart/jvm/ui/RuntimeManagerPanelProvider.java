@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.ui;
 
-import com.openwebstart.jvm.LocalRuntimeManager;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.ControlPanelProvider;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
@@ -20,7 +19,6 @@ public class RuntimeManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public JComponent createPanel(final DeploymentConfiguration deploymentConfiguration) {
-        LocalRuntimeManager.getInstance().loadRuntimes();
         return new RuntimeManagerPanel(deploymentConfiguration);
     }
 }
