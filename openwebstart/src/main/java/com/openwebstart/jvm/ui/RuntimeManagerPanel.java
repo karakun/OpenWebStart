@@ -48,6 +48,7 @@ public final class RuntimeManagerPanel extends JPanel {
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
+
         final JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
@@ -56,6 +57,7 @@ public final class RuntimeManagerPanel extends JPanel {
                 throw new RuntimeException("Error", ex);
             }
         }));
+
         final JButton findLocalRuntimesButton = new JButton("Find local");
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
@@ -102,7 +104,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
 
         //TODO: Register on show and hide on close
         LocalRuntimeManager.getInstance().
