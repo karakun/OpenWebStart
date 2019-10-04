@@ -78,35 +78,12 @@ public class ConfigurationDialog extends ModalDialog {
         final FormPanel mainPanel = new FormPanel();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-
-        final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-
         mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
         mainPanel.addRow(1, defaultVendorLabel, vendorComboBox);
         mainPanel.addRow(2, defaultUpdateServerLabel, defaultUpdateServerField);
         mainPanel.addEditorRow(3, allowAnyUpdateServerCheckBox);
         mainPanel.addRow(4, supportedVersionRangeLabel, supportedVersionRangeField);
         mainPanel.addFlexibleRow(5);
-
-        final JPanel actionWrapperPanel = new JPanel();
-        actionWrapperPanel.setBackground(Color.WHITE);
-        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
-        actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-        actionWrapperPanel.add(Box.createHorizontalGlue());
-        actionWrapperPanel.add(okButton);
-        actionWrapperPanel.add(cancelButton);
-
-        final JPanel topBorder = new JPanel();
-        topBorder.setBackground(Color.GRAY);
-        topBorder.setPreferredSize(new Dimension(1, 1));
-        topBorder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        topBorder.setMinimumSize(new Dimension(1, 1));
-
-        final JPanel actionPanel = new JPanel(new BorderLayout());
-        actionPanel.add(topBorder, BorderLayout.NORTH);
-        actionPanel.add(actionWrapperPanel, BorderLayout.CENTER);
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(8, 8));
