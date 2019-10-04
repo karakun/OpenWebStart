@@ -89,8 +89,8 @@
                             </relocations>
                             <transformers>
                                 <transformer implementation="com.openwebstart.maven.OwsManifestResourceTransformer">
-                                    <mainClass>com.openwebstart.launcher.ControlPanelLauncher</mainClass>
                                     <manifestEntries>
+                                        <Main-Class>com.openwebstart.launcher.ControlPanelLauncher</Main-Class>
                                         <OWS-Scm-Commit>${buildNumber}</OWS-Scm-Commit>
                                         <OWS-Build-Time>${maven.build.timestamp}</OWS-Build-Time>
                                         <Implementation-Version>${project.version}</Implementation-Version>

@@ -1,8 +1,6 @@
 package com.openwebstart.launcher;
 
-import com.openwebstart.i18n.TranslatorInitialization;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
