@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 public class ControlPanelLauncher {
 
     public static void main(final String[] args) {
-        TranslatorInitialization.init();
+        Translator.addBundle("i18n");
 
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {

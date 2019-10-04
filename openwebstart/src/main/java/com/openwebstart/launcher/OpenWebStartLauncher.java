@@ -3,6 +3,7 @@ package com.openwebstart.launcher;
 import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -23,6 +24,8 @@ public class OpenWebStartLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
     public static void main(String[] args) {
+        Translator.addBundle("i18n");
+
         if (!InstallerUtil.isMacOS()) {
             LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
             PhaseTwoWebStartLauncher.main(args);
