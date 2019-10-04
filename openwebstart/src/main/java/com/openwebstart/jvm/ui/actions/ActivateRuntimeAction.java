@@ -1,13 +1,14 @@
 package com.openwebstart.jvm.ui.actions;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import java.util.function.BiConsumer;
 
 public class ActivateRuntimeAction extends BasicMutationAction<LocalJavaRuntime> {
 
     public ActivateRuntimeAction(final BiConsumer<LocalJavaRuntime, LocalJavaRuntime> onChangeConsumer) {
-        super("Activate JVM", "Active the JVM for usage as runtime for webstart applications", onChangeConsumer);
+        super(Translator.getInstance().translate("jvmManager.action.activateRuntime.text"), Translator.getInstance().translate("jvmManager.action.activateRuntime.description"), onChangeConsumer);
     }
 
     @Override
