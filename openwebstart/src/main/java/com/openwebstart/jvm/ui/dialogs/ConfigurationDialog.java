@@ -6,6 +6,7 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;
@@ -18,11 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -31,31 +30,34 @@ import java.util.Optional;
 public class ConfigurationDialog extends ModalDialog {
 
     public ConfigurationDialog() {
-       setTitle("JVM Manager Configuration");
+        final Translator translator = Translator.getInstance();
 
-        final JLabel updateStrategyLabel = new JLabel("Update strategy:");
+        setTitle(translator.translate("dialog.jvmManagerConfig.title"));
+
+        final JLabel updateStrategyLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.updateStrategy.text"));
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
         updateStrategyComboBox.setRenderer(new TranslatableEnumComboboxRenderer<>());
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
-        final JLabel defaultVendorLabel = new JLabel("Vendor:");
+        final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
         final String[] combinedList = JavaRuntimeManager.getAllVendors(RuntimeManagerConfig.getDefaultRemoteEndpoint());
         final JComboBox<String> vendorComboBox = new JComboBox<>(combinedList);
         vendorComboBox.setEditable(true);
         vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
 
-        final JLabel defaultUpdateServerLabel = new JLabel("Default update server URL:");
+        final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
         final JTextField defaultUpdateServerField = new JTextField();
         defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
 
-        final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox("Allow server from JNLP file");
+        final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
         allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
-        final JLabel supportedVersionRangeLabel = new JLabel("Restrict JVM version range:");
+
+        final JLabel supportedVersionRangeLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.versionRange.text"));
         final JTextField supportedVersionRangeField = new JTextField();
         supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
 
-        final JButton okButton = new JButton("Ok");
+        final JButton okButton = new JButton(translator.translate("action.ok"));
         okButton.addActionListener(e -> {
             try {
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
@@ -65,11 +67,11 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (URISyntaxException ex) {
-                DialogFactory.showErrorDialog("The URI for the default update server is invalid", ex);
+                DialogFactory.showErrorDialog(translator.translate("jvmManager.error.invalidServerUri"), ex);
             }
         });
 
-        final JButton cancelButton = new JButton("Cancel");
+        final JButton cancelButton = new JButton(translator.translate("action.cancel"));
         cancelButton.addActionListener(e -> close());
 
 
@@ -78,8 +80,8 @@ public class ConfigurationDialog extends ModalDialog {
 
 
         final GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx=0;
-        constraints.gridy=0;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
 
         mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
         mainPanel.addRow(1, defaultVendorLabel, vendorComboBox);
