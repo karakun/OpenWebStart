@@ -1,5 +1,7 @@
 package com.openwebstart.jvm.ui.util;
 
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -7,7 +9,10 @@ import java.awt.Component;
 
 public class TranslatableEnumComboboxRenderer<T extends Enum<T> & Translatable> extends JLabel implements ListCellRenderer<T> {
 
+    private final Translator translator;
+
     public TranslatableEnumComboboxRenderer() {
+        this.translator = Translator.getInstance();
         setOpaque(true);
         setHorizontalAlignment(LEFT);
         setVerticalAlignment(CENTER);
@@ -24,7 +29,7 @@ public class TranslatableEnumComboboxRenderer<T extends Enum<T> & Translatable> 
             setForeground(list.getForeground());
         }
 
-        setText(value.getTranslationKey());
+        setText(translator.translate(value.getTranslationKey()));
 
         return this;
     }

@@ -11,6 +11,7 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.jvm.ui.list.RuntimeListModel;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -40,18 +41,21 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
+    private final Translator translator;
+
     public RuntimeManagerPanel() {
         this(JNLPRuntime.getConfiguration());
     }
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
+        translator = Translator.getInstance();
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes();
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
 
-        final JButton refreshButton = new JButton("Refresh");
+        final JButton refreshButton = new JButton(translator.translate("jvmManager.action.refresh.text"));
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 JavaRuntimeManager.reloadLocalRuntimes();
@@ -60,26 +64,26 @@ public final class RuntimeManagerPanel extends JPanel {
             }
         }));
 
-        final JButton findLocalRuntimesButton = new JButton("Find local");
+        final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
                 final List<Result<LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
                 result.stream()
                         .filter(r -> !r.isSuccessful())
                         .map(Result::getException)
-                        .forEach(ex -> DialogFactory.showErrorDialog("Can not add runtime!", ex));
+                        .forEach(ex -> DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex));
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }
         }));
 
-        final JButton configureButton = new JButton("Settings");
+        final JButton configureButton = new JButton(translator.translate("jvmManager.action.settings.text"));
         configureButton.addActionListener(e -> new ConfigurationDialog().showAndWait());
 
-        final JButton addLocalRuntimesButton = new JButton("Add local");
+        final JButton addLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.addLocal.text"));
         addLocalRuntimesButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Select JVM");
+            fileChooser.setDialogTitle(translator.translate("jvmManager.selectJvm"));
             fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setMultiSelectionEnabled(false);
@@ -139,10 +143,10 @@ public final class RuntimeManagerPanel extends JPanel {
                     .map(Result::getException)
                     .peek(e1 -> LOG.info("Exception while find local JDKs", e1))
                     .findFirst()
-                    .ifPresent(e2 -> DialogFactory.showErrorDialog("Error while adding runtime", e2));
+                    .ifPresent(e2 -> DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), e2));
 
         } catch (final Exception ex) {
-            DialogFactory.showErrorDialog("Error while adding runtime", ex);
+            DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
         }
     }
 

@@ -4,9 +4,9 @@ import com.openwebstart.jvm.ui.util.Translatable;
 
 public enum RuntimeUpdateStrategy implements Translatable {
 
-    DO_NOTHING_ON_LOCAL_MATCH("Use local if available"),
-    ASK_FOR_UPDATE_ON_LOCAL_MATCH("Ask if newer version should be downloaded"),
-    AUTOMATICALLY_DOWNLOAD("Always download newer version");
+    DO_NOTHING_ON_LOCAL_MATCH("jvmManager.updateStrategy.doNothing"),
+    ASK_FOR_UPDATE_ON_LOCAL_MATCH("jvmManager.updateStrategy.askForUpdate"),
+    AUTOMATICALLY_DOWNLOAD("jvmManager.updateStrategy.download");
 
     private final String translationKey;
 

@@ -9,6 +9,7 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -42,7 +43,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
         try {
             return getRuntime(version, url);
         } catch (Exception e) {
-            final String msg = "Exception while getting runtime - " + version + " - " + url;
+            final String msg = Translator.getInstance().translate("jvmManager.error.downloadWithDetails", version, url);
             LOG.info(msg, e);
             DialogFactory.showErrorDialog(msg, e);
             JNLPRuntime.exit(1);
