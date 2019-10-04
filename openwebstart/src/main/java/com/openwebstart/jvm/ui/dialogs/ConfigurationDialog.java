@@ -1,5 +1,6 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
@@ -10,7 +11,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -21,12 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
-
-import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
-import static com.openwebstart.jvm.runtimes.Vendor.AMAZON;
-import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
-import static com.openwebstart.jvm.runtimes.Vendor.BELLSOFT;
-import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 
 public class ConfigurationDialog extends ModalDialog {
 
@@ -39,7 +33,8 @@ public class ConfigurationDialog extends ModalDialog {
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel("Vendor:");
-        final JComboBox<String> vendorComboBox = new JComboBox<>(new String[]{ANY_VENDOR.getName(), ADOPT.getName(), AMAZON.getName(), BELLSOFT.getName(), ORACLE.getName()});
+        final String[] combinedList = JavaRuntimeManager.getAllVendors(RuntimeManagerConfig.getDefaultRemoteEndpoint());
+        final JComboBox<String> vendorComboBox = new JComboBox<>(combinedList);
         vendorComboBox.setEditable(true);
         vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
 
@@ -53,7 +48,6 @@ public class ConfigurationDialog extends ModalDialog {
         final JLabel supportedVersionRangeLabel = new JLabel("Restrict JVM version range:");
         final JTextField supportedVersionRangeField = new JTextField();
         supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
-
 
         final JButton okButton = new JButton("Ok");
         okButton.addActionListener(e -> {

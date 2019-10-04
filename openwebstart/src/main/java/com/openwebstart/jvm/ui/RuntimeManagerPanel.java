@@ -1,24 +1,23 @@
 package com.openwebstart.jvm.ui;
 
 import com.openwebstart.func.Result;
-import com.openwebstart.i18n.TranslatorInitialization;
+import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.localfinder.JdkFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.jvm.ui.list.RuntimeListModel;
-import java.awt.BorderLayout;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,13 +26,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-
-import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.config.DeploymentConfiguration;
-import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import java.awt.BorderLayout;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public final class RuntimeManagerPanel extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerPanel.class);
@@ -51,17 +50,20 @@ public final class RuntimeManagerPanel extends JPanel {
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
+        JavaRuntimeManager.reloadLocalRuntimes();
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
+
         final JButton refreshButton = new JButton(translator.translate("jvmManager.action.refresh.text"));
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
-                LocalRuntimeManager.getInstance().loadRuntimes();
+                JavaRuntimeManager.reloadLocalRuntimes();
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }
         }));
+
         final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
@@ -108,7 +110,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
 
         //TODO: Register on show and hide on close
         LocalRuntimeManager.getInstance().

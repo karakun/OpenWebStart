@@ -1,7 +1,7 @@
 package com.openwebstart.jvm.ui;
 
-import com.openwebstart.jvm.LocalRuntimeManager;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.ControlPanelProvider;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.JComponent;
@@ -9,8 +9,13 @@ import javax.swing.JComponent;
 public class RuntimeManagerPanelProvider implements ControlPanelProvider {
 
     @Override
-    public String getName() {
+    public String getTitle() {
         return "JVM Manager";
+    }
+
+    @Override
+    public String getName() {
+        return "RuntimeManagerPanel";
     }
 
     @Override
@@ -20,7 +25,6 @@ public class RuntimeManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public JComponent createPanel(final DeploymentConfiguration deploymentConfiguration) {
-        LocalRuntimeManager.getInstance().loadRuntimes();
         return new RuntimeManagerPanel(deploymentConfiguration);
     }
 }

@@ -2,6 +2,9 @@ package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
@@ -18,10 +21,22 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
+import java.util.Objects;
 
 public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     private final Logger LOG = LoggerFactory.getLogger(OpenWebStartControlPanelStyle.class);
+
+    @Override
+    public boolean isPanelActive(final String panelName) {
+        if(Objects.equals(panelName, AboutPanelProvider.NAME)) {
+            return false;
+        }
+        if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String getDialogTitle() {
@@ -57,16 +72,36 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
         logoLabel2.setForeground(Color.WHITE);
         logoLabel2.setBackground(null);
 
-        final JPanel logoPanel = new JPanel();
-        logoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        logoPanel.setBackground(null);
-        final JPanel someSpace = new JPanel();
-        someSpace.setBackground(null);
-        someSpace.setPreferredSize(new Dimension(10, 1));
+        final JLabel logoLabel3 = new JLabel();
+        try {
+            logoLabel3.setFont(Font.createFont(Font.TRUETYPE_FONT, OpenWebStartControlPanelStyle.class.getResourceAsStream("OpenSans-Light.ttf")));
+        } catch (final Exception e) {
+            LOG.warn("Unable to load font", e);
+        }
+        logoLabel3.setFont(logoLabel3.getFont().deriveFont(11.0f));
+        logoLabel3.setText("powered by IcedTeaWeb");
+        logoLabel3.setForeground(Color.WHITE);
+        logoLabel3.setBackground(null);
 
-        logoPanel.add(someSpace);
+
+        final JPanel logoPanel = new JPanel();
+        logoPanel.setLayout(null);
+        logoPanel.setBackground(null);
+
+        logoLabel1.setSize(new Dimension(logoLabel1.getPreferredSize().width + 2, logoLabel1.getPreferredSize().height + 2));
+        logoLabel2.setSize(new Dimension(logoLabel2.getPreferredSize().width + 2, logoLabel2.getPreferredSize().height + 2));
+        logoLabel3.setSize(new Dimension(logoLabel3.getPreferredSize().width + 2, logoLabel3.getPreferredSize().height + 2));
+
+        logoLabel1.setLocation(6, 2);
         logoPanel.add(logoLabel1);
+
+        logoLabel2.setLocation(84, 2);
         logoPanel.add(logoLabel2);
+
+        logoLabel3.setLocation(86, 34);
+        logoPanel.add(logoLabel3);
+
+        logoPanel.setPreferredSize(new Dimension(300, 64));
 
         try {
             final ImageIcon icon = new ImageIcon(ImageIO.read(OpenWebStartControlPanelStyle.class.getResourceAsStream("bean-42.png")));

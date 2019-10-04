@@ -23,25 +23,19 @@ import java.util.function.Predicate;
 
 import static com.openwebstart.jvm.RuntimeUpdateStrategy.DO_NOTHING_ON_LOCAL_MATCH;
 
-public class JavaRuntimeSelector implements JavaRuntimeProvider {
+class JavaRuntimeSelector implements JavaRuntimeProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimeSelector.class);
 
-    private static final JavaRuntimeSelector INSTANCE = new JavaRuntimeSelector();
+    private final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler;
 
-    private BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler;
+    private final Predicate<RemoteJavaRuntime> askForUpdateFunction;
 
-    private Predicate<RemoteJavaRuntime> askForUpdateFunction;
-
-    private JavaRuntimeSelector() {
-    }
-
-    public static void setDownloadHandler(final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler) {
-        getInstance().downloadHandler = downloadHandler;
-    }
-
-    public static void setAskForUpdateFunction(final Predicate<RemoteJavaRuntime> askForUpdateFunction) {
-        getInstance().askForUpdateFunction = askForUpdateFunction;
+    JavaRuntimeSelector(
+            BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler,
+            Predicate<RemoteJavaRuntime> askForUpdateFunction) {
+        this.downloadHandler = downloadHandler;
+        this.askForUpdateFunction = askForUpdateFunction;
     }
 
     @Override
@@ -57,7 +51,7 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
         }
     }
 
-    public LocalJavaRuntime getRuntime(final VersionString versionString, final URL serverEndpoint) {
+    private LocalJavaRuntime getRuntime(final VersionString versionString, final URL serverEndpoint) {
         Assert.requireNonNull(versionString, "versionString");
 
         LOG.debug("Trying to find Java runtime. Requested version: '{}' Requested url: '{}'", versionString, serverEndpoint);
@@ -121,9 +115,5 @@ public class JavaRuntimeSelector implements JavaRuntimeProvider {
         } catch (IOException e) {
             throw new RuntimeException("Can not install needed runtime", e);
         }
-    }
-
-    public static JavaRuntimeSelector getInstance() {
-        return INSTANCE;
     }
 }
