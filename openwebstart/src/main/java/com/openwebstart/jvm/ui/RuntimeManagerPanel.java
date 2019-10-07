@@ -141,7 +141,7 @@ public final class RuntimeManagerPanel extends JPanel {
             localJdks.stream()
                     .filter(Result::isFailed)
                     .map(Result::getException)
-                    .peek(e1 -> LOG.info("Exception while find local JDKs", e1))
+                    .peek(e1 -> LOG.info("Exception while finding local JDKs", e1))
                     .findFirst()
                     .ifPresent(e2 -> DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), e2));
 
