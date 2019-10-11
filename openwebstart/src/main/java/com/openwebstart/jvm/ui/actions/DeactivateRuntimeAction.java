@@ -1,13 +1,14 @@
 package com.openwebstart.jvm.ui.actions;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import java.util.function.BiConsumer;
 
 public class DeactivateRuntimeAction extends BasicMutationAction<LocalJavaRuntime> {
 
     public DeactivateRuntimeAction(final BiConsumer<LocalJavaRuntime, LocalJavaRuntime> onChangeConsumer) {
-        super("Deactivate JVM", "Deactivate the JVM for usage as runtime for webstart applications", onChangeConsumer);
+        super(Translator.getInstance().translate("jvmManager.action.deactivateRuntime.text"), Translator.getInstance().translate("jvmManager.action.deactivateRuntime.description"), onChangeConsumer);
     }
 
     @Override

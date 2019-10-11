@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
 
     public DeleteRuntimeAction() {
-        super("Delete JVM", "Delete the JVM");
+        super(Translator.getInstance().translate("jvmManager.action.deleteRuntime.text"), Translator.getInstance().translate("jvmManager.action.deleteRuntime.description"));
     }
 
     @Override
