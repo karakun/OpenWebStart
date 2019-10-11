@@ -6,8 +6,6 @@ import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,9 +16,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -29,14 +28,21 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import static java.awt.Cursor.WAIT_CURSOR;
+import static java.awt.Cursor.getDefaultCursor;
+import static java.awt.Cursor.getPredefinedCursor;
 
 public class ConfigurationDialog extends ModalDialog {
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
+    private final Executor backgroundExecutor = Executors.newSingleThreadExecutor() ;
+    private final Translator translator = Translator.getInstance();
+    private final JComboBox vendorComboBox;
+    private final Color originalBackground;
+    private final Color errorIndicator = Color.yellow;
 
     public ConfigurationDialog() {
-        final Translator translator = Translator.getInstance();
-
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
 
         final JLabel updateStrategyLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.updateStrategy.text"));
@@ -45,26 +51,16 @@ public class ConfigurationDialog extends ModalDialog {
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
 
         final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
-        final JComboBox vendorComboBox = new JComboBox();
-        vendorComboBox.setModel(new DefaultComboBoxModel(getVendorNames(RuntimeManagerConfig.getDefaultRemoteEndpoint())));
+        vendorComboBox = new JComboBox();
+        backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
-        vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
+
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
         final JTextField defaultUpdateServerField = new JTextField();
+        originalBackground = defaultUpdateServerField.getBackground();
         defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
-        defaultUpdateServerField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                final JTextField field = (JTextField) e.getSource();
-                final URL url = getUrl(field.getText());
-                if (url == null) {
-                    field.requestFocus();
-                } else {
-                    vendorComboBox.setModel(new DefaultComboBoxModel(getVendorNames(url)));
-                }
-            }
-        });
+        defaultUpdateServerField.addFocusListener(new MyFocusAdapter());
         final Checkbox allowAnyUpdateServerCheckBox = new Checkbox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
         allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
@@ -75,6 +71,10 @@ public class ConfigurationDialog extends ModalDialog {
         final JButton okButton = new JButton(translator.translate("action.ok"));
         okButton.addActionListener(e -> {
             try {
+                if (defaultUpdateServerField.getBackground() == errorIndicator) {
+                    defaultUpdateServerField.requestFocus();
+                    return;
+                }
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
@@ -119,6 +119,21 @@ public class ConfigurationDialog extends ModalDialog {
         add(panel);
     }
 
+    private void updateVendorComboBox(URL specifiedServerURL) {
+        try {
+            SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
+            final String[] vendorNames = JavaRuntimeManager.getAllVendors(specifiedServerURL);
+            SwingUtilities.invokeLater(() -> {
+                vendorComboBox.setModel(new DefaultComboBoxModel(vendorNames));
+                vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
+            });
+        } catch (Exception ex) {
+            DialogFactory.showErrorDialog(translator.translate("jvmManager.error.updateVendorNames"), ex);
+        } finally {
+            SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getDefaultCursor()));
+        }
+    }
+
     private static URL getUrl(String text) {
         try {
             return new URL(text);
@@ -127,21 +142,18 @@ public class ConfigurationDialog extends ModalDialog {
         }
     }
 
-    private String[] getVendorNames(URL specifiedServerURL) {
-        SwingWorker<String[], Void> swingWorker = new SwingWorker<String[], Void>() {
-            @Override
-            protected String[] doInBackground() {
-                LOG.info("Getting Vendor names");
-                return JavaRuntimeManager.getAllVendors(specifiedServerURL);
+    private class MyFocusAdapter extends FocusAdapter {
+        @Override
+        public void focusLost(FocusEvent e) {
+            final JTextField field = (JTextField) e.getSource();
+            final URL url = getUrl(field.getText());
+            if (url == null) {
+                field.setBackground(errorIndicator);
+                field.requestFocus();
+            } else {
+                field.setBackground(originalBackground);
+                backgroundExecutor.execute(() -> updateVendorComboBox(url));
             }
-        };
-        swingWorker.execute();
-        try {
-            return swingWorker.get(10, TimeUnit.SECONDS);
-        } catch (Exception exception) {
-            // TODO : error handling
-            LOG.error("Error while getting vendor names", exception);
-            return new String[0];
         }
     }
 }
