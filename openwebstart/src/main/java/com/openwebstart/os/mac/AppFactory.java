@@ -83,12 +83,12 @@ public class AppFactory {
             final String infoContent = IOUtils.readContentAsUtf8String(inputStream)
                     .replaceAll(Pattern.quote(SCRIPT_NAME_PROPERTY), SCRIPT_NAME)
                     .replaceAll(Pattern.quote(ICON_FILE_PROPERTY), ICON_FILE_NAME);
-
             try(final FileOutputStream outputStream = new FileOutputStream(infoFile)) {
                 IOUtils.writeUtf8Content(outputStream, infoContent);
             }
         }
 
+        //TODO: Here we need to change the calculator sample to a concrete OpenWebStart call
         final File scriptFile = new File(macFolder, SCRIPT_NAME);
         final String scriptContent = SCRIPT_START + System.lineSeparator() + "open -a Calculator";
         try(final FileOutputStream outputStream = new FileOutputStream(scriptFile)) {
