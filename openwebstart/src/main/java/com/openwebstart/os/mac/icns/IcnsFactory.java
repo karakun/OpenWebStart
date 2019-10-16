@@ -41,6 +41,7 @@ public class IcnsFactory {
                     return new ImageDefinition(v, size);
                 }))
                 .filter(r -> {
+                    //TODO: Better handling
                     if (r.isFailed()) {
                         r.getException().printStackTrace();
                         return false;

@@ -43,7 +43,7 @@ public class AppFactory {
 
     private final static String APPLICATIONS_FOLDER = "/Applications";
 
-    public void createApp(final String name, String... iconPaths) throws Exception {
+    public void createApp(final String name, final String... iconPaths) throws Exception {
         Assert.requireNonBlank(name, "name");
 
         final Path applicationsFolder = Paths.get(APPLICATIONS_FOLDER);
@@ -97,7 +97,7 @@ public class AppFactory {
         }
     }
 
-    private File getIcnsFile(String... iconPaths) throws Exception {
+    private File getIcnsFile(final String... iconPaths) throws Exception {
         if(iconPaths == null || iconPaths.length == 0) {
             return new File(AppFactory.class.getResource("icons.icns").getFile());
         }
