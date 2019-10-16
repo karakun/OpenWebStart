@@ -43,8 +43,6 @@ public class AppFactory {
 
     private final static String APPLICATIONS_FOLDER = "/Applications";
 
-
-
     public void createApp(final String name, String... iconPaths) throws Exception {
         Assert.requireNonBlank(name, "name");
 
