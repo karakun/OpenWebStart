@@ -13,13 +13,15 @@ public class Application {
 
     private final CacheId cacheId;
 
+    private final long size;
+
     /**
      * Constructor
      * @param cacheId the cache object from IcedTeaWeb
      */
     public Application(final CacheId cacheId) {
-        Assert.requireNonNull(cacheId, "cacheId");
-        this.cacheId = cacheId;
+        this.cacheId = Assert.requireNonNull(cacheId, "cacheId");
+        this.size = cacheId.getFiles().stream().mapToLong(f -> f.getSize()).sum();
     }
 
     /**
@@ -35,7 +37,7 @@ public class Application {
      * @return the size
      */
     public long getSize() {
-        return cacheId.getFiles().stream().mapToLong(f -> f.getSize()).sum();
+        return size;
     }
 
     /**
