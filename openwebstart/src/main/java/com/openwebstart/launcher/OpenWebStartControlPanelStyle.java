@@ -1,8 +1,7 @@
 package com.openwebstart.launcher;
 
-import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
-import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -17,7 +16,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.List;

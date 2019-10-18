@@ -1,9 +1,7 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
-import com.openwebstart.jvm.ui.util.IconComponent;
-import net.adoptopenjdk.icedteaweb.Assert;
+import com.openwebstart.ui.IconComponent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;

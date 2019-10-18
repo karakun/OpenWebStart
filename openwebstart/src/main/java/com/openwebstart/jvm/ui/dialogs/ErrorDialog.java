@@ -1,7 +1,7 @@
 package com.openwebstart.jvm.ui.dialogs;
 
 import com.openwebstart.jvm.ui.Images;
-import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -12,7 +12,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

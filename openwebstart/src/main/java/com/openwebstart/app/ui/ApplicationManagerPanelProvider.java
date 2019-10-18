@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui;
+package com.openwebstart.app.ui;
 
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.ControlPanelProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -6,25 +6,25 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.JComponent;
 
-public class RuntimeManagerPanelProvider implements ControlPanelProvider {
+public class ApplicationManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public String getTitle() {
-        return Translator.getInstance().translate("jvmManager.name");
+        return Translator.getInstance().translate("appManager.name");
     }
 
     @Override
     public String getName() {
-        return "RuntimeManagerPanel";
+        return "ApplicationManagerPanel";
     }
 
     @Override
     public int getOrder() {
-        return 0;
+        return 1;
     }
 
     @Override
-    public JComponent createPanel(final DeploymentConfiguration deploymentConfiguration) {
-        return new RuntimeManagerPanel(deploymentConfiguration);
+    public JComponent createPanel(final DeploymentConfiguration config) {
+        return new ApplicationManagerPanel(config);
     }
 }

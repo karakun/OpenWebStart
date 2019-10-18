@@ -1,6 +1,6 @@
 package com.openwebstart.jvm.ui.dialogs;
 
-enum ByteUnit {
+public enum ByteUnit {
 
     BYTE("B", "B", "byte", 0),
     KILOBYTE("KB", "KiB", "kilobyte", 1),

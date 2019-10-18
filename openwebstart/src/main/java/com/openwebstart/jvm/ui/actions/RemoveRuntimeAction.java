@@ -3,10 +3,9 @@ package com.openwebstart.jvm.ui.actions;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-import com.openwebstart.jvm.ui.dialogs.ErrorDialog;
+import com.openwebstart.ui.BasicAction;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
-import javax.swing.SwingUtilities;
 import java.util.concurrent.Executors;
 
 public class RemoveRuntimeAction extends BasicAction<LocalJavaRuntime> {

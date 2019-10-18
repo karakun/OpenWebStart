@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui.list;
+package com.openwebstart.ui;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
@@ -6,18 +6,19 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class RuntimeListHighlighter extends MouseAdapter {
+public class ListHighlighter<T> extends MouseAdapter {
 
     private static final int ACTION_AREA_WIDTH = 44;
+
     private static final int ACTION_AREA_HALF_OF_HEIGHTS = ACTION_AREA_WIDTH / 2;
 
     private int hoverIndex;
 
     private boolean inActionArea;
 
-    private RuntimeListComponent listComponent;
+    private ListComponent<T> listComponent;
 
-    RuntimeListHighlighter(final RuntimeListComponent listComponent) {
+    ListHighlighter(final ListComponent<T> listComponent) {
         this.listComponent = Assert.requireNonNull(listComponent, "listComponent");
         this.listComponent.addMouseListener(this);
         this.listComponent.addMouseMotionListener(this);
@@ -26,8 +27,12 @@ class RuntimeListHighlighter extends MouseAdapter {
         inActionArea = false;
     }
 
-    int getHoverIndex() {
+    public int getHoverIndex() {
         return hoverIndex;
+    }
+
+    public boolean isInActionArea() {
+        return inActionArea;
     }
 
     private void setHoverIndex(final int hoverIndex) {
@@ -79,9 +84,5 @@ class RuntimeListHighlighter extends MouseAdapter {
             this.inActionArea = inActionArea;
             repaintIndex(getHoverIndex());
         }
-    }
-
-    boolean isInActionArea() {
-        return inActionArea;
     }
 }

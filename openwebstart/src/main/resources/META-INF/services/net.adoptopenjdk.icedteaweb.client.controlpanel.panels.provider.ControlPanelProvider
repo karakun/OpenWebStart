@@ -1,2 +1,3 @@
 com.openwebstart.jvm.ui.RuntimeManagerPanelProvider
 com.openwebstart.controlpanel.SimplifiedJvmPanelProvider
+com.openwebstart.app.ui.ApplicationManagerPanelProvider

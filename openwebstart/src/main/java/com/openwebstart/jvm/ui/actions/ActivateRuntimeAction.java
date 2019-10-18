@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.ui.actions;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.ui.BasicMutationAction;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import java.util.function.BiConsumer;

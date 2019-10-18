@@ -1,7 +1,8 @@
-package com.openwebstart.jvm.ui.list;
+package com.openwebstart.app.ui;
 
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.app.Application;
 import com.openwebstart.jvm.ui.Images;
+import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ListHighlighter;
@@ -21,9 +22,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 
-class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
+public class ApplicationListCellRenderer implements ListCellRenderer<Application> {
 
     private final Color BACKGROUND_EVEN = Color.WHITE;
 
@@ -33,35 +36,28 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
     private final JPanel cellContent;
 
-    private final JLabel versionLabel;
+    private final JLabel titleLabel;
 
-    private final JLabel vendorLabel;
-
-    private final JLabel archLabel;
-
-    private final JLabel javaHomeLabel;
-
-    private final IconComponent deactivatedIcon;
+    private final JLabel detailsLabel;
 
     private final IconComponent actionsIcon;
 
     private final IconComponent actionsHooverIcon;
 
-    private final ListHighlighter<LocalJavaRuntime> listHighlighter;
+    private final ImageIcon appIcon;
 
-    RuntimeListCellRenderer(final ListHighlighter<LocalJavaRuntime> listHighlighter) {
+    private final ListHighlighter<Application> listHighlighter;
+
+    ApplicationListCellRenderer(final ListHighlighter<Application> listHighlighter) {
         this.listHighlighter = Assert.requireNonNull(listHighlighter, "listHighlighter");
 
         actionsIcon = new IconComponent(new ImageIcon(Images.MORE_OUTLINE_32_URL));
         actionsHooverIcon = new IconComponent(new ImageIcon(Images.MORE_32_URL));
 
+        appIcon = new ImageIcon();
 
-        versionLabel = new JLabel("VERSION");
-        vendorLabel = new JLabel("VENDOR");
-        archLabel = new JLabel("ARCH");
-        javaHomeLabel = new JLabel("JAVA_HOME");
-        deactivatedIcon = new IconComponent(new ImageIcon(Images.DEACTIVATED_24_URL));
-
+        titleLabel = new JLabel("VERSION");
+        detailsLabel = new JLabel("ARCH");
 
         cellContent = new JPanel();
         cellContent.setLayout(new BorderLayout(12, 12));
@@ -86,28 +82,21 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
     }
 
     private JPanel createCenterPanel() {
-        versionLabel.setFont(versionLabel.getFont().deriveFont(22.0f));
-        versionLabel.setMinimumSize(new Dimension(100, versionLabel.getPreferredSize().height));
-        vendorLabel.setFont(vendorLabel.getFont().deriveFont(22.0f).deriveFont(Font.ITALIC));
-        archLabel.setFont(archLabel.getFont().deriveFont(10.0f).deriveFont(Font.ITALIC));
-        archLabel.setForeground(Color.DARK_GRAY);
-        javaHomeLabel.setFont(javaHomeLabel.getFont().deriveFont(10.0f));
-        javaHomeLabel.setForeground(Color.DARK_GRAY);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(22.0f));
+        titleLabel.setMinimumSize(new Dimension(100, titleLabel.getPreferredSize().height));
+        detailsLabel.setFont(detailsLabel.getFont().deriveFont(10.0f).deriveFont(Font.ITALIC));
+        detailsLabel.setForeground(Color.DARK_GRAY);
 
         final JPanel firstLinePanel = new JPanel();
         firstLinePanel.setBackground(null);
         firstLinePanel.setLayout(new BoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
-        firstLinePanel.add(versionLabel);
-        firstLinePanel.add(Box.createHorizontalStrut(6));
-        firstLinePanel.add(vendorLabel);
+        firstLinePanel.add(titleLabel);
         firstLinePanel.add(Box.createHorizontalGlue());
 
         final JPanel secondLine = new JPanel();
         secondLine.setBackground(null);
         secondLine.setLayout(new BoxLayout(secondLine, BoxLayout.LINE_AXIS));
-        secondLine.add(archLabel);
-        secondLine.add(Box.createHorizontalStrut(6));
-        secondLine.add(javaHomeLabel);
+        secondLine.add(detailsLabel);
         secondLine.add(Box.createHorizontalGlue());
 
         final JPanel centerPanel = new JPanel();
@@ -121,32 +110,28 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
     }
 
     private JPanel createIconPanel() {
-        final IconComponent vmIcon = new IconComponent(new ImageIcon(Images.VMCUBE_64_URL));
-
-        final JPanel deactivatedIconWrapper = new JPanel();
-        deactivatedIconWrapper.setLayout(null);
-        deactivatedIconWrapper.setBackground(new Color(0, 0, 0, 0));
-        deactivatedIconWrapper.setPreferredSize(new Dimension(64, 64));
-        deactivatedIconWrapper.setMinimumSize(new Dimension(64, 64));
-        deactivatedIconWrapper.add(deactivatedIcon);
-        deactivatedIcon.setLocation(40, 40);
-        deactivatedIcon.setSize(24, 24);
-
+        final IconComponent vmIcon = new IconComponent(appIcon);
         final JPanel iconPanel = new JPanel();
         iconPanel.setLayout(new CenterLayout());
         iconPanel.setBackground(null);
-        iconPanel.add(deactivatedIconWrapper);
         iconPanel.add(vmIcon);
         return iconPanel;
     }
 
+    private BufferedImage getDefaultIcon() {
+        return null;
+    }
+
     @Override
-    public Component getListCellRendererComponent(final JList<? extends LocalJavaRuntime> list, final LocalJavaRuntime value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-        final Translator translator = Translator.getInstance();
-        versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse(translator.translate("jvmManager.unknownVersion")));
-        vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse(translator.translate("jvmManager.unknownVendor")));
-        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse(translator.translate("jvmManager.unknownOs")));
-        javaHomeLabel.setText(Optional.ofNullable(value).map(this::getJavaHome).orElse(translator.translate("jvmManager.unknownLocation")));
+    public Component getListCellRendererComponent(final JList<? extends Application> list, final Application value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+        titleLabel.setText(Optional.ofNullable(value).map(v -> v.getName()).orElse(""));
+
+        final long size = Optional.ofNullable(value).map(v -> v.getSize()).orElse(0l);
+        final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
+        detailsLabel.setText(size + " " + byteUnit.getDecimalShortName());
+
+        final Image iconImage = Optional.ofNullable(value).map(v -> v.getIcon(64)).orElse(getDefaultIcon());
+        appIcon.setImage(iconImage);
 
         if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);
@@ -157,26 +142,11 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
                 cellContent.setBackground(BACKGROUND_ODD);
             }
         }
-
-        if (Optional.ofNullable(value).map(LocalJavaRuntime::isActive).orElse(false)) {
-            deactivatedIcon.setVisible(false);
-        } else {
-            deactivatedIcon.setVisible(true);
-        }
-
         if (this.listHighlighter.isInActionArea() && this.listHighlighter.getHoverIndex() == index) {
             actionsHooverIcon.setVisible(true);
         } else {
             actionsHooverIcon.setVisible(false);
         }
-
         return cellContent;
-    }
-
-    private String getJavaHome(LocalJavaRuntime v) {
-        if (v.isManaged()) {
-            return "";
-        }
-        return v.getJavaHome().toString();
     }
 }
