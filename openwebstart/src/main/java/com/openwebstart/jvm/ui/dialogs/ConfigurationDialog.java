@@ -40,7 +40,8 @@ public class ConfigurationDialog extends ModalDialog {
     private final Translator translator = Translator.getInstance();
     private final JComboBox vendorComboBox;
     private final Color originalBackground;
-    private final Color errorIndicator = Color.yellow;
+    private final Color ERROR_BACKGROUND = Color.yellow;
+    private boolean urlValidationError = false;
 
     public ConfigurationDialog() {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
@@ -71,24 +72,24 @@ public class ConfigurationDialog extends ModalDialog {
         final JButton okButton = new JButton(translator.translate("action.ok"));
         okButton.addActionListener(e -> {
             try {
-                if (defaultUpdateServerField.getBackground() == errorIndicator) {
+                if (urlValidationError) {
                     defaultUpdateServerField.requestFocus();
                     return;
                 }
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
+                // TODO : Why URI when we are doing HttpRequest on the endpoint?
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
-            } catch (URISyntaxException ex) {
+            } catch (final URISyntaxException ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.invalidServerUri"), ex);
             }
         });
 
         final JButton cancelButton = new JButton(translator.translate("action.cancel"));
         cancelButton.addActionListener(e -> close());
-
 
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 2, 6, 6));
@@ -119,7 +120,7 @@ public class ConfigurationDialog extends ModalDialog {
         add(panel);
     }
 
-    private void updateVendorComboBox(URL specifiedServerURL) {
+    private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
             final String[] vendorNames = JavaRuntimeManager.getAllVendors(specifiedServerURL);
@@ -127,32 +128,26 @@ public class ConfigurationDialog extends ModalDialog {
                 vendorComboBox.setModel(new DefaultComboBoxModel(vendorNames));
                 vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
             });
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             DialogFactory.showErrorDialog(translator.translate("jvmManager.error.updateVendorNames"), ex);
         } finally {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getDefaultCursor()));
         }
     }
 
-    private static URL getUrl(String text) {
-        try {
-            return new URL(text);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
     private class MyFocusAdapter extends FocusAdapter {
         @Override
-        public void focusLost(FocusEvent e) {
+        public void focusLost(final FocusEvent e) {
             final JTextField field = (JTextField) e.getSource();
-            final URL url = getUrl(field.getText());
-            if (url == null) {
-                field.setBackground(errorIndicator);
-                field.requestFocus();
-            } else {
+            try {
+                final URL url = new URL(field.getText());
                 field.setBackground(originalBackground);
+                urlValidationError = false;
                 backgroundExecutor.execute(() -> updateVendorComboBox(url));
+            } catch (final MalformedURLException exception) {
+                field.setBackground(ERROR_BACKGROUND);
+                urlValidationError = true;
+                field.requestFocus();
             }
         }
     }
