@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -44,8 +42,6 @@ public class ConfigurationDialog extends ModalDialog {
     private boolean urlValidationError = false;
 
     public ConfigurationDialog() {
-        final Translator translator = Translator.getInstance();
-
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
 
         final JLabel updateStrategyLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.updateStrategy.text"));
@@ -57,7 +53,6 @@ public class ConfigurationDialog extends ModalDialog {
         vendorComboBox = new JComboBox();
         backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
-
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
         final JTextField defaultUpdateServerField = new JTextField();
@@ -81,12 +76,11 @@ public class ConfigurationDialog extends ModalDialog {
                 }
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
-                // TODO : Why URI when we are doing HttpRequest on the endpoint?
-                RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
+                RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
-            } catch (final URISyntaxException ex) {
+            } catch (final MalformedURLException ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.invalidServerUri"), ex);
             }
         });
