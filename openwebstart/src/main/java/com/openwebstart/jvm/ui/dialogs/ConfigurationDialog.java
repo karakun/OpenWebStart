@@ -24,6 +24,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -92,9 +95,9 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
-        mainPanel.addRow(1, defaultVendorLabel, vendorComboBox);
-        mainPanel.addRow(2, defaultUpdateServerLabel, defaultUpdateServerField);
-        mainPanel.addEditorRow(3, allowAnyUpdateServerCheckBox);
+        mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
+        mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
+        mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
         mainPanel.addRow(4, supportedVersionRangeLabel, supportedVersionRangeField);
         mainPanel.addFlexibleRow(5);
 
@@ -109,9 +112,12 @@ public class ConfigurationDialog extends ModalDialog {
     private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
-            final String[] vendorNames = JavaRuntimeManager.getAllVendors(specifiedServerURL);
+            final List<String> vendorNamesList = new ArrayList<String>(Arrays.asList(JavaRuntimeManager.getAllVendors(specifiedServerURL)));
+            if (vendorNamesList.contains(RuntimeManagerConfig.getVendor()) == false) {
+                vendorNamesList.add(RuntimeManagerConfig.getVendor());
+            }
             SwingUtilities.invokeLater(() -> {
-                vendorComboBox.setModel(new DefaultComboBoxModel(vendorNames));
+                vendorComboBox.setModel(new DefaultComboBoxModel(vendorNamesList.toArray()));
                 vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
             });
         } catch (final Exception ex) {
