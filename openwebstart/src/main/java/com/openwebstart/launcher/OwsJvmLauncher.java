@@ -57,9 +57,9 @@ class OwsJvmLauncher implements JvmLauncher {
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
         for (JREDesc jre : jnlpFile.getResources().getJREs()) {
             LOG.debug("searching for JRE with version string '{}'", jre.getVersion());
-
             final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(jre.getVersion(), jre.getLocation());
             if (javaRuntime != null) {
+                LOG.debug("Found JVM {}", javaRuntime);
                 return javaRuntime;
             }
         }

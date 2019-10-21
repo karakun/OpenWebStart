@@ -286,7 +286,7 @@ public final class LocalRuntimeManager {
     LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
 
-        LOG.debug("Installing remote runtime on local cache");
+        LOG.debug("Installing remote runtime {} on local cache", remoteRuntime);
 
 
         if (remoteRuntime.getOperationSystem() != OperationSystem.getLocalSystem()) {
@@ -306,7 +306,7 @@ public final class LocalRuntimeManager {
             if (downloadConsumer != null) {
                 downloadConsumer.accept(inputStream);
             }
-            LOG.debug("Trying to download and extract runtime");
+            LOG.debug("Trying to download and extract runtime {}", remoteRuntime);
             ZipUtil.unzip(inputStream, runtimePath);
         } catch (final Exception e) {
             try {
@@ -316,7 +316,7 @@ public final class LocalRuntimeManager {
             }
             throw new IOException("Error in runtime download", e);
         }
-
+        LOG.debug("Remote runtime {} successfully installed in {}", remoteRuntime, runtimePath);
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
 
         add(newRuntime);
