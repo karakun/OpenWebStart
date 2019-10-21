@@ -25,7 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +42,7 @@ public class JvmManagerDemo {
         Translator.addBundle("i18n");
 
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
-        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
+        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL("http://localhost:8090/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
 
