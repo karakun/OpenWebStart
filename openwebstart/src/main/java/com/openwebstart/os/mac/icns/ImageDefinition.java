@@ -26,6 +26,6 @@ class ImageDefinition implements Comparable<ImageDefinition> {
         if (o == null) {
             return 1;
         }
-        return Integer.valueOf(size).compareTo(o.size);
+        return Integer.compare(size, o.size);
     }
 }
