@@ -1,5 +1,7 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.controlpanel.ButtonPanelFactory;
+import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
@@ -8,19 +10,16 @@ import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.net.MalformedURLException;
@@ -36,14 +35,17 @@ import static java.awt.Cursor.getDefaultCursor;
 import static java.awt.Cursor.getPredefinedCursor;
 
 public class ConfigurationDialog extends ModalDialog {
+    private static final Color ERROR_BACKGROUND = Color.yellow;
+
     private final Executor backgroundExecutor = Executors.newSingleThreadExecutor() ;
     private final Translator translator = Translator.getInstance();
     private final JComboBox vendorComboBox;
     private final Color originalBackground;
-    private final Color ERROR_BACKGROUND = Color.yellow;
     private boolean urlValidationError = false;
 
     public ConfigurationDialog() {
+        final Translator translator = Translator.getInstance();
+
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
 
         final JLabel updateStrategyLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.updateStrategy.text"));
@@ -62,8 +64,9 @@ public class ConfigurationDialog extends ModalDialog {
         originalBackground = defaultUpdateServerField.getBackground();
         defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
         defaultUpdateServerField.addFocusListener(new MyFocusAdapter());
-        final Checkbox allowAnyUpdateServerCheckBox = new Checkbox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
-        allowAnyUpdateServerCheckBox.setState(RuntimeManagerConfig.isNonDefaultServerAllowed());
+
+        final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
+        allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
 
         final JLabel supportedVersionRangeLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.versionRange.text"));
         final JTextField supportedVersionRangeField = new JTextField();
@@ -80,7 +83,7 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
                 // TODO : Why URI when we are doing HttpRequest on the endpoint?
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI(defaultUpdateServerField.getText()));
-                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.getState());
+                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
                 RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (final URISyntaxException ex) {
@@ -91,31 +94,20 @@ public class ConfigurationDialog extends ModalDialog {
         final JButton cancelButton = new JButton(translator.translate("action.cancel"));
         cancelButton.addActionListener(e -> close());
 
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(0, 2, 6, 6));
-        mainPanel.add(updateStrategyLabel);
-        mainPanel.add(updateStrategyComboBox);
-        mainPanel.add(defaultUpdateServerLabel);
-        mainPanel.add(defaultUpdateServerField);
-        mainPanel.add(new JLabel());
-        mainPanel.add(allowAnyUpdateServerCheckBox);
-        mainPanel.add(defaultVendorLabel);
-        mainPanel.add(vendorComboBox);
-        mainPanel.add(supportedVersionRangeLabel);
-        mainPanel.add(supportedVersionRangeField);
+        final FormPanel mainPanel = new FormPanel();
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        final JPanel actionWrapperPanel = new JPanel();
-        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
-        actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        actionWrapperPanel.add(Box.createHorizontalGlue());
-        actionWrapperPanel.add(okButton);
-        actionWrapperPanel.add(cancelButton);
+        mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
+        mainPanel.addRow(1, defaultVendorLabel, vendorComboBox);
+        mainPanel.addRow(2, defaultUpdateServerLabel, defaultUpdateServerField);
+        mainPanel.addEditorRow(3, allowAnyUpdateServerCheckBox);
+        mainPanel.addRow(4, supportedVersionRangeLabel, supportedVersionRangeField);
+        mainPanel.addFlexibleRow(5);
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(8, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         panel.add(mainPanel, BorderLayout.CENTER);
-        panel.add(actionWrapperPanel, BorderLayout.SOUTH);
+        panel.add(ButtonPanelFactory.createButtonPanel(okButton, cancelButton), BorderLayout.SOUTH);
 
         add(panel);
     }
