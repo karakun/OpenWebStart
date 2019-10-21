@@ -5,6 +5,7 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.runtime.Boot;
@@ -26,6 +27,8 @@ public class PhaseTwoWebStartLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
 
     public static void main(String[] args) {
+        Translator.addBundle("i18n");
+
         LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
         LOG.debug("OS detected: Win[{}], MacOS[{}], Linux[{}]",
                 InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
