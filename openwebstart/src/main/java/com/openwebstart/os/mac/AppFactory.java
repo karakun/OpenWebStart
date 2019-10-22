@@ -53,22 +53,22 @@ public class AppFactory {
             throw new IllegalArgumentException("App with name " + name + " already exists!");
         }
         if(!appPackage.mkdirs()) {
-            throw new IOException("Can not create app directory");
+            throw new IOException("Cannot create app directory");
         }
 
         final File contentsFolder = new File(appPackage, CONTENTS_FOLDER_NAME);
         if(!contentsFolder.mkdirs()) {
-            throw new IOException("Can not create contents directory");
+            throw new IOException("Cannot create contents directory");
         }
 
         final File resourcesFolder = new File(contentsFolder, RESOURCES_FOLDER_NAME);
         if(!resourcesFolder.mkdirs()) {
-            throw new IOException("Can not create resources directory");
+            throw new IOException("Cannot create resources directory");
         }
 
         final File macFolder = new File(contentsFolder, MAC_OS_FOLDER_NAME);
         if(!macFolder.mkdirs()) {
-            throw new IOException("Can not create macOs directory");
+            throw new IOException("Cannot create macOs directory");
         }
 
         final File iconsFile = new File(resourcesFolder, ICON_FILE_NAME + ICON_FILE_EXTENSION);
@@ -93,7 +93,7 @@ public class AppFactory {
             IOUtils.writeUtf8Content(outputStream, scriptContent);
         }
         if(!scriptFile.setExecutable(true)) {
-            throw new IOException("Can not create script file");
+            throw new IOException("Cannot create script file");
         }
     }
 

@@ -92,6 +92,6 @@ public enum OperationSystem {
                 return OperationSystem.LINUX32;
             }
         }
-        throw new IllegalStateException("Can not specify OS");
+        throw new IllegalStateException("Cannot specify OS");
     }
 }

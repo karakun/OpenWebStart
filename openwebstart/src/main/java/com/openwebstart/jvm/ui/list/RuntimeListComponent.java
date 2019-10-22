@@ -45,7 +45,7 @@ public class RuntimeListComponent extends JList<LocalJavaRuntime> {
 
     @Override
     public void setModel(final ListModel<LocalJavaRuntime> model) {
-        throw new RuntimeException("Can not set model");
+        throw new RuntimeException("Cannot set model");
     }
 
     private void clickButtonAt(Point point) {

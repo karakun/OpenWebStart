@@ -83,7 +83,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
     private LocalJavaRuntime askForDeactivatedRuntime(VersionString versionString, Vendor vendor, OperationSystem os) {
         return LocalRuntimeManager.getInstance().getBestDeactivatedRuntime(versionString, vendor, os)
                 .filter(DialogFactory::askForDeactivatedRuntimeUsage)
-                .orElseThrow(() -> new RuntimeException("Can not provide or find runtime for version '" +
+                .orElseThrow(() -> new RuntimeException("Cannot provide or find runtime for version '" +
                         versionString + "', vendor '" + vendor + "' and operating system '" + os + "'"));
     }
 
@@ -113,7 +113,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
             return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, serverEndpoint, consumer);
         } catch (IOException e) {
-            throw new RuntimeException("Can not install needed runtime", e);
+            throw new RuntimeException("Cannot install needed runtime", e);
         }
     }
 }

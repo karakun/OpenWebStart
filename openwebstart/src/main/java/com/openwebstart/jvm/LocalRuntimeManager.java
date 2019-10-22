@@ -88,7 +88,7 @@ public final class LocalRuntimeManager {
             if (!cachePath.exists()) {
                 final boolean dirCreated = cachePath.mkdirs();
                 if (!dirCreated) {
-                    throw new IOException("Can not create cache dir '" + cachePath + "'");
+                    throw new IOException("Cannot create cache dir '" + cachePath + "'");
                 }
             }
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
@@ -153,7 +153,7 @@ public final class LocalRuntimeManager {
         }
 
         if (!Objects.equals(oldRuntime.isManaged(), newRuntime.isManaged())) {
-            throw new IllegalArgumentException("Can not change managed state of runtime");
+            throw new IllegalArgumentException("Cannot change managed state of runtime");
         }
 
         final int index = runtimes.indexOf(oldRuntime);
@@ -182,7 +182,7 @@ public final class LocalRuntimeManager {
 
         final Path runtimePath = localJavaRuntime.getJavaHome();
         if (!runtimePath.toFile().exists()) {
-            throw new IllegalArgumentException("Can not add runtime with nonexisting JAVAHOME=" + runtimePath);
+            throw new IllegalArgumentException("Cannot add runtime with nonexisting JAVAHOME=" + runtimePath);
         }
 
         if (!runtimes.contains(localJavaRuntime)) {
@@ -202,7 +202,7 @@ public final class LocalRuntimeManager {
         LOG.debug("Deleting runtime");
 
         if (!localJavaRuntime.isManaged()) {
-            throw new IllegalArgumentException("Can not delete runtime that is not managed");
+            throw new IllegalArgumentException("Cannot delete runtime that is not managed");
         }
 
         if (runtimes.contains(localJavaRuntime)) {
@@ -233,7 +233,7 @@ public final class LocalRuntimeManager {
         LOG.debug("Removing runtime definition");
 
         if (localJavaRuntime.isManaged()) {
-            throw new IllegalArgumentException("Can not remove runtime that is managed");
+            throw new IllegalArgumentException("Cannot remove runtime that is managed");
         }
 
         if (runtimes.contains(localJavaRuntime)) {
@@ -277,7 +277,7 @@ public final class LocalRuntimeManager {
             if (r.isSuccessful()) {
                     add(r.getResult());
             } else {
-                LOG.warn("Can not add local runtime.", r.getException());
+                LOG.warn("Cannot add local runtime.", r.getException());
             }
         }
         return Collections.unmodifiableList(foundRuntimes);
@@ -290,7 +290,7 @@ public final class LocalRuntimeManager {
 
 
         if (remoteRuntime.getOperationSystem() != OperationSystem.getLocalSystem()) {
-            throw new IllegalArgumentException("Can not install JVM for another os than " + OperationSystem.getLocalSystem().getName());
+            throw new IllegalArgumentException("Cannot install JVM for another os than " + OperationSystem.getLocalSystem().getName());
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
@@ -312,7 +312,7 @@ public final class LocalRuntimeManager {
             try {
                 FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
             } catch (IOException ex) {
-                throw new IOException("Error in Download + Can not delete directory", e);
+                throw new IOException("Error in Download + Cannot delete directory", e);
             }
             throw new IOException("Error in runtime download", e);
         }

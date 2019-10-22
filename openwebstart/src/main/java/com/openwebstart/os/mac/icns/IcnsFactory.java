@@ -31,7 +31,7 @@ public class IcnsFactory {
 
         final File iconFolder = new File(tempDirectory.toFile(), ICON_FOLDER_NAME);
         if (!iconFolder.mkdirs()) {
-            throw new IOException("Can not create icon folder");
+            throw new IOException("Cannot create icon folder");
         }
 
         final List<ImageDefinition> iconDefinitions = icons.stream()
