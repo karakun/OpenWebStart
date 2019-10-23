@@ -1,6 +1,7 @@
 package com.openwebstart.launcher;
 
 import com.install4j.runtime.installer.helper.InstallerUtil;
+import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
@@ -27,6 +28,8 @@ public class PhaseTwoWebStartLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
 
     public static void main(String[] args) {
+        Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
+
         Translator.addBundle("i18n");
 
         LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
