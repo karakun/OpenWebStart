@@ -6,8 +6,11 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
+import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -31,11 +34,18 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
+import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static java.awt.Cursor.WAIT_CURSOR;
 import static java.awt.Cursor.getDefaultCursor;
 import static java.awt.Cursor.getPredefinedCursor;
 
 public class ConfigurationDialog extends ModalDialog {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
+
     private static final Color ERROR_BACKGROUND = Color.yellow;
 
     private final Executor backgroundExecutor = Executors.newSingleThreadExecutor() ;
@@ -44,31 +54,38 @@ public class ConfigurationDialog extends ModalDialog {
     private final Color originalBackground;
     private boolean urlValidationError = false;
 
-    public ConfigurationDialog() {
+    public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
+
+        final UiLock uiLock = new UiLock(deploymentConfiguration);
 
         final JLabel updateStrategyLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.updateStrategy.text"));
         final JComboBox<RuntimeUpdateStrategy> updateStrategyComboBox = new JComboBox<>(RuntimeUpdateStrategy.values());
         updateStrategyComboBox.setRenderer(new TranslatableEnumComboboxRenderer<>());
         updateStrategyComboBox.setSelectedItem(RuntimeManagerConfig.getStrategy());
+        uiLock.update(JVM_UPDATE_STRATEGY, updateStrategyComboBox);
 
         final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
         vendorComboBox = new JComboBox();
         backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
+        uiLock.update(JVM_VENDOR, vendorComboBox);
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
         final JTextField defaultUpdateServerField = new JTextField();
         originalBackground = defaultUpdateServerField.getBackground();
-        defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
+        try {
+            defaultUpdateServerField.setText(Optional.ofNullable(RuntimeManagerConfig.getDefaultRemoteEndpoint()).map(URL::toString).orElse(""));
+        } catch (final Exception e) {
+            LOG.error("Can not set default server url!", e);
+        }
         defaultUpdateServerField.addFocusListener(new MyFocusAdapter());
+        uiLock.update(DEFAULT_JVM_DOWNLOAD_SERVER, defaultUpdateServerField);
+
 
         final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
         allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
-
-        final JLabel supportedVersionRangeLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.versionRange.text"));
-        final JTextField supportedVersionRangeField = new JTextField();
-        supportedVersionRangeField.setText(Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(VersionString::toString).orElse(""));
+        uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowAnyUpdateServerCheckBox);
 
         final JButton okButton = new JButton(translator.translate("action.ok"));
         okButton.addActionListener(e -> {
@@ -81,7 +98,6 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
-                RuntimeManagerConfig.setSupportedVersionRange(Optional.ofNullable(supportedVersionRangeField.getText()).filter(t -> !t.trim().isEmpty()).map(VersionString::fromString).orElse(null));
                 close();
             } catch (final MalformedURLException ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.invalidServerUri"), ex);
@@ -98,7 +114,6 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
         mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
         mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
-        mainPanel.addRow(4, supportedVersionRangeLabel, supportedVersionRangeField);
         mainPanel.addFlexibleRow(5);
 
         final JPanel panel = new JPanel();

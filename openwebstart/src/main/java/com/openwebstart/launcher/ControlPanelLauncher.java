@@ -22,15 +22,25 @@ public class ControlPanelLauncher {
 
         Translator.addBundle("i18n");
         final DeploymentConfiguration config = new DeploymentConfiguration();
+
         try {
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
+            System.exit(-1);
+        }
+
+        try {
+            new InitialConfigurationCheck(config).check();
+        } catch (Exception e) {
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("error.initialConfig"), e);
+            System.exit(-1);
         }
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {
+        } catch (final Exception e) {
+            LOG.error("Can not set look&feel", e);
         }
 
         SwingUtils.invokeLater(() -> {
