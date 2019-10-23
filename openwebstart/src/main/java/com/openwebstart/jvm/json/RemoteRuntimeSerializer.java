@@ -42,7 +42,7 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
             return new RemoteJavaRuntime(version, os, vendor, href);
 
         } catch (final Exception e) {
-            throw new JsonParseException("Can not parse RemoteJavaRuntime", e);
+            throw new JsonParseException("Cannot parse RemoteJavaRuntime", e);
         }
     }
 }

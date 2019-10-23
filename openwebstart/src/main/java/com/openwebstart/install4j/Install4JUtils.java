@@ -1,7 +1,6 @@
 package com.openwebstart.install4j;
 
 import com.install4j.api.launcher.Variables;
-import com.openwebstart.launcher.OpenWebStartControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -10,9 +9,9 @@ import java.util.Optional;
 
 public class Install4JUtils {
 
-    private final static Logger LOG = LoggerFactory.getLogger(Install4JUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Install4JUtils.class);
 
-    private final static String VERSION_VARIABLE_NAME = "sys.applicationVersion";
+    private static final String VERSION_VARIABLE_NAME = "sys.applicationVersion";
 
     public static Optional<String> applicationVersion() {
         try {

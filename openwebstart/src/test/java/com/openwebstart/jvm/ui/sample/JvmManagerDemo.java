@@ -11,6 +11,7 @@ import com.openwebstart.jvm.ui.RuntimeManagerPanel;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
 import com.openwebstart.launcher.JavaRuntimeProvider;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import spark.Spark;
 
@@ -24,7 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -39,9 +39,10 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 public class JvmManagerDemo {
 
     public static void main(String[] args) throws Exception {
+        Translator.addBundle("i18n");
 
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
-        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:8090/jvms"));
+        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL("http://localhost:8090/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(ANY_VENDOR.getName());
 

@@ -5,17 +5,16 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
-import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 
 public class RuntimeManagerConfig {
 
@@ -39,7 +38,7 @@ public class RuntimeManagerConfig {
         }
     }
 
-    public static void setDefaultRemoteEndpoint(final URI defaultRemoteEndpoint) {
+    public static void setDefaultRemoteEndpoint(final URL defaultRemoteEndpoint) {
         final String defaultServer = defaultRemoteEndpoint != null ? defaultRemoteEndpoint.toString() : null;
         config().setProperty(DEFAULT_JVM_DOWNLOAD_SERVER, defaultServer);
     }

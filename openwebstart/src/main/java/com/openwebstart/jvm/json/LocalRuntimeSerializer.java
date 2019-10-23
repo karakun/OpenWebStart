@@ -53,7 +53,7 @@ public class LocalRuntimeSerializer implements JsonSerializer<LocalJavaRuntime>,
             return new LocalJavaRuntime(version, os, vendor, javaHome, lastUsage, active, managed);
 
         } catch (final Exception e) {
-            throw new JsonParseException("Can not parse LocalJavaRuntime", e);
+            throw new JsonParseException("Cannot parse LocalJavaRuntime", e);
         }
     }
 

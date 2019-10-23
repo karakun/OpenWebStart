@@ -14,12 +14,13 @@ import javax.swing.UIManager;
 
 public class ControlPanelLauncher {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ControlPanelLauncher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ControlPanelLauncher.class);
 
 
     public static void main(final String[] args) {
-        Translator.addBundle("i18n");
+        Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart ControlPanel {}", v));
 
+        Translator.addBundle("i18n");
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {
             config.load();
@@ -29,10 +30,8 @@ public class ControlPanelLauncher {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-
-        Install4JUtils.applicationVersion().ifPresent(v ->  LOG.info("Starting OpenWebStart {}", v));
 
         SwingUtils.invokeLater(() -> {
             final ControlPanel editor = new ControlPanel(config, new OpenWebStartControlPanelStyle());
