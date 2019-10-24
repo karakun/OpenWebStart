@@ -10,6 +10,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.RuntimeManagerPanel;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
+import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -145,7 +146,7 @@ public class JvmManagerDemo {
 
         requestButton.addActionListener(event -> Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                final VersionString version = VersionString.fromString(requestedVersionField.getText());
+                final VersionString version = JvmVersionUtils.fromJnlp(VersionString.fromString(requestedVersionField.getText()));
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());
                 final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, serverEndpoint);
 
