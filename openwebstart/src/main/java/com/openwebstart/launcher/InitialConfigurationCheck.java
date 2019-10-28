@@ -34,14 +34,11 @@ public class InitialConfigurationCheck {
 
     private final DeploymentConfiguration deploymentConfiguration;
 
-    private final UiLock uiLock;
-
     private final Lock preferencesStoreLock = new ReentrantLock();
 
     public InitialConfigurationCheck(final DeploymentConfiguration deploymentConfiguration) {
         this.deploymentConfiguration = Assert.requireNonNull(deploymentConfiguration, "deploymentConfiguration");
         this.install4JConfiguration = Install4JConfiguration.getInstance();
-        this.uiLock = new UiLock(deploymentConfiguration);
     }
 
     public void check() throws Exception {
@@ -81,7 +78,7 @@ public class InitialConfigurationCheck {
 
         if (install4JConfiguration.isVariableLocked(propertyName)) {
             LOG.info("Property '{}' will be locked", propertyName);
-            uiLock.addLock(propertyName);
+            deploymentConfiguration.lock(propertyName);
         } else {
             LOG.info("no lock defined for property '{}'", propertyName);
         }
