@@ -9,9 +9,11 @@ import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
+import javax.naming.ConfigurationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,21 @@ public class PhaseTwoWebStartLauncher {
         LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
         LOG.debug("OS detected: Win[{}], MacOS[{}], Linux[{}]",
                 InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
+
+        final DeploymentConfiguration config = new DeploymentConfiguration();
+        try {
+            config.load();
+        } catch (final ConfigurationException e) {
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
+            System.exit(-1);
+        }
+
+        try {
+            new InitialConfigurationCheck(config).check();
+        } catch (Exception e) {
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("error.initialConfig"), e);
+            System.exit(-1);
+        }
 
         final List<String> bootArgs = skipNotRelevantArgs(args);
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(

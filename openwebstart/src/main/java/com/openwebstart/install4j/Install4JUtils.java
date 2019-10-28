@@ -17,7 +17,7 @@ public class Install4JUtils {
         try {
             return Optional.ofNullable(Variables.getCompilerVariable(VERSION_VARIABLE_NAME));
         } catch (IOException e) {
-            LOG.error("Can not read application applicationVersion", e);
+            LOG.warn("Can not read application applicationVersion");
             return Optional.empty();
         }
     }

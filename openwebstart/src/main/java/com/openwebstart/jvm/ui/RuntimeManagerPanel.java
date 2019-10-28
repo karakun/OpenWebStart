@@ -49,6 +49,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
+
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes();
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
@@ -78,7 +79,7 @@ public final class RuntimeManagerPanel extends JPanel {
         }));
 
         final JButton configureButton = new JButton(translator.translate("jvmManager.action.settings.text"));
-        configureButton.addActionListener(e -> new ConfigurationDialog().showAndWait());
+        configureButton.addActionListener(e -> new ConfigurationDialog(deploymentConfiguration).showAndWait());
 
         final JButton addLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.addLocal.text"));
         addLocalRuntimesButton.addActionListener(e -> {
