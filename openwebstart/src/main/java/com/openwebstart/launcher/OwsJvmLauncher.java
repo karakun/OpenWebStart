@@ -2,6 +2,7 @@ package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
+import com.openwebstart.jvm.util.JvmVersionUtils;
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -56,8 +57,9 @@ class OwsJvmLauncher implements JvmLauncher {
 
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
         for (JREDesc jre : jnlpFile.getResources().getJREs()) {
-            LOG.debug("searching for JRE with version string '{}'", jre.getVersion());
-            final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(jre.getVersion(), jre.getLocation());
+            final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
+            LOG.debug("searching for JRE with version string '{}'", version);
+            final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
             if (javaRuntime != null) {
                 LOG.debug("Found JVM {}", javaRuntime);
                 return javaRuntime;
