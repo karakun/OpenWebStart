@@ -12,46 +12,30 @@ import com.install4j.api.update.UpdateScheduleRegistry;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class Install4JUpdate {
+public class Install4JUpdateHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Install4JUpdate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Install4JUpdateHandler.class);
 
     private final static String UPDATE_PROCESS_ID = "1462";
 
-    private final static String UPDATE_DEACTIVATED_PARAM = "ows.update.deactivated";
+    public Install4JUpdateHandler(final UpdateSchedule updateSchedule) {
+        Assert.requireNonNull(updateSchedule, "updateSchedule");
 
-    private final static String UPDATE_SCHEDULE_PARAM = "ows.update.schedule";
-
-    private final boolean updateDeactivated;
-
-    public Install4JUpdate(final DeploymentConfiguration configuration) {
-        Assert.requireNonNull(configuration, "configuration");
-
-        final UpdateSchedule schedule = Optional.ofNullable(UpdateSchedule.getById(configuration.getProperty(UPDATE_SCHEDULE_PARAM)))
-                .orElse(UpdateSchedule.ON_EVERY_START);
-        UpdateScheduleRegistry.setUpdateSchedule(schedule);
-
-        updateDeactivated = Boolean.parseBoolean(configuration.getProperty(UPDATE_DEACTIVATED_PARAM));
+        UpdateScheduleRegistry.setUpdateSchedule(updateSchedule);
     }
 
     public void triggerPossibleUpdate() throws UserCanceledException, IOException {
-        if (!updateDeactivated && UpdateScheduleRegistry.checkAndReset() && hasUpdate()) {
+        if (UpdateScheduleRegistry.checkAndReset() && hasUpdate()) {
             doUpdate();
         }
     }
 
-    public boolean hasUpdate() throws UserCanceledException, IOException {
-        final String serverUrl = Install4JUtils.updatesUrl();
-        LOG.info("Checking for update on server {}", serverUrl);
-        final UpdateCheckRequest request = new UpdateCheckRequest(serverUrl);
-        request.applicationDisplayMode(ApplicationDisplayMode.UNATTENDED);
-        final UpdateDescriptor updateDescriptor = UpdateChecker.getUpdateDescriptor(request);
-        final Optional<UpdateDescriptorEntry> possibleUpdateEntry = Optional.ofNullable(updateDescriptor.getPossibleUpdateEntry());
+    public static boolean hasUpdate() throws UserCanceledException, IOException {
+        final Optional<UpdateDescriptorEntry> possibleUpdateEntry = getUpdate();
         if (possibleUpdateEntry.isPresent()) {
             LOG.info("found update {}", possibleUpdateEntry.get());
         } else {
@@ -60,7 +44,16 @@ public class Install4JUpdate {
         return possibleUpdateEntry.isPresent();
     }
 
-    private void doUpdate() {
+    public static Optional<UpdateDescriptorEntry> getUpdate() throws UserCanceledException, IOException {
+        final String serverUrl = Install4JUtils.updatesUrl();
+        LOG.info("Checking for update on server {}", serverUrl);
+        final UpdateCheckRequest request = new UpdateCheckRequest(serverUrl);
+        request.applicationDisplayMode(ApplicationDisplayMode.UNATTENDED);
+        final UpdateDescriptor updateDescriptor = UpdateChecker.getUpdateDescriptor(request);
+        return Optional.ofNullable(updateDescriptor.getPossibleUpdateEntry());
+    }
+
+    public static void doUpdate() {
         LOG.info("Starting update");
         ApplicationLauncher.launchApplicationInProcess(UPDATE_PROCESS_ID, null, new ApplicationLauncher.Callback() {
                     public void exited(int exitValue) {

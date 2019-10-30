@@ -1,8 +1,9 @@
 package com.openwebstart.launcher;
 
-import com.openwebstart.install4j.Install4JUpdate;
+import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
+import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -12,6 +13,7 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
+import java.util.concurrent.Executors;
 
 public class ControlPanelLauncher {
 
@@ -38,10 +40,14 @@ public class ControlPanelLauncher {
             System.exit(-1);
         }
 
-        try {
-            new Install4JUpdate(config).triggerPossibleUpdate();
-        } catch (Exception e) {
-            LOG.error("Error in possible update process", e);
+        if(UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
+            Executors.newSingleThreadExecutor().execute(() -> {
+                try {
+                    new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForSettings(config)).triggerPossibleUpdate();
+                } catch (Exception e) {
+                    LOG.error("Error in possible update process", e);
+                }
+            });
         }
 
         try {
