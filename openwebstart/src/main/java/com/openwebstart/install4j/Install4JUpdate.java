@@ -62,11 +62,6 @@ public class Install4JUpdate {
 
     private void doUpdate() {
         LOG.info("Starting update");
-        // This will return immediately if you call it from the EDT,
-        // otherwise it will block until the installer application exits
-
-       // PARAM NAME FOR URL:  "installer:updatesUrl"
-
         ApplicationLauncher.launchApplicationInProcess(UPDATE_PROCESS_ID, null, new ApplicationLauncher.Callback() {
                     public void exited(int exitValue) {
                         LOG.info("Installer closed");
