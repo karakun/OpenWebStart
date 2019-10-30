@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.install4j.Install4JUpdate;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanel;
@@ -35,6 +36,12 @@ public class ControlPanelLauncher {
         } catch (Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.initialConfig"), e);
             System.exit(-1);
+        }
+
+        try {
+            new Install4JUpdate(config).triggerPossibleUpdate();
+        } catch (Exception e) {
+            LOG.error("Error in possible update process", e);
         }
 
         try {

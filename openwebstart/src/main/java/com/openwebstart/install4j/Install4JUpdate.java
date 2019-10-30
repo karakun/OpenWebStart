@@ -23,20 +23,11 @@ public class Install4JUpdate {
 
     private final static String UPDATE_PROCESS_ID = "1462";
 
-
     private final static String UPDATE_DEACTIVATED_PARAM = "ows.update.deactivated";
 
     private final static String UPDATE_SCHEDULE_PARAM = "ows.update.schedule";
 
-    private final static String UPDATE_SERVER_PARAM = "ows.update.server";
-
-    private final static String DEFAULT_SERVER_URL = "http://localhost:8080/updates.xml";
-
     private final boolean updateDeactivated;
-
-    private final String updateServerUrl;
-
-
 
     public Install4JUpdate(final DeploymentConfiguration configuration) {
         Assert.requireNonNull(configuration, "configuration");
@@ -46,12 +37,6 @@ public class Install4JUpdate {
         UpdateScheduleRegistry.setUpdateSchedule(schedule);
 
         updateDeactivated = Boolean.parseBoolean(configuration.getProperty(UPDATE_DEACTIVATED_PARAM));
-
-        updateServerUrl = Optional.ofNullable(configuration.getProperty(UPDATE_SERVER_PARAM)).orElse(DEFAULT_SERVER_URL);
-    }
-
-    public boolean isUpdateDeactivated() {
-        return updateDeactivated;
     }
 
     public void triggerPossibleUpdate() throws UserCanceledException, IOException {
@@ -61,8 +46,9 @@ public class Install4JUpdate {
     }
 
     public boolean hasUpdate() throws UserCanceledException, IOException {
-        LOG.info("Checking for update on server");
-        final UpdateCheckRequest request = new UpdateCheckRequest(updateServerUrl);
+        final String serverUrl = Install4JUtils.updatesUrl();
+        LOG.info("Checking for update on server {}", serverUrl);
+        final UpdateCheckRequest request = new UpdateCheckRequest(serverUrl);
         request.applicationDisplayMode(ApplicationDisplayMode.UNATTENDED);
         final UpdateDescriptor updateDescriptor = UpdateChecker.getUpdateDescriptor(request);
         final Optional<UpdateDescriptorEntry> possibleUpdateEntry = Optional.ofNullable(updateDescriptor.getPossibleUpdateEntry());

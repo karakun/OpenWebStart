@@ -13,12 +13,26 @@ public class Install4JUtils {
 
     private static final String VERSION_VARIABLE_NAME = "sys.applicationVersion";
 
+    private static final String UPDATES_URL_VARIABLE_NAME = "sys.updatesUrl";
+
     public static Optional<String> applicationVersion() {
         try {
             return Optional.ofNullable(Variables.getCompilerVariable(VERSION_VARIABLE_NAME));
         } catch (IOException e) {
             LOG.warn("Can not read application applicationVersion");
             return Optional.empty();
+        }
+    }
+
+    public static String updatesUrl() throws IllegalStateException{
+        try {
+            final String value = Variables.getCompilerVariable(UPDATES_URL_VARIABLE_NAME);
+            if(value == null) {
+                throw new IllegalStateException("No update url defined");
+            }
+            return value;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can not get update url", e);
         }
     }
 }
