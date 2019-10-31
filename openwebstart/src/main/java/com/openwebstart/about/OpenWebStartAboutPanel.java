@@ -15,7 +15,7 @@ public class OpenWebStartAboutPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel label = new JLabel("Open Webstart" + Install4JUtils.applicationVersion().map(v -> " " + v).orElse(" X"));
+        JLabel label = new JLabel("Open Webstart" + Install4JUtils.applicationVersion().map(v -> " " + v).orElse(""));
 
         add(label, BorderLayout.CENTER);
     }
