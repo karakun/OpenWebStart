@@ -15,11 +15,13 @@ public class Install4JUtils {
 
     private static final String UPDATES_URL_VARIABLE_NAME = "sys.updatesUrl";
 
+    private static final String INSTALL4J_CONFIG_FILE = "i4jparams.conf";
+
     public static Optional<String> applicationVersion() {
         try {
             InstallerConfig config = InstallerConfig.getCurrentInstance();
             if (config == null) {
-                config = InstallerConfig.getGeneralConfigFromFile(InstallerUtil.getInstallerFile("i4jparams.conf"));
+                config = InstallerConfig.getGeneralConfigFromFile(InstallerUtil.getInstallerFile(INSTALL4J_CONFIG_FILE));
             }
             return Optional.ofNullable(config.getApplicationVersion());
         } catch (IOException e) {

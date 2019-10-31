@@ -32,7 +32,7 @@ public class PhaseTwoWebStartLauncher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");
@@ -51,12 +51,15 @@ public class PhaseTwoWebStartLauncher {
 
         try {
             new InitialConfigurationCheck(config).check();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.initialConfig"), e);
             System.exit(-1);
+        } catch (final UnsatisfiedLinkError e) {
+            //TODO: this exception is thrown on windows if you start OWS from the ide instead of using install4J
+            LOG.error("Initial configuration was not checked. This normally happens on Windows systems if you start OWS from the IDE.", e);
         }
 
-        if(UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
+        if (UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
             Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForLauncher(config)).triggerPossibleUpdate();
@@ -65,6 +68,7 @@ public class PhaseTwoWebStartLauncher {
                 }
             });
         }
+        
         final List<String> bootArgs = skipNotRelevantArgs(args);
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,

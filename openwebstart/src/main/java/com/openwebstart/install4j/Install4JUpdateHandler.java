@@ -20,6 +20,11 @@ public class Install4JUpdateHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(Install4JUpdateHandler.class);
 
+    /**
+     * This number is defined in the install4J project file that we use to build the native
+     * installers / executables for OpenWebStart. In this file each process (installer, uninstaller, updater)
+     * is defined by a unique id. The defined id is the matching id of the updater process.
+     */
     private final static String UPDATE_PROCESS_ID = "1462";
 
     public Install4JUpdateHandler(final UpdateSchedule updateSchedule) {
