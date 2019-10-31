@@ -1,12 +1,18 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -75,4 +81,19 @@ public class DialogFactory {
         return handleYesNoDialogEdtConform(title, message);
     }
 
+    public static void showNotification(final String title, final String message) {
+        final ModalDialog dialog = new ModalDialog();
+        dialog.setTitle(title);
+        final JLabel messageLabel = new JLabel(message);
+        messageLabel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        final JButton okButton = new JButton(Translator.getInstance().translate("action.ok"));
+        okButton.addActionListener(e -> dialog.close());
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout(8, 8));
+        panel.add(messageLabel, BorderLayout.CENTER);
+        panel.add(ButtonPanelFactory.createButtonPanel(okButton), BorderLayout.SOUTH);
+        dialog.setContentPane(panel);
+        dialog.setResizable(false);
+        dialog.showAndWait();
+    }
 }

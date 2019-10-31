@@ -1,6 +1,7 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.install4j.Install4JConfiguration;
+import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -57,6 +58,11 @@ public class InitialConfigurationCheck {
             initProperty(KEY_PROXY_AUTO_CONFIG_URL);
             initProperty(KEY_CACHE_MAX_SIZE);
             initProperty(KEY_CACHE_COMPRESSION_ENABLED);
+
+            initProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME);
+            initProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME);
+            initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME);
+            initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME);
 
             deploymentConfiguration.save();
 
