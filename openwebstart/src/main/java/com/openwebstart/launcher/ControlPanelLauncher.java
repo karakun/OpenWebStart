@@ -40,7 +40,7 @@ public class ControlPanelLauncher {
             System.exit(-1);
         }
 
-        if(UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
+        if (UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
             Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForSettings(config)).triggerPossibleUpdate();

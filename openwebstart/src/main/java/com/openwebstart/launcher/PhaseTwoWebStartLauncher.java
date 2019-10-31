@@ -32,7 +32,7 @@ public class PhaseTwoWebStartLauncher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");
@@ -56,7 +56,7 @@ public class PhaseTwoWebStartLauncher {
             System.exit(-1);
         }
 
-        if(UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
+        if (UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
             Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForLauncher(config)).triggerPossibleUpdate();
@@ -65,6 +65,7 @@ public class PhaseTwoWebStartLauncher {
                 }
             });
         }
+        
         final List<String> bootArgs = skipNotRelevantArgs(args);
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,
