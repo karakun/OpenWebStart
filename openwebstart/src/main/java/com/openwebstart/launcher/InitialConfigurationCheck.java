@@ -2,7 +2,6 @@ package com.openwebstart.launcher;
 
 import com.openwebstart.install4j.Install4JConfiguration;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -23,6 +22,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPAS
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_HOST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_PORT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
 
 public class InitialConfigurationCheck {
 
@@ -57,6 +57,7 @@ public class InitialConfigurationCheck {
             initProperty(KEY_PROXY_AUTO_CONFIG_URL);
             initProperty(KEY_CACHE_MAX_SIZE);
             initProperty(KEY_CACHE_COMPRESSION_ENABLED);
+            initProperty(KEY_SECURITY_SERVER_WHITELIST);
 
             deploymentConfiguration.save();
 
