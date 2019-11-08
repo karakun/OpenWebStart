@@ -19,6 +19,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_COMPRESSION_ENABLED;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_HOST;
@@ -59,6 +60,7 @@ public class InitialConfigurationCheck {
             initProperty(KEY_PROXY_AUTO_CONFIG_URL);
             initProperty(KEY_CACHE_MAX_SIZE);
             initProperty(KEY_CACHE_COMPRESSION_ENABLED);
+            initProperty(KEY_HTTPS_DONT_ENFORCE);
             initProperty(KEY_ASSUME_FILE_STEM_IN_CODEBASE);
             initProperty(KEY_SECURITY_SERVER_WHITELIST);
 
