@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 
 public class AppFactory {
 
-    private final static String SCRIPT_START = "#!/bin/sh";
-
     private final static String CONTENTS_FOLDER_NAME = "Contents";
 
     private final static String MAC_OS_FOLDER_NAME = "MacOS";
@@ -43,8 +41,16 @@ public class AppFactory {
 
     private final static String APPLICATIONS_FOLDER = "/Applications";
 
-    public void createApp(final String name, final String... iconPaths) throws Exception {
+    public static boolean exists(final String name) {
         Assert.requireNonBlank(name, "name");
+        final Path applicationsFolder = Paths.get(APPLICATIONS_FOLDER);
+        final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
+        return appPackage.exists();
+    }
+
+    public static void createApp(final String name, final String script, final String... iconPaths) throws Exception {
+        Assert.requireNonBlank(name, "name");
+        Assert.requireNonBlank(script, "script");
 
         final Path applicationsFolder = Paths.get(APPLICATIONS_FOLDER);
 
@@ -88,16 +94,15 @@ public class AppFactory {
 
         //TODO: Here we need to change the calculator sample to a concrete OpenWebStart call
         final File scriptFile = new File(macFolder, SCRIPT_NAME);
-        final String scriptContent = SCRIPT_START + System.lineSeparator() + "open -a Calculator";
         try(final FileOutputStream outputStream = new FileOutputStream(scriptFile)) {
-            IOUtils.writeUtf8Content(outputStream, scriptContent);
+            IOUtils.writeUtf8Content(outputStream, script);
         }
         if(!scriptFile.setExecutable(true)) {
             throw new IOException("Cannot create script file");
         }
     }
 
-    private File getIcnsFile(final String... iconPaths) throws Exception {
+    private static File getIcnsFile(final String... iconPaths) throws Exception {
         if(iconPaths == null || iconPaths.length == 0) {
             return new File(AppFactory.class.getResource("icons.icns").getFile());
         }
