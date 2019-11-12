@@ -13,6 +13,6 @@ public class ScriptFactory {
         final String executable = Install4JUtils.installationDirectory()
                 .map(d -> d + "/" + JAVA_WS_NAME)
                 .orElseThrow(() -> new IllegalStateException("Can not define executable"));
-        return executable + " " + Optional.ofNullable(jnlpFile.getSourceLocation()).orElse(jnlpFile.getFileLocation());
+        return executable + " \"" + Optional.ofNullable(jnlpFile.getSourceLocation()).orElse(jnlpFile.getFileLocation()) + "\"";
     }
 }
