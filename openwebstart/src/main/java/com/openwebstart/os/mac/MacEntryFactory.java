@@ -52,17 +52,20 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     @Override
     public void createMenuEntry(final JNLPFile file) throws Exception {
         final String name = file.createNameForDesktopFile();
-
         final String script = ScriptFactory.createStartCommand(file);
+        final String[] icons = getIcons(file);
 
+        AppFactory.createApp(name, script, icons);
+    }
+
+    private String[] getIcons(JNLPFile file) throws IOException {
         final List<String> shortcutIconLocations = getIconLocations(file, IconKind.SHORTCUT);
-        if(shortcutIconLocations.isEmpty()) {
+        if (shortcutIconLocations.isEmpty()) {
             final List<String> defaultIconLocations = getIconLocations(file, IconKind.DEFAULT);
-            AppFactory.createApp(name, script, defaultIconLocations.toArray(new String[0]));
-        } else {
-            AppFactory.createApp(name, script, shortcutIconLocations.toArray(new String[0]));
+            return defaultIconLocations.toArray(new String[0]);
         }
 
+        return shortcutIconLocations.toArray(new String[0]);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         final String targetName = UUID.randomUUID().toString();
         final File target = new File(PathsAndFiles.ICONS_DIR.getFile(), targetName);
         PathsAndFiles.ICONS_DIR.getFile().mkdirs();
-        try(final InputStream inputStream = url.openStream()) {
+        try (final InputStream inputStream = url.openStream()) {
             Files.copy(inputStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return target;
         }
@@ -86,12 +89,12 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
         return Optional.ofNullable(file.getInformation())
                 .map(i -> i.getIcons(iconKind))
-                .map(l -> Arrays.asList(l))
+                .map(Arrays::asList)
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(Result.of(l -> downloadIcon(l.getLocation()).getAbsolutePath()))
-                .filter(r -> r.isSuccessful())
-                .map(r -> r.getResult())
+                .filter(Result::isSuccessful)
+                .map(Result::getResult)
                 .collect(Collectors.toList());
     }
 }
