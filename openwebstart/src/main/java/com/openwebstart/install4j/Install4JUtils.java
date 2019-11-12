@@ -1,13 +1,13 @@
 package com.openwebstart.install4j;
 
-        import com.install4j.api.launcher.Variables;
-        import com.install4j.runtime.installer.config.InstallerConfig;
-        import com.install4j.runtime.installer.helper.InstallerUtil;
-        import net.adoptopenjdk.icedteaweb.logging.Logger;
-        import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import com.install4j.api.launcher.Variables;
+import com.install4j.runtime.installer.config.InstallerConfig;
+import com.install4j.runtime.installer.helper.InstallerUtil;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-        import java.io.IOException;
-        import java.util.Optional;
+import java.io.IOException;
+import java.util.Optional;
 
 public class Install4JUtils {
 
