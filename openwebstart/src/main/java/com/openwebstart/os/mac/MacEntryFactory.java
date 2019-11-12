@@ -29,13 +29,13 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file) throws Exception {
-
+    public void updateDesktopEntry(final JNLPFile file) {
+        throw new RuntimeException("Operation not supported");
     }
 
     @Override
-    public void createDesktopEntry(final JNLPFile file) throws Exception {
-
+    public void createDesktopEntry(final JNLPFile file) {
+        throw new RuntimeException("Operation not supported");
     }
 
     @Override
@@ -44,7 +44,8 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file) throws Exception {
+    public void updateMenuEntry(final JNLPFile file) {
+        throw new RuntimeException("not implemented yet!");
         // not implemented
     }
 
