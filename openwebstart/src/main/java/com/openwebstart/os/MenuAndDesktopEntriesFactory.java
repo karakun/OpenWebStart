@@ -6,7 +6,6 @@ import com.openwebstart.os.mac.MacEntryFactory;
 import com.openwebstart.os.win.WinEntryFactory;
 import net.sourceforge.jnlp.JNLPFile;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public interface MenuAndDesktopEntriesFactory {
@@ -32,13 +31,14 @@ public interface MenuAndDesktopEntriesFactory {
     }
 
     static Optional<MenuAndDesktopEntriesFactory> forCurrentOs() {
-        if(Objects.equals(OperationSystem.MAC64, OperationSystem.getLocalSystem())) {
+        final OperationSystem localSystem = OperationSystem.getLocalSystem();
+        if (OperationSystem.MAC64 == localSystem) {
             return Optional.of(new MacEntryFactory());
         }
-        if(Objects.equals(OperationSystem.WIN32, OperationSystem.getLocalSystem()) || Objects.equals(OperationSystem.WIN64, OperationSystem.getLocalSystem())) {
+        if (OperationSystem.WIN32 == localSystem || OperationSystem.WIN64 == localSystem) {
             return Optional.of(new WinEntryFactory());
         }
-        if(Objects.equals(OperationSystem.LINUX32, OperationSystem.getLocalSystem()) || Objects.equals(OperationSystem.LINUX64, OperationSystem.getLocalSystem())) {
+        if (OperationSystem.LINUX32 == localSystem || OperationSystem.LINUX64 == localSystem) {
             return Optional.of(new LinuxEntryFactory());
         }
         return Optional.empty();
