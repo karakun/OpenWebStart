@@ -1,6 +1,7 @@
 package com.openwebstart.os.linux;
 
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
+import com.openwebstart.os.ScriptFactory;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
@@ -22,7 +23,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.JAVAWS;
-import static net.adoptopenjdk.icedteaweb.jvm.JvmUtils.getJavaWsBin;
 
 public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
 
@@ -153,7 +153,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
             fileContents += "X-Vendor=" + sanitize(file.getInformation().getVendor()) + "\n";
         }
         String exec;
-        exec = "Exec=" + getJavaWsBin() + " \"" + file.getSourceLocation() + "\"\n";
+        exec = "Exec=" + ScriptFactory.createStartCommand(file) + "\"\n";
         fileContents += exec;
         return fileContents;
     }

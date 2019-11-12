@@ -15,6 +15,8 @@ public class Install4JUtils {
 
     private static final String UPDATES_URL_VARIABLE_NAME = "sys.updatesUrl";
 
+    private static final String INSTALLATION_DIR_VARIABLE_NAME = "sys.installationDir";
+
     private static final String INSTALL4J_CONFIG_FILE = "i4jparams.conf";
 
     public static Optional<String> applicationVersion() {
@@ -41,4 +43,10 @@ public class Install4JUtils {
             throw new IllegalStateException("Can not get update url", e);
         }
     }
+
+    public static Optional<String> installationDirectory() {
+        return Install4JConfiguration.getInstance()
+                .getInstallerVariableAsString​(INSTALLATION_DIR_VARIABLE_NAME);
+    }
+
 }

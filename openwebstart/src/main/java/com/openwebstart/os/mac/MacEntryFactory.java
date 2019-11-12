@@ -2,6 +2,7 @@ package com.openwebstart.os.mac;
 
 import com.openwebstart.func.Result;
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
+import com.openwebstart.os.ScriptFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
 import net.sourceforge.jnlp.JNLPFile;
@@ -51,7 +52,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     public void createMenuEntry(final JNLPFile file) throws Exception {
         final String name = file.createNameForDesktopFile();
 
-        final String script = "echo ERROR";
+        final String script = ScriptFactory.createStartCommand(file);
 
         final List<String> shortcutIconLocations = getIconLocations(file, IconKind.SHORTCUT);
         if(shortcutIconLocations.isEmpty()) {
