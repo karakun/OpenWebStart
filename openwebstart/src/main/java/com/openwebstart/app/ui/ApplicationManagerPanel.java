@@ -39,7 +39,7 @@ public class ApplicationManagerPanel extends JPanel {
             final List<Action<Application>> actions = new ArrayList<>();
             actions.add(new StartApplicationAction());
             actions.add(new CreateShortcutAction());
-            actions.add(new DeleteApplicationAction());
+            actions.add(new DeleteApplicationAction(app -> refreshModel()));
             return actions;
         };
 

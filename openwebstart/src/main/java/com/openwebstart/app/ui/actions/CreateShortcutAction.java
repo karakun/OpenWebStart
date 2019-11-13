@@ -2,8 +2,11 @@ package com.openwebstart.app.ui.actions;
 
 import com.openwebstart.app.Application;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
+import com.openwebstart.os.MenuAndDesktopEntryHandler;
 import com.openwebstart.ui.BasicAction;
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.sourceforge.jnlp.JNLPFile;
 
 public class CreateShortcutAction extends BasicAction<Application> {
 
@@ -13,7 +16,15 @@ public class CreateShortcutAction extends BasicAction<Application> {
 
     @Override
     public void call(final Application item) {
-        DialogFactory.showErrorDialog("Action not implemented!", new RuntimeException("Not yet implemented"));
+        Assert.requireNonNull(item, "item");
+        try {
+            final JNLPFile jnlpFile = new JNLPFile(item.getJnlpFileUrl());
+            final MenuAndDesktopEntryHandler handler = new MenuAndDesktopEntryHandler();
+            handler.askForIntegration(jnlpFile);
+        } catch (final Exception e) {
+            //TODO: Translation
+            DialogFactory.showErrorDialog("Can not create shortcut", e);
+        }
     }
 }
 

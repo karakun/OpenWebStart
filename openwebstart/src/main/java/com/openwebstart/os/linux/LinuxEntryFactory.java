@@ -153,7 +153,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
         if (file.getInformation().getVendor() != null) {
             fileContents += "X-Vendor=" + sanitize(file.getInformation().getVendor()) + "\n";
         }
-        fileContents += "Exec=" + ScriptFactory.createStartCommand(file) + "\n";
+        fileContents += "Exec=" + ScriptFactory.createStartScript(file) + "\n";
         return fileContents;
     }
 

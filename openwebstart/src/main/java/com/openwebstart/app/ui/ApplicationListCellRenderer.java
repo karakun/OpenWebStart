@@ -7,8 +7,10 @@ import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ListHighlighter;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,6 +29,8 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 public class ApplicationListCellRenderer implements ListCellRenderer<Application> {
+
+    private final static Logger LOG = LoggerFactory.getLogger(ApplicationListCellRenderer.class);
 
     private final Color BACKGROUND_EVEN = Color.WHITE;
 
@@ -48,6 +52,8 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
 
     private final ListHighlighter<Application> listHighlighter;
 
+    private final BufferedImage defaultIcon;
+
     ApplicationListCellRenderer(final ListHighlighter<Application> listHighlighter) {
         this.listHighlighter = Assert.requireNonNull(listHighlighter, "listHighlighter");
 
@@ -55,6 +61,8 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         actionsHooverIcon = new IconComponent(new ImageIcon(Images.MORE_32_URL));
 
         appIcon = new ImageIcon();
+
+        defaultIcon = createDefaultIcon();
 
         titleLabel = new JLabel("VERSION");
         detailsLabel = new JLabel("ARCH");
@@ -118,8 +126,13 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         return iconPanel;
     }
 
-    private BufferedImage getDefaultIcon() {
-        return null;
+    private BufferedImage createDefaultIcon() {
+        try {
+            return ImageIO.read(ApplicationListCellRenderer.class.getResource("default-app-icon.png"));
+        } catch (Exception e) {
+            LOG.error("Can not load default application icon", e);
+            return new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        }
     }
 
     @Override
@@ -130,7 +143,7 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
         detailsLabel.setText(size + " " + byteUnit.getDecimalShortName());
 
-        final Image iconImage = Optional.ofNullable(value).map(v -> v.getIcon(64)).orElse(getDefaultIcon());
+        final Image iconImage = Optional.ofNullable(value).map(v -> v.getIcon(64)).orElse(defaultIcon);
         appIcon.setImage(iconImage);
 
         if (this.listHighlighter.getHoverIndex() == index) {

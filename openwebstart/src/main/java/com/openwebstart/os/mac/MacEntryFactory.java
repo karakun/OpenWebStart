@@ -52,7 +52,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     @Override
     public void createMenuEntry(final JNLPFile file) throws Exception {
         final String name = file.createNameForDesktopFile();
-        final String script = ScriptFactory.createStartCommand(file);
+        final String script = ScriptFactory.createStartScript(file);
         final String[] icons = getIcons(file);
 
         AppFactory.createApp(name, script, icons);

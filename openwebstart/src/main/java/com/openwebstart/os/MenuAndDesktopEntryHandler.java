@@ -1,5 +1,7 @@
 package com.openwebstart.os;
 
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
+import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
@@ -7,6 +9,7 @@ import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.util.ShortcutCreationOptions;
 
+import java.util.Optional;
 import java.util.concurrent.Executors;
 
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ALWAYS;
@@ -39,8 +42,10 @@ public class MenuAndDesktopEntryHandler {
         final boolean supportsMenu = factory.supportsMenuEntry();
         final boolean supportsDesktop = factory.supportsDesktopEntry();
 
-        final boolean jnlpWantsMenu = jnlpFile.getInformation().getShortcut().toMenu();
-        final boolean jnlpWantsDesktop = jnlpFile.getInformation().getShortcut().onDesktop();
+        final Optional<ShortcutDesc> shortcutDesc = Optional.ofNullable(jnlpFile.getInformation()).map(i -> i.getShortcut());
+
+        final boolean jnlpWantsMenu = shortcutDesc.map(d -> d.toMenu()).orElse(false);
+        final boolean jnlpWantsDesktop = shortcutDesc.map(d -> d.onDesktop()).orElse(false);
 
 
         if (hasMenu || hasDesktop) {
@@ -68,7 +73,7 @@ public class MenuAndDesktopEntryHandler {
                 try {
                     factory.updateMenuEntry(jnlpFile);
                 } catch (Exception e) {
-                    LOG.error("Can not update menu entry for app");
+                    DialogFactory.showErrorDialog("Can not update menu entry for app", e);
                 }
             }
 
@@ -76,7 +81,7 @@ public class MenuAndDesktopEntryHandler {
                 try {
                     factory.updateDesktopEntry(jnlpFile);
                 } catch (Exception e) {
-                    LOG.error("Can not update desktop entry for app");
+                    DialogFactory.showErrorDialog("Can not update desktop entry for app", e);
                 }
             }
         });
@@ -88,14 +93,14 @@ public class MenuAndDesktopEntryHandler {
                 try {
                     factory.createMenuEntry(jnlpFile);
                 } catch (Exception e) {
-                    LOG.error("Can not create menu entry for app");
+                    DialogFactory.showErrorDialog("Can not create menu entry for app", e);
                 }
             }
             if (addDesktop) {
                 try {
                     factory.createDesktopEntry(jnlpFile);
                 } catch (Exception e) {
-                    LOG.error("Can not create desktop entry for app");
+                    DialogFactory.showErrorDialog("Can not create desktop entry for app", e);
                 }
             }
         });

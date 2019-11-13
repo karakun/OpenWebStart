@@ -5,6 +5,7 @@ import net.adoptopenjdk.icedteaweb.resources.cache.CacheId;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.nio.file.Paths;
 
 /**
  * Defines a JNLP based application that is manged by OpenWebStart
@@ -54,6 +55,14 @@ public class Application {
      * @return
      */
     public URL getJnlpFileUrl() {
-        return null;
+        try {
+            return Paths.get(cacheId.getId()).toUri().toURL();
+        } catch (final Exception e) {
+            throw new RuntimeException("Can not get JNLP URL", e);
+        }
+    }
+
+    public String getId() {
+        return cacheId.getId();
     }
 }
