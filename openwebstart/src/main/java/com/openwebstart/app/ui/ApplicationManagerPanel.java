@@ -5,6 +5,8 @@ import com.openwebstart.app.ApplicationManager;
 import com.openwebstart.app.ui.actions.CreateShortcutAction;
 import com.openwebstart.app.ui.actions.DeleteApplicationAction;
 import com.openwebstart.app.ui.actions.StartApplicationAction;
+import com.openwebstart.func.Result;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.ui.Action;
 import com.openwebstart.ui.ListComponentModel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ApplicationManagerPanel extends JPanel {
 
@@ -77,11 +80,19 @@ public class ApplicationManagerPanel extends JPanel {
         listModel.clear();
         backgroundExecutor.execute(() -> {
             try {
-                final List<Application> loadedData = ApplicationManager.getInstance().getAllApplications();
-                SwingUtilities.invokeAndWait(() -> listModel.replaceData(loadedData));
+                final List<Result<Application>> loadedData = ApplicationManager.getInstance().getAllApplications();
+
+                final List<Application> apps = loadedData.stream()
+                        .filter(Result::isSuccessful)
+                        .map(Result::getResult)
+                        .collect(Collectors.toList());
+                SwingUtilities.invokeAndWait(() -> listModel.replaceData(apps));
+
+                loadedData.stream().filter(Result::isFailed).findFirst().ifPresent(r -> DialogFactory.showErrorDialog("Error while updating model", r.getException()));
+
             } catch (final Exception e) {
                 //TODO: Handle in UI error dialog.
-                throw new RuntimeException("Error while loading data", e);
+                DialogFactory.showErrorDialog("Can not update model", e);
             }
         });
     }

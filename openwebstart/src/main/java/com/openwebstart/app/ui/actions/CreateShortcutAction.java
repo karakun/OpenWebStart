@@ -18,9 +18,8 @@ public class CreateShortcutAction extends BasicAction<Application> {
     public void call(final Application item) {
         Assert.requireNonNull(item, "item");
         try {
-            final JNLPFile jnlpFile = new JNLPFile(item.getJnlpFileUrl());
             final MenuAndDesktopEntryHandler handler = new MenuAndDesktopEntryHandler();
-            handler.askForIntegration(jnlpFile);
+            handler.askForIntegration(item.getJnlpFile());
         } catch (final Exception e) {
             //TODO: Translation
             DialogFactory.showErrorDialog("Can not create shortcut", e);

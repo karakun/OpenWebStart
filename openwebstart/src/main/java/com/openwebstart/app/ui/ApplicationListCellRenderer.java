@@ -3,8 +3,10 @@ package com.openwebstart.app.ui;
 import com.openwebstart.app.Application;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
+import com.openwebstart.os.mac.AppFactory;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
+import com.openwebstart.ui.ImageUtils;
 import com.openwebstart.ui.ListHighlighter;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -19,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,6 +29,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ApplicationListCellRenderer implements ListCellRenderer<Application> {
@@ -53,6 +61,11 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
     private final ListHighlighter<Application> listHighlighter;
 
     private final BufferedImage defaultIcon;
+
+    //TODO: not perfect solution since it can block...
+    private final List<String> requestedAppsForIcon = new ArrayList<>();
+
+    private final Map<String, BufferedImage> appIcons = new HashMap<>();
 
     ApplicationListCellRenderer(final ListHighlighter<Application> listHighlighter) {
         this.listHighlighter = Assert.requireNonNull(listHighlighter, "listHighlighter");
@@ -135,6 +148,28 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         }
     }
 
+    private BufferedImage getIcon(final Application application) {
+        if(!requestedAppsForIcon.contains(application.getId())) {
+            requestedAppsForIcon.add(application.getId());
+            application.loadIcon(64).whenComplete((i, e) -> {
+                if(e != null) {
+                    LOG.debug("Can not load icon for app '{}'", application.getId());
+                } else if(i == null) {
+                    LOG.debug("No icon defined for app '{}'", application.getId());
+                }
+                final BufferedImage finalIcon = Optional.ofNullable(i)
+                        .map(image -> ImageUtils.resize(image, 64, 64))
+                        .orElse(defaultIcon);
+                SwingUtilities.invokeLater(() -> {
+                    appIcons.put(application.getId(), finalIcon);
+                });
+            });
+            return defaultIcon;
+        } else {
+            return Optional.ofNullable(appIcons.get(application.getId())).orElse(defaultIcon);
+        }
+    }
+
     @Override
     public Component getListCellRendererComponent(final JList<? extends Application> list, final Application value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         titleLabel.setText(Optional.ofNullable(value).map(v -> v.getName()).orElse(""));
@@ -143,7 +178,7 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
         detailsLabel.setText(size + " " + byteUnit.getDecimalShortName());
 
-        final Image iconImage = Optional.ofNullable(value).map(v -> v.getIcon(64)).orElse(defaultIcon);
+        final Image iconImage = getIcon(value);
         appIcon.setImage(iconImage);
 
         if (this.listHighlighter.getHoverIndex() == index) {

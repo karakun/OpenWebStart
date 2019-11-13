@@ -16,8 +16,7 @@ public class StartApplicationAction extends BasicAction<Application> {
     @Override
     public void call(final Application item) {
         try {
-            final JNLPFile jnlpFile = new JNLPFile(item.getJnlpFileUrl());
-            final Process startProcess = ScriptFactory.createStartProcess(jnlpFile);
+            final Process startProcess = ScriptFactory.createStartProcess(item.getJnlpFile());
             startProcess.waitFor();
         } catch (final Exception e) {
             DialogFactory.showErrorDialog("Can not remove app", e);
