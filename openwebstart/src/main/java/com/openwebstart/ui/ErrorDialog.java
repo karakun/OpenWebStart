@@ -20,10 +20,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class ErrorDialog extends ModalDialog {
 
@@ -110,20 +107,4 @@ public class ErrorDialog extends ModalDialog {
         }
     }
 
-    public static void main(String[] args) {
-        IntStream.of(1).forEach(i -> show("Dies ost ein Test", createForDeepStack()));
-    }
-
-    private static Exception createForDeepStack() {
-        try {
-            IntStream.of(1).forEach(i -> {
-                Stream.of("Test").forEach(v -> {
-                    Optional.ofNullable(null).orElseThrow(() -> new RuntimeException("Deep exception somewhere"));
-                });
-            });
-        } catch (Exception e) {
-            return e;
-        }
-        return null;
-    }
 }
