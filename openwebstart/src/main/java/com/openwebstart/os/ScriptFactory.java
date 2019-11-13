@@ -16,7 +16,6 @@ public class ScriptFactory {
 
     private final static Logger LOG = LoggerFactory.getLogger(ScriptFactory.class);
 
-
     private final static String SCRIPT_START = "#!/bin/sh";
 
     private static final String JAVA_WS_NAME = "javaws";
@@ -28,7 +27,8 @@ public class ScriptFactory {
         final String executable = Install4JUtils.installationDirectory()
                 .map(d -> d + "/" + JAVA_WS_NAME)
                 .orElseThrow(() -> new IllegalStateException("Can not define executable"));
-        return executable + " \"" + Optional.ofNullable(jnlpFile.getSourceLocation()).orElse(jnlpFile.getFileLocation()) + "\"";
+        final String jnlpLocation = "\"" + Optional.ofNullable(jnlpFile.getSourceLocation()).orElse(jnlpFile.getFileLocation()) + "\"";
+        return executable + " " + jnlpLocation;
     }
 
     public static String createStartScriptForMac(final JNLPFile jnlpFile) {
@@ -36,9 +36,12 @@ public class ScriptFactory {
                 .map(d -> d + "/" + "OpenWebStart javaws.app" + "\"")
                 .orElseThrow(() -> new IllegalStateException("Can not define executable"));
 
-        final String scriptContent = SCRIPT_START + System.lineSeparator() + "open -a " + executable;
+        //TODO: URL is not working on mac. Maybe we can add a new param to OWS that can be used to pass
+        // the jnlp url (mac open command supports --args)
+        // This one is not working: open -a "/Applications/OpenWebStart/OpenWebStart javaws.app" --args -jnlp "file:/Users/hendrikebbers/Desktop/AccessibleScrollDemo.jnlpx"
+        final String jnlpLocation = "\"" + jnlpFile.getFileLocation() + "\"";
 
-        return scriptContent + " \"" + jnlpFile.getFileLocation() + "\"";
+        return SCRIPT_START + System.lineSeparator() + "open -a " + executable + " " + jnlpLocation;
     }
 
     public static Process createStartProcess(final JNLPFile jnlpFile) throws IOException {
@@ -47,7 +50,7 @@ public class ScriptFactory {
                 .orElseThrow(() -> new IllegalStateException("Can not define executable"));
         final String fileLocation = "\"" + jnlpFile.getFileLocation() + "\"";
         final ProcessBuilder builder = new ProcessBuilder();
-        builder.command("open", "-a", executable, fileLocation);
+        builder.command("open", "-a", executable, "--args", fileLocation);
         builder.redirectErrorStream(true);
         final Process process = builder.start();
         logIO(process.getInputStream());

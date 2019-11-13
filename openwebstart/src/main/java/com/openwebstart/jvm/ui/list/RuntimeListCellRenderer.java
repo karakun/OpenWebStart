@@ -121,7 +121,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
     }
 
     private JPanel createIconPanel() {
-        final IconComponent vmIcon = new IconComponent(new ImageIcon(Images.VMCUBE_64_URL));
+        final IconComponent vmIcon = new IconComponent(new ImageIcon(Images.JVM_64_URL));
 
         final JPanel deactivatedIconWrapper = new JPanel();
         deactivatedIconWrapper.setLayout(null);
