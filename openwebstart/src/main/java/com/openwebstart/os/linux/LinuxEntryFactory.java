@@ -123,13 +123,12 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     private static String getContent(final JNLPFile file, boolean menu, final String iconLocation) {
-        File generatedJnlp = null;
-
         String fileContents = "[Desktop Entry]\n";
         fileContents += "Version=1.0\n";
         fileContents += "Name=" + getDesktopIconName(file) + "\n";
         fileContents += "GenericName=Java Web Start Application\n";
         fileContents += "Comment=" + sanitize(file.getInformation().getDescription()) + "\n";
+
         if (menu) {
             //keeping the default category because of KDE
             String menuString = "Categories=Network;";
@@ -142,6 +141,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
             menuString += "Java;Javaws;";
             fileContents += menuString + "\n";
         }
+
         fileContents += "Type=Application\n";
         if (iconLocation != null) {
             fileContents += "Icon=" + iconLocation + "\n";
@@ -149,31 +149,28 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
             fileContents += "Icon=" + JAVAWS + "\n";
 
         }
+
         if (file.getInformation().getVendor() != null) {
             fileContents += "X-Vendor=" + sanitize(file.getInformation().getVendor()) + "\n";
         }
-        String exec;
-        exec = "Exec=" + ScriptFactory.createStartCommand(file) + "\"\n";
-        fileContents += exec;
+        fileContents += "Exec=" + ScriptFactory.createStartCommand(file) + "\n";
         return fileContents;
     }
 
     private static String getIconLocation(final JNLPFile file) throws IOException {
-        final URL uiconLocation = Optional
+        final File target = getTargetFile();
+
+        final URL iconLocation = Optional
                 .ofNullable(file.getInformation().getIconLocation(IconKind.SHORTCUT, ICON_SIZE, ICON_SIZE))
                 .orElseGet(() -> file.getInformation().getIconLocation(IconKind.DEFAULT, ICON_SIZE, ICON_SIZE));
 
-        final String targetName = UUID.randomUUID().toString();
-        final File target = new File(PathsAndFiles.ICONS_DIR.getFile(), targetName);
-        PathsAndFiles.ICONS_DIR.getFile().mkdirs();
-
-        if (uiconLocation != null) {
+        if (iconLocation != null) {
             try {
-                final File cacheFile = CacheUtil.downloadAndGetCacheFile(uiconLocation, null);
+                final File cacheFile = CacheUtil.downloadAndGetCacheFile(iconLocation, null);
                 Files.copy(cacheFile.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 return target.getAbsolutePath();
             } catch (final Exception e) {
-                LOG.debug("app icon can not be used", e);
+                LOG.debug("app icon can not be used - {}: {}", e.getClass().getSimpleName(), e.getMessage());
             }
         }
 
@@ -183,12 +180,25 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
             Files.copy(cacheFile.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return target.getAbsolutePath();
         } catch (final Exception e) {
-            LOG.debug("Favicon can not be used");
+            LOG.debug("Favicon can not be used - {}: {}", e.getClass().getSimpleName(), e.getMessage());
         }
 
         try (final InputStream inputStream = LinuxEntryFactory.class.getResourceAsStream("default-icon.png")) {
             Files.copy(inputStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return target.getAbsolutePath();
         }
+    }
+
+    private static File getTargetFile() {
+        final File iconsDir = PathsAndFiles.ICONS_DIR.getFile();
+        if (!iconsDir.isDirectory()) {
+            final boolean created = iconsDir.mkdirs();
+            if (!created) {
+                throw new IllegalStateException("cannot create icons dir");
+            }
+        }
+
+        final String targetName = UUID.randomUUID().toString();
+        return new File(iconsDir, targetName);
     }
 }
