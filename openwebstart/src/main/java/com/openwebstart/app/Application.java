@@ -1,7 +1,7 @@
 package com.openwebstart.app;
 
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.sourceforge.jnlp.cache.cache.CacheId;
+import net.adoptopenjdk.icedteaweb.resources.cache.CacheId;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;

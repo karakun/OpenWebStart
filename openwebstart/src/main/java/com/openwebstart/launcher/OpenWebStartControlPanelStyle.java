@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
@@ -38,7 +39,7 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     @Override
     public String getDialogTitle() {
-        return "OpenWebStart";
+        return "OpenWebStart" + Install4JUtils.applicationVersion().map(v -> " " + v).orElse("");
     }
 
     @Override

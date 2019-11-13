@@ -15,7 +15,6 @@ import org.junit.jupiter.api.io.TempDir;
 import spark.Spark;
 
 import java.net.ServerSocket;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -82,7 +81,7 @@ public class RemoteRuntimeManagerTest {
         Spark.awaitInitialization();
 
         RuntimeManagerConfig.setCachePath(cacheFolder);
-        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URI("http://localhost:" + port + "/jvms"));
+        RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL("http://localhost:" + port + "/jvms"));
         RuntimeManagerConfig.setNonDefaultServerAllowed(true);
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);

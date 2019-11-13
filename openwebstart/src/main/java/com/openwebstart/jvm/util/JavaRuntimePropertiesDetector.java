@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.fill;
 import static java.util.Collections.unmodifiableSet;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VENDOR;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VERSION;
@@ -32,10 +33,15 @@ public class JavaRuntimePropertiesDetector {
 
     private static final Set<String> REQUIRED_PROPS = unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
 
+    private static final String SHOW_SETTINGS_ARG = "-XshowSettings:properties";
+
+    private static final String VERSION_ARG = "-version";
+    
     public static JavaRuntimeProperties getProperties(Path javaHome) {
+        LOG.info("trying to get definiton of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
-            final Process p = new ProcessBuilder(java, "-XshowSettings:properties", "-version").start();
+            final Process p = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG).start();
             final OutputReader stdOutReader = new OutputReader(p.getInputStream());
             final OutputReader stdErrReader = new OutputReader(p.getErrorStream());
             new Thread(stdOutReader).start();
@@ -43,7 +49,10 @@ public class JavaRuntimePropertiesDetector {
             ProcessUtils.waitForSafely(p);
             final int returnCode = p.exitValue();
             if (returnCode != 0) {
-                throw new RuntimeException("");
+                final RuntimeException exception = new RuntimeException("failed to execute java binary");
+                LOG.error("Executing local java instance '{}' to receive JVM definition failed!", exception);
+                LOG.debug("The java process printed the following content on the error out: {}", stdErrReader.content);
+                throw exception;
             }
 
             return extractProperties(stdOutReader.content, stdErrReader.content);

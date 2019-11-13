@@ -1,8 +1,10 @@
 package com.openwebstart.config;
 
+import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.jvm.PathAndFiles;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.config.ValidatorFactory;
 import net.sourceforge.jnlp.config.DefaultsProvider;
 import net.sourceforge.jnlp.config.Setting;
@@ -57,6 +59,29 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         JVM_SUPPORTED_VERSION_RANGE,
                         "1.8+",
                         null
+                ),
+                Setting.createDefault(
+                        UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
+                        "true",
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME,
+                        UpdateSchedule.ON_EVERY_START.name(),
+                        ValidatorFactory.createStringValidator(
+                                Stream.of(UpdateSchedule.values())
+                                        .map(Enum::name)
+                                        .toArray(String[]::new)
+                        )
+                ),
+                Setting.createDefault(
+                        UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME,
+                        UpdateSchedule.WEEKLY.name(),
+                        ValidatorFactory.createStringValidator(
+                                Stream.of(UpdateSchedule.values())
+                                        .map(Enum::name)
+                                        .toArray(String[]::new)
+                        )
                 )
         );
     }

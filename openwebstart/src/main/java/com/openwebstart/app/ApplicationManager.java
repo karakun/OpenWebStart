@@ -1,6 +1,6 @@
 package com.openwebstart.app;
 
-import net.sourceforge.jnlp.cache.cache.Cache;
+import net.adoptopenjdk.icedteaweb.resources.cache.Cache;
 
 import java.util.List;
 import java.util.stream.Collectors;

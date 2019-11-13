@@ -41,5 +41,13 @@ public abstract class JavaRuntime implements Serializable {
         return vendor;
     }
 
+    @Override
+    public String toString() {
+        return "JavaRuntime{" +
+                "version=" + version +
+                ", vendor=" + vendor +
+                ", operationSystem=" + operationSystem +
+                '}';
+    }
 }
 

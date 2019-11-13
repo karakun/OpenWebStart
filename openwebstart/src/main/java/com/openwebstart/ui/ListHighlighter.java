@@ -18,7 +18,7 @@ public class ListHighlighter<T> extends MouseAdapter {
 
     private ListComponent<T> listComponent;
 
-    ListHighlighter(final ListComponent<T> listComponent) {
+    public ListHighlighter(final ListComponent<T> listComponent) {
         this.listComponent = Assert.requireNonNull(listComponent, "listComponent");
         this.listComponent.addMouseListener(this);
         this.listComponent.addMouseMotionListener(this);
