@@ -3,10 +3,11 @@ package com.openwebstart.launcher;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
-import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.PolicySettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.UnsignedAppletsTrustingListPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
@@ -19,7 +20,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
@@ -31,13 +31,19 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     @Override
     public boolean isPanelActive(final String panelName) {
-        if(Objects.equals(panelName, AboutPanelProvider.NAME)) {
+        if (Objects.equals(panelName, AboutPanelProvider.NAME)) {
             return false;
         }
-        if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
+        if (Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
             return false;
         }
-        if(Objects.equals(panelName, DesktopSettingsPanelProvider.NAME)) {
+        if (Objects.equals(panelName, UnsignedAppletsTrustingListPanelProvider.NAME)) {
+            return false;
+        }
+        if (Objects.equals(panelName, PolicySettingsPanelProvider.NAME)) {
+            return false;
+        }
+        if (Objects.equals(panelName, DesktopSettingsPanelProvider.NAME)) {
             return false;
         }
         return true;
