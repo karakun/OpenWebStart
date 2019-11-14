@@ -176,7 +176,7 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
 
         final long size = Optional.ofNullable(value).map(v -> v.getSize()).orElse(0l);
         final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
-        detailsLabel.setText(size + " " + byteUnit.getDecimalShortName());
+        detailsLabel.setText(String.format("%.0f", byteUnit.convertBytesToUnit(size)) + " " + byteUnit.getDecimalShortName());
 
         final Image iconImage = getIcon(value);
         appIcon.setImage(iconImage);

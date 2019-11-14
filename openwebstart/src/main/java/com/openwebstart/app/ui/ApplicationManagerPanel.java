@@ -10,6 +10,8 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.ui.Action;
 import com.openwebstart.ui.ListComponentModel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
@@ -28,6 +30,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ApplicationManagerPanel extends JPanel {
+
+    private final static Logger LOG = LoggerFactory.getLogger(ApplicationManagerPanel.class);
 
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
@@ -53,11 +57,6 @@ public class ApplicationManagerPanel extends JPanel {
         final JButton refreshButton = new JButton(translator.translate("appManager.action.refresh.text"));
         refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> refreshModel()));
 
-        final JButton deleteAllButton = new JButton(translator.translate("appManager.action.deleteAll.text"));
-        deleteAllButton.addActionListener(e -> backgroundExecutor.execute(() -> {
-            throw new RuntimeException("Not yet implemented!");
-        }));
-
         setLayout(new BorderLayout(12, 12));
 
         add(new JScrollPane(appListComponent), BorderLayout.CENTER);
@@ -65,7 +64,6 @@ public class ApplicationManagerPanel extends JPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(deleteAllButton);
         buttonPanel.add(refreshButton);
 
 
@@ -88,7 +86,7 @@ public class ApplicationManagerPanel extends JPanel {
                         .collect(Collectors.toList());
                 SwingUtilities.invokeAndWait(() -> listModel.replaceData(apps));
 
-                loadedData.stream().filter(Result::isFailed).findFirst().ifPresent(r -> DialogFactory.showErrorDialog("Error while updating model", r.getException()));
+                loadedData.stream().filter(Result::isFailed).findFirst().ifPresent(r -> LOG.error("Error while updating model", r.getException()));
 
             } catch (final Exception e) {
                 //TODO: Handle in UI error dialog.
