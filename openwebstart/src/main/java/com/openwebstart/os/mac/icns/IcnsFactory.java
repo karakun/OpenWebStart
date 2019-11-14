@@ -2,6 +2,7 @@ package com.openwebstart.os.mac.icns;
 
 import com.openwebstart.func.Result;
 import com.openwebstart.ui.ImageUtils;
+import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 
@@ -70,7 +71,10 @@ public class IcnsFactory {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(ICONUTIL_COMMAND);
         processBuilder.directory(tempDirectory.toFile());
-        final int exitValue = processBuilder.start().waitFor();
+        processBuilder.redirectError();
+        final Process process = processBuilder.start();
+        ProcessUtil.logIO(process.getInputStream());
+        final int exitValue = process.waitFor();
         if(exitValue != 0) {
             throw new RuntimeException("Error in creating icon file");
         }
