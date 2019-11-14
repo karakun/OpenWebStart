@@ -122,7 +122,7 @@ public class InitialConfigurationCheck {
     private void setLastUpdateProperty() {
         preferencesStoreLock.lock();
         try {
-            deploymentConfiguration.setProperty(LAST_UPDATE_PROPERTY_NAME, Long.valueOf(System.currentTimeMillis()).toString());
+            deploymentConfiguration.setProperty(LAST_UPDATE_PROPERTY_NAME, Long.toString(System.currentTimeMillis()));
         } finally {
             preferencesStoreLock.unlock();
         }
