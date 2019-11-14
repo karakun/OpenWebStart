@@ -6,6 +6,8 @@ import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.PolicySettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.UnsignedAppletsTrustingListPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
@@ -34,6 +36,12 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
             return false;
         }
         if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
+            return false;
+        }
+        if(Objects.equals(panelName, UnsignedAppletsTrustingListPanelProvider.NAME)) {
+            return false;
+        }
+        if(Objects.equals(panelName, PolicySettingsPanelProvider.NAME)) {
             return false;
         }
         return true;
