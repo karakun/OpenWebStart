@@ -22,31 +22,26 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     private final Logger LOG = LoggerFactory.getLogger(OpenWebStartControlPanelStyle.class);
 
+    private final static Set<String> UNSUPPORTED_PANEL_NAMES = new HashSet<>(Arrays.asList(
+            AboutPanelProvider.NAME,
+            DesktopSettingsPanelProvider.NAME,
+            PolicySettingsPanelProvider.NAME,
+            UnsignedAppletsTrustingListPanelProvider.NAME,
+            JvmSettingsPanelProvider.NAME));
+
     @Override
     public boolean isPanelActive(final String panelName) {
-        if (Objects.equals(panelName, AboutPanelProvider.NAME)) {
-            return false;
-        }
-        if (Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
-            return false;
-        }
-        if (Objects.equals(panelName, UnsignedAppletsTrustingListPanelProvider.NAME)) {
-            return false;
-        }
-        if (Objects.equals(panelName, PolicySettingsPanelProvider.NAME)) {
-            return false;
-        }
-        if (Objects.equals(panelName, DesktopSettingsPanelProvider.NAME)) {
-            return false;
-        }
-        return true;
+        return !UNSUPPORTED_PANEL_NAMES.contains(panelName);
     }
 
     @Override
