@@ -1,5 +1,6 @@
 package com.openwebstart.app;
 
+import com.openwebstart.os.linux.FavIcon;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
 import net.adoptopenjdk.icedteaweb.resources.cache.CacheId;
@@ -8,13 +9,14 @@ import net.sourceforge.jnlp.JNLPFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -30,6 +32,7 @@ public class Application {
 
     /**
      * Constructor
+     *
      * @param cacheId the cache object from IcedTeaWeb
      */
     public Application(final CacheId cacheId) throws IOException, ParseException {
@@ -40,6 +43,7 @@ public class Application {
 
     /**
      * Returns the application name
+     *
      * @return the name
      */
     public String getName() {
@@ -52,6 +56,7 @@ public class Application {
 
     /**
      * returns the current size of the application on disc in bytes
+     *
      * @return the size
      */
     public long getSize() {
@@ -62,11 +67,20 @@ public class Application {
         final CompletableFuture<BufferedImage> result = new CompletableFuture<>();
         final URL iconURL = Optional.ofNullable(jnlpFile.getInformation().getIconLocation(IconKind.SHORTCUT, 64, 64))
                 .orElseGet(() -> jnlpFile.getInformation().getIconLocation(IconKind.DEFAULT, 64, 64));
-        if(iconURL == null) {
-            result.complete(null);
+        if (iconURL == null) {
+            Executors.newSingleThreadExecutor().submit(() -> {
+                try {
+                    final FavIcon favIcon = new FavIcon(jnlpFile);
+                    final File favIconFile = favIcon.download();
+                    result.complete(ImageIO.read(favIconFile));
+                } catch (final IOException e) {
+                    result.completeExceptionally(e);
+                }
+            });
+
         } else {
             Executors.newSingleThreadExecutor().submit(() -> {
-                try(final InputStream inputStream = iconURL.openStream()) {
+                try (final InputStream inputStream = iconURL.openStream()) {
                     result.complete(ImageIO.read(inputStream));
                 } catch (final IOException e) {
                     result.completeExceptionally(e);
@@ -78,6 +92,7 @@ public class Application {
 
     /**
      * Returns an icon that can be used to show the application
+     *
      * @param dimension needed size of the icon
      * @return the icon as image
      */
@@ -89,6 +104,7 @@ public class Application {
 
     /**
      * Returns the URL of the JNLP file
+     *
      * @return
      */
     public URL getJnlpFileUrl() {

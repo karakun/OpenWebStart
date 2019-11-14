@@ -47,7 +47,7 @@ public class FavIcon {
                 }
             }
         } catch (Exception ex) {
-            LOG.error("Can not download or find favicon", ex);
+            LOG.error("Can not download or find favicon");
         }
         return null;
     }
