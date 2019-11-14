@@ -70,7 +70,7 @@ public class InitialConfigurationCheck {
             initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME);
             initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME);
 
-            setFirstStartDoneFlag();
+            setLastUpdateProperty();
 
             deploymentConfiguration.save();
             LOG.debug("Import of initial configuration done");
@@ -119,7 +119,7 @@ public class InitialConfigurationCheck {
         }
     }
 
-    private void setFirstStartDoneFlag() {
+    private void setLastUpdateProperty() {
         preferencesStoreLock.lock();
         try {
             deploymentConfiguration.setProperty(LAST_UPDATE_PROPERTY_NAME, Long.valueOf(System.currentTimeMillis()).toString());
