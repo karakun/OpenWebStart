@@ -2,15 +2,13 @@ package com.openwebstart.os;
 
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.concurrent.Executors;
 
 public class ScriptFactory {
 
@@ -53,16 +51,8 @@ public class ScriptFactory {
         builder.command("open", "-a", executable, "--args", fileLocation);
         builder.redirectErrorStream(true);
         final Process process = builder.start();
-        logIO(process.getInputStream());
+        ProcessUtil.logIO(process.getInputStream());
         return process;
     }
 
-    private static void logIO(final InputStream src) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            final Scanner sc = new Scanner(src);
-            while (sc.hasNextLine()) {
-                LOG.debug("APP: " + sc.nextLine());
-            }
-        });
-    }
 }

@@ -2,6 +2,7 @@ package com.openwebstart.os.linux;
 
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
 import com.openwebstart.os.ScriptFactory;
+import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
@@ -56,8 +57,9 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
                 shortcutFile.getCanonicalPath()};
         LOG.debug("Executing: {}", Arrays.toString(execString));
         final ProcessBuilder pb = new ProcessBuilder(execString);
-        pb.inheritIO();
+        pb.redirectError();
         final Process installer = pb.start();
+        ProcessUtil.logIO(installer.getInputStream());
         ProcessUtils.waitForSafely(installer);
         if (!shortcutFile.delete()) {
             throw new IOException("Unable to delete temporary file:" + shortcutFile);
