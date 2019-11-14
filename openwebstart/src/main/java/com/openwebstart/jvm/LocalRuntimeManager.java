@@ -273,13 +273,15 @@ public final class LocalRuntimeManager {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "No Java runtime found on your local machine.", "Local JVM Search", JOptionPane.INFORMATION_MESSAGE));
         }
 
-        for (Result<LocalJavaRuntime> r : foundRuntimes) {
-            if (r.isSuccessful()) {
-                    add(r.getResult());
-            } else {
-                LOG.warn("Cannot add local runtime.", r.getException());
-            }
-        }
+        foundRuntimes.stream()
+                .filter(Result::isSuccessful)
+                .map(Result::getResult)
+                .forEach(r -> add(r));
+
+        foundRuntimes.stream()
+                .filter(Result::isFailed)
+                .forEach(r -> LOG.warn("Cannot add local runtime.", r.getException()));
+
         return Collections.unmodifiableList(foundRuntimes);
     }
 
