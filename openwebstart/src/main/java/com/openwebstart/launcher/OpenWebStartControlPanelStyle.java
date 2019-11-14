@@ -5,6 +5,7 @@ import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.JVMPanel;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -34,6 +35,9 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
             return false;
         }
         if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
+            return false;
+        }
+        if(Objects.equals(panelName, DesktopSettingsPanelProvider.NAME)) {
             return false;
         }
         return true;
