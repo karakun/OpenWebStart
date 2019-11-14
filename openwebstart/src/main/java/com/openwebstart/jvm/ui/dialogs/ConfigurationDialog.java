@@ -6,6 +6,7 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.util.TranslatableEnumComboboxRenderer;
+import com.openwebstart.ui.ModalDialog;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;

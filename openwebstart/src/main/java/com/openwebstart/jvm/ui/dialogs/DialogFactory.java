@@ -3,6 +3,8 @@ package com.openwebstart.jvm.ui.dialogs;
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.ui.ErrorDialog;
+import com.openwebstart.ui.ModalDialog;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
@@ -43,22 +45,7 @@ public class DialogFactory {
     }
 
     public static void showErrorDialog(final String message, final Exception error) {
-        final Runnable dialogHandler = () -> new ErrorDialog(message, error).showAndWait();
-
-        if(SwingUtils.isEventDispatchThread()) {
-            dialogHandler.run();
-        } else {
-            try {
-                final CompletableFuture<Void> completableFuture = new CompletableFuture<>();
-                SwingUtilities.invokeAndWait(() -> {
-                    dialogHandler.run();
-                    completableFuture.complete(null);
-                });
-                completableFuture.get();
-            } catch (final Exception e) {
-                throw new RuntimeException("Internal runtime error while handling dialog", e);
-            }
-        }
+        ErrorDialog.show(message, error);
     }
 
     public static boolean askForDeactivatedRuntimeUsage(final LocalJavaRuntime runtime) {
