@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.func.Result;
 import com.openwebstart.install4j.Install4JConfiguration;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -30,8 +31,8 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SE
 public class InitialConfigurationCheck {
 
     private final static Logger LOG = LoggerFactory.getLogger(InitialConfigurationCheck.class);
-
-    private final static String FIRST_START_VARIABLE_NAME = "com.karakun.openwebstart.config.initial.firstStart";
+    public static final String INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME = "installationDate";
+    public static final String LAST_UPDATE_PROPERTY_NAME = "ows.install4j.propertyUpdate";
 
     private final Install4JConfiguration install4JConfiguration;
 
@@ -46,7 +47,7 @@ public class InitialConfigurationCheck {
 
     public void check() throws Exception {
         if (isFirstStart()) {
-            LOG.info("Looks like OpenWebStart is started for the first time. Will import initial configuration");
+            LOG.debug("Looks like OpenWebStart is started for the first time. Will import initial configuration");
 
             initProperty(DEFAULT_JVM_DOWNLOAD_SERVER);
             initProperty(ALLOW_DOWNLOAD_SERVER_FROM_JNLP);
@@ -69,49 +70,59 @@ public class InitialConfigurationCheck {
             initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME);
             initProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME);
 
-            deploymentConfiguration.save();
+            setLastUpdateProperty();
 
-            setFirstStartDoneFlag();
-            LOG.info("Import of initial configuration done");
+            deploymentConfiguration.save();
+            LOG.debug("Import of initial configuration done");
         }
     }
 
     private void initProperty(final String propertyName) {
         Assert.requireNonBlank(propertyName, "propertyName");
 
-        LOG.info("Checking if property '{}' is predefined", propertyName);
+        LOG.debug("Checking if property '{}' is predefined", propertyName);
 
         install4JConfiguration.getInstallerVariableAsString​(propertyName)
                 .ifPresent(v -> {
-                    LOG.info("Property '{}' will be imported with value '{}'", propertyName, v);
+                    LOG.debug("Property '{}' will be imported with value '{}'", propertyName, v);
                     deploymentConfiguration.setProperty(propertyName, v);
                 });
 
         if (install4JConfiguration.isVariableLocked(propertyName)) {
-            LOG.info("Property '{}' will be locked", propertyName);
+            LOG.debug("Property '{}' will be locked", propertyName);
             deploymentConfiguration.lock(propertyName);
         } else {
-            LOG.info("no lock defined for property '{}'", propertyName);
+            LOG.debug("no lock defined for property '{}'", propertyName);
         }
     }
 
-    public boolean isFirstStart() {
+    private boolean isFirstStart() {
         preferencesStoreLock.lock();
         try {
-            final boolean value = Optional.ofNullable(deploymentConfiguration.getProperty(FIRST_START_VARIABLE_NAME))
-                    .map(s -> Boolean.parseBoolean(s))
-                    .orElse(true);
-            return value;
+            final long installationDate = Install4JConfiguration.getInstance()
+                    .getInstallerVariableAsLong​(INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME)
+                    .orElse(Long.MAX_VALUE);
+
+            final Result<Long> lastPropertyUpdateDate = Optional.ofNullable(deploymentConfiguration.getProperty(LAST_UPDATE_PROPERTY_NAME))
+                    .map(Result.of(v -> Long.parseLong(v)))
+                    .orElse(Result.fail(new IllegalStateException("Time of last propertyUpdate not defined")));
+
+            if (lastPropertyUpdateDate.isFailed()) {
+                LOG.debug("Can not get '{}' property. Will do intial config", LAST_UPDATE_PROPERTY_NAME);
+                return true;
+            } else {
+                LOG.debug("Checking if installation time ({}) is after last initial config time ({})", installationDate, lastPropertyUpdateDate.getResult());
+                return installationDate > lastPropertyUpdateDate.getResult();
+            }
         } finally {
             preferencesStoreLock.unlock();
         }
     }
 
-    public void setFirstStartDoneFlag() throws Exception {
+    private void setLastUpdateProperty() {
         preferencesStoreLock.lock();
         try {
-            deploymentConfiguration.setProperty(FIRST_START_VARIABLE_NAME, Boolean.FALSE.toString());
-            deploymentConfiguration.save();
+            deploymentConfiguration.setProperty(LAST_UPDATE_PROPERTY_NAME, Long.toString(System.currentTimeMillis()));
         } finally {
             preferencesStoreLock.unlock();
         }
