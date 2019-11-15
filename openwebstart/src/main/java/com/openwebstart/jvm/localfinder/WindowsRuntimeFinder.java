@@ -26,12 +26,16 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
 
         final Path systemPath32 = Paths.get(JVM_BASEFOLDER_32);
         final Path systemPath64 = Paths.get(JVM_BASEFOLDER_64);
+
+        final Path correttoPath1 = Paths.get(System.getenv("ProgramFiles(X86)") + File.separatorChar + "Amazon Corretto");
+        final Path correttoPath2 = Paths.get(System.getenv("ProgramFiles") + File.separatorChar + "Amazon Corretto");
+
         // This is based on the assumption that the windows installation and the cygwin installation left the
         // Windows' default user directory and the cygwin home directory pretty much to the defaults
         final String cygwinUserHome = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
         final Path sdkmanPath = Paths.get(cygwinUserHome + File.separatorChar + ".sdkman");
 
-        return JdkFinder.findLocalJdks(systemPath32, systemPath64, sdkmanPath);
+        return JdkFinder.findLocalJdks(systemPath32, systemPath64, sdkmanPath, correttoPath1, correttoPath2);
     }
 
     @Override
