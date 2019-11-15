@@ -46,7 +46,7 @@ public class Install4JUtils {
 
     public static Optional<String> installationDirectory() {
         return Install4JConfiguration.getInstance()
-                .getInstallerVariableAsString​(INSTALLATION_DIR_VARIABLE_NAME);
+                .getInstallerVariableAsString(INSTALLATION_DIR_VARIABLE_NAME);
     }
 
 }

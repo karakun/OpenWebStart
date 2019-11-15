@@ -7,7 +7,9 @@ import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.config.Setting;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,11 +30,11 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
 
-public class InitialConfigurationCheck {
+class InitialConfigurationCheck {
 
-    private final static Logger LOG = LoggerFactory.getLogger(InitialConfigurationCheck.class);
-    public static final String INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME = "installationDate";
-    public static final String LAST_UPDATE_PROPERTY_NAME = "ows.install4j.propertyUpdate";
+    private static final Logger LOG = LoggerFactory.getLogger(InitialConfigurationCheck.class);
+    private static final String INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME = "installationDate";
+    private static final String LAST_UPDATE_PROPERTY_NAME = "ows.install4j.propertyUpdate";
 
     private final Install4JConfiguration install4JConfiguration;
 
@@ -40,12 +42,12 @@ public class InitialConfigurationCheck {
 
     private final Lock preferencesStoreLock = new ReentrantLock();
 
-    public InitialConfigurationCheck(final DeploymentConfiguration deploymentConfiguration) {
+    InitialConfigurationCheck(final DeploymentConfiguration deploymentConfiguration) {
         this.deploymentConfiguration = Assert.requireNonNull(deploymentConfiguration, "deploymentConfiguration");
         this.install4JConfiguration = Install4JConfiguration.getInstance();
     }
 
-    public void check() throws Exception {
+    void check() throws Exception {
         if (isFirstStart()) {
             LOG.debug("Looks like OpenWebStart is started for the first time. Will import initial configuration");
 
@@ -82,29 +84,34 @@ public class InitialConfigurationCheck {
 
         LOG.debug("Checking if property '{}' is predefined", propertyName);
 
-        install4JConfiguration.getInstallerVariableAsString​(propertyName)
+        final Map<String, Setting<String>> config = deploymentConfiguration.getRaw();
+
+        install4JConfiguration.getInstallerVariableAsString(propertyName)
                 .ifPresent(v -> {
                     LOG.debug("Property '{}' will be imported with value '{}'", propertyName, v);
-                    deploymentConfiguration.setProperty(propertyName, v);
+                    config.computeIfAbsent(propertyName, this::createNewSetting).setValue(v);
                 });
 
-        if (install4JConfiguration.isVariableLocked(propertyName)) {
-            LOG.debug("Property '{}' will be locked", propertyName);
-            deploymentConfiguration.lock(propertyName);
-        } else {
-            LOG.debug("no lock defined for property '{}'", propertyName);
-        }
+        install4JConfiguration.isVariableLocked(propertyName)
+                .ifPresent(b -> {
+                    LOG.debug("Lock of Property '{}' will be set to '{}'", propertyName, b);
+                    config.computeIfAbsent(propertyName, this::createNewSetting).setLocked(b);
+                });
+    }
+
+    private Setting<String> createNewSetting(String k) {
+        return Setting.createUnknown(k, null);
     }
 
     private boolean isFirstStart() {
         preferencesStoreLock.lock();
         try {
             final long installationDate = Install4JConfiguration.getInstance()
-                    .getInstallerVariableAsLong​(INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME)
+                    .getInstallerVariableAsLong(INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME)
                     .orElse(Long.MAX_VALUE);
 
             final Result<Long> lastPropertyUpdateDate = Optional.ofNullable(deploymentConfiguration.getProperty(LAST_UPDATE_PROPERTY_NAME))
-                    .map(Result.of(v -> Long.parseLong(v)))
+                    .map(Result.of(Long::parseLong))
                     .orElse(Result.fail(new IllegalStateException("Time of last propertyUpdate not defined")));
 
             if (lastPropertyUpdateDate.isFailed()) {
