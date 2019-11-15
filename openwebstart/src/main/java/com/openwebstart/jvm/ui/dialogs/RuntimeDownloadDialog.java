@@ -4,7 +4,7 @@ import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.http.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
-import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 

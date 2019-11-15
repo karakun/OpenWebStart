@@ -1,7 +1,7 @@
 package com.openwebstart.jvm.ui.list;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import com.openwebstart.jvm.ui.actions.Action;
+import com.openwebstart.ui.Action;
 import com.openwebstart.jvm.ui.actions.ActivateRuntimeAction;
 import com.openwebstart.jvm.ui.actions.DeactivateRuntimeAction;
 import com.openwebstart.jvm.ui.actions.DeleteRuntimeAction;

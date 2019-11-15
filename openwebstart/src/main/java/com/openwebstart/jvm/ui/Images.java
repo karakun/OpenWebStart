@@ -10,7 +10,7 @@ public interface Images {
 
     URL MORE_OUTLINE_32_URL = Images.class.getResource("more-outline-32.png");
 
-    URL VMCUBE_64_URL = Images.class.getResource("vmcube-64.png");
+    URL JVM_64_URL = Images.class.getResource("jvm-64.png");
 
     URL QUESTION_64_URL = Images.class.getResource("question-64.png");
 

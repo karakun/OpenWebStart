@@ -2,7 +2,6 @@ package com.openwebstart.ui;
 
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.jvm.ui.Images;
-import com.openwebstart.jvm.ui.util.IconComponent;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;

@@ -1,7 +1,7 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.install4j.Install4JUtils;
-import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;

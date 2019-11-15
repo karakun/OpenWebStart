@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui.actions;
+package com.openwebstart.ui;
 
 public interface Action<T> {
 

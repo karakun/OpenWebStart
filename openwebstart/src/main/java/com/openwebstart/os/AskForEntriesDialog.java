@@ -26,20 +26,22 @@ public class AskForEntriesDialog extends ModalDialog {
         final FormPanel formPanel = new FormPanel();
         formPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        final JLabel textLabel = new JLabel(Translator.getInstance().translate("shortcuts.dialog.text"));
+        final JLabel textLabel = new JLabel(Translator.getInstance().translate("shortcuts.dialog.text", appName));
 
         int row = 0;
 
         formPanel.addEditorRow(row++, textLabel);
         if(askForMenu) {
             formPanel.addEditorRow(row++, menuCheckBox);
+            menuCheckBox.setSelected(true);
         }
         if(askForDesktop) {
             formPanel.addEditorRow(row++, desktopCheckBox);
+            desktopCheckBox.setSelected(true);
         }
         formPanel.addFlexibleRow(row++);
 
-        final JButton okButton = new JButton(Translator.getInstance().translate("shortcuts.dialog.ok.text"));
+        final JButton okButton = new JButton(Translator.getInstance().translate("action.ok"));
         okButton.addActionListener(e -> {
             this.setVisible(false);
             this.dispose();

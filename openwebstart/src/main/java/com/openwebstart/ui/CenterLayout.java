@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui.util;
+package com.openwebstart.ui;
 
 import java.awt.Component;
 import java.awt.Container;

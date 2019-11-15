@@ -1,12 +1,12 @@
 package com.openwebstart.os.mac.icns;
 
 import com.openwebstart.func.Result;
+import com.openwebstart.ui.ImageUtils;
+import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class IcnsFactory {
                 final BufferedImage image = ImageIO.read(imageFile);
                 final File iconFile = new File(iconFolder, i.getFileName());
                 if(image.getHeight() != i.getSize() || image.getWidth() != i.getSize()) {
-                    final BufferedImage resizedImage = resize(image, i.getSize(), i.getSize());
+                    final BufferedImage resizedImage = ImageUtils.resize(image, i.getSize(), i.getSize());
                     ImageIO.write(resizedImage, "png", iconFile);
                 } else {
                     ImageIO.write(image, "png", iconFile);
@@ -71,7 +71,10 @@ public class IcnsFactory {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(ICONUTIL_COMMAND);
         processBuilder.directory(tempDirectory.toFile());
-        final int exitValue = processBuilder.start().waitFor();
+        processBuilder.redirectError();
+        final Process process = processBuilder.start();
+        ProcessUtil.logIO(process.getInputStream());
+        final int exitValue = process.waitFor();
         if(exitValue != 0) {
             throw new RuntimeException("Error in creating icon file");
         }
@@ -91,19 +94,6 @@ public class IcnsFactory {
         Assert.requireNonNull(definitions, "definitions");
         Collections.sort(definitions);
         return definitions.get(0);
-    }
-
-    public static BufferedImage resize(final BufferedImage source, final int width, final int height) {
-        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D bg = image.createGraphics();
-        final double sx = (double) width / source.getWidth();
-        final double sy = (double) height / source.getHeight();
-
-        bg.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        bg.scale(sx, sy);
-        bg.drawImage(source, 0, 0, null);
-        bg.dispose();
-        return image;
     }
 
 }

@@ -2,8 +2,9 @@ package com.openwebstart.jvm.ui.list;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
-import com.openwebstart.jvm.ui.util.CenterLayout;
-import com.openwebstart.jvm.ui.util.IconComponent;
+import com.openwebstart.ui.CenterLayout;
+import com.openwebstart.ui.IconComponent;
+import com.openwebstart.ui.ListHighlighter;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
@@ -46,9 +47,9 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
     private final IconComponent actionsHooverIcon;
 
-    private final RuntimeListHighlighter listHighlighter;
+    private final ListHighlighter<LocalJavaRuntime> listHighlighter;
 
-    RuntimeListCellRenderer(final RuntimeListHighlighter listHighlighter) {
+    RuntimeListCellRenderer(final ListHighlighter<LocalJavaRuntime> listHighlighter) {
         this.listHighlighter = Assert.requireNonNull(listHighlighter, "listHighlighter");
 
         actionsIcon = new IconComponent(new ImageIcon(Images.MORE_OUTLINE_32_URL));
@@ -120,7 +121,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
     }
 
     private JPanel createIconPanel() {
-        final IconComponent vmIcon = new IconComponent(new ImageIcon(Images.VMCUBE_64_URL));
+        final IconComponent vmIcon = new IconComponent(new ImageIcon(Images.JVM_64_URL));
 
         final JPanel deactivatedIconWrapper = new JPanel();
         deactivatedIconWrapper.setLayout(null);

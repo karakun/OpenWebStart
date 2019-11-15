@@ -3,6 +3,7 @@ package com.openwebstart.os.mac;
 import com.openwebstart.func.Result;
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
 import com.openwebstart.os.ScriptFactory;
+import com.openwebstart.os.linux.FavIcon;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
 import net.sourceforge.jnlp.JNLPFile;
@@ -52,7 +53,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     @Override
     public void createMenuEntry(final JNLPFile file) throws Exception {
         final String name = file.createNameForDesktopFile();
-        final String script = ScriptFactory.createStartCommand(file);
+        final String script = ScriptFactory.createStartScript(file);
         final String[] icons = getIcons(file);
 
         AppFactory.createApp(name, script, icons);
@@ -62,9 +63,22 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         final List<String> shortcutIconLocations = getIconLocations(file, IconKind.SHORTCUT);
         if (shortcutIconLocations.isEmpty()) {
             final List<String> defaultIconLocations = getIconLocations(file, IconKind.DEFAULT);
+            if(defaultIconLocations.isEmpty()) {
+             final FavIcon favIcon = new FavIcon(file);
+             return Optional.ofNullable(favIcon.download())
+                     .map(f -> f.getAbsolutePath())
+                     .map(p -> Collections.singletonList(p))
+                     .orElse(Collections.emptyList()).toArray(new String[0]);
+            }
             return defaultIconLocations.toArray(new String[0]);
         }
-
+        if(shortcutIconLocations.isEmpty()) {
+            final FavIcon favIcon = new FavIcon(file);
+            return Optional.ofNullable(favIcon.download())
+                    .map(f -> f.getAbsolutePath())
+                    .map(p -> Collections.singletonList(p))
+                    .orElse(Collections.emptyList()).toArray(new String[0]);
+        }
         return shortcutIconLocations.toArray(new String[0]);
     }
 

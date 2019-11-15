@@ -10,7 +10,7 @@ import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
-import com.openwebstart.jvm.ui.list.RuntimeListModel;
+import com.openwebstart.ui.ListComponentModel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public final class RuntimeManagerPanel extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerPanel.class);
 
-    private final RuntimeListModel listModel;
+    private final ListComponentModel<LocalJavaRuntime> listModel;
 
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 

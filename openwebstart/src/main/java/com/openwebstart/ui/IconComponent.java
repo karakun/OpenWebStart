@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui.util;
+package com.openwebstart.ui;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 

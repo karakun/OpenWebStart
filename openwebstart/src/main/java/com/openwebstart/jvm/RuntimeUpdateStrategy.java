@@ -1,6 +1,6 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.jvm.ui.util.Translatable;
+import com.openwebstart.ui.Translatable;
 
 public enum RuntimeUpdateStrategy implements Translatable {
 
