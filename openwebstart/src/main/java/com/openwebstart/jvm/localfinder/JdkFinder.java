@@ -4,18 +4,23 @@ import com.openwebstart.func.Result;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
+import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 public class JdkFinder {
     private static final Logger LOG = LoggerFactory.getLogger(JdkFinder.class);
@@ -67,9 +72,19 @@ public class JdkFinder {
     }
 
     private static LocalJavaRuntime getLocalJavaRuntime(final Path javaHome) {
+        Assert.requireNonNull(javaHome, "javaHome");
+        if (isInternalJvm(javaHome)) {
+            LOG.info("JVM '{}' won't be used since it is the internal OpenWebStart JVM", javaHome);
+            throw new IllegalArgumentException("The selected JVM at '" + javaHome + "' is the internal OpenWebStart JVM");
+        }
+
         final JavaRuntimePropertiesDetector.JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
         final String version = jreProps.getVersion();
         final String vendor = jreProps.getVendor();
         return LocalJavaRuntime.createPreInstalled(version, LOCAL_OS, vendor, javaHome);
+    }
+
+    private static boolean isInternalJvm(final Path javaHome) {
+        return Objects.equals(Paths.get(JavaSystemProperties.getJavaHome()), javaHome);
     }
 }

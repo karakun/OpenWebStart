@@ -6,9 +6,9 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.JComponent;
 
-public class SimplifiedJvmPanelProvider implements ControlPanelProvider {
+public class SimpleDesktopSettingsPanelProvider implements ControlPanelProvider {
 
-    public static final String NAME = "SimplifiedJVMPanel";
+    public static final String NAME = "SimpleDesktopSettingsPanel";
 
     @Override
     public String getName() {
@@ -17,16 +17,17 @@ public class SimplifiedJvmPanelProvider implements ControlPanelProvider {
 
     @Override
     public String getTitle() {
-        return Translator.R("CPTabJVMSettings");
+        return Translator.R("CPTabDesktopIntegration");
     }
 
     @Override
     public int getOrder() {
-        return 50;
+        return 40;
     }
 
     @Override
     public JComponent createPanel(final DeploymentConfiguration config) {
-        return new SimplifiedJvmPanel(config);
+        return new SimpleDesktopSettingsPanel(config);
     }
+
 }

@@ -5,14 +5,17 @@ import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanel;
+import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 
 public class ControlPanelLauncher {
@@ -21,6 +24,10 @@ public class ControlPanelLauncher {
 
 
     public static void main(final String[] args) {
+        if (Arrays.asList(args).contains(CommandLineOptions.VERBOSE.getOption())) {
+            JNLPRuntime.setDebug(true);
+        }
+
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart ControlPanel {}", v));
 
         Translator.addBundle("i18n");

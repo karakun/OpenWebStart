@@ -4,7 +4,10 @@ import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.PolicySettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.UnsignedAppletsTrustingListPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
@@ -19,22 +22,26 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
     private final Logger LOG = LoggerFactory.getLogger(OpenWebStartControlPanelStyle.class);
 
+    private final static Set<String> UNSUPPORTED_PANEL_NAMES = new HashSet<>(Arrays.asList(
+            AboutPanelProvider.NAME,
+            DesktopSettingsPanelProvider.NAME,
+            PolicySettingsPanelProvider.NAME,
+            UnsignedAppletsTrustingListPanelProvider.NAME,
+            JvmSettingsPanelProvider.NAME));
+
     @Override
     public boolean isPanelActive(final String panelName) {
-        if(Objects.equals(panelName, AboutPanelProvider.NAME)) {
-            return false;
-        }
-        if(Objects.equals(panelName, JvmSettingsPanelProvider.NAME)) {
-            return false;
-        }
-        return true;
+        return !UNSUPPORTED_PANEL_NAMES.contains(panelName);
     }
 
     @Override

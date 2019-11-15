@@ -1,4 +1,4 @@
-package com.openwebstart.jvm.ui.dialogs;
+package com.openwebstart.ui;
 
 import javax.swing.JDialog;
 
@@ -15,7 +15,7 @@ public class ModalDialog extends JDialog {
         setVisible(true);
     }
 
-    protected void close() {
+    public void close() {
         setVisible(false);
         dispose();
     }

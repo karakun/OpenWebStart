@@ -2,7 +2,7 @@ package com.openwebstart.os;
 
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.controlpanel.FormPanel;
-import com.openwebstart.jvm.ui.dialogs.ModalDialog;
+import com.openwebstart.ui.ModalDialog;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;

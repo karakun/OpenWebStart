@@ -68,7 +68,7 @@ public class PhaseTwoWebStartLauncher {
                 }
             });
         }
-        
+
         final List<String> bootArgs = skipNotRelevantArgs(args);
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,
