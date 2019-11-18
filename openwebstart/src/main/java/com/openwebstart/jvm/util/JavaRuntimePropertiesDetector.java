@@ -57,8 +57,9 @@ public class JavaRuntimePropertiesDetector {
 
             return extractProperties(stdOutReader.content, stdErrReader.content);
         } catch (IOException ex) {
-            LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, ex);
-            throw new RuntimeException(ex);
+            final String message = "Can not get properties for JVM in path '" + java + "'";
+            LOG.error(message, ex);
+            throw new IllegalStateException(message, ex);
         }
     }
 
