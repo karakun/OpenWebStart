@@ -6,6 +6,7 @@ import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
+import com.openwebstart.os.MenuAndDesktopEntryHandler;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -78,7 +79,7 @@ public class PhaseTwoWebStartLauncher {
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
         LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
-        Boot.main(new OwsJvmLauncher(javaRuntimeProvider), bootArgs.toArray(new String[0]));
+        Boot.main(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
     }
 
     private static List<String> skipNotRelevantArgs(final String[] args) {
