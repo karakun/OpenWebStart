@@ -32,12 +32,12 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
     private static final Logger LOG = LoggerFactory.getLogger(LinuxEntryFactory.class);
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file) throws IOException {
+    public void updateDesktopEntry(final JNLPFile file) {
 
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file) throws IOException {
+    public void updateMenuEntry(final JNLPFile file) {
 
     }
 
@@ -68,7 +68,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
     public void createMenuEntry(final JNLPFile file) throws IOException {
-        final File f = new File(findAndVerifyJavawsMenuDir() + "/" + createDesktopIconFileName(getDesktopIconName(file)));
+        final File f = getMenuEntryFile(file);
         final String iconLocation = getIconLocation(file);
         FileUtils.saveFileUtf8(getContent(file, true, iconLocation), f);
         LOG.info("Menu item created: {}", f.getAbsolutePath());
@@ -83,12 +83,15 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
     public boolean existsMenuEntry(final JNLPFile file) {
-        final XDesktopEntry desktopEntry = new XDesktopEntry(file);
-        return desktopEntry.getLinuxMenuIconFile().exists();
+        return getMenuEntryFile(file).exists();
+    }
+
+    private File getMenuEntryFile(JNLPFile file) {
+        return new File(findAndVerifyJavawsMenuDir() + "/" + createDesktopIconFileName(getDesktopIconName(file)));
     }
 
     private static String findAndVerifyJavawsMenuDir() {
-        final File menuDir = PathsAndFiles.MENUS_DIR.getFile();
+        final File menuDir = PathsAndFiles.MENUS_DIR.getFile().getParentFile();
         if (!menuDir.exists()) {
             if (!menuDir.mkdirs()) {
                 LOG.warn("directory '{}' for storing menu entry cannot be created.", menuDir);
