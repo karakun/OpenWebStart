@@ -4,6 +4,7 @@ import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.jvm.PathAndFiles;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.config.ValidatorFactory;
 import net.sourceforge.jnlp.config.DefaultsProvider;
@@ -43,7 +44,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         JVM_VENDOR,
-                        "AdoptOpenJDK",
+                        Vendor.ANY_VENDOR.getName(),
                         null
                 ),
                 Setting.createDefault(
