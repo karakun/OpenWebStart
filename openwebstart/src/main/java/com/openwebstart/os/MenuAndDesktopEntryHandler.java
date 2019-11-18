@@ -1,12 +1,12 @@
 package com.openwebstart.os;
 
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
+import net.adoptopenjdk.icedteaweb.jnlp.element.information.InformationDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
 import net.sourceforge.jnlp.util.ShortcutCreationOptions;
 
 import java.util.Optional;
@@ -18,15 +18,14 @@ import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ASK_USER;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ASK_USER_IF_HINTED;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_NEVER;
 
-public class MenuAndDesktopEntryHandler {
+public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MenuAndDesktopEntryHandler.class);
-
-    public void askForIntegration(final JNLPFile jnlpFile) {
-        MenuAndDesktopEntriesFactory.forCurrentOs().ifPresent(f -> askForIntegration(f, jnlpFile));
+    @Override
+    public void addMenuAndDesktopEntries(final JNLPFile jnlpFile) {
+        MenuAndDesktopEntriesFactory.forCurrentOs().ifPresent(f -> addMenuAndDesktopEntries(f, jnlpFile));
     }
 
-    private void askForIntegration(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile) {
+    private void addMenuAndDesktopEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile) {
         final String property = JNLPRuntime.getConfiguration().getProperty(ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT);
         final ShortcutCreationOptions shortcutCreationOptions = ShortcutCreationOptions.forConfigName(property).orElse(CREATE_NEVER);
 
@@ -42,10 +41,10 @@ public class MenuAndDesktopEntryHandler {
         final boolean supportsMenu = factory.supportsMenuEntry();
         final boolean supportsDesktop = factory.supportsDesktopEntry();
 
-        final Optional<ShortcutDesc> shortcutDesc = Optional.ofNullable(jnlpFile.getInformation()).map(i -> i.getShortcut());
+        final Optional<ShortcutDesc> shortcutDesc = Optional.ofNullable(jnlpFile.getInformation()).map(InformationDesc::getShortcut);
 
-        final boolean jnlpWantsMenu = shortcutDesc.map(d -> d.toMenu()).orElse(false);
-        final boolean jnlpWantsDesktop = shortcutDesc.map(d -> d.onDesktop()).orElse(false);
+        final boolean jnlpWantsMenu = shortcutDesc.map(ShortcutDesc::toMenu).orElse(false);
+        final boolean jnlpWantsDesktop = shortcutDesc.map(ShortcutDesc::onDesktop).orElse(false);
 
 
         if (hasMenu || hasDesktop) {

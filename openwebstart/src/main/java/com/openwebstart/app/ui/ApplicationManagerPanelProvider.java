@@ -25,7 +25,7 @@ public class ApplicationManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public boolean isActive(final DeploymentConfiguration config) {
-        return false;
+        return true;
     }
 
     @Override
