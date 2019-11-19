@@ -17,6 +17,8 @@ public class MacRuntimeFinder implements RuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(MacRuntimeFinder.class);
 
     private static final String MAC_JVM_BASEFOLDER = "/Library/Java/JavaVirtualMachines";
+    private static final String MAC_HOMEBREW_JVM_BASEFOLDER = "/usr/local/Cellar/openjdk/";
+
 
     @Override
     public List<Result<LocalJavaRuntime>> findLocalRuntimes() {
@@ -24,8 +26,9 @@ public class MacRuntimeFinder implements RuntimeFinder {
 
         final Path systemPath = Paths.get(MAC_JVM_BASEFOLDER);
         final Path sdkmanPath = Paths.get(JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman");
+        final Path homebrewPath = Paths.get(MAC_HOMEBREW_JVM_BASEFOLDER);
 
-        return JdkFinder.findLocalJdks(systemPath, sdkmanPath);
+        return JdkFinder.findLocalJdks(systemPath, sdkmanPath, homebrewPath);
     }
 
     @Override
