@@ -1,11 +1,11 @@
 package com.openwebstart.jvm.ui;
 
-import com.openwebstart.func.Result;
 import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.localfinder.JdkFinder;
+import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -13,6 +13,7 @@ import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.ui.ListComponentModel;
 import com.openwebstart.ui.Notifications;
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public final class RuntimeManagerPanel extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerPanel.class);
@@ -44,10 +44,6 @@ public final class RuntimeManagerPanel extends JPanel {
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
     private final Translator translator;
-
-    public RuntimeManagerPanel() {
-        this(JNLPRuntime.getConfiguration());
-    }
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
@@ -59,46 +55,16 @@ public final class RuntimeManagerPanel extends JPanel {
         listModel = runtimeListComponent.getModel();
 
         final JButton refreshButton = new JButton(translator.translate("jvmManager.action.refresh.text"));
-        refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> {
-            try {
-                JavaRuntimeManager.reloadLocalRuntimes();
-            } catch (Exception ex) {
-                throw new RuntimeException("Error", ex);
-            }
-        }));
+        refreshButton.addActionListener(e -> onRefresh());
 
         final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
-        findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
-            try {
-                final List<ResultWithInput<Path, LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
-                result.stream()
-                        .filter(r -> !r.isSuccessful())
-                        .forEach(r -> {
-                            Notifications.showError("jvmManager.error.addRuntime");
-                            LOG.error("Error while trying to add runtime at '" + r.getInput() + "'", r.getException());
-                        });
-            } catch (final Exception ex) {
-                DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
-            }
-        }));
+        findLocalRuntimesButton.addActionListener(e -> onFindLocalRuntimes());
 
         final JButton configureButton = new JButton(translator.translate("jvmManager.action.settings.text"));
         configureButton.addActionListener(e -> new ConfigurationDialog(deploymentConfiguration).showAndWait());
 
         final JButton addLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.addLocal.text"));
-        addLocalRuntimesButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle(translator.translate("jvmManager.selectJvm"));
-            fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            fileChooser.setMultiSelectionEnabled(false);
-            fileChooser.setFileHidingEnabled(false);
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                final Path selected = fileChooser.getSelectedFile().toPath();
-                backgroundExecutor.execute(() -> addLocalRuntimes(selected));
-            }
-        });
+        addLocalRuntimesButton.addActionListener(e -> onAddLocalRuntime());
 
         setLayout(new BorderLayout(12, 12));
 
@@ -119,63 +85,105 @@ public final class RuntimeManagerPanel extends JPanel {
 
         //TODO: Register on show and hide on close
         LocalRuntimeManager.getInstance().
-
                 addRuntimeAddedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.addElement(runtime)));
-        LocalRuntimeManager.getInstance().
 
+        LocalRuntimeManager.getInstance().
                 addRuntimeRemovedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.removeElement(runtime)));
-        LocalRuntimeManager.getInstance().
 
+        LocalRuntimeManager.getInstance().
                 addRuntimeUpdatedListener((oldValue, newValue) -> SwingUtilities.invokeLater(() -> listModel.replaceItem(oldValue, newValue)));
 
-        refreshModel();
-
+        listModel.replaceData(LocalRuntimeManager.getInstance().getAll());
     }
 
-    private void addLocalRuntimes(final Path selected) {
-        try {
-            final List<ResultWithInput<Path, LocalJavaRuntime>> localJdks = JdkFinder.findLocalJdks(selected).stream()
-                    .map(this::checkSupportedVersionRange)
-                    .collect(Collectors.toList());
-
-            localJdks.stream()
-                    .filter(Result::isSuccessful)
-                    .map(Result::getResult)
-                    .forEach(LocalRuntimeManager.getInstance()::add);
-
-            localJdks.stream()
-                    .filter(Result::isFailed)
-                    .forEach(r -> {
-                        LOG.error("Exception while finding local JDK at '" + r.getInput() + "'", r.getException());
-                        Notifications.showError("It was not possible to add one of the found JVMs. See log for more information");
-                    });
-        } catch (final Exception ex) {
-            DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
-        }
-    }
-
-    private ResultWithInput<Path, LocalJavaRuntime> checkSupportedVersionRange(final ResultWithInput<Path, LocalJavaRuntime> result) {
-        if (result.isSuccessful()) {
-            final VersionId version = result.getResult().getVersion();
-            if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
-                return result;
-            } else {
-                return Result.fail(result.getInput(), new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange()));
-            }
-        }
-        return result;
-    }
-
-    private void refreshModel() {
-        listModel.clear();
+    private void onRefresh() {
         backgroundExecutor.execute(() -> {
             try {
-                final List<LocalJavaRuntime> loadedData = LocalRuntimeManager.getInstance().getAll();
-                SwingUtilities.invokeAndWait(() -> listModel.replaceData(loadedData));
-            } catch (final Exception e) {
-                //TODO: Handle in UI error dialog.
-                throw new RuntimeException("Error while loading data", e);
+                JavaRuntimeManager.reloadLocalRuntimes();
+            } catch (Exception ex) {
+                throw new RuntimeException("Error", ex);
             }
         });
     }
+
+    private void onAddLocalRuntime() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(translator.translate("jvmManager.selectJvm"));
+        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileHidingEnabled(false);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            final Path selected = fileChooser.getSelectedFile().toPath();
+            backgroundExecutor.execute(() -> {
+                try {
+                    handleFoundRuntimes(JdkFinder.findLocalJdks(selected));
+                } catch (final Exception ex) {
+                    DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
+                }
+            });
+        }
+    }
+
+    private void handleFoundRuntimes(final List<ResultWithInput<Path, LocalJavaRuntime>> results) {
+        Assert.requireNonNull(results, "results");
+        final long added = results.stream()
+                .filter(result -> {
+                    if (result.isSuccessful()) {
+                        return handleSucessfulFoundRuntime(result.getInput(), result.getResult());
+                    } else {
+                        LOG.error("Error while adding local JDK at '" + result.getInput() + "'", result.getException());
+                        Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+                        return false;
+                    }
+                }).count();
+        if (added > 0) {
+            LOG.info("Added {} local JVMs to the JVM Manager", added);
+            Notifications.showInfo(added + " JVM were added to the JVM Manager");
+        } else {
+            LOG.info("No local JVMs added to the JVM Manager", added);
+            Notifications.showInfo("No JVM was added to the JVM Manager");
+        }
+    }
+
+    private boolean handleSucessfulFoundRuntime(final Path path, final LocalJavaRuntime runtime) {
+        if (runtime == null) {
+            LOG.error("Error while adding local JDK at '" + path + "'", new NullPointerException("runtime == null"));
+            Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+            return false;
+        }
+        if (supportsVersionRange(runtime)) {
+            try {
+                return LocalRuntimeManager.getInstance().add(runtime);
+            } catch (final Exception e) {
+                LOG.error("Error while adding local JDK at '" + path + "'", e);
+                Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+            }
+        } else {
+            LOG.error("JVM at '" + path + "' has unsupported version '" + runtime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
+            Notifications.showError("One of the found JVMs does not fit the supported version range of OpenWebStart");
+        }
+        return false;
+    }
+
+    private void onFindLocalRuntimes() {
+        LOG.info("Starting to search for local JVMs");
+        backgroundExecutor.execute(() -> {
+            try {
+                handleFoundRuntimes(RuntimeFinder.find());
+            } catch (final Exception ex) {
+                DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
+            }
+        });
+    }
+
+    private boolean supportsVersionRange(final LocalJavaRuntime runtime) {
+        Assert.requireNonNull(runtime, "runtime");
+        final VersionId version = runtime.getVersion();
+        return Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange())
+                .map(v -> v.contains(version))
+                .orElse(true);
+    }
+
 }

@@ -1,7 +1,8 @@
 package com.openwebstart.ui;
 
 import com.openwebstart.ui.impl.Notification;
-import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -9,8 +10,11 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Notifications {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Notifications.class);
 
     private static final int PADDING = 18;
 
@@ -26,13 +30,13 @@ public class Notifications {
 
     }
 
-    public static void showError(final String messageKey) {
-        final Notification notification = new Notification(Translator.getInstance().translate(messageKey), true, n -> hide(n));
+    public static void showError(final String message) {
+        final Notification notification = new Notification(message, true, n -> hide(n));
         show(notification);
     }
 
-    public static void showInfo(final String messageKey) {
-        final Notification notification = new Notification(Translator.getInstance().translate(messageKey), false, n -> hide(n));
+    public static void showInfo(final String message) {
+        final Notification notification = new Notification(message, false, n -> hide(n));
         show(notification);
     }
 
@@ -44,13 +48,25 @@ public class Notifications {
     }
 
     private static void show(final Notification notification) {
-        visibleNotifications.add(notification);
-        updateLayout();
+        final Consumer<Notification> uiHandler = n -> {
+            visibleNotifications.add(n);
+            updateLayout();
 
-        final Timer timer = new Timer(VISIBLE_IN_MS, e -> hide(notification));
-        timer.setRepeats(false);
-        timer.setInitialDelay(VISIBLE_IN_MS);
-        timer.start();
+            final Timer timer = new Timer(VISIBLE_IN_MS, e -> hide(n));
+            timer.setRepeats(false);
+            timer.setInitialDelay(VISIBLE_IN_MS);
+            timer.start();
+        };
+
+        if(SwingUtilities.isEventDispatchThread()) {
+            uiHandler.accept(notification);
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(() -> uiHandler.accept(notification));
+            } catch (final Exception e) {
+                LOG.error("Error while showing notification", e);
+            }
+        }
     }
 
     private static void updateLayout() {
@@ -71,9 +87,9 @@ public class Notifications {
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Hallo da draußen"));
         Thread.sleep(1_000);
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Dies ist ein langer Text der anzeigt das etwas passiert ist das nicht sein sollte."));
-        SwingUtilities.invokeAndWait(() -> Notifications.showInfo("Ha, jetzt kommen ganz viele Notifications."));
-        SwingUtilities.invokeAndWait(() -> Notifications.showError("Genau! Hier ist noch eine ;)."));
-        SwingUtilities.invokeAndWait(() -> Notifications.showInfo("Dies ist ein langer Text der anzeigt das etwas passiert ist das nicht sein sollte. Und jetzt kommt sogar noch mehr text"));
+        Notifications.showInfo("Ha, jetzt kommen ganz viele Notifications.");
+        Notifications.showError("Genau! Hier ist noch eine ;).");
+        Notifications.showInfo("Dies ist ein langer Text der anzeigt das etwas passiert ist das nicht sein sollte. Und jetzt kommt sogar noch mehr text");
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Hallo da draußen"));
         Thread.sleep(6_000);
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Hallo da draußen"));

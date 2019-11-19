@@ -78,11 +78,14 @@ public class JdkFinder {
             LOG.info("JVM '{}' won't be used since it is the internal OpenWebStart JVM", javaHome);
             throw new IllegalArgumentException("The selected JVM at '" + javaHome + "' is the internal OpenWebStart JVM");
         }
-
-        final JavaRuntimePropertiesDetector.JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
-        final String version = jreProps.getVersion();
-        final String vendor = jreProps.getVendor();
-        return LocalJavaRuntime.createPreInstalled(version, LOCAL_OS, vendor, javaHome);
+        try {
+            final JavaRuntimePropertiesDetector.JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
+            final String version = jreProps.getVersion();
+            final String vendor = jreProps.getVendor();
+            return LocalJavaRuntime.createPreInstalled(version, LOCAL_OS, vendor, javaHome);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Error while reading properties from JVM at '" + javaHome +"'", e);
+        }
     }
 
     private static boolean isInternalJvm(final Path javaHome) {

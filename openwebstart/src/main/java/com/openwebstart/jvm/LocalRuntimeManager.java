@@ -171,7 +171,7 @@ public final class LocalRuntimeManager {
         }
     }
 
-    public void add(final LocalJavaRuntime localJavaRuntime) {
+    public boolean add(final LocalJavaRuntime localJavaRuntime) {
         LOG.debug("Adding runtime definition");
 
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
@@ -191,10 +191,12 @@ public final class LocalRuntimeManager {
             addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
             try {
                 saveRuntimes();
+                return true;
             } catch (final Exception e) {
                 throw new RuntimeException("Error while saving JVM cache.", e);
             }
         }
+        return false;
     }
 
     public void delete(final LocalJavaRuntime localJavaRuntime) {
@@ -253,37 +255,6 @@ public final class LocalRuntimeManager {
 
     public static LocalRuntimeManager getInstance() {
         return INSTANCE;
-    }
-
-    public List<ResultWithInput<Path, LocalJavaRuntime>> findAndAddLocalRuntimes() {
-        final OperationSystem currentOs = OperationSystem.getLocalSystem();
-
-        final List<ResultWithInput<Path,LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
-        ServiceLoader.load(RuntimeFinder.class).iterator().forEachRemaining(f -> {
-            if (f.getSupportedOperationSystems().contains(currentOs)) {
-                try {
-                    foundRuntimes.addAll(f.findLocalRuntimes());
-                } catch (final Exception e) {
-                    throw new RuntimeException("Error while searching for JVMs on the system", e);
-                }
-            }
-        });
-
-        if (foundRuntimes.isEmpty()) {
-            LOG.debug("No Java runtime found on your local machine.");
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "No Java runtime found on your local machine.", "Local JVM Search", JOptionPane.INFORMATION_MESSAGE));
-        }
-
-        foundRuntimes.stream()
-                .filter(Result::isSuccessful)
-                .map(Result::getResult)
-                .forEach(r -> add(r));
-
-        foundRuntimes.stream()
-                .filter(Result::isFailed)
-                .forEach(r -> LOG.warn("Cannot add local runtime.", r.getException()));
-
-        return Collections.unmodifiableList(foundRuntimes);
     }
 
     LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
