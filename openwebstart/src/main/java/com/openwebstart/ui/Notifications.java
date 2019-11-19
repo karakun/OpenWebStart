@@ -20,7 +20,7 @@ public class Notifications {
 
     private static final int NOTIFICATION_WIDTH = 320;
 
-    private static final int NOTIFICATION_HEIGHT = 64;
+    private static final int NOTIFICATION_HEIGHT = 76;
 
     private static final int VISIBLE_IN_MS = 8_000;
 

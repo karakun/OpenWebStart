@@ -19,7 +19,6 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
-import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -134,23 +133,23 @@ public final class RuntimeManagerPanel extends JPanel {
                         return handleSucessfulFoundRuntime(result.getInput(), result.getResult());
                     } else {
                         LOG.error("Error while adding local JDK at '" + result.getInput() + "'", result.getException());
-                        Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+                        Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
                         return false;
                     }
                 }).count();
         if (added > 0) {
             LOG.info("Added {} local JVMs to the JVM Manager", added);
-            Notifications.showInfo(added + " JVM were added to the JVM Manager");
+            Notifications.showInfo(Translator.getInstance().translate("jvmManager.info.jvmsAdded", added));
         } else {
             LOG.info("No local JVMs added to the JVM Manager", added);
-            Notifications.showInfo("No JVM was added to the JVM Manager");
+            Notifications.showInfo(Translator.getInstance().translate("jvmManager.info.noJvmAdded"));
         }
     }
 
     private boolean handleSucessfulFoundRuntime(final Path path, final LocalJavaRuntime runtime) {
         if (runtime == null) {
             LOG.error("Error while adding local JDK at '" + path + "'", new NullPointerException("runtime == null"));
-            Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+            Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
             return false;
         }
         if (supportsVersionRange(runtime)) {
@@ -158,11 +157,11 @@ public final class RuntimeManagerPanel extends JPanel {
                 return LocalRuntimeManager.getInstance().add(runtime);
             } catch (final Exception e) {
                 LOG.error("Error while adding local JDK at '" + path + "'", e);
-                Notifications.showError("One of the found JVMs was not added based on an error (see log)");
+                Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
             }
         } else {
             LOG.error("JVM at '" + path + "' has unsupported version '" + runtime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
-            Notifications.showError("One of the found JVMs does not fit the supported version range of OpenWebStart");
+            Notifications.showError(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
         }
         return false;
     }
