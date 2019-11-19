@@ -4,6 +4,7 @@ import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.ui.IconComponent;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DebugSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.PolicySettingsPanelProvider;
@@ -37,7 +38,8 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
             DesktopSettingsPanelProvider.NAME,
             PolicySettingsPanelProvider.NAME,
             UnsignedAppletsTrustingListPanelProvider.NAME,
-            JvmSettingsPanelProvider.NAME));
+            JvmSettingsPanelProvider.NAME,
+            DebugSettingsPanelProvider.NAME));
 
     @Override
     public boolean isPanelActive(final String panelName) {
