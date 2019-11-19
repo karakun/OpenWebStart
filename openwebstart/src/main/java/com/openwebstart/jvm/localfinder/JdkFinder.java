@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.func.Result;
+import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.util.JavaRuntimePropertiesDetector;
@@ -23,12 +24,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JdkFinder {
+
     private static final Logger LOG = LoggerFactory.getLogger(JdkFinder.class);
 
     public static final OperationSystem LOCAL_OS = OperationSystem.getLocalSystem();
 
-
-    public static List<Result<LocalJavaRuntime>> findLocalJdks(final Path... searchRoots) {
+    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path... searchRoots) {
         LOG.debug("About to look for local jdks at the following locations: {}",
                 Arrays.stream(searchRoots).map(path -> path.normalize().toAbsolutePath().toString()).collect(Collectors.toList()));
 
@@ -38,18 +39,18 @@ public class JdkFinder {
                 .collect(Collectors.toList());
     }
 
-    private static List<Result<LocalJavaRuntime>> findLocalJdks(final Path searchRoot) {
+    private static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path searchRoot) {
         if (Files.isDirectory(searchRoot)) {
             try {
                 return Files.find(searchRoot, 5, JdkFinder::isJavaHome)
                         .map(Path::toAbsolutePath)
                         .map(Path::normalize)
                         .distinct()
-                        .map(Result.of(JdkFinder::getLocalJavaRuntime))
+                        .map(Result.withInput(JdkFinder::getLocalJavaRuntime))
                         .collect(Collectors.toList());
             }
-            catch (IOException e) {
-                throw new RuntimeException(e);
+            catch (final IOException e) {
+                throw new RuntimeException("Error while searching for local JVMs at '" + searchRoot + "'", e);
             }
         }
         return Collections.emptyList();

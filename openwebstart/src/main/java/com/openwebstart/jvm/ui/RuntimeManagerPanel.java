@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.ui;
 
 import com.openwebstart.func.Result;
+import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
@@ -11,6 +12,7 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.ui.ListComponentModel;
+import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -68,13 +70,15 @@ public final class RuntimeManagerPanel extends JPanel {
         final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
         findLocalRuntimesButton.addActionListener(e -> backgroundExecutor.execute(() -> {
             try {
-                final List<Result<LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
+                final List<ResultWithInput<Path, LocalJavaRuntime>> result = LocalRuntimeManager.getInstance().findAndAddLocalRuntimes();
                 result.stream()
                         .filter(r -> !r.isSuccessful())
-                        .map(Result::getException)
-                        .forEach(ex -> DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex));
-            } catch (Exception ex) {
-                throw new RuntimeException("Error", ex);
+                        .forEach(r -> {
+                            Notifications.showError("jvmManager.error.addRuntime");
+                            LOG.error("Error while trying to add runtime at '" + r.getInput() + "'", r.getException());
+                        });
+            } catch (final Exception ex) {
+                DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
             }
         }));
 
@@ -130,7 +134,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private void addLocalRuntimes(final Path selected) {
         try {
-            final List<Result<LocalJavaRuntime>> localJdks = JdkFinder.findLocalJdks(selected).stream()
+            final List<ResultWithInput<Path, LocalJavaRuntime>> localJdks = JdkFinder.findLocalJdks(selected).stream()
                     .map(this::checkSupportedVersionRange)
                     .collect(Collectors.toList());
 
@@ -141,24 +145,22 @@ public final class RuntimeManagerPanel extends JPanel {
 
             localJdks.stream()
                     .filter(Result::isFailed)
-                    .map(Result::getException)
-                    .peek(e1 -> LOG.info("Exception while finding local JDKs", e1))
-                    .findFirst()
-                    .ifPresent(e2 -> DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), e2));
-
+                    .forEach(r -> {
+                        LOG.error("Exception while finding local JDK at '" + r.getInput() + "'", r.getException());
+                        Notifications.showError("It was not possible to add one of the found JVMs. See log for more information");
+                    });
         } catch (final Exception ex) {
             DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
         }
     }
 
-    private Result<LocalJavaRuntime> checkSupportedVersionRange(final Result<LocalJavaRuntime> result) {
+    private ResultWithInput<Path, LocalJavaRuntime> checkSupportedVersionRange(final ResultWithInput<Path, LocalJavaRuntime> result) {
         if (result.isSuccessful()) {
             final VersionId version = result.getResult().getVersion();
             if (Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(version)).orElse(true)) {
                 return result;
-            }
-            else {
-                return Result.fail(new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange()));
+            } else {
+                return Result.fail(result.getInput(), new IllegalStateException("Supported version range: " + RuntimeManagerConfig.getSupportedVersionRange()));
             }
         }
         return result;

@@ -1,6 +1,7 @@
 package com.openwebstart.jvm;
 
 import com.openwebstart.func.Result;
+import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.http.HttpGetRequest;
 import com.openwebstart.http.HttpResponse;
@@ -254,10 +255,10 @@ public final class LocalRuntimeManager {
         return INSTANCE;
     }
 
-    public List<Result<LocalJavaRuntime>> findAndAddLocalRuntimes() {
+    public List<ResultWithInput<Path, LocalJavaRuntime>> findAndAddLocalRuntimes() {
         final OperationSystem currentOs = OperationSystem.getLocalSystem();
 
-        final List<Result<LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
+        final List<ResultWithInput<Path,LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
         ServiceLoader.load(RuntimeFinder.class).iterator().forEachRemaining(f -> {
             if (f.getSupportedOperationSystems().contains(currentOs)) {
                 try {
