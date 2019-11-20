@@ -10,13 +10,16 @@ import net.sourceforge.jnlp.config.PathsAndFiles;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Vector;
 
 public class LoggingPanel extends FormPanel {
 
@@ -27,18 +30,16 @@ public class LoggingPanel extends FormPanel {
         final UiLock uiLock = new UiLock(config);
 
 
-        final JCheckBox showLogWindowCheckbox = new JCheckBox(translator.translate("loggingPanel.showLogWindow.text"));
-        showLogWindowCheckbox.setToolTipText(translator.translate("loggingPanel.showLogWindow.description"));
-        uiLock.update(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, showLogWindowCheckbox);
-        showLogWindowCheckbox.addChangeListener(e -> {
-            if(showLogWindowCheckbox.isSelected()) {
-                config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, ConfigurationConstants.CONSOLE_SHOW);
-            } else {
-                config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, ConfigurationConstants.CONSOLE_DISABLE);
-            }
+        final JLabel showLogWindowLabel = new JLabel(translator.translate("loggingPanel.showLogWindow.text") + ":");
+        final JComboBox<LogWindowModes> showLogWindowCombobox = new JComboBox<>(new Vector<>(Arrays.asList(LogWindowModes.values())));
+        showLogWindowCombobox.setToolTipText(translator.translate("loggingPanel.showLogWindow.description"));
+        uiLock.update(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, showLogWindowCombobox);
+        showLogWindowCombobox.addActionListener(e -> {
+            final LogWindowModes selectedItem = (LogWindowModes) showLogWindowCombobox.getSelectedItem();
+            config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, selectedItem.getPropertyValue());
         });
-        showLogWindowCheckbox.setSelected(Objects.equals(config.getProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE), ConfigurationConstants.CONSOLE_SHOW));
-        addEditorRow(0, showLogWindowCheckbox);
+        showLogWindowCombobox.setSelectedItem(LogWindowModes.getForConfigValue(config.getProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE)));
+        addRow(0, showLogWindowLabel, showLogWindowCombobox);
 
 
         final JCheckBox activateDebugLoggingCheckbox = new JCheckBox(translator.translate("loggingPanel.activateDebug.text"));
@@ -59,7 +60,7 @@ public class LoggingPanel extends FormPanel {
         addEditorRow(3, logInFileCheckbox);
 
 
-        final JLabel logFolderLabel = new JLabel(translator.translate("loggingPanel.logFolder.text"));
+        final JLabel logFolderLabel = new JLabel(translator.translate("loggingPanel.logFolder.text") + ":");
         final JTextField logFolderField = new JTextField();
         logFolderField.setToolTipText(translator.translate("loggingPanel.logFolder.description"));
         logFolderField.setText(PathsAndFiles.LOG_DIR.getFullPath(config));

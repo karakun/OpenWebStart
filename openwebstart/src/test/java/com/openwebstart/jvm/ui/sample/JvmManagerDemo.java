@@ -14,6 +14,7 @@ import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import spark.Spark;
 
 import javax.swing.BorderFactory;
@@ -118,7 +119,7 @@ public class JvmManagerDemo {
 
     private static void showManagerWindow() {
         final JFrame frame = new JFrame("JVM Manager");
-        final RuntimeManagerPanel panel = new RuntimeManagerPanel();
+        final RuntimeManagerPanel panel = new RuntimeManagerPanel(JNLPRuntime.getConfiguration());
         frame.add(panel);
         frame.pack();
         frame.setLocationRelativeTo(null);
