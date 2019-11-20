@@ -1,6 +1,7 @@
 package com.openwebstart.jvm.localfinder;
 
 import com.openwebstart.func.Result;
+import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import java.io.File;
@@ -21,7 +22,7 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
     public static final String CYGWIN_HOME = "cygwin64" + File.separatorChar + "home";
 
     @Override
-    public List<Result<LocalJavaRuntime>> findLocalRuntimes() {
+    public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
         final Path systemPath32 = Paths.get(JVM_BASEFOLDER_32);

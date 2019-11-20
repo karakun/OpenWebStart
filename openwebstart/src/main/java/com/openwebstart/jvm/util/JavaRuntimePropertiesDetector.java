@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
@@ -36,6 +38,8 @@ public class JavaRuntimePropertiesDetector {
     private static final String SHOW_SETTINGS_ARG = "-XshowSettings:properties";
 
     private static final String VERSION_ARG = "-version";
+
+    private static final Executor OUTPUT_READER_EXECUTOR = Executors.newCachedThreadPool();
     
     public static JavaRuntimeProperties getProperties(Path javaHome) {
         LOG.info("trying to get definiton of local JVM at '{}'", javaHome);
@@ -44,8 +48,8 @@ public class JavaRuntimePropertiesDetector {
             final Process p = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG).start();
             final OutputReader stdOutReader = new OutputReader(p.getInputStream());
             final OutputReader stdErrReader = new OutputReader(p.getErrorStream());
-            new Thread(stdOutReader).start();
-            new Thread(stdErrReader).start();
+            OUTPUT_READER_EXECUTOR.execute(stdOutReader);
+            OUTPUT_READER_EXECUTOR.execute(stdErrReader);
             ProcessUtils.waitForSafely(p);
             final int returnCode = p.exitValue();
             if (returnCode != 0) {

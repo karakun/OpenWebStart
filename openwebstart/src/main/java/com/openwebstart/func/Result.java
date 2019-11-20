@@ -61,6 +61,10 @@ public interface Result<R> {
         return new Fail<>(e);
     }
 
+    static <I, B> ResultWithInput<I, B> fail(final I input, final Exception e) {
+        return new Fail<>(input, e);
+    }
+
     /**
      * Wraps a given {@link CheckedFunction} in a {@link Function} that returns the {@link Result} of the given {@link CheckedFunction}
      *
