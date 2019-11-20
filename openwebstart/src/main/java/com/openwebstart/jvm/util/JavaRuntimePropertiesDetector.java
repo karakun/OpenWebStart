@@ -16,7 +16,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.fill;
@@ -39,28 +41,26 @@ public class JavaRuntimePropertiesDetector {
 
     private static final String VERSION_ARG = "-version";
 
-    private static final Executor OUTPUT_READER_EXECUTOR = Executors.newCachedThreadPool();
+    private static final ExecutorService READER_EXECUTOR = Executors.newSingleThreadExecutor();
     
     public static JavaRuntimeProperties getProperties(Path javaHome) {
         LOG.info("trying to get definiton of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG).start();
-            final OutputReader stdOutReader = new OutputReader(p.getInputStream());
-            final OutputReader stdErrReader = new OutputReader(p.getErrorStream());
-            OUTPUT_READER_EXECUTOR.execute(stdOutReader);
-            OUTPUT_READER_EXECUTOR.execute(stdErrReader);
+            final Future<String> stdFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getInputStream()));
+            final Future<String> errFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getErrorStream()));
             ProcessUtils.waitForSafely(p);
+
+            final String standardOut = stdFuture.get();
+            final String errorOut = errFuture.get();
             final int returnCode = p.exitValue();
             if (returnCode != 0) {
-                final RuntimeException exception = new RuntimeException("failed to execute java binary");
-                LOG.error("Executing local java instance '{}' to receive JVM definition failed!", exception);
-                LOG.debug("The java process printed the following content on the error out: {}", stdErrReader.content);
-                throw exception;
+                LOG.debug("The java process printed the following content on the error out: {}", errorOut);
+                throw new RuntimeException("failed to execute java binary");
             }
-
-            return extractProperties(stdOutReader.content, stdErrReader.content);
-        } catch (IOException ex) {
+            return extractProperties(standardOut, errorOut);
+        } catch (final Exception ex) {
             final String message = "Can not get properties for JVM in path '" + java + "'";
             LOG.error(message, ex);
             throw new IllegalStateException(message, ex);
@@ -125,26 +125,6 @@ public class JavaRuntimePropertiesDetector {
 
         public String getOsArch() {
             return osArch;
-        }
-    }
-
-    private static class OutputReader implements Runnable {
-
-        private final InputStream in;
-        private String content;
-
-        private OutputReader(InputStream in) {
-            this.in = in;
-        }
-
-        @Override
-        public void run() {
-            try {
-                content = IOUtils.readContentAsUtf8String(in);
-            } catch (IOException e) {
-                LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, e);
-                throw new RuntimeException(e);
-            }
         }
     }
 }
