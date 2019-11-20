@@ -13,7 +13,7 @@ public class HttpGetRequest {
     private final HttpURLConnection connection;
 
     public HttpGetRequest(final URL url) throws IOException {
-        final URL url1 = Assert.requireNonNull(url, "url");
+        Assert.requireNonNull(url, "url");
 
         final URLConnection connection = url.openConnection();
         if (connection instanceof HttpURLConnection) {
