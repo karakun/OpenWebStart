@@ -12,10 +12,8 @@ public class HttpGetRequest {
 
     private final HttpURLConnection connection;
 
-    private final URL url;
-
     public HttpGetRequest(final URL url) throws IOException {
-        this.url = Assert.requireNonNull(url, "url");
+        final URL url1 = Assert.requireNonNull(url, "url");
 
         final URLConnection connection = url.openConnection();
         if (connection instanceof HttpURLConnection) {
@@ -36,7 +34,7 @@ public class HttpGetRequest {
         connection.setRequestProperty(headers.getName(), headers.getContent());
     }
 
-    public HttpResponse handle() throws IOException {
+    public HttpResponse handle() {
         return new HttpResponse(connection);
     }
 

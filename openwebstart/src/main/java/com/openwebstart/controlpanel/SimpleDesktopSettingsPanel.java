@@ -1,7 +1,6 @@
 package com.openwebstart.controlpanel;
 
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ComboItem;
-import net.adoptopenjdk.icedteaweb.client.controlpanel.desktopintegrationeditor.FreeDesktopIntegrationEditorFrame;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
 import net.sourceforge.jnlp.config.ConfigurationConstants;

@@ -124,7 +124,7 @@ public class AppFactory {
             return AppFactory.class.getResourceAsStream("icons.icns");
         }
         final IcnsFactory factory = new IcnsFactory();
-        final List<File> iconFiles = Arrays.asList(iconPaths).stream().map(v -> new File(v)).collect(Collectors.toList());
+        final List<File> iconFiles = Arrays.stream(iconPaths).map(File::new).collect(Collectors.toList());
         return new FileInputStream(factory.createIconSet(iconFiles));
     }
 

@@ -27,7 +27,7 @@ public class ButtonPanelFactory {
         actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
         actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
         actionWrapperPanel.add(Box.createHorizontalGlue());
-        buttons.forEach(b -> actionWrapperPanel.add(b));
+        buttons.forEach(actionWrapperPanel::add);
 
         final JPanel topBorder = new JPanel();
         topBorder.setBackground(Color.GRAY);

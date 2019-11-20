@@ -1,5 +1,6 @@
 package com.openwebstart.update;
 
+import com.install4j.api.update.UpdateDescriptorEntry;
 import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.install4j.Install4JUpdateHandler;
@@ -18,7 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 
 public class UpdatePanel extends FormPanel {
@@ -90,7 +90,7 @@ public class UpdatePanel extends FormPanel {
             Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     Install4JUpdateHandler.getUpdate()
-                            .map(u -> u.getNewVersion())
+                            .map(UpdateDescriptorEntry::getNewVersion)
                             .map(v -> translator.translate("updatesPanel.installConcreteVersion", v))
                             .ifPresent(s -> SwingUtils.invokeLater(() -> checkForUpdateButton.setText(s)));
                 } catch (final Exception ex) {

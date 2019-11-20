@@ -51,7 +51,7 @@ public class ConfigurationDialog extends ModalDialog {
 
     private final Executor backgroundExecutor = Executors.newSingleThreadExecutor() ;
     private final Translator translator = Translator.getInstance();
-    private final JComboBox vendorComboBox;
+    private final JComboBox<String> vendorComboBox;
     private final Color originalBackground;
     private boolean urlValidationError = false;
 
@@ -67,7 +67,7 @@ public class ConfigurationDialog extends ModalDialog {
         uiLock.update(JVM_UPDATE_STRATEGY, updateStrategyComboBox);
 
         final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
-        vendorComboBox = new JComboBox();
+        vendorComboBox = new JComboBox<>();
         backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
         uiLock.update(JVM_VENDOR, vendorComboBox);
@@ -128,12 +128,12 @@ public class ConfigurationDialog extends ModalDialog {
     private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
-            final List<String> vendorNamesList = new ArrayList<String>(Arrays.asList(JavaRuntimeManager.getAllVendors(specifiedServerURL)));
-            if (vendorNamesList.contains(RuntimeManagerConfig.getVendor()) == false) {
+            final List<String> vendorNamesList = new ArrayList<>(Arrays.asList(JavaRuntimeManager.getAllVendors(specifiedServerURL)));
+            if (!vendorNamesList.contains(RuntimeManagerConfig.getVendor())) {
                 vendorNamesList.add(RuntimeManagerConfig.getVendor());
             }
             SwingUtilities.invokeLater(() -> {
-                vendorComboBox.setModel(new DefaultComboBoxModel(vendorNamesList.toArray()));
+                vendorComboBox.setModel(new DefaultComboBoxModel<>(vendorNamesList.toArray(new String[0])));
                 vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
             });
         } catch (final Exception ex) {

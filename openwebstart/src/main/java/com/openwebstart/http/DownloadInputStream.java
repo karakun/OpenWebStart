@@ -1,5 +1,6 @@
 package com.openwebstart.http;
 
+import com.openwebstart.util.Subscription;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -81,9 +82,7 @@ public class DownloadInputStream extends InputStream {
 
     public CompletableFuture<String> getHash() {
         final CompletableFuture<String> future = new CompletableFuture<>();
-        addDownloadDoneListener(size -> {
-            future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest()));
-        });
+        addDownloadDoneListener(size -> future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest())));
         return future;
     }
 

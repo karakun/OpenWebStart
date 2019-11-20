@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class DeleteApplicationAction extends BasicAction<Application> {
 
-    private Consumer<Application> afterDelete;
+    private final Consumer<Application> afterDelete;
 
     public DeleteApplicationAction(Consumer<Application> afterDelete) {
         super(Translator.getInstance().translate("appManager.action.deleteApplication.text"), Translator.getInstance().translate("appManager.action.deleteApplication.description"));

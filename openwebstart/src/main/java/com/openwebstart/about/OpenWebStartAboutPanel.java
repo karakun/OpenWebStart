@@ -67,9 +67,8 @@ public class OpenWebStartAboutPanel extends JPanel {
 
     private String getHtmlContent() throws IOException {
         try(final InputStream inputStream = OpenWebStartAboutPanel.class.getResourceAsStream("about.template.html")) {
-            final String content = IOUtils.readContentAsUtf8String(inputStream)
+            return IOUtils.readContentAsUtf8String(inputStream)
                     .replaceAll(Pattern.quote("${version}"), Install4JUtils.applicationVersion().orElse(""));
-            return content;
         }
     }
 }

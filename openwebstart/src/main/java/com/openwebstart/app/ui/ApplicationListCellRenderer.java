@@ -3,7 +3,6 @@ package com.openwebstart.app.ui;
 import com.openwebstart.app.Application;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
-import com.openwebstart.os.mac.AppFactory;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ImageUtils;
@@ -30,7 +29,6 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,20 +147,18 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
     }
 
     private BufferedImage getIcon(final Application application) {
-        if(!requestedAppsForIcon.contains(application.getId())) {
+        if (!requestedAppsForIcon.contains(application.getId())) {
             requestedAppsForIcon.add(application.getId());
             application.loadIcon(64).whenComplete((i, e) -> {
-                if(e != null) {
+                if (e != null) {
                     LOG.debug("Can not load icon for app '{}'", application.getId());
-                } else if(i == null) {
+                } else if (i == null) {
                     LOG.debug("No icon defined for app '{}'", application.getId());
                 }
                 final BufferedImage finalIcon = Optional.ofNullable(i)
                         .map(image -> ImageUtils.resize(image, 64, 64))
                         .orElse(defaultIcon);
-                SwingUtilities.invokeLater(() -> {
-                    appIcons.put(application.getId(), finalIcon);
-                });
+                SwingUtilities.invokeLater(() -> appIcons.put(application.getId(), finalIcon));
             });
             return defaultIcon;
         } else {
@@ -172,14 +168,18 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
 
     @Override
     public Component getListCellRendererComponent(final JList<? extends Application> list, final Application value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-        titleLabel.setText(Optional.ofNullable(value).map(v -> v.getName()).orElse(""));
+        titleLabel.setText(Optional.ofNullable(value).map(Application::getName).orElse(""));
 
-        final long size = Optional.ofNullable(value).map(v -> v.getSize()).orElse(0l);
+        final long size = Optional.ofNullable(value).map(Application::getSize).orElse(0L);
         final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
         detailsLabel.setText(String.format("%.0f", byteUnit.convertBytesToUnit(size)) + " " + byteUnit.getDecimalShortName());
 
-        final Image iconImage = getIcon(value);
-        appIcon.setImage(iconImage);
+        if(value != null) {
+            final Image iconImage = getIcon(value);
+            appIcon.setImage(iconImage);
+        } else {
+            appIcon.setImage(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB));
+        }
 
         if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);

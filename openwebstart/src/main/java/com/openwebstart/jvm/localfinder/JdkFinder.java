@@ -64,11 +64,7 @@ public class JdkFinder {
             return true;
         }
 
-        if (Files.isRegularFile(path.resolve("bin" + File.separatorChar + "java.exe"))) {
-            return true;
-        }
-
-        return false;
+        return Files.isRegularFile(path.resolve("bin" + File.separatorChar + "java.exe"));
     }
 
     private static LocalJavaRuntime getLocalJavaRuntime(final Path javaHome) {

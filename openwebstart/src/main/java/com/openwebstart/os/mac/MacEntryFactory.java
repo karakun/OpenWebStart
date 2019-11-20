@@ -66,18 +66,11 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
             if(defaultIconLocations.isEmpty()) {
              final FavIcon favIcon = new FavIcon(file);
              return Optional.ofNullable(favIcon.download())
-                     .map(f -> f.getAbsolutePath())
-                     .map(p -> Collections.singletonList(p))
+                     .map(File::getAbsolutePath)
+                     .map(Collections::singletonList)
                      .orElse(Collections.emptyList()).toArray(new String[0]);
             }
             return defaultIconLocations.toArray(new String[0]);
-        }
-        if(shortcutIconLocations.isEmpty()) {
-            final FavIcon favIcon = new FavIcon(file);
-            return Optional.ofNullable(favIcon.download())
-                    .map(f -> f.getAbsolutePath())
-                    .map(p -> Collections.singletonList(p))
-                    .orElse(Collections.emptyList()).toArray(new String[0]);
         }
         return shortcutIconLocations.toArray(new String[0]);
     }
@@ -97,7 +90,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         }
     }
 
-    private static List<String> getIconLocations(final JNLPFile file, final IconKind iconKind) throws IOException {
+    private static List<String> getIconLocations(final JNLPFile file, final IconKind iconKind) {
         Assert.requireNonNull(file, "file");
         Assert.requireNonNull(iconKind, "iconKind");
 

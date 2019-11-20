@@ -123,8 +123,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
 
     private static File getShortcutTmpFile(final String desktopIconName) {
         String userTmp = PathsAndFiles.TMP_DIR.getFullPath();
-        File shortcutFile = new File(userTmp + File.separator + createDesktopIconFileName(desktopIconName));
-        return shortcutFile;
+        return new File(userTmp + File.separator + createDesktopIconFileName(desktopIconName));
     }
 
     private static String getContent(final JNLPFile file, boolean menu, final String iconLocation) {

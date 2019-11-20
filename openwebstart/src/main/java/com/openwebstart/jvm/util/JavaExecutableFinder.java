@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +19,7 @@ public class JavaExecutableFinder {
     public static String findJavaExecutable(Path javaHome) {
         try {
             final Path binFolder = javaHome.resolve("bin");
-            final List<String> possibleJavaExecutables = Files.find(binFolder, 1, JavaExecutableFinder::isJavaExecutable)
+            final List<String> possibleJavaExecutables = Files.find(binFolder, 1, (path, basicFileAttributes) -> isJavaExecutable(path))
                     .filter(Files::isRegularFile)
                     .filter(Files::isExecutable)
                     .map(Path::toAbsolutePath)
@@ -38,7 +37,7 @@ public class JavaExecutableFinder {
         }
     }
 
-    private static boolean isJavaExecutable(Path path, BasicFileAttributes basicFileAttributes) {
+    private static boolean isJavaExecutable(Path path) {
         final String fileName = path.getFileName().toString();
         return fileName.equalsIgnoreCase("java") || fileName.equalsIgnoreCase("java.exe");
     }

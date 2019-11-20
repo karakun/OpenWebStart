@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RuntimeFinder {
 
-    List<Result<LocalJavaRuntime>> findLocalRuntimes() throws Exception;
+    List<Result<LocalJavaRuntime>> findLocalRuntimes();
 
     List<OperationSystem> getSupportedOperationSystems();
 }
