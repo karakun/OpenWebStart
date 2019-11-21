@@ -11,6 +11,7 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
 
@@ -56,7 +57,12 @@ class OwsJvmLauncher implements JvmLauncher {
     }
 
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
-        for (JREDesc jre : jnlpFile.getResources().getJREs()) {
+        final List<JREDesc> jres = Arrays.asList(jnlpFile.getResources().getJREs());
+        if (jres.isEmpty()) {
+            jres.add(getDefaultJRE());
+        }
+
+        for (JREDesc jre : jres) {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
             LOG.debug("searching for JRE with version string '{}'", version);
             final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
@@ -67,6 +73,14 @@ class OwsJvmLauncher implements JvmLauncher {
         }
 
         throw new IllegalStateException("could not find any suitable runtime");
+    }
+
+    private JREDesc getDefaultJRE() {
+        try {
+            return new JREDesc(VersionString.fromString("1.8+"), null, null, null, null, null);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
