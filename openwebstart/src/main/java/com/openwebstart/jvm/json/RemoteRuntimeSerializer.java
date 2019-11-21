@@ -11,7 +11,6 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 
 import java.lang.reflect.Type;
-import java.net.URL;
 
 public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime>, JsonDeserializer<RemoteJavaRuntime> {
 

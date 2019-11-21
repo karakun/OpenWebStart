@@ -1,6 +1,5 @@
 package com.openwebstart.util;
 
-import com.openwebstart.os.ScriptFactory;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 

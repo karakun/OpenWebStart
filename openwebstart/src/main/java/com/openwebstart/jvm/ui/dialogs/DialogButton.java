@@ -2,7 +2,6 @@ package com.openwebstart.jvm.ui.dialogs;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
-import java.awt.event.ActionListener;
 import java.util.function.Supplier;
 
 public class DialogButton<R> {

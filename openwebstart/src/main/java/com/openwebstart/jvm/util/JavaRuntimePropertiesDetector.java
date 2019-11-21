@@ -21,7 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static java.util.Arrays.asList;
-import static java.util.Arrays.fill;
 import static java.util.Collections.unmodifiableSet;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VENDOR;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VERSION;
@@ -44,7 +43,7 @@ public class JavaRuntimePropertiesDetector {
     private static final ExecutorService READER_EXECUTOR = Executors.newSingleThreadExecutor();
     
     public static JavaRuntimeProperties getProperties(Path javaHome) {
-        LOG.info("trying to get definiton of local JVM at '{}'", javaHome);
+        LOG.info("trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final Process p = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG).start();

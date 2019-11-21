@@ -14,7 +14,7 @@ public class ApplicationManager {
     }
 
     public List<Result<Application>> getAllApplications() {
-        return Cache.getJnlpCacheIds().stream().map(Result.of(c -> new Application(c))).collect(Collectors.toList());
+        return Cache.getJnlpCacheIds().stream().map(Result.of(Application::new)).collect(Collectors.toList());
     }
 
     public static ApplicationManager getInstance() {

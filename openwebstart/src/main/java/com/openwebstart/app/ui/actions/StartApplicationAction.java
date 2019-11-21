@@ -5,7 +5,6 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.os.ScriptFactory;
 import com.openwebstart.ui.BasicAction;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.sourceforge.jnlp.JNLPFile;
 
 public class StartApplicationAction extends BasicAction<Application> {
 

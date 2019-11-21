@@ -5,9 +5,9 @@ import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.http.HttpGetRequest;
 import com.openwebstart.http.HttpResponse;
+import com.openwebstart.util.Subscription;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
-import com.openwebstart.jvm.listener.Registration;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
@@ -66,17 +66,17 @@ public final class LocalRuntimeManager {
         return Collections.unmodifiableList(runtimes);
     }
 
-    public Registration addRuntimeAddedListener(final RuntimeAddedListener listener) {
+    public Subscription addRuntimeAddedListener(final RuntimeAddedListener listener) {
         addedListeners.add(listener);
         return () -> addedListeners.remove(listener);
     }
 
-    public Registration addRuntimeRemovedListener(final RuntimeRemovedListener listener) {
+    public Subscription addRuntimeRemovedListener(final RuntimeRemovedListener listener) {
         removedListeners.add(listener);
         return () -> removedListeners.remove(listener);
     }
 
-    public Registration addRuntimeUpdatedListener(final RuntimeUpdateListener listener) {
+    public Subscription addRuntimeUpdatedListener(final RuntimeUpdateListener listener) {
         updatedListeners.add(listener);
         return () -> updatedListeners.remove(listener);
     }
@@ -94,7 +94,9 @@ public final class LocalRuntimeManager {
             }
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
-                jsonFile.delete();
+                if(!jsonFile.delete()) {
+                    throw new IOException("Unable to delete old config file!");
+                }
             }
             final CacheStore cacheStore = new CacheStore(runtimes);
             final String jsonString = JsonHandler.getInstance().toJson(cacheStore);
@@ -113,7 +115,7 @@ public final class LocalRuntimeManager {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 clear();
-                cacheStore.getRuntimes().forEach(r -> add(r));
+                cacheStore.getRuntimes().forEach(this::add);
             } else {
                 clear();
             }
@@ -257,7 +259,7 @@ public final class LocalRuntimeManager {
         return INSTANCE;
     }
 
-    LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, URL serverEndpoint, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
+    LocalJavaRuntime install(final RemoteJavaRuntime remoteRuntime, final Consumer<DownloadInputStream> downloadConsumer) throws IOException {
         Assert.requireNonNull(remoteRuntime, "remoteRuntime");
 
         LOG.debug("Installing remote runtime {} on local cache", remoteRuntime);
@@ -272,7 +274,7 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Runtime will be installed in {}", runtimePath);
 
-        final URL downloadRequest = remoteRuntime.getEndpoint(serverEndpoint);
+        final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
         try (final HttpResponse response = request.handle()) {
             final DownloadInputStream inputStream = new DownloadInputStream(response);

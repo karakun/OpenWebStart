@@ -20,7 +20,7 @@ public interface UpdatePanelConfigConstants {
         Assert.requireNonNull(configuration, "configuration");
 
         return Optional.ofNullable(configuration.getProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME))
-                .map(v -> UpdateSchedule.valueOf(v))
+                .map(UpdateSchedule::valueOf)
                 .orElse(UpdateSchedule.ON_EVERY_START);
     }
 
@@ -28,7 +28,7 @@ public interface UpdatePanelConfigConstants {
         Assert.requireNonNull(configuration, "configuration");
 
         return Optional.ofNullable(configuration.getProperty(UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME))
-                .map(v -> UpdateSchedule.valueOf(v))
+                .map(UpdateSchedule::valueOf)
                 .orElse(UpdateSchedule.WEEKLY);
     }
 
@@ -36,7 +36,7 @@ public interface UpdatePanelConfigConstants {
         Assert.requireNonNull(configuration, "configuration");
 
         return Optional.ofNullable(configuration.getProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME))
-                .map(v -> Boolean.parseBoolean(v))
+                .map(Boolean::parseBoolean)
                 .orElse(true);
     }
 }
