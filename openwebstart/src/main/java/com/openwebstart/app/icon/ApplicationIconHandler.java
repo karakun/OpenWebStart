@@ -9,7 +9,6 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -52,18 +51,13 @@ public class ApplicationIconHandler {
         Assert.requireNonNull(application, "application");
         Assert.requireNonNull(dimension, "dimension");
 
-        final Optional<BufferedImage> image = applicationIconCache.get(application, dimension);
-        if (image.isPresent()) {
-            return CompletableFuture.completedFuture(image.get());
-        } else {
-            return applicationIconCache.getOrLoadIcon(application, dimension).handle((i, e) -> {
-                if (e != null) {
-                    return getDefaultIcon(dimension);
-                } else {
-                    return Optional.ofNullable(i).orElse(getDefaultIcon(dimension));
-                }
-            });
-        }
+        return applicationIconCache.getOrLoadIcon(application, dimension).handle((i, e) -> {
+            if (e != null) {
+                return getDefaultIcon(dimension);
+            } else {
+                return Optional.ofNullable(i).orElse(getDefaultIcon(dimension));
+            }
+        });
     }
 
     private BufferedImage getDefaultIcon(final IconDimensions dimension) {

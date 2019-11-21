@@ -63,14 +63,14 @@ public class ApplicationIconDownloadUtils {
                 .map(Result::getResult);
     }
 
-    private static Stream<? extends URL> getFavIconUrlStreamForPath(final JNLPFile jnlpFile, final String l) {
+    private static Stream<? extends URL> getFavIconUrlStreamForPath(final JNLPFile jnlpFile, final String path) {
         final List<URL> urls = new ArrayList<>();
         try {
-            urls.add(FavIcon.favUrl("/", l, jnlpFile));
+            urls.add(FavIcon.favUrl("/", path, jnlpFile));
         } catch (MalformedURLException ignore) {
         }
         try {
-            urls.add(FavIcon.favUrl("\\", l, jnlpFile));
+            urls.add(FavIcon.favUrl("\\", path, jnlpFile));
         } catch (MalformedURLException ignore) {
         }
         return urls.stream();
