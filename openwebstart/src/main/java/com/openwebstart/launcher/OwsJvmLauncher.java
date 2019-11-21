@@ -59,7 +59,7 @@ class OwsJvmLauncher implements JvmLauncher {
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
         final List<JREDesc> jres = Arrays.asList(jnlpFile.getResources().getJREs());
         if (jres.isEmpty()) {
-            jres.add(defaultJRE());
+            jres.add(getDefaultJRE());
         }
 
         for (JREDesc jre : jres) {
@@ -75,7 +75,7 @@ class OwsJvmLauncher implements JvmLauncher {
         throw new IllegalStateException("could not find any suitable runtime");
     }
 
-    private JREDesc defaultJRE() {
+    private JREDesc getDefaultJRE() {
         try {
             return new JREDesc(VersionString.fromString("1.8+"), null, null, null, null, null);
         } catch (ParseException e) {
