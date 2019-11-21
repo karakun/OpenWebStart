@@ -78,7 +78,7 @@ public class PhaseTwoWebStartLauncher {
 
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
-        LOG.info("ITW Boot called with custom OwsJvmLauncher and args {}.", Arrays.toString(args));
+        LOG.info("Calling ITW Boot with args {}.", bootArgs);
         Boot.main(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
     }
 
