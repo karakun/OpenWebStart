@@ -35,12 +35,10 @@ public class ApplicationManagerPanel extends JPanel {
 
     private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
-    private final Translator translator;
-
     private final ListComponentModel<Application> listModel;
 
     public ApplicationManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
-        translator = Translator.getInstance();
+        final Translator translator = Translator.getInstance();
 
         final Function<Application, List<Action<Application>>> actionSupplier = a -> {
             final List<Action<Application>> actions = new ArrayList<>();
@@ -55,7 +53,7 @@ public class ApplicationManagerPanel extends JPanel {
 
 
         final JButton refreshButton = new JButton(translator.translate("appManager.action.refresh.text"));
-        refreshButton.addActionListener(e -> backgroundExecutor.execute(() -> refreshModel()));
+        refreshButton.addActionListener(e -> backgroundExecutor.execute(this::refreshModel));
 
         setLayout(new BorderLayout(12, 12));
 

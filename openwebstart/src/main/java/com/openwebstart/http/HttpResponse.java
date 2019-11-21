@@ -55,7 +55,7 @@ public class HttpResponse implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         closeConnection();
     }
 }

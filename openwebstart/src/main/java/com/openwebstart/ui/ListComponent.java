@@ -22,8 +22,8 @@ public class ListComponent<T> extends JList<T> {
 
     public ListComponent(final Function<T, List<Action<T>>> actionSupplier) {
         this.actionSupplier = Assert.requireNonNull(actionSupplier, "actionSupplier");
-        this.highlighter = new ListHighlighter(this);
-        this.model = new ListComponentModel();
+        this.highlighter = new ListHighlighter<>(this);
+        this.model = new ListComponentModel<>();
         super.setModel(model);
 
         addMouseListener(new MouseAdapter() {
@@ -61,7 +61,7 @@ public class ListComponent<T> extends JList<T> {
         }
     }
 
-    public ListHighlighter<T> getHighlighter() {
+    protected ListHighlighter<T> getHighlighter() {
         return highlighter;
     }
 }

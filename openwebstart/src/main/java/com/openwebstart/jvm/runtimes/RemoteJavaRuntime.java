@@ -19,7 +19,7 @@ public class RemoteJavaRuntime extends JavaRuntime {
         return href;
     }
 
-    public URL getEndpoint(URL jsonEndpoint) throws MalformedURLException {
+    public URL getEndpoint() throws MalformedURLException {
         return new URL(href);
     }
 }

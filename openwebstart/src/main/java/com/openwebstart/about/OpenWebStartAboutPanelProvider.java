@@ -1,7 +1,5 @@
 package com.openwebstart.about;
 
-import com.openwebstart.update.UpdatePanel;
-import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.AboutPanel;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.ControlPanelProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;

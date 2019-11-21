@@ -48,7 +48,7 @@ public class IcnsFactory {
                     }
                     return true;
                 })
-                .map(r -> r.getResult())
+                .map(Result::getResult)
                 .collect(Collectors.toList());
 
         Arrays.asList(IcnsContent.values()).forEach(i -> {

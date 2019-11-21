@@ -16,7 +16,7 @@ public class ListHighlighter<T> extends MouseAdapter {
 
     private boolean inActionArea;
 
-    private ListComponent<T> listComponent;
+    private final ListComponent<T> listComponent;
 
     public ListHighlighter(final ListComponent<T> listComponent) {
         this.listComponent = Assert.requireNonNull(listComponent, "listComponent");

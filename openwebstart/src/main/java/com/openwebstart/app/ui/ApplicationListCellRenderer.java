@@ -5,16 +5,11 @@ import com.openwebstart.app.icon.ApplicationIconHandler;
 import com.openwebstart.app.icon.IconDimensions;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
-import com.openwebstart.os.mac.AppFactory;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
-import com.openwebstart.ui.ImageUtils;
 import com.openwebstart.ui.ListHighlighter;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,24 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class ApplicationListCellRenderer implements ListCellRenderer<Application> {
-
-    private final static Logger LOG = LoggerFactory.getLogger(ApplicationListCellRenderer.class);
 
     private final Color BACKGROUND_EVEN = Color.WHITE;
 
@@ -134,13 +119,15 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
 
     @Override
     public Component getListCellRendererComponent(final JList<? extends Application> list, final Application value, final int index, final boolean isSelected, final boolean cellHasFocus) {
-        titleLabel.setText(Optional.ofNullable(value).map(v -> v.getName()).orElse(""));
+        titleLabel.setText(Optional.ofNullable(value).map(Application::getName).orElse(""));
 
-        final long size = Optional.ofNullable(value).map(v -> v.getSize()).orElse(0l);
+        final long size = Optional.ofNullable(value).map(Application::getSize).orElse(0L);
         final ByteUnit byteUnit = ByteUnit.findBestUnit(size);
         detailsLabel.setText(String.format("%.0f", byteUnit.convertBytesToUnit(size)) + " " + byteUnit.getDecimalShortName());
 
-        appIcon.setImage(ApplicationIconHandler.getInstance().getIconOrDefault(value, IconDimensions.SIZE_64));
+        if (value != null) {
+            appIcon.setImage(ApplicationIconHandler.getInstance().getIconOrDefault(value, IconDimensions.SIZE_64));
+        }
 
         if (this.listHighlighter.getHoverIndex() == index) {
             cellContent.setBackground(BACKGROUND_HOOVER);

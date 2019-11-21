@@ -8,11 +8,11 @@ public abstract class BasicAction<T> implements Action<T> {
 
     private final String description;
 
-    public BasicAction(final String name, final String description) {
+    protected BasicAction(final String name, final String description) {
         this(true, name, description);
     }
 
-    public BasicAction(final boolean active, final String name, final String description) {
+    protected BasicAction(final boolean active, final String name, final String description) {
         this.active = active;
         this.name = name;
         this.description = description;

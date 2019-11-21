@@ -111,7 +111,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
                 consumer = null;
             }
 
-            return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, serverEndpoint, consumer);
+            return LocalRuntimeManager.getInstance().install(remoteJavaRuntime, consumer);
         } catch (IOException e) {
             throw new RuntimeException("Cannot install needed runtime", e);
         }

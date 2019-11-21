@@ -115,7 +115,7 @@ class InitialConfigurationCheck {
                     .orElse(Result.fail(new IllegalStateException("Time of last propertyUpdate not defined")));
 
             if (lastPropertyUpdateDate.isFailed()) {
-                LOG.debug("Can not get '{}' property. Will do intial config", LAST_UPDATE_PROPERTY_NAME);
+                LOG.debug("Can not get '{}' property. Will do initial config", LAST_UPDATE_PROPERTY_NAME);
                 return true;
             } else {
                 LOG.debug("Checking if installation time ({}) is after last initial config time ({})", installationDate, lastPropertyUpdateDate.getResult());
