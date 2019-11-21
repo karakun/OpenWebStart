@@ -4,12 +4,12 @@ import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.install4j.Install4JUtils;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
@@ -24,18 +24,18 @@ public class OpenWebStartLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
     public static void main(String[] args) {
+        final List<String> verboseArgs = getVerboseArgs(args);
         if (!InstallerUtil.isMacOS()) {
-            LOG.info("OWS main args {}.", Arrays.toString(args));
-            PhaseTwoWebStartLauncher.main(args);
+            LOG.info("OWS main args {}.", verboseArgs);
+            PhaseTwoWebStartLauncher.main(verboseArgs.toArray(new String[0]));
         } else {
             Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart MacLauncher {}", v));
 
             StartupNotification.registerStartupListener(parameters -> {
                 try {
-                    final List<String> mergedArgs = new ArrayList<>(Arrays.asList(args));
                     LOG.info("MacOS detected, Launcher needs to add JNLP file name {} to the list of arguments.", parameters);
-                    Collections.addAll(mergedArgs, parameters); // add file name at the end file to open
-                    LOG.info("OWS main args {}.", mergedArgs);
+                    verboseArgs.add(parameters); // add file name at the end
+                    LOG.info("OWS main args {}.", verboseArgs);
 
                     final List<String> commands = new ArrayList<>();
                     commands.add(quoteIfRequired(JavaSystemProperties.getJavaHome() + "/bin/java"));
@@ -43,7 +43,7 @@ public class OpenWebStartLauncher {
                     commands.add("-cp");
                     commands.add(JavaSystemProperties.getJavaClassPath());
                     commands.add(PhaseTwoWebStartLauncher.class.getName());
-                    commands.addAll(mergedArgs);
+                    commands.addAll(verboseArgs);
 
                     LOG.info("Starting: " + commands);
                     new ProcessBuilder().command(commands).inheritIO().start();
@@ -53,5 +53,14 @@ public class OpenWebStartLauncher {
                 }
             });
         }
+    }
+
+    private static ArrayList<String> getVerboseArgs(String[] args) {
+        // TODO: this makes sure any app launched with OWS is running in verbose/debug mode. Remove this once OWS is stable
+        final ArrayList<String> result = new ArrayList<>(Arrays.asList(args));
+        if (! result.contains(CommandLineOptions.VERBOSE.getOption())) {
+            result.add(0, CommandLineOptions.VERBOSE.getOption());
+        }
+        return result;
     }
 }
