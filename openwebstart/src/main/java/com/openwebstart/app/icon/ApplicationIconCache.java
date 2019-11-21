@@ -58,8 +58,11 @@ public class ApplicationIconCache {
         inProgressMapLock.lock();
         try {
             final IconDescription iconDescription = new IconDescription(application.getId(), dimension);
-            return inProgressMap.computeIfAbsent(iconDescription, description -> {
+            if(inProgressMap.containsKey(iconDescription)) {
+                return inProgressMap.get(iconDescription);
+            } else {
                 final CompletableFuture<BufferedImage> result = new CompletableFuture<>();
+                inProgressMap.put(iconDescription, result);
                 executor.execute(() -> {
                     try {
                         final BufferedImage icon = ApplicationIconDownloadUtils.downloadIcon(application, dimension);
@@ -82,7 +85,7 @@ public class ApplicationIconCache {
                     }
                 });
                 return result;
-            });
+            }
         } finally {
             inProgressMapLock.unlock();
         }
