@@ -52,7 +52,7 @@ public class FavIcon {
         return null;
     }
 
-    private static List<String> possibleFavIconLocations(String path) {
+    public static List<String> possibleFavIconLocations(String path) {
         while (path.endsWith("/") || path.endsWith("\\")) {
             path = path.substring(0, path.length() - 1);
         }
@@ -73,7 +73,7 @@ public class FavIcon {
         return r;
     }
 
-    private static URL favUrl(final String delimiter, final String path, final JNLPFile file) throws MalformedURLException {
+    public static URL favUrl(final String delimiter, final String path, final JNLPFile file) throws MalformedURLException {
         final String separator = path.endsWith(delimiter) ? "" : delimiter;
         return new URL(
                 file.getNotNullProbableCodeBase().getProtocol(),
