@@ -42,7 +42,7 @@ public class WindowsProxyProvider implements ProxyProvider {
                     final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
                     final List<String> hosts = Arrays.asList(proxyServerValue.getValue().split(Pattern.quote(";")));
                     if (hosts.size() == 1) {
-                        //HTTP and use for all other
+                        //HTTP use for all other
                         proxyConfiguration.setUseHttpForHttpsAndFtp(true);
                         proxyConfiguration.setUseHttpForSocks(true);
 

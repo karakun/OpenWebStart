@@ -67,6 +67,7 @@ import static sun.security.util.SecurityConstants.PROPERTY_READ_ACTION;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config#The_PAC_file">The PAC File</a>
  */
+//TODO: Class should be refactored
 public class PacFileEvaluator {
 
     private final static Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);

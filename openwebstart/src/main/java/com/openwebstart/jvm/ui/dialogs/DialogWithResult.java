@@ -48,6 +48,9 @@ public class DialogWithResult<R> extends JDialog {
 
         Arrays.asList(buttons).forEach(b -> {
             final JButton button = new JButton(b.getText());
+            if(b.getDescription() != null) {
+                button.setToolTipText(b.getDescription());
+            }
             button.addActionListener(e -> {
                 final R result = b.getOnAction().get();
                 close(result);

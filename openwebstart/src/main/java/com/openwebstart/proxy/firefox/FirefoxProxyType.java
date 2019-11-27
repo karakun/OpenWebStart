@@ -16,13 +16,9 @@ public enum FirefoxProxyType {
         this.configValue = configValue;
     }
 
-    public int getConfigValue() {
-        return configValue;
-    }
-
     public static FirefoxProxyType getForConfigValue(final int value) {
         return Stream.of(FirefoxProxyType.values())
-                .filter(t -> value == t.getConfigValue())
+                .filter(t -> value == t.configValue)
                 .findFirst()
                 .orElse(BROWSER_PROXY_TYPE_NONE);
     }

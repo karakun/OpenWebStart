@@ -6,19 +6,27 @@ import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 public abstract class ProxyErrorDialog extends DialogWithResult<ProxyDialogResult> {
 
-    private final static String EXIT_KEY = "xxx.xxx.xxx";
-    private final static String CONTINUE_KEY = "xxx.xxx.xxx";
+    private final static String EXIT_TITLE_KEY = "proxy.error.exitAction.title";
+    private final static String EXIT_DESCRIPTION_KEY = "proxy.error.exitAction.description";
+    private final static String CONTINUE_WITH_NO_PROXY_TITLE_KEY = "proxy.error.continueWithNoProxyAction.title";
+    private final static String CONTINUE_WITH_NO_PROXY_DESCRIPTION_KEY = "proxy.error.continueWithNoProxyAction.description";
 
     public ProxyErrorDialog(final String title, final String message) {
-        super(title, message, createButtons());
+        super(title, message, createNoProxyButton(), createExitButtons());
     }
 
-    protected static DialogButton<ProxyDialogResult>[] createButtons() {
-        final String exitText = Translator.getInstance().translate(EXIT_KEY);
-        final String continueText = Translator.getInstance().translate(CONTINUE_KEY);
-        final DialogButton<ProxyDialogResult> exitButton = new DialogButton<>(exitText, () -> ProxyDialogResult.EXIT);
-        final DialogButton<ProxyDialogResult> continueButton = new DialogButton<>(continueText, () -> ProxyDialogResult.CONTINUE_WITH_NO_PROXY);
-        return new DialogButton[]{exitButton, continueButton};
+    protected static DialogButton<ProxyDialogResult> createExitButtons() {
+        final String exitText = Translator.getInstance().translate(EXIT_TITLE_KEY);
+        final String exitDescription = Translator.getInstance().translate(EXIT_DESCRIPTION_KEY);
+
+        return new DialogButton<>(exitText, () -> ProxyDialogResult.EXIT, exitDescription);
+    }
+
+    protected static DialogButton<ProxyDialogResult> createNoProxyButton() {
+        final String continueText = Translator.getInstance().translate(CONTINUE_WITH_NO_PROXY_TITLE_KEY);
+        final String continueDescription = Translator.getInstance().translate(CONTINUE_WITH_NO_PROXY_DESCRIPTION_KEY);
+
+        return new DialogButton<>(continueText, () -> ProxyDialogResult.CONTINUE_WITH_NO_PROXY, continueDescription);
     }
 }
 

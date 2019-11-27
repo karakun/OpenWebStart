@@ -13,7 +13,7 @@ import static com.openwebstart.proxy.util.pac.PacConstants.DIRECT;
 import static com.openwebstart.proxy.util.pac.PacConstants.PROXY;
 import static com.openwebstart.proxy.util.pac.PacConstants.SOCKS;
 
-
+//TODO: Class should be refactored
 public class PacUtils {
 
     private final static Logger LOG = LoggerFactory.getLogger(PacUtils.class);

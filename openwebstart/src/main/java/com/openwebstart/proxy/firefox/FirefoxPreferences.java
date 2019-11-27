@@ -66,6 +66,7 @@ import java.util.Map;
  * System.out.println("blink allowed: " + prefs.get("firefox.blink_allowed"));
  * </code></pre>
  */
+//TODO: Class should be refactored
 public final class FirefoxPreferences {
 
     private final static Logger LOG = LoggerFactory.getLogger(FirefoxPreferences.class);
