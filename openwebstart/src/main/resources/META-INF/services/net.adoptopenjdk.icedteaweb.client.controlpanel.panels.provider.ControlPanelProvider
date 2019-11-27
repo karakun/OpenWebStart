@@ -4,3 +4,4 @@ com.openwebstart.about.OpenWebStartAboutPanelProvider
 com.openwebstart.controlpanel.SimpleDesktopSettingsPanelProvider
 com.openwebstart.app.ui.ApplicationManagerPanelProvider
 com.openwebstart.debug.LoggingPanelProvider
+com.openwebstart.proxy.ui.ProxyConfigPanelProvider
