@@ -79,7 +79,11 @@ public class PhaseTwoWebStartLauncher {
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
         LOG.info("Calling ITW Boot with args {}.", bootArgs);
-        Boot.main(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
+        final int status = Boot.mainWithReturnCode(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
+
+        if (status != 0) {
+            System.exit(status);
+        }
     }
 
     private static List<String> skipNotRelevantArgs(final String[] args) {
