@@ -41,7 +41,7 @@ public class JavaRuntimePropertiesDetector {
     private static final String VERSION_ARG = "-version";
 
     private static final ExecutorService READER_EXECUTOR = Executors.newSingleThreadExecutor();
-    
+
     public static JavaRuntimeProperties getProperties(Path javaHome) {
         LOG.info("trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
