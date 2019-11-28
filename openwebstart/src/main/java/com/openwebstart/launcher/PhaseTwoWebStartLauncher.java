@@ -32,6 +32,8 @@ import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
 public class PhaseTwoWebStartLauncher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
+    private static final String consoleOption = "-console";
+    private static final List<String> optionsToSkip = Arrays.asList(CommandLineOptions.NOFORK.getOption(), CommandLineOptions.VIEWER.getOption(), consoleOption);
 
     public static void main(final String[] args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
@@ -88,7 +90,7 @@ public class PhaseTwoWebStartLauncher {
 
     private static List<String> skipNotRelevantArgs(final String[] args) {
         final List<String> relevantJavawsArgs = Arrays.stream(args)
-                .filter(arg -> !arg.equals(CommandLineOptions.NOFORK.getOption()))
+                .filter(arg -> !optionsToSkip.contains(arg))
                 .collect(Collectors.toList());
 
         LOG.debug("RelevantJavawsArgs: '{}'", relevantJavawsArgs);
