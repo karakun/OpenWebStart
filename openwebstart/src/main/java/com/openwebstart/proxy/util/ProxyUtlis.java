@@ -15,12 +15,4 @@ public class ProxyUtlis {
         }
         return Optional.of(new InetSocketAddress(host, port));
     }
-
-    public static int toPort(final String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
 }

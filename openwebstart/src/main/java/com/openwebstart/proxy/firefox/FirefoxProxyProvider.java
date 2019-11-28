@@ -24,6 +24,7 @@ import static com.openwebstart.proxy.firefox.FirefoxConstants.SOCKS_PORT_PROPERT
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SOCKS_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SSL_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SSL_PROPERTY_NAME;
+import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 
 public class FirefoxProxyProvider implements ProxyProvider {
 
@@ -58,13 +59,13 @@ public class FirefoxProxyProvider implements ProxyProvider {
         proxyConfiguration.setUseHttpForHttpsAndFtp(prefs.getBooleanValue(SHARE_SETTINGS_PROPERTY_NAME, false));
         proxyConfiguration.setUseHttpForSocks(true);
         proxyConfiguration.setHttpHost(prefs.getStringValue(HTTP_PROPERTY_NAME));
-        proxyConfiguration.setHttpPort(prefs.getIntValue(HTTP_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setHttpPort(prefs.getIntValue(HTTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setHttpsHost(prefs.getStringValue(SSL_PROPERTY_NAME));
-        proxyConfiguration.setHttpsPort(prefs.getIntValue(SSL_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setHttpsPort(prefs.getIntValue(SSL_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setFtpHost(prefs.getStringValue(FTP_PROPERTY_NAME));
-        proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
-        proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         return new SimpleConfigBasedProvider(proxyConfiguration);
     }
 

@@ -7,7 +7,7 @@ import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
-import static com.openwebstart.proxy.util.ProxyUtlis.toPort;
+import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 import static java.lang.Boolean.parseBoolean;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
@@ -59,6 +59,14 @@ public class ConfigBasedProxyProvider extends AbstractConfigBasedProvider {
 
     private static String toHost(String host) {
         return !StringUtils.isBlank(host) ? host.trim() : null;
+    }
+
+    private static int toPort(final String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return DEFAULT_PROTOCOL_PORT;
+        }
     }
 
 }

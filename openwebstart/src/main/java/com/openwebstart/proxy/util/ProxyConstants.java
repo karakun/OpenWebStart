@@ -14,4 +14,6 @@ public interface ProxyConstants {
      * The default port to use as a fallback. Currently squid's default port
      */
     int FALLBACK_PROXY_PORT = 3128;
+
+    int DEFAULT_PROTOCOL_PORT = -1;
 }
