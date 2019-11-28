@@ -18,7 +18,7 @@ public class ProxyUtlis {
 
     public static int toPort(final String value) {
         try {
-            return Integer.valueOf(value);
+            return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return -1;
         }
