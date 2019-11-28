@@ -1,7 +1,7 @@
 package com.openwebstart.proxy.ui;
 
 import com.openwebstart.controlpanel.FormPanel;
-import com.openwebstart.proxy.ProxyProviderTypes;
+import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.AdvancedProxySettingsDialog;
@@ -68,32 +68,32 @@ public class ProxyConfigPanel extends FormPanel {
         };
 
         noProxySelection = new JRadioButton(translator.translate("proxyPanel.noProxy.text"));
-        noProxySelection.addActionListener(e -> onRadioButtonSelected(ProxyProviderTypes.NONE));
+        noProxySelection.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.NONE));
         noProxySelection.setToolTipText(translator.translate("proxyPanel.noProxy.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, noProxySelection);
         basicConfigButtonGroup.add(noProxySelection);
         addRow(0, noProxySelection);
 
         useWinSystemSettings = new JRadioButton(translator.translate("proxyPanel.systemSettings.text"));
-        useWinSystemSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderTypes.WINDOWS));
+        useWinSystemSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.WINDOWS));
         useWinSystemSettings.setToolTipText(translator.translate("proxyPanel.systemSettings.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, useWinSystemSettings);
         basicConfigButtonGroup.add(useWinSystemSettings);
-        if (ProxyProviderTypes.WINDOWS.isSupported()) {
+        if (ProxyProviderType.WINDOWS.isSupported()) {
             addRow(1, useWinSystemSettings);
         }
 
         useFirefoxSettings = new JRadioButton(translator.translate("proxyPanel.firefoxSettings.text"));
-        useFirefoxSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderTypes.FIREFOX));
+        useFirefoxSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.FIREFOX));
         useFirefoxSettings.setToolTipText(translator.translate("proxyPanel.firefoxSettings.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, useFirefoxSettings);
         basicConfigButtonGroup.add(useFirefoxSettings);
-        if (ProxyProviderTypes.FIREFOX.isSupported()) {
+        if (ProxyProviderType.FIREFOX.isSupported()) {
             addRow(2, useFirefoxSettings);
         }
 
         usePacSettings = new JRadioButton(translator.translate("proxyPanel.pacSettings.text"));
-        usePacSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderTypes.MANUAL_PAC_URL));
+        usePacSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.MANUAL_PAC_URL));
         usePacSettings.setToolTipText(translator.translate("proxyPanel.pacSettings.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, usePacSettings);
         basicConfigButtonGroup.add(usePacSettings);
@@ -110,7 +110,7 @@ public class ProxyConfigPanel extends FormPanel {
         addRow(3, pacSettingsPanel);
 
         useManualSettings = new JRadioButton(translator.translate("proxyPanel.manualSettings.text"));
-        useManualSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderTypes.MANUAL_HOSTS));
+        useManualSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.MANUAL_HOSTS));
         useManualSettings.setToolTipText(translator.translate("proxyPanel.manualSettings.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, useManualSettings);
         basicConfigButtonGroup.add(useManualSettings);
@@ -177,16 +177,16 @@ public class ProxyConfigPanel extends FormPanel {
         updateUi();
     }
 
-    private void onRadioButtonSelected(final ProxyProviderTypes providerType) {
+    private void onRadioButtonSelected(final ProxyProviderType providerType) {
         updateEnabledStateForProxyType(providerType);
         updateConfig();
     }
 
-    private void updateEnabledStateForProxyType(final ProxyProviderTypes providerType) {
-        final boolean isPac = providerType == ProxyProviderTypes.MANUAL_PAC_URL;
+    private void updateEnabledStateForProxyType(final ProxyProviderType providerType) {
+        final boolean isPac = providerType == ProxyProviderType.MANUAL_PAC_URL;
         pacUrlField.setEnabled(isPac);
 
-        final boolean isManual = providerType == ProxyProviderTypes.MANUAL_HOSTS;
+        final boolean isManual = providerType == ProxyProviderType.MANUAL_HOSTS;
         proxyHostField.setEnabled(isManual);
         proxyPortField.setEnabled(isManual);
         advancedButton.setEnabled(isManual);
@@ -194,15 +194,15 @@ public class ProxyConfigPanel extends FormPanel {
 
     private void updateConfig() {
         if (noProxySelection.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderTypes.NONE.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.NONE.getConfigValue() + "");
         } else if (useFirefoxSettings.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderTypes.FIREFOX.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.FIREFOX.getConfigValue() + "");
         } else if (useWinSystemSettings.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderTypes.WINDOWS.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.WINDOWS.getConfigValue() + "");
         } else if (useManualSettings.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderTypes.MANUAL_HOSTS.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.MANUAL_HOSTS.getConfigValue() + "");
         } else if (usePacSettings.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderTypes.MANUAL_PAC_URL.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.MANUAL_PAC_URL.getConfigValue() + "");
         }
 
         config.setProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL, pacUrlField.getText());
@@ -215,19 +215,19 @@ public class ProxyConfigPanel extends FormPanel {
             final String proxyTypeString = config.getProperty(ConfigurationConstants.KEY_PROXY_TYPE);
             if (proxyTypeString == null) {
                 noProxySelection.setSelected(true);
-                updateEnabledStateForProxyType(ProxyProviderTypes.NONE);
+                updateEnabledStateForProxyType(ProxyProviderType.NONE);
             } else {
                 final int proxyTypeConfigValue = Integer.valueOf(proxyTypeString);
-                final ProxyProviderTypes providerType = ProxyProviderTypes.getForConfigValue(proxyTypeConfigValue);
-                if (providerType == ProxyProviderTypes.NONE) {
+                final ProxyProviderType providerType = ProxyProviderType.getForConfigValue(proxyTypeConfigValue);
+                if (providerType == ProxyProviderType.NONE) {
                     noProxySelection.setSelected(true);
-                } else if (providerType == ProxyProviderTypes.FIREFOX) {
+                } else if (providerType == ProxyProviderType.FIREFOX) {
                     useFirefoxSettings.setSelected(true);
-                } else if (providerType == ProxyProviderTypes.WINDOWS) {
+                } else if (providerType == ProxyProviderType.WINDOWS) {
                     useWinSystemSettings.setSelected(true);
-                } else if (providerType == ProxyProviderTypes.MANUAL_HOSTS) {
+                } else if (providerType == ProxyProviderType.MANUAL_HOSTS) {
                     useManualSettings.setSelected(true);
-                } else if (providerType == ProxyProviderTypes.MANUAL_PAC_URL) {
+                } else if (providerType == ProxyProviderType.MANUAL_PAC_URL) {
                     usePacSettings.setSelected(true);
                 }
                 updateEnabledStateForProxyType(providerType);
@@ -236,7 +236,7 @@ public class ProxyConfigPanel extends FormPanel {
             Notifications.showError(Translator.getInstance().translate("proxyPanel.error.loadSettings"));
             LOG.error("Error while loading proxy settings", e);
             noProxySelection.setSelected(true);
-            updateEnabledStateForProxyType(ProxyProviderTypes.NONE);
+            updateEnabledStateForProxyType(ProxyProviderType.NONE);
         }
         pacUrlField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL));
         proxyHostField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST));

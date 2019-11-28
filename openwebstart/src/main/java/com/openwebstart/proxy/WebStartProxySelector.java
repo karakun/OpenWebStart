@@ -40,7 +40,7 @@ public class WebStartProxySelector extends ProxySelector {
         try {
             final String proxyTypeString = config.getProperty(ConfigurationConstants.KEY_PROXY_TYPE);
             final int proxyTypeConfigValue = Integer.parseInt(proxyTypeString);
-            final ProxyProviderTypes providerType = ProxyProviderTypes.getForConfigValue(proxyTypeConfigValue);
+            final ProxyProviderType providerType = ProxyProviderType.getForConfigValue(proxyTypeConfigValue);
 
             providerType.checkSupported();
             return providerType.createProvider(config);

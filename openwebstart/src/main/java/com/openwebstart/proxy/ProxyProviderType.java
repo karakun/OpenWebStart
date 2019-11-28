@@ -10,7 +10,7 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.util.stream.Stream;
 
-public enum ProxyProviderTypes {
+public enum ProxyProviderType {
 
     NONE(0) {
         @Override
@@ -51,7 +51,7 @@ public enum ProxyProviderTypes {
 
     private final int configValue;
 
-    ProxyProviderTypes(final int configValue) {
+    ProxyProviderType(final int configValue) {
         this.configValue = configValue;
     }
 
@@ -84,8 +84,8 @@ public enum ProxyProviderTypes {
         return true;
     }
 
-    public static ProxyProviderTypes getForConfigValue(final int value) {
-        return Stream.of(ProxyProviderTypes.values())
+    public static ProxyProviderType getForConfigValue(final int value) {
+        return Stream.of(ProxyProviderType.values())
                 .filter(t -> value == t.getConfigValue())
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No proxy type defined with config value " + value));
