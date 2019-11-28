@@ -37,7 +37,6 @@ exception statement from your version.
 
 package com.openwebstart.proxy.firefox;
 
-import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.os.OsUtil;
@@ -48,28 +47,75 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static net.adoptopenjdk.icedteaweb.JavaSystemProperties.getUserHome;
+import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
+
 /**
  * <p>
- * A parser for Firefox's preferences file. It can 'getPreferences' Firefox's
+ * A parser for Firefox's preferences file. It can 'load' Firefox's
  * preferences file and expose the preferences in a simple to use format.
  * </p>
  * Sample usage:
  * <pre><code>
- * FirefoxPreferences p = new FirefoxPreferences(prefsFile);
- * p.getPreferences();
- * Map&lt;String,String&gt; prefs = p.getPreferences();
- * System.out.println("blink allowed: " + prefs.get("firefox.blink_allowed"));
+ * FirefoxPreferences p = new FirefoxPreferences();
+ * p.load();
+ * System.out.println("blink allowed: " + p.getStringValue("firefox.blink_allowed"));
  * </code></pre>
  */
-//TODO: Class should be refactored
-public final class FirefoxPreferences {
+final class FirefoxPreferences {
 
-    private final static Logger LOG = LoggerFactory.getLogger(FirefoxPreferences.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FirefoxPreferences.class);
+
+    private static final String PATH_PREFIX = "Path=";
+    private static final String USER_PREF_PREFIX = "user_pref(";
+    private static final int USER_PREF_PREFIX_LENGTH = USER_PREF_PREFIX.length();
+    private static final String DOUBLE_QUOTE = "\"";
+
+    private final Map<String, String> prefs = new HashMap<>();
+
+    String getStringValue(final String key) {
+        return getStringValue(key, null);
+    }
+
+    String getStringValue(final String key, final String defaultValue) {
+        ensureLoaded();
+        final String valueCandidate = prefs.get(key);
+        if (isDoubleQuotedString(valueCandidate)) {
+            return removeDoubleQuotes(valueCandidate);
+        }
+        return defaultValue;
+    }
+
+    int getIntValue(final String key, final int defaultValue) {
+        ensureLoaded();
+        final String valueCandidate = prefs.get(key);
+        if (!isDoubleQuotedString(valueCandidate)) {
+            try {
+                return Integer.parseInt(valueCandidate.trim());
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return defaultValue;
+    }
+
+    boolean getBooleanValue(final String key, final boolean defaultValue) {
+        ensureLoaded();
+        final String valueCandidate = prefs.get(key);
+        if (!isDoubleQuotedString(valueCandidate)) {
+            return valueCandidate.trim().equalsIgnoreCase(Boolean.toString(!defaultValue));
+        }
+        return defaultValue;
+    }
+
+    private void ensureLoaded() {
+        if (prefs.isEmpty()) {
+            throw new IllegalStateException("Preferences have not been loaded");
+        }
+    }
 
     /**
      * Parse the preferences file
@@ -77,7 +123,7 @@ public final class FirefoxPreferences {
      * @throws IOException if an exception occurs while reading the
      *                     preferences file.
      */
-    public static Map<String, String> getPreferences() throws IOException {
+    public void load() throws IOException {
 
         final File preferencesFile = findPreferencesFile();
 
@@ -87,64 +133,56 @@ public final class FirefoxPreferences {
          * The correct way of course is to use a javascript library and extract
          * the user_pref object
          */
-        final Map<String, String> prefs = new HashMap<>();
-
-        BufferedReader reader = new BufferedReader(new FileReader(preferencesFile));
-
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader(preferencesFile))) {
             while (true) {
-                String line = reader.readLine();
+                final String untrimmedLine = reader.readLine();
                 // end of stream
-                if (line == null) {
+                if (untrimmedLine == null) {
                     break;
                 }
+                final String line = untrimmedLine.trim();
 
-                line = line.trim();
-                if (line.startsWith("user_pref")) {
+                /*
+                 * we are only interested in lines of the form: user_pref("key",value);
+                 * where value can be a string in double quotes or a number or boolean
+                 */
+                if (line.startsWith(USER_PREF_PREFIX) && line.length() > USER_PREF_PREFIX_LENGTH + 2) {
+                    // extract everything between "user_pref(" and ");"
+                    final String pref = line.substring(USER_PREF_PREFIX_LENGTH, line.length() - 2);
+                    // key and value are separated by a ","
+                    final int firstCommaPos = pref.indexOf(',');
+                    if (firstCommaPos > 2) { // shortest valid pref string is `"x",0` -> the comma is a position 3
+                        final String keyCandidate = pref.substring(0, firstCommaPos).trim();
+                        final String valueCandidate = pref.substring(firstCommaPos + 1).trim();
 
-                    /*
-                     * each line is of the form: user_pref("key",value); where value
-                     * can be a string in double quotes or an integer or float or
-                     * boolean
-                     */
-
-                    boolean foundKey = false;
-                    boolean foundValue = false;
-
-                    // extract everything inside user_pref( and );
-                    String pref = line.substring("user_pref(".length(), line.length() - 2);
-                    // key and value are separated by a ,
-                    int firstCommaPos = pref.indexOf(',');
-                    if (firstCommaPos >= 1) {
-                        String key = pref.substring(0, firstCommaPos).trim();
-                        if (key.startsWith("\"") && key.endsWith("\"")) {
-                            key = key.substring(1, key.length() - 1);
-                            if (key.trim().length() > 0) {
-                                foundKey = true;
-                            }
-                        }
-
-                        if (pref.length() > firstCommaPos + 1) {
-                            String value = pref.substring(firstCommaPos + 1).trim();
-                            if (value.startsWith("\"") && value.endsWith("\"")) {
-                                value = value.substring(1, value.length() - 1).trim();
-                            }
-                            foundValue = true;
-
-                            if (foundKey && foundValue) {
-                                //ItwLogger.getLogger().printOutLn("added (\"" + key + "\", \"" + value + "\")");
-                                prefs.put(key, value);
-                            }
+                        final String key = getKeyFromCandidate(keyCandidate);
+                        if (key != null) {
+                            prefs.put(key, valueCandidate);
                         }
                     }
                 }
             }
-        } finally {
-            reader.close();
         }
-        LOG.info("Read {} entries from Firefox's preferences", prefs.size());
 
-        return Collections.unmodifiableMap(prefs);
+        LOG.info("Read {} entries from Firefox's preferences", prefs.size());
+    }
+
+    private String getKeyFromCandidate(String keyCandidate) {
+        if (isDoubleQuotedString(keyCandidate)) {
+            final String key = removeDoubleQuotes(keyCandidate);
+            if (!isBlank(key)) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    private boolean isDoubleQuotedString(String s) {
+        return s != null && s.startsWith(DOUBLE_QUOTE) && s.endsWith(DOUBLE_QUOTE) && s.length() > 1;
+    }
+
+    private String removeDoubleQuotes(String s) {
+        return s.substring(1, s.length() - 1);
     }
 
     /**
@@ -155,23 +193,9 @@ public final class FirefoxPreferences {
      * @throws IOException           if an exception occurs while trying to identify the
      *                               location of the preferences file.
      */
-    public static File findPreferencesFile() throws IOException {
+    private File findPreferencesFile() throws IOException {
 
-        String configPath = JavaSystemProperties.getUserHome() + File.separator + ".mozilla"
-                + File.separator + "firefox" + File.separator;
-
-        if (OsUtil.isWindows()) {
-            Map<String, String> env = System.getenv();
-            if (env != null) {
-                String appdata = env.get("APPDATA");
-                if (appdata != null) {
-                    configPath = appdata + File.separator + "Mozilla"
-                            + File.separator + "Firefox" + File.separator;
-                }
-            }
-        }
-
-        String profilesPath = configPath + "profiles.ini";
+        final String profilesPath = getConfigPath() + "profiles.ini";
 
         if (!(new File(profilesPath).isFile())) {
             throw new FileNotFoundException(profilesPath);
@@ -179,65 +203,76 @@ public final class FirefoxPreferences {
 
         LOG.info("Using firefox's profiles file: {}", profilesPath);
 
-        BufferedReader reader = new BufferedReader(new FileReader(profilesPath));
 
-        List<String> linesInSection = new ArrayList<String>();
+        final List<String> linesInSection = new ArrayList<>();
         boolean foundDefaultSection = false;
 
         /*
          * The profiles.ini file is an ini file. This is a quick hack to read
-         * it. It is very likely to break given anything strange.
+         * it. It is very likely to break given anything strange content.
          */
 
-        // findPreferencesFile the section with an entry Default=1
-        try {
+        // find lines of the section with an entry `default=1`
+        try (BufferedReader reader = new BufferedReader(new FileReader(profilesPath))) {
             while (true) {
-                String line = reader.readLine();
-                if (line == null) {
+                final String untrimmedLine = reader.readLine();
+                if (untrimmedLine == null) {
                     break;
                 }
 
-                line = line.trim();
+                final String line = untrimmedLine.trim();
                 if (line.startsWith("[Profile") && line.endsWith("]")) {
                     if (foundDefaultSection) {
                         break;
                     }
                     // new section
-                    linesInSection = new ArrayList<String>();
+                    linesInSection.clear();
                 } else {
                     linesInSection.add(line);
-                    int equalSignPos = line.indexOf('=');
-                    if (equalSignPos > 0) {
-                        String key = line.substring(0, equalSignPos).trim();
-                        String value = line.substring(equalSignPos + 1).trim();
-                        if (key.toLowerCase().equals("default") && value.equals("1")) {
-                            foundDefaultSection = true;
-                        }
+                    if (isDefaultSection(line)) {
+                        foundDefaultSection = true;
                     }
                 }
             }
-        } finally {
-            reader.close();
         }
 
         if (!foundDefaultSection && linesInSection.size() == 0) {
             throw new FileNotFoundException("preferences file");
         }
 
-        String path = null;
-        for (String line : linesInSection) {
-            if (line.startsWith("Path=")) {
-                path = line.substring("Path=".length());
+        final String path = linesInSection.stream()
+                .filter(line -> line.startsWith(PATH_PREFIX))
+                .findFirst()
+                .map(line -> line.substring(PATH_PREFIX.length()))
+                .orElseThrow(() -> new FileNotFoundException("preferences file"));
+
+        String fullPath = getConfigPath() + path + File.separator + "prefs.js";
+        LOG.info("Found preferences file: ", fullPath);
+        return new File(fullPath);
+    }
+
+    private String getConfigPath() {
+
+        if (OsUtil.isWindows()) {
+            final Map<String, String> env = System.getenv();
+            if (env != null) {
+                final String appdata = env.get("APPDATA");
+                if (appdata != null) {
+                    return appdata + File.separator + "Mozilla" + File.separator + "Firefox" + File.separator;
+                }
             }
         }
+        return getUserHome() + File.separator + ".mozilla" + File.separator + "firefox" + File.separator;
+    }
 
-        if (path == null) {
-            throw new FileNotFoundException("preferences file");
-        } else {
-            String fullPath = configPath + path + File.separator + "prefs.js";
-            LOG.info("Found preferences file: ", fullPath);
-            return new File(fullPath);
+    private boolean isDefaultSection(String line) {
+        int equalSignPos = line.indexOf('=');
+        if (equalSignPos > 0) {
+            String key = line.substring(0, equalSignPos).trim();
+            String value = line.substring(equalSignPos + 1).trim();
+            return key.toLowerCase().equals("default") && value.equals("1");
         }
+        return false;
     }
 
 }

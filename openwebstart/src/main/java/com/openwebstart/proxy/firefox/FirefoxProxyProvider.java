@@ -2,7 +2,6 @@ package com.openwebstart.proxy.firefox;
 
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
-import com.openwebstart.proxy.util.ProxyUtlis;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.util.config.SimpleConfigBasedProvider;
 import com.openwebstart.proxy.util.pac.PacFileEvaluator;
@@ -13,7 +12,6 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import static com.openwebstart.proxy.firefox.FirefoxConstants.AUTO_CONFIG_URL_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PORT_PROPERTY_NAME;
@@ -29,13 +27,17 @@ import static com.openwebstart.proxy.firefox.FirefoxConstants.SSL_PROPERTY_NAME;
 
 public class FirefoxProxyProvider implements ProxyProvider {
 
+    private static final int UNKNOWN_TYPE = -99;
+
     private final ProxyProvider internalProvider;
 
     public FirefoxProxyProvider() throws Exception {
-        final Map<String, String> prefs = FirefoxPreferences.getPreferences();
-        final String type = prefs.get(PROXY_TYPE_PROPERTY_NAME);
-        if (type != null) {
-            final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(Integer.valueOf(type));
+        final FirefoxPreferences prefs = new FirefoxPreferences();
+        prefs.load();
+
+        final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, UNKNOWN_TYPE);
+        if (type != UNKNOWN_TYPE) {
+            final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(type);
             if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_PAC) {
                 internalProvider = createForPac(prefs);
             } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL) {
@@ -51,23 +53,23 @@ public class FirefoxProxyProvider implements ProxyProvider {
         }
     }
 
-    private ProxyProvider createForManualConfig(final Map<String, String> prefs) {
+    private ProxyProvider createForManualConfig(final FirefoxPreferences prefs) {
         final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
-        proxyConfiguration.setUseHttpForHttpsAndFtp(Boolean.valueOf(prefs.get(SHARE_SETTINGS_PROPERTY_NAME)));
+        proxyConfiguration.setUseHttpForHttpsAndFtp(prefs.getBooleanValue(SHARE_SETTINGS_PROPERTY_NAME, false));
         proxyConfiguration.setUseHttpForSocks(true);
-        proxyConfiguration.setHttpHost(prefs.get(HTTP_PROPERTY_NAME));
-        proxyConfiguration.setHttpPort(ProxyUtlis.toPort(prefs.get(HTTP_PORT_PROPERTY_NAME)));
-        proxyConfiguration.setHttpsHost(prefs.get(SSL_PROPERTY_NAME));
-        proxyConfiguration.setHttpsPort(ProxyUtlis.toPort(prefs.get(SSL_PORT_PROPERTY_NAME)));
-        proxyConfiguration.setFtpHost(prefs.get(FTP_PROPERTY_NAME));
-        proxyConfiguration.setFtpPort(ProxyUtlis.toPort(prefs.get(FTP_PORT_PROPERTY_NAME)));
-        proxyConfiguration.setSocksHost(prefs.get(SOCKS_PROPERTY_NAME));
-        proxyConfiguration.setSocksPort(ProxyUtlis.toPort(prefs.get(SOCKS_PORT_PROPERTY_NAME)));
+        proxyConfiguration.setHttpHost(prefs.getStringValue(HTTP_PROPERTY_NAME));
+        proxyConfiguration.setHttpPort(prefs.getIntValue(HTTP_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setHttpsHost(prefs.getStringValue(SSL_PROPERTY_NAME));
+        proxyConfiguration.setHttpsPort(prefs.getIntValue(SSL_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setFtpHost(prefs.getStringValue(FTP_PROPERTY_NAME));
+        proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, -1));
+        proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
+        proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, -1));
         return new SimpleConfigBasedProvider(proxyConfiguration);
     }
 
-    private ProxyProvider createForPac(final Map<String, String> prefs) throws MalformedURLException {
-        final String url = prefs.get(AUTO_CONFIG_URL_PROPERTY_NAME);
+    private ProxyProvider createForPac(final FirefoxPreferences prefs) throws MalformedURLException {
+        final String url = prefs.getStringValue(AUTO_CONFIG_URL_PROPERTY_NAME);
         final URL autoConfigUrl = new URL(url);
         final PacFileEvaluator evaluator = new PacFileEvaluator(autoConfigUrl);
         return new SimplePacBasedProvider(evaluator);
@@ -77,5 +79,4 @@ public class FirefoxProxyProvider implements ProxyProvider {
     public List<Proxy> select(final URI uri) throws Exception {
         return internalProvider.select(uri);
     }
-
 }
