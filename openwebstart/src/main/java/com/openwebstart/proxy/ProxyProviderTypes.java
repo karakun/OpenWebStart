@@ -1,16 +1,53 @@
 package com.openwebstart.proxy;
 
 import com.openwebstart.jvm.os.OperationSystem;
+import com.openwebstart.proxy.config.ConfigBasedAutoConfigUrlProxyProvider;
+import com.openwebstart.proxy.config.ConfigBasedProxyProvider;
+import com.openwebstart.proxy.direct.DirectProxyProvider;
+import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
+import com.openwebstart.proxy.windows.WindowsProxyProvider;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.util.stream.Stream;
 
 public enum ProxyProviderTypes {
 
-    NONE(0),
-    MANUAL_HOSTS(1),
-    MANUAL_PAC_URL(2),
-    FIREFOX(3),
-    WINDOWS(4);
+    NONE(0) {
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) {
+            return DirectProxyProvider.getInstance();
+        }
+    },
+
+    MANUAL_HOSTS(1) {
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) {
+            return new ConfigBasedProxyProvider(config);
+        }
+    },
+
+    MANUAL_PAC_URL(2) {
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            return new ConfigBasedAutoConfigUrlProxyProvider(config);
+        }
+    },
+
+    FIREFOX(3) {
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            return new FirefoxProxyProvider();
+        }
+    },
+
+    WINDOWS(4) {
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            return new WindowsProxyProvider();
+        }
+    },
+
+    ;
 
     private final int configValue;
 
@@ -20,6 +57,10 @@ public enum ProxyProviderTypes {
 
     public int getConfigValue() {
         return configValue;
+    }
+
+    public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+        throw new RuntimeException("this method must be overridden by every instance of the enum");
     }
 
     public void checkSupported() {

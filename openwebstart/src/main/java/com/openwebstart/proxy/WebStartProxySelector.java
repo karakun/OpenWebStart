@@ -1,15 +1,11 @@
 package com.openwebstart.proxy;
 
-import com.openwebstart.proxy.config.ConfigBasedAutoConfigUrlProxyProvider;
-import com.openwebstart.proxy.config.ConfigBasedProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
-import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
 import com.openwebstart.proxy.ui.error.ConnectionFailedDialog;
 import com.openwebstart.proxy.ui.error.ProxyCreationFailedDialog;
 import com.openwebstart.proxy.ui.error.ProxyDialogResult;
 import com.openwebstart.proxy.ui.error.ProxyErrorDialog;
 import com.openwebstart.proxy.ui.error.ProxySelectionFailedDialog;
-import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -27,13 +23,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WebStartProxySelector extends ProxySelector {
 
-    private final static Logger LOG = LoggerFactory.getLogger(WebStartProxySelector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebStartProxySelector.class);
 
     private final ProxyProvider proxyProvider;
 
     private final AtomicBoolean useDirectAfterError;
 
-    public WebStartProxySelector(final DeploymentConfiguration config) throws Exception {
+    public WebStartProxySelector(final DeploymentConfiguration config) {
         this.useDirectAfterError = new AtomicBoolean(false);
         this.proxyProvider = createProvider(config);
     }
@@ -43,27 +39,11 @@ public class WebStartProxySelector extends ProxySelector {
 
         try {
             final String proxyTypeString = config.getProperty(ConfigurationConstants.KEY_PROXY_TYPE);
-            final int proxyTypeConfigValue = Integer.valueOf(proxyTypeString);
+            final int proxyTypeConfigValue = Integer.parseInt(proxyTypeString);
             final ProxyProviderTypes providerType = ProxyProviderTypes.getForConfigValue(proxyTypeConfigValue);
 
             providerType.checkSupported();
-
-            if (providerType == ProxyProviderTypes.NONE) {
-                return DirectProxyProvider.getInstance();
-            }
-            if (providerType == ProxyProviderTypes.MANUAL_HOSTS) {
-                return new ConfigBasedProxyProvider(config);
-            }
-            if (providerType == ProxyProviderTypes.MANUAL_PAC_URL) {
-                return new ConfigBasedAutoConfigUrlProxyProvider(config);
-            }
-            if (providerType == ProxyProviderTypes.FIREFOX) {
-                return new FirefoxProxyProvider();
-            }
-            if (providerType == ProxyProviderTypes.WINDOWS) {
-                return new WindowsProxyProvider();
-            }
-            throw new IllegalStateException("Proxy can not be defined");
+            return providerType.createProvider(config);
         } catch (final Exception e) {
             LOG.error("Error in proxy creation", e);
             final ProxyErrorDialog dialog = new ProxyCreationFailedDialog();
