@@ -41,13 +41,13 @@ import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Context;
+import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.ContextFactory;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Function;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Scriptable;
 import net.sourceforge.jnlp.util.TimedHashMap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.SocketPermission;
 import java.net.URL;
@@ -70,12 +70,12 @@ import static sun.security.util.SecurityConstants.PROPERTY_READ_ACTION;
 //TODO: Class should be refactored
 public class PacFileEvaluator {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
 
     private final String pacHelperFunctionContents;
     private final String pacContents;
     private final URL pacUrl;
-    private final TimedHashMap<String, String> cache;
+    private final TimedHashMap<String, String> pacCache = new TimedHashMap<>();
 
     /**
      * Initialize a new object by using the PAC file located at the given URL.
@@ -84,10 +84,9 @@ public class PacFileEvaluator {
      */
     public PacFileEvaluator(URL pacUrl) {
         LOG.debug("Create Rhino-based PAC evaluator for '{}'", pacUrl);
-        pacHelperFunctionContents = getHelperFunctionContents();
+        this.pacHelperFunctionContents = getHelperFunctionContents();
         this.pacUrl = pacUrl;
-        pacContents = getPacContents(pacUrl);
-        cache = new TimedHashMap<String, String>();
+        this.pacContents = getContent(pacUrl);
     }
 
     /**
@@ -101,7 +100,7 @@ public class PacFileEvaluator {
      * <pre>"PROXY foo.example.com:8080; PROXY bar.example.com:8080; DIRECT"</pre>
      * @see #getProxiesWithoutCaching(URL)
      */
-    public String getProxies(URL url) {
+    String getProxies(URL url) {
         String cachedResult = getFromCache(url);
         if (cachedResult != null) {
             return cachedResult;
@@ -147,25 +146,20 @@ public class PacFileEvaluator {
     /**
      * Returns the contents of file at pacUrl as a String.
      */
-    private String getPacContents(URL pacUrl) {
-        StringBuilder contents = null;
+    private String getContent(URL pacUrl) {
+        final StringBuilder contents = new StringBuilder();
         try {
-            String line = null;
-            contents = new StringBuilder();
-            BufferedReader pacReader = new BufferedReader(new InputStreamReader(pacUrl.openStream()));
-            try {
+            String line;
+            try (BufferedReader pacReader = new BufferedReader(new InputStreamReader(pacUrl.openStream()))) {
                 while ((line = pacReader.readLine()) != null) {
-                    // OutputController.getLogger().log(OutputController.Level.MESSAGE_ALL, line);
-                    contents = contents.append(line).append("\n");
+                    contents.append(line).append("\n");
                 }
-            } finally {
-                pacReader.close();
             }
         } catch (IOException e) {
-            contents = null;
+            return null;
         }
 
-        return (contents != null) ? contents.toString() : null;
+        return contents.toString();
     }
 
     /**
@@ -173,30 +167,15 @@ public class PacFileEvaluator {
      * from net/sourceforge/jnlp/resources/pac-funcs.js
      */
     private String getHelperFunctionContents() {
-        StringBuilder contents = null;
-        try {
-            String line;
-            ClassLoader cl = this.getClass().getClassLoader();
-            if (cl == null) {
-                cl = ClassLoader.getSystemClassLoader();
-            }
-            InputStream in = cl.getResourceAsStream("net/sourceforge/jnlp/runtime/pac-funcs.js");
-            BufferedReader pacFuncsReader = new BufferedReader(new InputStreamReader(in));
-            try {
-                contents = new StringBuilder();
-                while ((line = pacFuncsReader.readLine()) != null) {
-                    // OutputController.getLogger().log(OutputController.Level.MESSAGE_ALL,line);
-                    contents = contents.append(line).append("\n");
-                }
-            } finally {
-                pacFuncsReader.close();
-            }
-        } catch (IOException e) {
-            LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, e);
-            contents = null;
-        }
+        return getContent(getPacFuncJsUrl());
+    }
 
-        return (contents != null) ? contents.toString() : null;
+    private URL getPacFuncJsUrl() {
+        ClassLoader cl = this.getClass().getClassLoader();
+        if (cl == null) {
+            return ClassLoader.getSystemClassLoader().getResource("net/sourceforge/jnlp/runtime/pac-funcs.js");
+        }
+        return cl.getResource("net/sourceforge/jnlp/runtime/pac-funcs.js");
     }
 
     /**
@@ -204,7 +183,7 @@ public class PacFileEvaluator {
      */
     private String getFromCache(URL url) {
         String lookupString = url.getProtocol() + "://" + url.getHost();
-        String result = cache.get(lookupString);
+        String result = pacCache.get(lookupString);
         return result;
     }
 
@@ -213,7 +192,7 @@ public class PacFileEvaluator {
      */
     private void addToCache(URL url, String proxyResult) {
         String lookupString = url.getAuthority() + "://" + url.getHost();
-        cache.put(lookupString, proxyResult);
+        pacCache.put(lookupString, proxyResult);
     }
 
     /**
@@ -227,7 +206,7 @@ public class PacFileEvaluator {
         private String pacFuncsContents;
         private URL url;
 
-        public EvaluatePacAction(String pacContents, String pacUrl, String pacFuncsContents, URL url) {
+        EvaluatePacAction(String pacContents, String pacUrl, String pacFuncsContents, URL url) {
             this.pacContents = pacContents;
             this.pacUrl = pacUrl;
             this.pacFuncsContents = pacFuncsContents;
@@ -235,7 +214,7 @@ public class PacFileEvaluator {
         }
 
         public String run() {
-            Context cx = Context.enter();
+            Context cx = ContextFactory.getGlobal().enterContext();
             try {
                 /*
                  * TODO defense in depth.
@@ -243,24 +222,21 @@ public class PacFileEvaluator {
                  * This is already running within a sandbox, but we can (and we
                  * should) lock it down further. Look into ClassShutter.
                  */
-                Scriptable scope = cx.initStandardObjects();
+                final Scriptable scope = cx.initStandardObjects();
                 // any optimization level greater than -1 will trigger code generation
                 // and this block will then need classloader permissions
                 cx.setOptimizationLevel(-1);
-                Object result = null;
-                result = cx.evaluateString(scope, pacFuncsContents, "internal", 1, null);
-                result = cx.evaluateString(scope, pacContents, pacUrl, 1, null);
+                cx.evaluateString(scope, pacFuncsContents, "internal", 1, null);
+                cx.evaluateString(scope, pacContents, pacUrl, 1, null);
 
-                Object functionObj = scope.get("FindProxyForURL", scope);
-                if (!(functionObj instanceof Function)) {
+                final Object functionObj = scope.get("FindProxyForURL", scope);
+                if (functionObj instanceof Function) {
+                    final Object[] args = {url.toString(), url.getHost()};
+                    final Object result = ((Function) functionObj).call(cx, scope, scope, args);
+                    return (String) result;
+                } else {
                     LOG.error("FindProxyForURL not found");
                     return null;
-                } else {
-                    Function findProxyFunction = (Function) functionObj;
-
-                    Object[] args = {url.toString(), url.getHost()};
-                    result = findProxyFunction.call(cx, scope, scope, args);
-                    return (String) result;
                 }
             } catch (Exception e) {
                 LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, e);
