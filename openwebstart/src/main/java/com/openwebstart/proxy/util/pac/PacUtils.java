@@ -5,18 +5,19 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.openwebstart.proxy.util.pac.PacConstants.DIRECT;
 import static com.openwebstart.proxy.util.pac.PacConstants.PROXY;
 import static com.openwebstart.proxy.util.pac.PacConstants.SOCKS;
 
 //TODO: Class should be refactored
-public class PacUtils {
+class PacUtils {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PacUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PacUtils.class);
+    private static final int PREFIX_LENGTH = PROXY.length();
 
     /**
      * Converts a proxy string from a firefox into a List of Proxy objects
@@ -27,39 +28,19 @@ public class PacUtils {
      * @return a list of Proxy objects representing the parsed string. In
      * case of malformed input, an empty list may be returned
      */
-    public static List<Proxy> getProxiesFromPacResult(String pacString) {
-        List<Proxy> proxies = new ArrayList<>();
+    static List<Proxy> getProxiesFromPacResult(String pacString) {
+        final List<Proxy> proxies = new ArrayList<>();
 
-        String[] tokens = pacString.split(";");
+        final String[] tokens = pacString.split(";");
         for (String token : tokens) {
             if (token.startsWith(PROXY)) {
-                String hostPortPair = token.substring(PROXY.length()).trim();
-                if (!hostPortPair.contains(":")) {
-                    continue;
-                }
-                String host = hostPortPair.split(":")[0];
-                int port;
-                try {
-                    port = Integer.valueOf(hostPortPair.split(":")[1]);
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-                SocketAddress sa = new InetSocketAddress(host, port);
-                proxies.add(new Proxy(Proxy.Type.HTTP, sa));
+                getInetSocketAddress(token)
+                        .map(sa -> new Proxy(Proxy.Type.HTTP, sa))
+                        .ifPresent(proxies::add);
             } else if (token.startsWith(SOCKS)) {
-                String hostPortPair = token.substring(SOCKS.length()).trim();
-                if (!hostPortPair.contains(":")) {
-                    continue;
-                }
-                String host = hostPortPair.split(":")[0];
-                int port;
-                try {
-                    port = Integer.valueOf(hostPortPair.split(":")[1]);
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-                SocketAddress sa = new InetSocketAddress(host, port);
-                proxies.add(new Proxy(Proxy.Type.SOCKS, sa));
+                getInetSocketAddress(token)
+                        .map(sa -> new Proxy(Proxy.Type.SOCKS, sa))
+                        .ifPresent(proxies::add);
             } else if (token.startsWith(DIRECT)) {
                 proxies.add(Proxy.NO_PROXY);
             } else {
@@ -69,4 +50,19 @@ public class PacUtils {
 
         return proxies;
     }
+
+    private static Optional<InetSocketAddress> getInetSocketAddress(String token) {
+        final String hostPortPairString = token.substring(PREFIX_LENGTH).trim();
+        final String[] hostPortPair = hostPortPairString.split(":");
+        if (hostPortPair.length == 2) {
+            try {
+                final String host = hostPortPair[0];
+                final int port = Integer.parseInt(hostPortPair[1]);
+                return Optional.of(new InetSocketAddress(host, port));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return Optional.empty();
+    }
+
 }
