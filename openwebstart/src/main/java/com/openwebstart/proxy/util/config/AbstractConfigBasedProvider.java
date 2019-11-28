@@ -24,8 +24,6 @@ public abstract class AbstractConfigBasedProvider implements ProxyProvider {
         final ProxyConfiguration configuration = getConfig();
         Assert.requireNonNull(configuration, "configuration");
 
-        Assert.requireNonNull(uri, "uri");
-
         final List<Proxy> proxies = new ArrayList<>();
         final String scheme = uri.getScheme();
 
