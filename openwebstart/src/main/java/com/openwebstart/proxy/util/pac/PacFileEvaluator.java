@@ -72,6 +72,8 @@ public class PacFileEvaluator {
 
     private static final Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
 
+    private static final String PAC_FUNCS_JS = "net/sourceforge/jnlp/runtime/pac-funcs.js";
+
     private final String pacHelperFunctionContents;
     private final String pacContents;
     private final URL pacUrl;
@@ -82,7 +84,7 @@ public class PacFileEvaluator {
      *
      * @param pacUrl the url of the PAC file to use
      */
-    public PacFileEvaluator(URL pacUrl) {
+    public PacFileEvaluator(final URL pacUrl) {
         LOG.debug("Create Rhino-based PAC evaluator for '{}'", pacUrl);
         this.pacHelperFunctionContents = getHelperFunctionContents();
         this.pacUrl = pacUrl;
@@ -100,13 +102,13 @@ public class PacFileEvaluator {
      * <pre>"PROXY foo.example.com:8080; PROXY bar.example.com:8080; DIRECT"</pre>
      * @see #getProxiesWithoutCaching(URL)
      */
-    String getProxies(URL url) {
-        String cachedResult = getFromCache(url);
+    String getProxies(final URL url) {
+        final String cachedResult = getFromCache(url);
         if (cachedResult != null) {
             return cachedResult;
         }
 
-        String result = getProxiesWithoutCaching(url);
+        final String result = getProxiesWithoutCaching(url);
         addToCache(url, result);
         return result;
     }
@@ -120,25 +122,25 @@ public class PacFileEvaluator {
      * <pre>"PROXY example.com:3128; DIRECT"</pre>
      * @see #getProxies(URL)
      */
-    private String getProxiesWithoutCaching(URL url) {
+    private String getProxiesWithoutCaching(final URL url) {
         if (pacHelperFunctionContents == null) {
             LOG.error("Error loading pac functions");
             return PacConstants.DIRECT;
         }
 
-        EvaluatePacAction evaluatePacAction = new EvaluatePacAction(pacContents, pacUrl.toString(),
+        final EvaluatePacAction evaluatePacAction = new EvaluatePacAction(pacContents, pacUrl.toString(),
                 pacHelperFunctionContents, url);
 
         // Purposefully giving only these permissions rather than using java.policy. The "evaluatePacAction"
         // isn't supposed to do very much and so doesn't require all the default permissions given by
         // java.policy
-        Permissions p = new Permissions();
+        final Permissions p = new Permissions();
         p.add(new RuntimePermission("accessClassInPackage.org.mozilla.javascript"));
         p.add(new SocketPermission("*", "resolve"));
         p.add(new PropertyPermission(VM_NAME, PROPERTY_READ_ACTION));
 
-        ProtectionDomain pd = new ProtectionDomain(null, p);
-        AccessControlContext context = new AccessControlContext(new ProtectionDomain[]{pd});
+        final ProtectionDomain pd = new ProtectionDomain(null, p);
+        final AccessControlContext context = new AccessControlContext(new ProtectionDomain[]{pd});
 
         return AccessController.doPrivileged(evaluatePacAction, context);
     }
@@ -146,7 +148,7 @@ public class PacFileEvaluator {
     /**
      * Returns the contents of file at pacUrl as a String.
      */
-    private String getContent(URL pacUrl) {
+    private String getContent(final URL pacUrl) {
         final StringBuilder contents = new StringBuilder();
         try {
             String line;
@@ -171,27 +173,27 @@ public class PacFileEvaluator {
     }
 
     private URL getPacFuncJsUrl() {
-        ClassLoader cl = this.getClass().getClassLoader();
-        if (cl == null) {
-            return ClassLoader.getSystemClassLoader().getResource("net/sourceforge/jnlp/runtime/pac-funcs.js");
+        final ClassLoader cl = this.getClass().getClassLoader();
+        if (cl != null) {
+            return cl.getResource(PAC_FUNCS_JS);
         }
-        return cl.getResource("net/sourceforge/jnlp/runtime/pac-funcs.js");
+        return ClassLoader.getSystemClassLoader().getResource(PAC_FUNCS_JS);
     }
 
     /**
      * Gets an entry from the cache
      */
-    private String getFromCache(URL url) {
-        String lookupString = url.getProtocol() + "://" + url.getHost();
-        String result = pacCache.get(lookupString);
+    private String getFromCache(final URL url) {
+        final String lookupString = url.getProtocol() + "://" + url.getHost();
+        final String result = pacCache.get(lookupString);
         return result;
     }
 
     /**
      * Adds an entry to the cache
      */
-    private void addToCache(URL url, String proxyResult) {
-        String lookupString = url.getAuthority() + "://" + url.getHost();
+    private void addToCache(final URL url, final String proxyResult) {
+        final String lookupString = url.getAuthority() + "://" + url.getHost();
         pacCache.put(lookupString, proxyResult);
     }
 
@@ -201,10 +203,10 @@ public class PacFileEvaluator {
      */
     private static class EvaluatePacAction implements PrivilegedAction<String> {
 
-        private String pacContents;
-        private String pacUrl;
-        private String pacFuncsContents;
-        private URL url;
+        private final String pacContents;
+        private final String pacUrl;
+        private final String pacFuncsContents;
+        private final URL url;
 
         EvaluatePacAction(String pacContents, String pacUrl, String pacFuncsContents, URL url) {
             this.pacContents = pacContents;
