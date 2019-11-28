@@ -47,14 +47,14 @@ public class PhaseTwoWebStartLauncher {
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
-            System.exit(-1);
+            JNLPRuntime.exit(-1);
         }
 
         try {
             new InitialConfigurationCheck(config).check();
         } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.initialConfig"), e);
-            System.exit(-1);
+            JNLPRuntime.exit(-1);
         } catch (final UnsatisfiedLinkError e) {
             //TODO: this exception is thrown on windows if you start OWS from the ide instead of using install4J
             LOG.error("Initial configuration was not checked. This normally happens on Windows systems if you start OWS from the IDE.", e);
@@ -82,7 +82,7 @@ public class PhaseTwoWebStartLauncher {
         final int status = Boot.mainWithReturnCode(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
 
         if (status != 0) {
-            System.exit(status);
+            JNLPRuntime.exit(status);
         }
     }
 
