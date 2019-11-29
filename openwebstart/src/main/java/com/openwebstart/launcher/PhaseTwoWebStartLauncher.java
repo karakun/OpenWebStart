@@ -70,20 +70,12 @@ public class PhaseTwoWebStartLauncher {
             });
         }
 
-        final List<String> bootArgs = skipNotRelevantArgs(args);
-        final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
-                RuntimeDownloadDialog::showDownloadDialog,
-                DialogFactory::askForRuntimeUpdate
-        );
-
+        // we MUST fork in order to start the application with the jvm from the JVM Manager
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
+        final List<String> bootArgs = skipNotRelevantArgs(args);
         LOG.info("Calling ITW Boot with args {}.", bootArgs);
-        final int status = Boot.mainWithReturnCode(new OwsJvmLauncher(javaRuntimeProvider), new MenuAndDesktopEntryHandler(), bootArgs.toArray(new String[0]));
-
-        if (status != 0) {
-            JNLPRuntime.exit(status);
-        }
+        Boot.main(bootArgs.toArray(new String[0]));
     }
 
     private static List<String> skipNotRelevantArgs(final String[] args) {

@@ -67,7 +67,7 @@ public class ControlPanelLauncher {
         }
 
         SwingUtils.invokeLater(() -> {
-            final ControlPanel editor = new ControlPanel(config, new OpenWebStartControlPanelStyle());
+            final ControlPanel editor = new ControlPanel(config);
             editor.setVisible(true);
         });
     }
