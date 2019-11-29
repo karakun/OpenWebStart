@@ -88,6 +88,6 @@ public enum ProxyProviderType {
         return Stream.of(ProxyProviderType.values())
                 .filter(t -> value == t.getConfigValue())
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No proxy type defined with config value " + value));
+                .orElse(NONE);
     }
 }
