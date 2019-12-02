@@ -15,6 +15,8 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
 
 import java.net.ProxySelector;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Extension point providing OWS specific implementations.
@@ -44,5 +46,10 @@ public class OwsExtensionPoint implements ExtensionPoint {
     @Override
     public ControlPanelStyle createControlPanelStyle(final DeploymentConfiguration configuration) {
         return new OpenWebStartControlPanelStyle();
+    }
+
+    @Override
+    public List<String> getTranslationResources() {
+        return Collections.singletonList("i18n");
     }
 }
