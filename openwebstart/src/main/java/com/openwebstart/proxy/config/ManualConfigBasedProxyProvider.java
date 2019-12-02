@@ -1,6 +1,6 @@
 package com.openwebstart.proxy.config;
 
-import com.openwebstart.proxy.util.config.AbstractConfigBasedProvider;
+import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfiguration;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -21,17 +21,10 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SOCKS4_HOST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SOCKS4_PORT;
 
-public class ConfigBasedProxyProvider extends AbstractConfigBasedProvider {
+public class ManualConfigBasedProxyProvider extends ConfigBasedProvider {
 
-    private final ProxyConfiguration proxyConfiguration;
-
-    public ConfigBasedProxyProvider(final DeploymentConfiguration config) {
-        this.proxyConfiguration = createConfiguration(config);
-    }
-
-    @Override
-    protected ProxyConfiguration getConfig() {
-        return proxyConfiguration;
+    public ManualConfigBasedProxyProvider(final DeploymentConfiguration config) {
+        super(createConfiguration(config));
     }
 
     private static ProxyConfiguration createConfiguration(final DeploymentConfiguration config) {

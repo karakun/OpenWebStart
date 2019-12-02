@@ -16,16 +16,19 @@ import static com.openwebstart.proxy.util.ProxyConstants.HTTP_SCHEMA;
 import static com.openwebstart.proxy.util.ProxyConstants.SOCKET_SCHEMA;
 
 
-public abstract class AbstractConfigBasedProvider implements ProxyProvider {
+public class ConfigBasedProvider implements ProxyProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractConfigBasedProvider.class);
-    protected abstract ProxyConfiguration getConfig();
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigBasedProvider.class);
+
+    private final ProxyConfiguration configuration;
+
+    public ConfigBasedProvider(final ProxyConfiguration proxyConfiguration) {
+        this.configuration = Assert.requireNonNull(proxyConfiguration, "proxyConfiguration");
+    }
 
     @Override
     public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
-        final ProxyConfiguration configuration = getConfig();
-        Assert.requireNonNull(configuration, "configuration");
 
         final List<Proxy> proxies = new ArrayList<>();
         final String scheme = uri.getScheme();

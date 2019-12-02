@@ -3,10 +3,9 @@ package com.openwebstart.proxy.firefox;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
+import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.config.SimpleConfigBasedProvider;
-import com.openwebstart.proxy.util.pac.PacFileEvaluator;
-import com.openwebstart.proxy.util.pac.SimplePacBasedProvider;
+import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -67,14 +66,12 @@ public class FirefoxProxyProvider implements ProxyProvider {
         proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
         proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
-        return new SimpleConfigBasedProvider(proxyConfiguration);
+        return new ConfigBasedProvider(proxyConfiguration);
     }
 
     private ProxyProvider createForPac(final FirefoxPreferences prefs) throws MalformedURLException {
         final String url = prefs.getStringValue(AUTO_CONFIG_URL_PROPERTY_NAME);
-        final URL autoConfigUrl = new URL(url);
-        final PacFileEvaluator evaluator = new PacFileEvaluator(autoConfigUrl);
-        return new SimplePacBasedProvider(evaluator);
+        return new PacBasedProxyProvider(new URL(url));
     }
 
     @Override

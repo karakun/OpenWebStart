@@ -1,8 +1,8 @@
 package com.openwebstart.proxy;
 
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.proxy.config.ConfigBasedAutoConfigUrlProxyProvider;
-import com.openwebstart.proxy.config.ConfigBasedProxyProvider;
+import com.openwebstart.proxy.config.ManualPacFileProxyProvider;
+import com.openwebstart.proxy.config.ManualConfigBasedProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
@@ -22,14 +22,14 @@ public enum ProxyProviderType {
     MANUAL_HOSTS(1) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) {
-            return new ConfigBasedProxyProvider(config);
+            return new ManualConfigBasedProxyProvider(config);
         }
     },
 
     MANUAL_PAC_URL(2) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
-            return new ConfigBasedAutoConfigUrlProxyProvider(config);
+            return new ManualPacFileProxyProvider(config);
         }
     },
 

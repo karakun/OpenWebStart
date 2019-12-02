@@ -2,10 +2,9 @@ package com.openwebstart.proxy.windows;
 
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
+import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.config.SimpleConfigBasedProvider;
-import com.openwebstart.proxy.util.pac.PacFileEvaluator;
-import com.openwebstart.proxy.util.pac.SimplePacBasedProvider;
+import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
 
 import java.net.Proxy;
 import java.net.URI;
@@ -34,8 +33,7 @@ public class WindowsProxyProvider implements ProxyProvider {
             final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
             if (autoConfigUrlValue != null) {
                 final String autoConfigUrl = autoConfigUrlValue.getValue();
-                final PacFileEvaluator pacEvaluator = new PacFileEvaluator(new URL(autoConfigUrl));
-                internalProvider = new SimplePacBasedProvider(pacEvaluator);
+                internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl));
             } else {
                 final RegistryValue proxyServerValue = proxyRegistryEntries.get(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
@@ -80,7 +78,7 @@ public class WindowsProxyProvider implements ProxyProvider {
                     if (overrideHostsValue != null) {
                         Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
                     }
-                    internalProvider = new SimpleConfigBasedProvider(proxyConfiguration);
+                    internalProvider = new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
                     internalProvider = DirectProxyProvider.getInstance();

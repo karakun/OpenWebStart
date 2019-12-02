@@ -7,23 +7,28 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.Proxy;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractPacBasedProvider implements ProxyProvider {
+public class PacBasedProxyProvider implements ProxyProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractPacBasedProvider.class);
-    protected abstract PacFileEvaluator getPacEvaluator();
+    private static final Logger LOG = LoggerFactory.getLogger(PacBasedProxyProvider.class);
+
+    private final PacFileEvaluator pacEvaluator;
+
+    public PacBasedProxyProvider(final URL pacConfigFileUrl) {
+        Assert.requireNonNull(pacConfigFileUrl, "pacConfigFileUrl");
+        this.pacEvaluator = new PacFileEvaluator(pacConfigFileUrl);
+    }
 
     @Override
     public List<Proxy> select(final URI uri) throws Exception {
         Assert.requireNonNull(uri, "uri");
-        final PacFileEvaluator pacEvaluator = getPacEvaluator();
-        Assert.requireNonNull(pacEvaluator, "pacEvaluator");
+
         final String proxiesString = pacEvaluator.getProxies(uri.toURL());
         final List<Proxy> proxies = PacUtils.getProxiesFromPacResult(proxiesString);
         LOG.debug("Proxies found for '{}' : {}", uri, proxies);
         return Collections.unmodifiableList(proxies);
     }
-
 }
