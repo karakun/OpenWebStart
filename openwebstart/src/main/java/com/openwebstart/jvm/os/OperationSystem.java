@@ -56,6 +56,14 @@ public enum OperationSystem {
         this.architecture = architecture;
     }
 
+    public boolean isMac() {
+        return this == MAC64;
+    }
+
+    public boolean isWindows() {
+        return this == WIN64 || this == WIN32;
+    }
+
     public String getName() {
         return name;
     }

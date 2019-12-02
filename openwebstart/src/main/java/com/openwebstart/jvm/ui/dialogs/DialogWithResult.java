@@ -11,8 +11,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class DialogWithResult<R> extends JDialog {
 
@@ -46,6 +48,9 @@ public class DialogWithResult<R> extends JDialog {
 
         Arrays.asList(buttons).forEach(b -> {
             final JButton button = new JButton(b.getText());
+            if(b.getDescription() != null) {
+                button.setToolTipText(b.getDescription());
+            }
             button.addActionListener(e -> {
                 final R result = b.getOnAction().get();
                 close(result);
@@ -69,9 +74,22 @@ public class DialogWithResult<R> extends JDialog {
     }
 
     public R showAndWait() {
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-        return result;
+        if(SwingUtilities.isEventDispatchThread()) {
+            pack();
+            setLocationRelativeTo(null);
+            setVisible(true);
+            return result;
+        } else {
+            final CompletableFuture<R> result = new CompletableFuture<>();
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    final R r = showAndWait();
+                    result.complete(r);
+                });
+                return result.get();
+            } catch (Exception e) {
+                throw new RuntimeException("Error in handling dialog!", e);
+            }
+        }
     }
 }
