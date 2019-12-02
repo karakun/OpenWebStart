@@ -22,7 +22,7 @@ import java.net.ProxySelector;
 class OwsExtensionPoint implements ExtensionPoint {
 
     @Override
-    public JvmLauncher getJvmLauncher() {
+    public JvmLauncher createJvmLauncher(final DeploymentConfiguration configuration) {
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,
                 DialogFactory::askForRuntimeUpdate
@@ -32,17 +32,17 @@ class OwsExtensionPoint implements ExtensionPoint {
     }
 
     @Override
-    public MenuAndDesktopIntegration getMenuAndDesktopIntegration(DeploymentConfiguration configuration) {
+    public MenuAndDesktopIntegration createMenuAndDesktopIntegration(final DeploymentConfiguration configuration) {
         return new MenuAndDesktopEntryHandler();
     }
 
     @Override
-    public ProxySelector getProxySelector(DeploymentConfiguration configuration) {
+    public ProxySelector createProxySelector(final DeploymentConfiguration configuration) {
         return new WebStartProxySelector(configuration);
     }
 
     @Override
-    public ControlPanelStyle getControlPanelStyle(DeploymentConfiguration configuration) {
+    public ControlPanelStyle createControlPanelStyle(final DeploymentConfiguration configuration) {
         return new OpenWebStartControlPanelStyle();
     }
 }
