@@ -2,7 +2,7 @@ package com.openwebstart.proxy.windows;
 
 public interface WindowsProxyConstants {
 
-    String PROXY_REGISTRY_KEY = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
+    String PROXY_REGISTRY_KEY = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings";
 
     String PROXY_SERVER_REGISTRY_VAL = "ProxyServer";
 
