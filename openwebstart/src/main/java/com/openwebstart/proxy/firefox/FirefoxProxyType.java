@@ -10,6 +10,10 @@ public enum FirefoxProxyType {
     BROWSER_PROXY_TYPE_AUTO(4),
     BROWSER_PROXY_TYPE_SYSTEM(5);
 
+    public int getConfigValue() {
+        return configValue;
+    }
+
     private final int configValue;
 
     FirefoxProxyType(final int configValue) {

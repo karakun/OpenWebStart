@@ -96,7 +96,7 @@ final class FirefoxPreferences {
         if (!isDoubleQuotedString(valueCandidate)) {
             try {
                 return Integer.parseInt(valueCandidate.trim());
-            } catch (NumberFormatException ignored) {
+            } catch (Exception ignored) {
             }
         }
         return defaultValue;

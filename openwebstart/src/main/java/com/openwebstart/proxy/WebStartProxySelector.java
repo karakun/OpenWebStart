@@ -43,6 +43,7 @@ public class WebStartProxySelector extends ProxySelector {
             final ProxyProviderType providerType = ProxyProviderType.getForConfigValue(proxyTypeConfigValue);
 
             providerType.checkSupported();
+            LOG.debug("Selected ProxyProvider : {} ", providerType);
             return providerType.createProvider(config);
         } catch (final Exception e) {
             LOG.error("Error in proxy creation", e);

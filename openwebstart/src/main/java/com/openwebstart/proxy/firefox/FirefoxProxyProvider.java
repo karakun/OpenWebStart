@@ -1,11 +1,13 @@
 package com.openwebstart.proxy.firefox;
 
+import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.util.config.SimpleConfigBasedProvider;
 import com.openwebstart.proxy.util.pac.PacFileEvaluator;
 import com.openwebstart.proxy.util.pac.SimplePacBasedProvider;
+import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -31,30 +33,25 @@ import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 public class FirefoxProxyProvider implements ProxyProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FirefoxProxyProvider.class);
-    private static final int UNKNOWN_TYPE = -99;
-
     private final ProxyProvider internalProvider;
 
     public FirefoxProxyProvider() throws Exception {
         final FirefoxPreferences prefs = new FirefoxPreferences();
         prefs.load();
 
-        final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, UNKNOWN_TYPE);
-        if (type != UNKNOWN_TYPE) {
-            final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(type);
-            LOG.debug("FireFoxProxyType : {}", browserProxyType);
-            if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_PAC) {
-                internalProvider = createForPac(prefs);
-            } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL) {
-                internalProvider = createForManualConfig(prefs);
-            } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_NONE) {
-                internalProvider = DirectProxyProvider.getInstance();
-            } else {
-                throw new IllegalStateException("Firefox Proxy Type '" + browserProxyType + "' is not supported");
-            }
-        } else {
-            //TODO: is this an error or can there be no specification in firefox settings? - Against BROWSER_PROXY_TYPE_NONE
+        final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM.getConfigValue());
+        final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(type);
+        LOG.debug("FireFoxProxyType : {}", browserProxyType);
+        if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_PAC) {
+            internalProvider = createForPac(prefs);
+        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL) {
+            internalProvider = createForManualConfig(prefs);
+        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_NONE) {
             internalProvider = DirectProxyProvider.getInstance();
+        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM && OperationSystem.getLocalSystem().isWindows()) {
+            internalProvider = new WindowsProxyProvider();
+        } else {
+            throw new IllegalStateException("Firefox Proxy Type '" + browserProxyType + "' is not supported");
         }
     }
 

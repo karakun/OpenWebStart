@@ -7,6 +7,7 @@ import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.AboutPane
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DebugSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.DesktopSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.JvmSettingsPanelProvider;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.NetworkSettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.PolicySettingsPanelProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.provider.UnsignedAppletsTrustingListPanelProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -38,7 +39,8 @@ public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
             PolicySettingsPanelProvider.NAME,
             UnsignedAppletsTrustingListPanelProvider.NAME,
             JvmSettingsPanelProvider.NAME,
-            DebugSettingsPanelProvider.NAME));
+            DebugSettingsPanelProvider.NAME,
+            NetworkSettingsPanelProvider.NAME));
 
     @Override
     public boolean isPanelActive(final String panelName) {
