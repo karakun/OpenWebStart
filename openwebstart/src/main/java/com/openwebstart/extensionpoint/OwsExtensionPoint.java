@@ -19,7 +19,7 @@ import java.net.ProxySelector;
 /**
  * Extension point providing OWS specific implementations.
  */
-class OwsExtensionPoint implements ExtensionPoint {
+public class OwsExtensionPoint implements ExtensionPoint {
 
     @Override
     public JvmLauncher createJvmLauncher(final DeploymentConfiguration configuration) {

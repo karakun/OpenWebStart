@@ -2,6 +2,8 @@ package com.openwebstart.proxy.util.config;
 
 import com.openwebstart.proxy.ProxyProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.Proxy;
 import java.net.URI;
@@ -16,6 +18,7 @@ import static com.openwebstart.proxy.util.ProxyConstants.SOCKET_SCHEMA;
 
 public abstract class AbstractConfigBasedProvider implements ProxyProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractConfigBasedProvider.class);
     protected abstract ProxyConfiguration getConfig();
 
     @Override
@@ -49,9 +52,11 @@ public abstract class AbstractConfigBasedProvider implements ProxyProvider {
         }
 
         if (proxies.isEmpty()) {
+            LOG.debug("No proxy found for '{}'. Falling back to NO_PROXY", uri);
             proxies.add(Proxy.NO_PROXY);
+        } else {
+            LOG.debug("Proxies found for '{}' : {}", uri, proxies);
         }
-
         return proxies;
     }
 }

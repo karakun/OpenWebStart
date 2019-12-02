@@ -58,6 +58,7 @@ public class WebStartProxySelector extends ProxySelector {
     @Override
     public List<Proxy> select(final URI uri) {
         if (useDirectAfterError.get()) {
+            LOG.debug("Falling back to NO_PROXY");
             return Collections.singletonList(Proxy.NO_PROXY);
         }
         try {

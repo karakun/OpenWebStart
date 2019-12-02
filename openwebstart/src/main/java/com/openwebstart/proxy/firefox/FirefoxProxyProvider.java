@@ -6,6 +6,8 @@ import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.util.config.SimpleConfigBasedProvider;
 import com.openwebstart.proxy.util.pac.PacFileEvaluator;
 import com.openwebstart.proxy.util.pac.SimplePacBasedProvider;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -28,6 +30,7 @@ import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 
 public class FirefoxProxyProvider implements ProxyProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FirefoxProxyProvider.class);
     private static final int UNKNOWN_TYPE = -99;
 
     private final ProxyProvider internalProvider;
@@ -39,6 +42,7 @@ public class FirefoxProxyProvider implements ProxyProvider {
         final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, UNKNOWN_TYPE);
         if (type != UNKNOWN_TYPE) {
             final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(type);
+            LOG.debug("FireFoxProxyType : {}", browserProxyType);
             if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_PAC) {
                 internalProvider = createForPac(prefs);
             } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL) {
