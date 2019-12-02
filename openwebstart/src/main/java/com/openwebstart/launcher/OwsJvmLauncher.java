@@ -31,7 +31,7 @@ import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 /**
  * Launches OWS with a JNLP in a matching JRE.
  */
-class OwsJvmLauncher implements JvmLauncher {
+public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
@@ -44,7 +44,7 @@ class OwsJvmLauncher implements JvmLauncher {
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
-    OwsJvmLauncher(JavaRuntimeProvider javaRuntimeProvider) {
+    public OwsJvmLauncher(JavaRuntimeProvider javaRuntimeProvider) {
         this.javaRuntimeProvider = javaRuntimeProvider;
     }
 
