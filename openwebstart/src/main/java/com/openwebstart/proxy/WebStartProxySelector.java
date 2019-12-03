@@ -11,8 +11,10 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.util.UrlUtils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
@@ -58,6 +60,10 @@ public class WebStartProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(final URI uri) {
+        if (isLocalhost(uri)) {
+            LOG.debug("localhost -> NO_PROXY");
+            return Collections.singletonList(Proxy.NO_PROXY);
+        }
         if (useDirectAfterError.get()) {
             LOG.debug("Falling back to NO_PROXY");
             return Collections.singletonList(Proxy.NO_PROXY);
@@ -74,6 +80,14 @@ public class WebStartProxySelector extends ProxySelector {
                 useDirectAfterError.set(true);
             }
             return Collections.singletonList(Proxy.NO_PROXY);
+        }
+    }
+
+    private boolean isLocalhost(URI uri) {
+        try {
+            return UrlUtils.isLocalhost(uri.toURL());
+        } catch (MalformedURLException e) {
+            return false;
         }
     }
 
