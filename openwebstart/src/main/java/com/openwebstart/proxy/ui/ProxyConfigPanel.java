@@ -15,12 +15,10 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -241,17 +239,5 @@ public class ProxyConfigPanel extends FormPanel {
         pacUrlField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL));
         proxyHostField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST));
         proxyPortField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_HTTP_PORT));
-    }
-
-    public static void main(String[] args) throws Exception {
-        Translator.addBundle("i18n");
-
-        SwingUtilities.invokeAndWait(() -> {
-            JFrame frame = new JFrame();
-            frame.setContentPane(new ProxyConfigPanel(new DeploymentConfiguration()));
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
     }
 }
