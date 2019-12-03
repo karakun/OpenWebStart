@@ -9,8 +9,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.util.Arrays;
@@ -33,9 +33,11 @@ public class DialogWithResult<R> extends JDialog {
 
         final IconComponent icon = new IconComponent(imageIcon);
 
-        final JLabel messageLabel = new JLabel(message);
-
         final JPanel messageWrapperPanel = new JPanel();
+        final JTextArea messageLabel = new JTextArea(message);
+        messageLabel.setEditable(false);
+        messageLabel.setBackground(messageWrapperPanel.getBackground());
+
         messageWrapperPanel.setLayout(new BorderLayout(12, 12));
         messageWrapperPanel.add(icon, BorderLayout.WEST);
         messageWrapperPanel.add(messageLabel, BorderLayout.CENTER);

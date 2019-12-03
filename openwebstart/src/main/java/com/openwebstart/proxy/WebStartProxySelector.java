@@ -85,7 +85,7 @@ public class WebStartProxySelector extends ProxySelector {
     @Override
     public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
         LOG.error("Error in proxy connection", ioe);
-        final ProxyErrorDialog dialog = new ConnectionFailedDialog();
+        final ProxyErrorDialog dialog = new ConnectionFailedDialog(uri);
         final ProxyDialogResult proxyDialogResult = dialog.showAndWait();
         if (proxyDialogResult == ProxyDialogResult.EXIT) {
             System.exit(0);
