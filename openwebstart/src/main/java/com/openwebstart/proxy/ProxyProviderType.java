@@ -5,6 +5,7 @@ import com.openwebstart.proxy.config.ManualPacFileProxyProvider;
 import com.openwebstart.proxy.config.ManualConfigBasedProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
+import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
@@ -40,14 +41,17 @@ public enum ProxyProviderType {
         }
     },
 
-    WINDOWS(4) {
+    OPERATION_SYSTEM(4) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
-            return new WindowsProxyProvider();
+            if(OperationSystem.getLocalSystem().isWindows()) {
+                return new WindowsProxyProvider();
+            } else if(OperationSystem.getLocalSystem().isMac()) {
+                return new MacProxyProvider();
+            }
+            throw new IllegalStateException("Operation system proxy not supported for " + OperationSystem.getLocalSystem());
         }
-    },
-
-    ;
+    };
 
     private final int configValue;
 
@@ -64,7 +68,7 @@ public enum ProxyProviderType {
     }
 
     public void checkSupported() {
-        if (this == WINDOWS && !OperationSystem.getLocalSystem().isWindows()) {
+        if (this == OPERATION_SYSTEM && !OperationSystem.getLocalSystem().isWindows()) {
             throw new IllegalStateException("Windows proxy is only supported on windows os");
         }
         if (this == FIREFOX && OperationSystem.getLocalSystem().isMac()) {
@@ -74,7 +78,7 @@ public enum ProxyProviderType {
     }
 
     public boolean isSupported() {
-        if (this == WINDOWS && !OperationSystem.getLocalSystem().isWindows()) {
+        if (this == OPERATION_SYSTEM && !(OperationSystem.getLocalSystem().isWindows() || OperationSystem.getLocalSystem().isMac())) {
             return false;
         }
         if (this == FIREFOX && OperationSystem.getLocalSystem().isMac()) {

@@ -1,6 +1,9 @@
 package com.openwebstart.proxy.mac;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MacProxySettings {
 
@@ -35,6 +38,10 @@ public class MacProxySettings {
     private boolean autoDiscoveryEnabled;
 
     private boolean excludeSimpleHostnames;
+
+    private boolean ftpPassive;
+
+    private List<String> exceptionList = new ArrayList<>();
 
     public void setHttpHost(final String httpHost) {
         this.httpHost = httpHost;
@@ -162,5 +169,21 @@ public class MacProxySettings {
 
     public boolean isExcludeSimpleHostnames() {
         return excludeSimpleHostnames;
+    }
+
+    public void setFtpPassive(final boolean ftpPassive) {
+        this.ftpPassive = ftpPassive;
+    }
+
+    public boolean isFtpPassive() {
+        return ftpPassive;
+    }
+
+    public void setExceptionsList(final List<String> exceptionList) {
+        this.exceptionList = new ArrayList<>(exceptionList);
+    }
+
+    public List<String> getExceptionList() {
+        return Collections.unmodifiableList(exceptionList);
     }
 }

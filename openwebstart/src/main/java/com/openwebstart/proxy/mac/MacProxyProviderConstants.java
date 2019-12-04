@@ -34,4 +34,8 @@ public interface MacProxyProviderConstants {
 
     String EXCLUDE_SIMPLE_HOSTNAMES_PROPERTY_NAME = "ExcludeSimpleHostnames";
 
+    String FTP_PASSIVE_PROPERTY_NAME = "FTPPassive";
+
+    String EXCEPTIONS_LIST_PROPERTY_NAME = "ExceptionsList";
+
 }

@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.AUTO_CONFIG_ENABLED_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.AUTO_CONFIG_URL_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.AUTO_DISCOVERY_ENABLE_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.EXCEPTIONS_LIST_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.EXCLUDE_SIMPLE_HOSTNAMES_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_ENABLE_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PASSIVE_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PROXY_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTPS_ENABLE_PROPERTY_NAME;
@@ -106,6 +109,13 @@ public class ScutilParser {
                 .map(ScutilParser::asBooleanValue)
                 .ifPresent(proxySettings::setExcludeSimpleHostnames);
 
+        getValueForSimpleParam(FTP_PASSIVE_PROPERTY_NAME, parameterLines)
+                .map(ScutilParser::asBooleanValue)
+                .ifPresent(proxySettings::setFtpPassive);
+
+        getValueForArrayParam(EXCEPTIONS_LIST_PROPERTY_NAME, parameterLines)
+                .ifPresent(proxySettings::setExceptionsList);
+
         return proxySettings;
     }
 
@@ -126,6 +136,22 @@ public class ScutilParser {
                 .filter(l -> l.startsWith(paramName))
                 .map(l -> l.substring(paramName.length() + 3))
                 .findFirst();
+    }
+
+    private static Optional<List<String>> getValueForArrayParam(final String paramName, final List<String> parameterLines) {
+        return parameterLines
+                .stream()
+                .filter(l -> Objects.equals(paramName + " : <array> {", l.trim()))
+                .findFirst()
+                .map(l -> {
+                    final int firstLine = parameterLines.indexOf(l);
+                    final int lastLine = parameterLines.subList(firstLine, parameterLines.size()).indexOf("}");
+                    return parameterLines.subList(firstLine + 1, firstLine + lastLine)
+                            .stream()
+                            .map(v -> v.split(Pattern.quote(":"))[1])
+                            .map(v -> v.trim())
+                            .collect(Collectors.toList());
+                });
     }
 
 }

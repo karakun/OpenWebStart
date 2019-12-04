@@ -3,6 +3,7 @@ package com.openwebstart.proxy.firefox;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
+import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
@@ -49,6 +50,8 @@ public class FirefoxProxyProvider implements ProxyProvider {
             internalProvider = DirectProxyProvider.getInstance();
         } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM && OperationSystem.getLocalSystem().isWindows()) {
             internalProvider = new WindowsProxyProvider();
+        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM && OperationSystem.getLocalSystem().isMac()) {
+            internalProvider = new MacProxyProvider();
         } else {
             throw new IllegalStateException("Firefox Proxy Type '" + browserProxyType + "' is not supported");
         }

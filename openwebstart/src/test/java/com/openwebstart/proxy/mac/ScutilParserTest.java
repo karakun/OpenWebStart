@@ -11,6 +11,7 @@ class ScutilParserTest {
 
     @Test
     public void testParse() throws IOException {
+
         //given:
         final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out1.txt"));
 
@@ -30,5 +31,21 @@ class ScutilParserTest {
         Assertions.assertFalse(proxySettings.isAutoDiscoveryEnabled());
         Assertions.assertFalse(proxySettings.isAutoConfigEnabled());
         Assertions.assertFalse(proxySettings.isExcludeSimpleHostnames());
+    }
+
+    @Test
+    public void testParseWithList() throws IOException {
+
+        //given:
+        final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out2.txt"));
+
+        //when:
+        final MacProxySettings proxySettings = ScutilParser.parse(output);
+
+        //then:
+        Assertions.assertNotNull(proxySettings);
+        Assertions.assertFalse(proxySettings.getExceptionList().isEmpty());
+        Assertions.assertTrue(proxySettings.getExceptionList().contains("*.local"));
+        Assertions.assertTrue(proxySettings.getExceptionList().contains("169.254/16"));
     }
 }
