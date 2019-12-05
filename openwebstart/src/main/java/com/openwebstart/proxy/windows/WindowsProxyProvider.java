@@ -24,6 +24,9 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_
 
 public class WindowsProxyProvider implements ProxyProvider {
 
+    // see https://blogs.msdn.microsoft.com/askie/2015/10/12/how-to-configure-proxy-settings-for-ie10-and-ie11-as-iem-is-not-available/
+    private static final String EXCLUDE_LOCALHOST_MAGIC_VALUE = "<local>";
+
     private final ProxyProvider internalProvider;
 
     public WindowsProxyProvider() throws Exception {
@@ -78,6 +81,7 @@ public class WindowsProxyProvider implements ProxyProvider {
                     if (overrideHostsValue != null) {
                         Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
                     }
+                    proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
                     internalProvider = new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
