@@ -24,7 +24,6 @@ public class MacProxyProvider implements ProxyProvider {
 
     private final static Logger LOG = LoggerFactory.getLogger(MacProxyProvider.class);
 
-
     private final ProxyProvider internalProvider;
 
     public MacProxyProvider() throws IOException, InterruptedException, ExecutionException {
@@ -91,6 +90,6 @@ public class MacProxyProvider implements ProxyProvider {
 
     @Override
     public List<Proxy> select(final URI uri) throws Exception {
-        return null;
+        return internalProvider.select(uri);
     }
 }
