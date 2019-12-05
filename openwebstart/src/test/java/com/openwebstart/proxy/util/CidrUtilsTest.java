@@ -1,24 +1,18 @@
 package com.openwebstart.proxy.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CidrUtilsTest {
 
-    @Test
-    void testIsInRange() {
-        //given:
-        final String cidrNotation = "169.254/16";
-
-        final String lastBeforeRange = "169.253.255.255";
-        final String firstInRange = "169.254.0.0";
-        final String someInRange = "169.254.23.55";
-        final String lastInRange = "169.254.255.255";
-        final String firstAfterRange = "169.255.0.0";
-
-        //than
+    @ParameterizedTest
+    @CsvFileSource(resources = "cidr_test.csv", numLinesToSkip = 1)
+    void testIsInRange(final String cidrNotation, final String lastBeforeRange, final String firstInRange, final String someInRange, final String lastInRange, final String firstAfterRange) {
         assertFalse(CidrUtils.isInRange(cidrNotation, lastBeforeRange));
         assertTrue(CidrUtils.isInRange(cidrNotation, firstInRange));
         assertTrue(CidrUtils.isInRange(cidrNotation, someInRange));
