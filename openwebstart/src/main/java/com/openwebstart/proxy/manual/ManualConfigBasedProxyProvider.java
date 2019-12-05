@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.config;
+package com.openwebstart.proxy.manual;
 
 import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfiguration;
