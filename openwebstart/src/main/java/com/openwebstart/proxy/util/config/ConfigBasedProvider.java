@@ -97,7 +97,7 @@ public class ConfigBasedProvider implements ProxyProvider {
                     }
 
                     //169.254/16
-                    if(exclusion.contains("/")) {
+                    if(CidrUtils.isCidrNotation(exclusion)) {
                         if(CidrUtils.isInRange(exclusion, ipAdress)) {
                             return true;
                         }

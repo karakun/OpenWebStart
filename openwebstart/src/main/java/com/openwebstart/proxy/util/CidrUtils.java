@@ -14,6 +14,11 @@ public class CidrUtils {
     private static final Pattern ipv4Pattern = Pattern.compile(IP_V4_ADDRESS);
     private static final Pattern cidrv4Pattern = Pattern.compile(CIDR_V4_ADDRESS);
 
+    public static boolean isCidrNotation(final String value) {
+        final Matcher cidrMatcher = cidrv4Pattern.matcher(value);
+        return cidrMatcher.matches();
+    }
+
     public static boolean isInRange(final String cidrv4Notation, final String ipv4Notation) {
         final Matcher cidrMatcher = cidrv4Pattern.matcher(cidrv4Notation);
         if (cidrMatcher.matches()) {
