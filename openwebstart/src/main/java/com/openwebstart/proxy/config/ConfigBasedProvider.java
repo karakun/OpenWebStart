@@ -1,7 +1,6 @@
 package com.openwebstart.proxy.config;
 
 import com.openwebstart.proxy.ProxyProvider;
-import com.openwebstart.proxy.util.CidrUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -15,6 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.openwebstart.proxy.util.CidrUtils.isCidrNotation;
+import static com.openwebstart.proxy.util.CidrUtils.isInRange;
+import static com.openwebstart.proxy.util.CidrUtils.isIpv4;
 import static com.openwebstart.proxy.util.ProxyConstants.FTP_SCHEMA;
 import static com.openwebstart.proxy.util.ProxyConstants.HTTPS_SCHEMA;
 import static com.openwebstart.proxy.util.ProxyConstants.HTTP_SCHEMA;
@@ -35,7 +37,7 @@ public class ConfigBasedProvider implements ProxyProvider {
     public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
 
-        if(configuration.isBypassLocal() && UrlUtils.isLocalhost(uri)) {
+        if (configuration.isBypassLocal() && UrlUtils.isLocalhost(uri)) {
             return Collections.singletonList(Proxy.NO_PROXY);
         }
 
@@ -78,44 +80,41 @@ public class ConfigBasedProvider implements ProxyProvider {
     }
 
     private boolean isExcluded(final URI uri) {
-        return configuration.getBypassList()
-                .stream()
-                .filter(exclusion -> {
-                    final String host = uri.getHost();
+        return configuration.getBypassList().stream()
+                .anyMatch(exclusion -> isExcluded(uri, exclusion));
+    }
 
-                    //google.de
-                    if(Objects.equals(host, exclusion)) {
-                        return true;
-                    }
+    private boolean isExcluded(URI uri, String exclusion) {
+        final String host = uri.getHost();
 
-                    //*.local
-                    if(exclusion.startsWith("*.") && host.endsWith(exclusion.substring(1))) {
-                        return true;
-                    }
+        // google.de
+        if (Objects.equals(host, exclusion)) {
+            return true;
+        }
 
-                    //.mozilla
-                    if(exclusion.startsWith(".") && host.endsWith(exclusion)) {
-                        return true;
-                    }
+        // *.local
+        if (exclusion.startsWith("*.") && host.endsWith(exclusion.substring(1))) {
+            return true;
+        }
+
+        // .mozilla
+        if (exclusion.startsWith(".") && host.endsWith(exclusion)) {
+            return true;
+        }
 
 
-                    final InetSocketAddress socketAddress = new InetSocketAddress(host, uri.getPort());
-                    final String ipAdress = socketAddress.getAddress().getHostAddress();
-                    //169.254.120.4
-                    if(Objects.equals(ipAdress, exclusion)) {
-                        return true;
-                    }
+        final InetSocketAddress socketAddress = new InetSocketAddress(host, uri.getPort());
+        final String ipAdress = socketAddress.getAddress().getHostAddress();
+        // 169.254.120.4
+        if (Objects.equals(ipAdress, exclusion)) {
+            return true;
+        }
 
-                    //169.254/16
-                    if(CidrUtils.isCidrNotation(exclusion)) {
-                        if(CidrUtils.isInRange(exclusion, ipAdress)) {
-                            return true;
-                        }
-                    }
+        // 169.254/16
+        if (isCidrNotation(exclusion) && isIpv4(ipAdress)) {
+            return isInRange(exclusion, ipAdress);
+        }
 
-                    return false;
-                })
-                .findAny()
-                .isPresent();
+        return false;
     }
 }
