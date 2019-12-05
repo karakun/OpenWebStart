@@ -15,6 +15,7 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -39,6 +40,8 @@ public class ProxyConfigPanel extends FormPanel {
     private final JRadioButton usePacSettings;
 
     private final JRadioButton useManualSettings;
+
+    private final JCheckBox bypassLocalhostCheckbox;
 
     private final JTextField pacUrlField;
 
@@ -165,6 +168,19 @@ public class ProxyConfigPanel extends FormPanel {
         advancedButtonContraints.weighty = 0;
         advancedButtonContraints.fill = GridBagConstraints.HORIZONTAL;
         manualSettingsDetailsPanel.add(advancedButton, advancedButtonContraints);
+
+        bypassLocalhostCheckbox = new JCheckBox(translator.translate("proxyPanel.bypassLocalhost.text"));
+        bypassLocalhostCheckbox.setToolTipText(translator.translate("proxyPanel.bypassLocalhost.description"));
+        final GridBagConstraints bypassLocalhostCheckboxContraints = new GridBagConstraints();
+        bypassLocalhostCheckboxContraints.gridx = 0;
+        bypassLocalhostCheckboxContraints.gridwidth=4;
+        bypassLocalhostCheckboxContraints.gridy = 1;
+        bypassLocalhostCheckboxContraints.weightx = 0;
+        bypassLocalhostCheckboxContraints.weighty = 0;
+        bypassLocalhostCheckboxContraints.fill = GridBagConstraints.HORIZONTAL;
+        manualSettingsDetailsPanel.add(bypassLocalhostCheckbox, bypassLocalhostCheckboxContraints);
+
+
         final JPanel manualSettingsPanel = new JPanel(new BorderLayout());
         manualSettingsPanel.add(useManualSettings, BorderLayout.NORTH);
         manualSettingsPanel.add(manualSettingsDetailsPanel, BorderLayout.CENTER);
@@ -182,12 +198,13 @@ public class ProxyConfigPanel extends FormPanel {
 
     private void updateEnabledStateForProxyType(final ProxyProviderType providerType) {
         final boolean isPac = providerType == ProxyProviderType.MANUAL_PAC_URL;
-        pacUrlField.setEnabled(isPac);
+        pacUrlField.setEnabled(isPac && !config.isLocked(ConfigurationConstants.KEY_PROXY_TYPE));
 
         final boolean isManual = providerType == ProxyProviderType.MANUAL_HOSTS;
-        proxyHostField.setEnabled(isManual);
-        proxyPortField.setEnabled(isManual);
-        advancedButton.setEnabled(isManual);
+        proxyHostField.setEnabled(isManual && !config.isLocked(ConfigurationConstants.KEY_PROXY_TYPE));
+        proxyPortField.setEnabled(isManual && !config.isLocked(ConfigurationConstants.KEY_PROXY_TYPE));
+        advancedButton.setEnabled(isManual && !config.isLocked(ConfigurationConstants.KEY_PROXY_TYPE));
+        bypassLocalhostCheckbox.setEnabled(isManual && !config.isLocked(ConfigurationConstants.KEY_PROXY_TYPE));
     }
 
     private void updateConfig() {
@@ -206,6 +223,7 @@ public class ProxyConfigPanel extends FormPanel {
         config.setProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL, pacUrlField.getText());
         config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST, proxyHostField.getText());
         config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_PORT, proxyPortField.getText());
+        config.setProperty(ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL, bypassLocalhostCheckbox.isSelected() + "");
     }
 
     private void updateUi() {
@@ -239,5 +257,8 @@ public class ProxyConfigPanel extends FormPanel {
         pacUrlField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL));
         proxyHostField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST));
         proxyPortField.setText(config.getProperty(ConfigurationConstants.KEY_PROXY_HTTP_PORT));
+
+        bypassLocalhostCheckbox.setSelected(Boolean.parseBoolean(config.getProperty(ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL)));
+
     }
 }
