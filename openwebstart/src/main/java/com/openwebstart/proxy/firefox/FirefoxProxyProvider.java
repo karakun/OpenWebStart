@@ -22,6 +22,7 @@ import static com.openwebstart.proxy.firefox.FirefoxConstants.AUTO_CONFIG_URL_PR
 import static com.openwebstart.proxy.firefox.FirefoxConstants.EXCLUSIONS_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PROPERTY_NAME;
+import static com.openwebstart.proxy.firefox.FirefoxConstants.HIJACK_LOCALHOST_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.HTTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.HTTP_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.PROXY_TYPE_PROPERTY_NAME;
@@ -72,11 +73,10 @@ public class FirefoxProxyProvider implements ProxyProvider {
         proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
         proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
-        Arrays.asList(prefs.getStringValue(EXCLUSIONS_PROPERTY_NAME).split("[, ]+"))
-                .stream()
-                .forEach(v -> proxyConfiguration.addToBypassList(v));
+        proxyConfiguration.setBypassLocal(!prefs.getBooleanValue(HIJACK_LOCALHOST_PROPERTY_NAME, false));
 
-        proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().isEmpty());
+        Arrays.stream(prefs.getStringValue(EXCLUSIONS_PROPERTY_NAME).split("[, ]+"))
+                .forEach(proxyConfiguration::addToBypassList);
 
         return new ConfigBasedProvider(proxyConfiguration);
     }
