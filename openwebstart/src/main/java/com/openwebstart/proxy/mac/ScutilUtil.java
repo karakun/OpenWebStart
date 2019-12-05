@@ -23,15 +23,19 @@ import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_ENABLE_PR
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PASSIVE_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_PROXY_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.FTP_USER_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTPS_ENABLE_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTPS_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTPS_PROXY_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTPS_USER_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTP_ENABLE_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTP_PROXY_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.HTTP_USER_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_ENABLE_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PROXY_PROPERTY_NAME;
+import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_USER_PROPERTY_NAME;
 
 public class ScutilUtil {
 
@@ -131,6 +135,15 @@ public class ScutilUtil {
         getValueForSimpleParam(FTP_PASSIVE_PROPERTY_NAME, parameterLines)
                 .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setFtpPassive);
+
+        getValueForSimpleParam(HTTP_USER_PROPERTY_NAME, parameterLines)
+                .ifPresent(proxySettings::setHttpUser);
+        getValueForSimpleParam(HTTPS_USER_PROPERTY_NAME, parameterLines)
+                .ifPresent(proxySettings::setHttpsUser);
+        getValueForSimpleParam(FTP_USER_PROPERTY_NAME, parameterLines)
+                .ifPresent(proxySettings::setFtpUser);
+        getValueForSimpleParam(SOCKS_USER_PROPERTY_NAME, parameterLines)
+                .ifPresent(proxySettings::setSocksUser);
 
         getValueForArrayParam(EXCEPTIONS_LIST_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setExceptionsList);

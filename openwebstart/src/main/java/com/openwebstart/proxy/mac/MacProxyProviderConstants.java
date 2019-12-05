@@ -38,4 +38,12 @@ public interface MacProxyProviderConstants {
 
     String EXCEPTIONS_LIST_PROPERTY_NAME = "ExceptionsList";
 
+    String HTTP_USER_PROPERTY_NAME = "HTTPUser";
+
+    String HTTPS_USER_PROPERTY_NAME = "HTTPSUser";
+
+    String FTP_USER_PROPERTY_NAME = "FTPUser";
+
+    String SOCKS_USER_PROPERTY_NAME = "SOCKSUser";
+
 }

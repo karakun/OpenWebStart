@@ -37,6 +37,18 @@ public class MacProxyProvider implements ProxyProvider {
         if (proxySettings.isFtpPassive()) {
             showUnsupportedFeatureDialog("proxy.unsupportedFeature.ftpPassive");
         }
+        if (proxySettings.getHttpUser() != null) {
+            showUnsupportedFeatureDialog("proxy.unsupportedFeature.httpUser");
+        }
+        if (proxySettings.getHttpsUser() != null) {
+            showUnsupportedFeatureDialog("proxy.unsupportedFeature.httpsUser");
+        }
+        if (proxySettings.getFtpUser() != null) {
+            showUnsupportedFeatureDialog("proxy.unsupportedFeature.ftpUser");
+        }
+        if (proxySettings.getSocksUser() != null) {
+            showUnsupportedFeatureDialog("proxy.unsupportedFeature.socksUser");
+        }
 
         if (proxySettings.isAutoConfigEnabled()) {
             internalProvider = new PacBasedProxyProvider(proxySettings.getAutoConfigUrl());

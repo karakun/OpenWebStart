@@ -41,7 +41,12 @@ public class MacProxySettings {
 
     private boolean ftpPassive;
 
+    private String httpUser;
+
     private List<String> exceptionList = new ArrayList<>();
+    private String httpsUser;
+    private String ftpUser;
+    private String socksUser;
 
     public void setHttpHost(final String httpHost) {
         this.httpHost = httpHost;
@@ -185,5 +190,37 @@ public class MacProxySettings {
 
     public List<String> getExceptionList() {
         return Collections.unmodifiableList(exceptionList);
+    }
+
+    public void setHttpUser(final String httpUser) {
+        this.httpUser = httpUser;
+    }
+
+    public String getHttpUser() {
+        return httpUser;
+    }
+
+    public void setHttpsUser(final String httpsUser) {
+        this.httpsUser = httpsUser;
+    }
+
+    public void setFtpUser(final String ftpUser) {
+        this.ftpUser = ftpUser;
+    }
+
+    public void setSocksUser(final String socksUser) {
+        this.socksUser = socksUser;
+    }
+
+    public String getHttpsUser() {
+        return httpsUser;
+    }
+
+    public String getFtpUser() {
+        return ftpUser;
+    }
+
+    public String getSocksUser() {
+        return socksUser;
     }
 }
