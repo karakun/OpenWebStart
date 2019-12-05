@@ -33,15 +33,17 @@ public class DialogWithResult<R> extends JDialog {
 
         final IconComponent icon = new IconComponent(imageIcon);
 
-        final JPanel messageWrapperPanel = new JPanel();
         final JTextArea messageLabel = new JTextArea(message);
         messageLabel.setEditable(false);
-        messageLabel.setBackground(messageWrapperPanel.getBackground());
+        messageLabel.setBackground(null);
+        messageLabel.setWrapStyleWord(true);
+        messageLabel.setLineWrap(true);
+        messageLabel.setColumns(50);
 
+        final JPanel messageWrapperPanel = new JPanel();
         messageWrapperPanel.setLayout(new BorderLayout(12, 12));
         messageWrapperPanel.add(icon, BorderLayout.WEST);
         messageWrapperPanel.add(messageLabel, BorderLayout.CENTER);
-
 
         final JPanel actionWrapperPanel = new JPanel();
         actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
@@ -93,5 +95,9 @@ public class DialogWithResult<R> extends JDialog {
                 throw new RuntimeException("Error in handling dialog!", e);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new DialogWithResult<>("Title", "This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line.").showAndWait();
     }
 }
