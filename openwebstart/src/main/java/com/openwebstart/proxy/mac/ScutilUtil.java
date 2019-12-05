@@ -1,11 +1,16 @@
 package com.openwebstart.proxy.mac;
 
+import com.openwebstart.util.ProcessUtil;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -28,7 +33,21 @@ import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_ENABLE_
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PROXY_PROPERTY_NAME;
 
-public class ScutilParser {
+public class ScutilUtil {
+
+    public static MacProxySettings executeScutil() throws IOException, InterruptedException, ExecutionException {
+        final Process process = new ProcessBuilder()
+                .command("scutil", "--proxy")
+                .redirectErrorStream(true)
+                .start();
+        final Future<String> out = ProcessUtil.getIO(process.getInputStream());
+        final int exitValue = process.waitFor();
+        if (exitValue != 0) {
+            throw new RuntimeException("process ended with error code " + exitValue);
+        }
+        final String processOut = out.get();
+        return parse(processOut);
+    }
 
     public static MacProxySettings parse(final String processOut) {
         final Scanner scanner = new Scanner(processOut);
@@ -59,7 +78,7 @@ public class ScutilParser {
         final MacProxySettings proxySettings = new MacProxySettings();
 
         getValueForSimpleParam(HTTP_ENABLE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setHttpEnabled);
         getValueForSimpleParam(HTTP_PROXY_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setHttpHost);
@@ -68,7 +87,7 @@ public class ScutilParser {
                 .ifPresent(proxySettings::setHttpPort);
 
         getValueForSimpleParam(HTTPS_ENABLE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setHttpsEnabled);
         getValueForSimpleParam(HTTPS_PROXY_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setHttpsHost);
@@ -77,7 +96,7 @@ public class ScutilParser {
                 .ifPresent(proxySettings::setHttpsPort);
 
         getValueForSimpleParam(FTP_ENABLE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setFtpEnabled);
         getValueForSimpleParam(FTP_PROXY_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setFtpHost);
@@ -86,7 +105,7 @@ public class ScutilParser {
                 .ifPresent(proxySettings::setFtpPort);
 
         getValueForSimpleParam(SOCKS_ENABLE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setSocksEnabled);
         getValueForSimpleParam(SOCKS_PROXY_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setSocksHost);
@@ -95,22 +114,22 @@ public class ScutilParser {
                 .ifPresent(proxySettings::setSocksPort);
 
         getValueForSimpleParam(AUTO_CONFIG_ENABLED_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setAutoConfigEnabled);
         getValueForSimpleParam(AUTO_CONFIG_URL_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::toUrl)
+                .map(ScutilUtil::toUrl)
                 .ifPresent(proxySettings::setAutoConfigUrl);
 
         getValueForSimpleParam(AUTO_DISCOVERY_ENABLE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setAutoDiscoveryEnabled);
 
         getValueForSimpleParam(EXCLUDE_SIMPLE_HOSTNAMES_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setExcludeSimpleHostnames);
 
         getValueForSimpleParam(FTP_PASSIVE_PROPERTY_NAME, parameterLines)
-                .map(ScutilParser::asBooleanValue)
+                .map(ScutilUtil::asBooleanValue)
                 .ifPresent(proxySettings::setFtpPassive);
 
         getValueForArrayParam(EXCEPTIONS_LIST_PROPERTY_NAME, parameterLines)

@@ -1,6 +1,5 @@
 package com.openwebstart.proxy.mac;
 
-import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ class ScutilParserTest {
         final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out1.txt"));
 
         //when:
-        final MacProxySettings proxySettings = ScutilParser.parse(output);
+        final MacProxySettings proxySettings = ScutilUtil.parse(output);
 
         //then:
         Assertions.assertNotNull(proxySettings);
@@ -40,7 +39,7 @@ class ScutilParserTest {
         final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out2.txt"));
 
         //when:
-        final MacProxySettings proxySettings = ScutilParser.parse(output);
+        final MacProxySettings proxySettings = ScutilUtil.parse(output);
 
         //then:
         Assertions.assertNotNull(proxySettings);
