@@ -2,11 +2,11 @@ package com.openwebstart.proxy.firefox;
 
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;

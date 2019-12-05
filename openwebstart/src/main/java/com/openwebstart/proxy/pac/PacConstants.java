@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.util.pac;
+package com.openwebstart.proxy.pac;
 
 public interface PacConstants {
 

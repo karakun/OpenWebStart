@@ -1,8 +1,8 @@
 package com.openwebstart.proxy.manual;
 
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfiguration;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfiguration;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;

@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.util.pac;
+package com.openwebstart.proxy.pac;
 
 import com.openwebstart.proxy.ProxyProvider;
 import net.adoptopenjdk.icedteaweb.Assert;

@@ -1,10 +1,10 @@
 package com.openwebstart.proxy.windows;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 
 import java.net.Proxy;
 import java.net.URI;

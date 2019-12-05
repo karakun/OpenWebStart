@@ -2,11 +2,11 @@ package com.openwebstart.proxy.mac;
 
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.ProxyProviderType;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
+import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.ui.error.ProxyDialogResult;
 import com.openwebstart.proxy.ui.error.UnsupportedFeatureDialog;
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
