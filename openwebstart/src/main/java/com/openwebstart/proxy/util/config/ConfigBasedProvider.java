@@ -1,14 +1,21 @@
 package com.openwebstart.proxy.util.config;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.util.CidrUtils;
+import com.openwebstart.proxy.util.SubnetUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static com.openwebstart.proxy.util.ProxyConstants.FTP_SCHEMA;
 import static com.openwebstart.proxy.util.ProxyConstants.HTTPS_SCHEMA;
@@ -29,6 +36,11 @@ public class ConfigBasedProvider implements ProxyProvider {
     @Override
     public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
+
+        if (isExcluded(uri)) {
+            LOG.debug("URL {} is excluded", uri);
+            return Collections.singletonList(Proxy.NO_PROXY);
+        }
 
         final List<Proxy> proxies = new ArrayList<>();
         final String scheme = uri.getScheme();
@@ -61,5 +73,42 @@ public class ConfigBasedProvider implements ProxyProvider {
             LOG.debug("Proxies found for '{}' : {}", uri, proxies);
         }
         return proxies;
+    }
+
+    private boolean isExcluded(final URI uri) {
+        return configuration.getBypassList()
+                .stream()
+                .filter(exclusion -> {
+                    final String host = uri.getHost();
+
+                    //google.de
+                    if(Objects.equals(host, exclusion)) {
+                        return true;
+                    }
+
+                    //*.local
+                    if(exclusion.startsWith("*.")) {
+                        return host.endsWith(exclusion.substring(1));
+                    }
+
+
+                    final InetSocketAddress socketAddress = new InetSocketAddress(host, uri.getPort());
+                    final String ipAdress = socketAddress.getAddress().getHostAddress();
+                    //169.254.120.4
+                    if(Objects.equals(ipAdress, exclusion)) {
+                        return true;
+                    }
+
+                    //169.254/16
+                    if(exclusion.contains("/")) {
+                        if(CidrUtils.isInRange(exclusion, ipAdress)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
+                .findAny()
+                .isPresent();
     }
 }
