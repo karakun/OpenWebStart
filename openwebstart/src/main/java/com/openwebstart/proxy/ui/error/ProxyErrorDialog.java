@@ -26,7 +26,7 @@ public abstract class ProxyErrorDialog extends DialogWithResult<ProxyDialogResul
         final String continueText = Translator.getInstance().translate(CONTINUE_WITH_NO_PROXY_TITLE_KEY);
         final String continueDescription = Translator.getInstance().translate(CONTINUE_WITH_NO_PROXY_DESCRIPTION_KEY);
 
-        return new DialogButton<>(continueText, () -> ProxyDialogResult.CONTINUE_WITHOUT_PROXY, continueDescription);
+        return new DialogButton<>(continueText, () -> ProxyDialogResult.CONTINUE, continueDescription);
     }
 }
 

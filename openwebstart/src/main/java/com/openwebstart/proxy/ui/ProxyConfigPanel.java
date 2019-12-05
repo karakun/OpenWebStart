@@ -73,11 +73,11 @@ public class ProxyConfigPanel extends FormPanel {
         addRow(0, noProxySelection);
 
         useWinSystemSettings = new JRadioButton(translator.translate("proxyPanel.systemSettings.text"));
-        useWinSystemSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.WINDOWS));
+        useWinSystemSettings.addActionListener(e -> onRadioButtonSelected(ProxyProviderType.OPERATION_SYSTEM));
         useWinSystemSettings.setToolTipText(translator.translate("proxyPanel.systemSettings.description"));
         uiLock.update(ConfigurationConstants.KEY_PROXY_TYPE, useWinSystemSettings);
         basicConfigButtonGroup.add(useWinSystemSettings);
-        if (ProxyProviderType.WINDOWS.isSupported()) {
+        if (ProxyProviderType.OPERATION_SYSTEM.isSupported()) {
             addRow(1, useWinSystemSettings);
         }
 
@@ -196,7 +196,7 @@ public class ProxyConfigPanel extends FormPanel {
         } else if (useFirefoxSettings.isSelected()) {
             config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.FIREFOX.getConfigValue() + "");
         } else if (useWinSystemSettings.isSelected()) {
-            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.WINDOWS.getConfigValue() + "");
+            config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.OPERATION_SYSTEM.getConfigValue() + "");
         } else if (useManualSettings.isSelected()) {
             config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.MANUAL_HOSTS.getConfigValue() + "");
         } else if (usePacSettings.isSelected()) {
@@ -221,7 +221,7 @@ public class ProxyConfigPanel extends FormPanel {
                     noProxySelection.setSelected(true);
                 } else if (providerType == ProxyProviderType.FIREFOX) {
                     useFirefoxSettings.setSelected(true);
-                } else if (providerType == ProxyProviderType.WINDOWS) {
+                } else if (providerType == ProxyProviderType.OPERATION_SYSTEM) {
                     useWinSystemSettings.setSelected(true);
                 } else if (providerType == ProxyProviderType.MANUAL_HOSTS) {
                     useManualSettings.setSelected(true);

@@ -1,0 +1,8 @@
+<dictionary> {
+  HTTPEnable : 1
+  HTTPPort : 80
+  HTTPProxy : example.proxy
+  HTTPSEnable : 1
+  HTTPSPort : 88
+  HTTPSProxy : example.https.proxy
+}
