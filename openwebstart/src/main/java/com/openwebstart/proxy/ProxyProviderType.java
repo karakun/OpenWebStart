@@ -68,7 +68,7 @@ public enum ProxyProviderType {
     }
 
     public void checkSupported() {
-        if (this == OPERATION_SYSTEM && !OperationSystem.getLocalSystem().isWindows()) {
+        if (this == OPERATION_SYSTEM && !(OperationSystem.getLocalSystem().isWindows() || OperationSystem.getLocalSystem().isMac())) {
             throw new IllegalStateException("Windows proxy is only supported on windows os");
         }
         if (this == FIREFOX && OperationSystem.getLocalSystem().isMac()) {

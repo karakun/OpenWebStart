@@ -5,6 +5,7 @@ import com.openwebstart.util.ProcessUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -145,8 +146,7 @@ public class ScutilUtil {
         getValueForSimpleParam(SOCKS_USER_PROPERTY_NAME, parameterLines)
                 .ifPresent(proxySettings::setSocksUser);
 
-        getValueForArrayParam(EXCEPTIONS_LIST_PROPERTY_NAME, parameterLines)
-                .ifPresent(proxySettings::setExceptionsList);
+        proxySettings.setExceptionsList(getValueForArrayParam(EXCEPTIONS_LIST_PROPERTY_NAME, parameterLines));
 
         return proxySettings;
     }
@@ -170,7 +170,7 @@ public class ScutilUtil {
                 .findFirst();
     }
 
-    private static Optional<List<String>> getValueForArrayParam(final String paramName, final List<String> parameterLines) {
+    private static List<String> getValueForArrayParam(final String paramName, final List<String> parameterLines) {
         return parameterLines
                 .stream()
                 .filter(l -> Objects.equals(paramName + " : <array> {", l.trim()))
@@ -183,7 +183,7 @@ public class ScutilUtil {
                             .map(v -> v.split(Pattern.quote(":"))[1])
                             .map(v -> v.trim())
                             .collect(Collectors.toList());
-                });
+                }).orElse(Collections.emptyList());
     }
 
 }
