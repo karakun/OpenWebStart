@@ -15,12 +15,17 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class MacProxyProvider implements ProxyProvider {
 
-    private final static Logger LOG = LoggerFactory.getLogger(MacProxyProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MacProxyProvider.class);
+
+    private static final Set<String> LOCALHOST_INDICATORS = new HashSet<>(Arrays.asList("localhost", "*.local"));
 
     private final ProxyProvider internalProvider;
 
@@ -71,8 +76,13 @@ public class MacProxyProvider implements ProxyProvider {
                 proxyConfiguration.setSocksPort(proxySettings.getSocksPort());
             }
             proxySettings.getExceptionList().forEach(proxyConfiguration::addToBypassList);
+            proxyConfiguration.setBypassLocal(bypassLocalhost(proxySettings));
             internalProvider = new ConfigBasedProvider(proxyConfiguration);
         }
+    }
+
+    private boolean bypassLocalhost(MacProxySettings proxySettings) {
+        return proxySettings.getExceptionList().stream().anyMatch(LOCALHOST_INDICATORS::contains);
     }
 
     private void showUnsupportedFeatureDialog(final String featureKey) {
