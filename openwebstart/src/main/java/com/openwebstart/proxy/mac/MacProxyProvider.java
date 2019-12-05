@@ -1,10 +1,17 @@
 package com.openwebstart.proxy.mac;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.ProxyProviderType;
+import com.openwebstart.proxy.ui.ProxyConfigPanel;
+import com.openwebstart.proxy.ui.error.ProxyDialogResult;
+import com.openwebstart.proxy.ui.error.UnsupportedFeatureDialog;
 import com.openwebstart.proxy.util.config.ConfigBasedProvider;
 import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
 import com.openwebstart.util.ProcessUtil;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -14,6 +21,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class MacProxyProvider implements ProxyProvider {
+
+    private final static Logger LOG = LoggerFactory.getLogger(MacProxyProvider.class);
+
 
     private final ProxyProvider internalProvider;
 
@@ -33,13 +43,25 @@ public class MacProxyProvider implements ProxyProvider {
         final MacProxySettings proxySettings = ScutilParser.parse(processOut);
 
         if (proxySettings.isAutoDiscoveryEnabled()) {
-            //TODO: Notify User that unsupported proxy settings are configured!
+            final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, "").showAndWait();
+            if(result == ProxyDialogResult.EXIT) {
+                LOG.info("Exit app based on missing proxy feature. Please reconfigure the proxy settings");
+                JNLPRuntime.exit(-1);
+            }
         }
         if (proxySettings.isExcludeSimpleHostnames()) {
-            //TODO: Notify User that unsupported proxy settings are configured!
+            final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, "").showAndWait();
+            if(result == ProxyDialogResult.EXIT) {
+                LOG.info("Exit app based on missing proxy feature. Please reconfigure the proxy settings");
+                JNLPRuntime.exit(-1);
+            }
         }
         if (proxySettings.isFtpPassive()) {
-            //TODO: Notify User that unsupported proxy settings are configured!
+            final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, "").showAndWait();
+            if(result == ProxyDialogResult.EXIT) {
+                LOG.info("Exit app based on missing proxy feature. Please reconfigure the proxy settings");
+                JNLPRuntime.exit(-1);
+            }
         }
 
         if (proxySettings.isAutoConfigEnabled()) {
