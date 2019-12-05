@@ -23,4 +23,8 @@ public interface FirefoxConstants {
     String SOCKS_PROPERTY_NAME = "network.proxy.socks";
 
     String SOCKS_PORT_PROPERTY_NAME = "network.proxy.socks_port";
+
+    String EXCLUSIONS_PROPERTY_NAME = "network.proxy.no_proxies_on";
+
+    String HIJACK_LOCALHOST_PROPERTY_NAME = "network.proxy.allow_hijacking_localhost";
 }

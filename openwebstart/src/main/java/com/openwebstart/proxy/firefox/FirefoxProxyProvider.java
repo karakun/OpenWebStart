@@ -15,9 +15,11 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.openwebstart.proxy.firefox.FirefoxConstants.AUTO_CONFIG_URL_PROPERTY_NAME;
+import static com.openwebstart.proxy.firefox.FirefoxConstants.EXCLUSIONS_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.HTTP_PORT_PROPERTY_NAME;
@@ -33,6 +35,7 @@ import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 public class FirefoxProxyProvider implements ProxyProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FirefoxProxyProvider.class);
+
     private final ProxyProvider internalProvider;
 
     public FirefoxProxyProvider() throws Exception {
@@ -69,6 +72,12 @@ public class FirefoxProxyProvider implements ProxyProvider {
         proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
         proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
+        Arrays.asList(prefs.getStringValue(EXCLUSIONS_PROPERTY_NAME).split("[, ]+"))
+                .stream()
+                .forEach(v -> proxyConfiguration.addToBypassList(v));
+
+        proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().isEmpty());
+
         return new ConfigBasedProvider(proxyConfiguration);
     }
 

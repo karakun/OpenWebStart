@@ -5,6 +5,8 @@ import com.openwebstart.proxy.util.CidrUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.util.UrlUtils;
+import sun.net.util.URLUtil;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -33,6 +35,10 @@ public class ConfigBasedProvider implements ProxyProvider {
     @Override
     public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
+
+        if(configuration.isBypassLocal() && UrlUtils.isLocalhost(uri)) {
+            return Collections.singletonList(Proxy.NO_PROXY);
+        }
 
         if (isExcluded(uri)) {
             LOG.debug("URL {} is excluded", uri);
@@ -84,8 +90,13 @@ public class ConfigBasedProvider implements ProxyProvider {
                     }
 
                     //*.local
-                    if(exclusion.startsWith("*.")) {
-                        return host.endsWith(exclusion.substring(1));
+                    if(exclusion.startsWith("*.") && host.endsWith(exclusion.substring(1))) {
+                        return true;
+                    }
+
+                    //.mozilla
+                    if(exclusion.startsWith(".") && host.endsWith(exclusion)) {
+                        return true;
                     }
 
 
