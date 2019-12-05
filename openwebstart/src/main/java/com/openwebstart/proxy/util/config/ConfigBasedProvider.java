@@ -2,20 +2,17 @@ package com.openwebstart.proxy.util.config;
 
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.util.CidrUtils;
-import com.openwebstart.proxy.util.SubnetUtils;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static com.openwebstart.proxy.util.ProxyConstants.FTP_SCHEMA;
 import static com.openwebstart.proxy.util.ProxyConstants.HTTPS_SCHEMA;
