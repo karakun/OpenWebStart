@@ -103,8 +103,7 @@ public class ConfigBasedProvider implements ProxyProvider {
         }
 
         try {
-            final int port = uri.getPort() >= 0 ? uri.getPort() : uri.toURL().getDefaultPort();
-            final InetSocketAddress socketAddress = new InetSocketAddress(host, port);
+            final InetSocketAddress socketAddress = new InetSocketAddress(host, 0);
             final String ipAdress = socketAddress.getAddress().getHostAddress();
             // 169.254.120.4
             if (Objects.equals(ipAdress, exclusion)) {
@@ -116,7 +115,7 @@ public class ConfigBasedProvider implements ProxyProvider {
                 return isInRange(exclusion, ipAdress);
             }
         } catch (final Exception e) {
-            LOG.debug("Looks like uri '{}' can not converted and checked as socket address. error: '{}'", uri, e.getMessage());
+            LOG.debug("Looks like we cannot get the socket address for '{}'. error: '{}'", uri, e.getMessage());
         }
 
         return false;
