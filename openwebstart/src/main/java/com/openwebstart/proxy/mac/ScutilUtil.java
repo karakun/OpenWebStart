@@ -1,7 +1,5 @@
 package com.openwebstart.proxy.mac;
 
-import com.openwebstart.util.ProcessUtil;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -37,20 +34,12 @@ import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_ENABLE_
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PROXY_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_USER_PROPERTY_NAME;
+import static com.openwebstart.util.ProcessUtil.executeProcessAndReturnOutput;
 
 public class ScutilUtil {
 
     public static MacProxySettings executeScutil() throws IOException, InterruptedException, ExecutionException {
-        final Process process = new ProcessBuilder()
-                .command("scutil", "--proxy")
-                .redirectErrorStream(true)
-                .start();
-        final Future<String> out = ProcessUtil.getIO(process.getInputStream());
-        final int exitValue = process.waitFor();
-        if (exitValue != 0) {
-            throw new RuntimeException("process ended with error code " + exitValue);
-        }
-        final String processOut = out.get();
+        final String processOut = executeProcessAndReturnOutput("scutil", "--proxy");
         return parse(processOut);
     }
 

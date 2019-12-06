@@ -3,15 +3,30 @@ package com.openwebstart.util;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ProcessUtil {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ProcessUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessUtil.class);
+
+    public static String executeProcessAndReturnOutput(String... args) throws IOException, InterruptedException, ExecutionException {
+        final Process process = new ProcessBuilder()
+                .command(args)
+                .redirectErrorStream(true)
+                .start();
+        final Future<String> out = ProcessUtil.getIO(process.getInputStream());
+        final int exitValue = process.waitFor();
+        if (exitValue != 0) {
+            throw new RuntimeException("process ended with error code " + exitValue);
+        }
+        return out.get();
+    }
 
     public static void logIO(final InputStream src) {
         Executors.newSingleThreadExecutor().execute(() -> {
