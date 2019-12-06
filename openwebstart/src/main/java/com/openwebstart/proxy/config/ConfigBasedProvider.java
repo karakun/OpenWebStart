@@ -102,17 +102,20 @@ public class ConfigBasedProvider implements ProxyProvider {
             return true;
         }
 
+        try {
+            final InetSocketAddress socketAddress = new InetSocketAddress(host, 0);
+            final String ipAddress = socketAddress.getAddress().getHostAddress();
+            // 169.254.120.4
+            if (Objects.equals(ipAddress, exclusion)) {
+                return true;
+            }
 
-        final InetSocketAddress socketAddress = new InetSocketAddress(host, uri.getPort());
-        final String ipAdress = socketAddress.getAddress().getHostAddress();
-        // 169.254.120.4
-        if (Objects.equals(ipAdress, exclusion)) {
-            return true;
-        }
-
-        // 169.254/16
-        if (isCidrNotation(exclusion) && isIpv4(ipAdress)) {
-            return isInRange(exclusion, ipAdress);
+            // 169.254/16
+            if (isCidrNotation(exclusion) && isIpv4(ipAddress)) {
+                return isInRange(exclusion, ipAddress);
+            }
+        } catch (final Exception e) {
+            LOG.debug("Looks like we cannot get the socket address for '{}'. error: '{}'", uri, e.getMessage());
         }
 
         return false;
