@@ -1,16 +1,9 @@
 package com.openwebstart.proxy.mac;
 
 import com.openwebstart.proxy.ProxyProvider;
-import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
-import com.openwebstart.proxy.ui.error.ProxyDialogResult;
-import com.openwebstart.proxy.ui.error.UnsupportedFeatureDialog;
-import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -21,9 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class MacProxyProvider implements ProxyProvider {
+import static com.openwebstart.proxy.util.ProxyUtlis.showUnsupportedFeatureDialog;
 
-    private static final Logger LOG = LoggerFactory.getLogger(MacProxyProvider.class);
+public class MacProxyProvider implements ProxyProvider {
 
     private static final Set<String> LOCALHOST_INDICATORS = new HashSet<>(Arrays.asList("localhost", "*.local"));
 
@@ -83,15 +76,6 @@ public class MacProxyProvider implements ProxyProvider {
 
     private boolean bypassLocalhost(MacProxySettings proxySettings) {
         return proxySettings.getExceptionList().stream().anyMatch(LOCALHOST_INDICATORS::contains);
-    }
-
-    private void showUnsupportedFeatureDialog(final String featureKey) {
-        final String featureName = Translator.getInstance().translate(featureKey);
-        final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, featureName).showAndWait();
-        if (result == ProxyDialogResult.EXIT) {
-            LOG.info("Exit app based on missing proxy feature. Please reconfigure the proxy settings");
-            JNLPRuntime.exit(-1);
-        }
     }
 
     @Override
