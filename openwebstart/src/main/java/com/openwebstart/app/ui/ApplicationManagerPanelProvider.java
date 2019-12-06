@@ -24,6 +24,11 @@ public class ApplicationManagerPanelProvider implements ControlPanelProvider {
     }
 
     @Override
+    public boolean isActive(final DeploymentConfiguration config) {
+        return false;
+    }
+
+    @Override
     public JComponent createPanel(final DeploymentConfiguration config) {
         return new ApplicationManagerPanel(config);
     }
