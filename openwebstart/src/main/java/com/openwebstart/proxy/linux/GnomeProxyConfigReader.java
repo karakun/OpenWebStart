@@ -163,7 +163,7 @@ class GnomeProxyConfigReader {
     private static String parseString(String s) {
         final String trimmed = s.trim();
         if (trimmed.startsWith("'") && trimmed.endsWith("'") && trimmed.length() > 1) {
-            return trimmed.substring(1, trimmed.length()-1);
+            return trimmed.substring(1, trimmed.length() - 1);
         } else {
             throw new IllegalArgumentException("not a gnome string: " + s);
         }
@@ -172,6 +172,7 @@ class GnomeProxyConfigReader {
     private enum ParserState {
         START, OUTSIDE, INSIDE, END
     }
+
     private static List<String> parseList(String s) {
         final List<String> result = new ArrayList<>();
         StringBuilder next = new StringBuilder();

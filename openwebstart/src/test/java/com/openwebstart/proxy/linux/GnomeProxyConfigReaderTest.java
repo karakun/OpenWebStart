@@ -1,6 +1,5 @@
 package com.openwebstart.proxy.linux;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -11,10 +10,18 @@ import java.util.Map;
 import static com.openwebstart.proxy.linux.LinuxProxyProvider.LinuxProxyMode.MANUAL;
 import static com.openwebstart.proxy.linux.LinuxProxyProvider.LinuxProxyMode.NO_PROXY;
 import static com.openwebstart.proxy.linux.LinuxProxyProvider.LinuxProxyMode.PAC;
-import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.*;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_AUTOCONFIG_URL;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_FTP_HOST;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_FTP_PORT;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_HTTPS_HOST;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_HTTPS_PORT;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_HTTP_PORT;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_IGNORE_HOSTS;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_MODE;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_SOCKS_HOST;
+import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_SOCKS_PORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**

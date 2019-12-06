@@ -14,7 +14,6 @@ import java.util.List;
 
 import static com.openwebstart.proxy.linux.GnomeProxyConfigReader.readGnomeProxyConfig;
 import static com.openwebstart.proxy.linux.LinuxProxyProvider.LinuxProxyMode.NO_PROXY;
-import static com.openwebstart.proxy.linux.LinuxProxyProviderConstants.GNOME_PROXY_USE_AUTHENTICATION;
 import static com.openwebstart.proxy.linux.SystemPropertiesProxyConfigReader.readSystemPropertiesProxyConfig;
 import static com.openwebstart.proxy.util.ProxyUtlis.showUnsupportedFeatureDialog;
 
