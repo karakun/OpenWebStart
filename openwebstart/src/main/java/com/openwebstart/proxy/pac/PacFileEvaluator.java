@@ -35,7 +35,7 @@ obligated to do so.  If you do not wish to do so, delete this
 exception statement from your version.
 */
 
-package com.openwebstart.proxy.util.pac;
+package com.openwebstart.proxy.pac;
 
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.logging.Logger;

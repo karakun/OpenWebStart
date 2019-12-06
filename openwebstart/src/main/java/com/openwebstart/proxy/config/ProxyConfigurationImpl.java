@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.util.config;
+package com.openwebstart.proxy.config;
 
 import java.util.ArrayList;
 import java.util.Collections;

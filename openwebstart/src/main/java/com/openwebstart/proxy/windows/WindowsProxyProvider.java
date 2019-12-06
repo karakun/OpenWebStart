@@ -1,10 +1,10 @@
 package com.openwebstart.proxy.windows;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 
 import java.net.Proxy;
 import java.net.URI;
@@ -23,6 +23,9 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_REGISTRY_VAL;
 
 public class WindowsProxyProvider implements ProxyProvider {
+
+    // see https://blogs.msdn.microsoft.com/askie/2015/10/12/how-to-configure-proxy-settings-for-ie10-and-ie11-as-iem-is-not-available/
+    private static final String EXCLUDE_LOCALHOST_MAGIC_VALUE = "<local>";
 
     private final ProxyProvider internalProvider;
 
@@ -78,6 +81,7 @@ public class WindowsProxyProvider implements ProxyProvider {
                     if (overrideHostsValue != null) {
                         Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
                     }
+                    proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
                     internalProvider = new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?

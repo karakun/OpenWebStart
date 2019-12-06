@@ -2,11 +2,11 @@ package com.openwebstart.proxy.firefox;
 
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
-import com.openwebstart.proxy.util.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -15,11 +15,14 @@ import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.openwebstart.proxy.firefox.FirefoxConstants.AUTO_CONFIG_URL_PROPERTY_NAME;
+import static com.openwebstart.proxy.firefox.FirefoxConstants.EXCLUSIONS_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.FTP_PROPERTY_NAME;
+import static com.openwebstart.proxy.firefox.FirefoxConstants.HIJACK_LOCALHOST_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.HTTP_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.HTTP_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.PROXY_TYPE_PROPERTY_NAME;
@@ -33,6 +36,7 @@ import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 public class FirefoxProxyProvider implements ProxyProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FirefoxProxyProvider.class);
+
     private final ProxyProvider internalProvider;
 
     public FirefoxProxyProvider() throws Exception {
@@ -69,6 +73,11 @@ public class FirefoxProxyProvider implements ProxyProvider {
         proxyConfiguration.setFtpPort(prefs.getIntValue(FTP_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
         proxyConfiguration.setSocksHost(prefs.getStringValue(SOCKS_PROPERTY_NAME));
         proxyConfiguration.setSocksPort(prefs.getIntValue(SOCKS_PORT_PROPERTY_NAME, DEFAULT_PROTOCOL_PORT));
+        proxyConfiguration.setBypassLocal(!prefs.getBooleanValue(HIJACK_LOCALHOST_PROPERTY_NAME, false));
+
+        Arrays.stream(prefs.getStringValue(EXCLUSIONS_PROPERTY_NAME).split("[, ]+"))
+                .forEach(proxyConfiguration::addToBypassList);
+
         return new ConfigBasedProvider(proxyConfiguration);
     }
 

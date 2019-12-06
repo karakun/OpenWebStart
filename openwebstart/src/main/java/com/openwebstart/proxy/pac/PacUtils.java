@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.util.pac;
+package com.openwebstart.proxy.pac;
 
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.openwebstart.proxy.util.pac.PacConstants.DIRECT;
-import static com.openwebstart.proxy.util.pac.PacConstants.PROXY;
-import static com.openwebstart.proxy.util.pac.PacConstants.SOCKS;
+import static com.openwebstart.proxy.pac.PacConstants.DIRECT;
+import static com.openwebstart.proxy.pac.PacConstants.PROXY;
+import static com.openwebstart.proxy.pac.PacConstants.SOCKS;
 
 //TODO: Class should be refactored
 class PacUtils {

@@ -1,8 +1,8 @@
-package com.openwebstart.proxy.config;
+package com.openwebstart.proxy.manual;
 
-import com.openwebstart.proxy.util.config.ConfigBasedProvider;
-import com.openwebstart.proxy.util.config.ProxyConfiguration;
-import com.openwebstart.proxy.util.config.ProxyConfigurationImpl;
+import com.openwebstart.proxy.config.ConfigBasedProvider;
+import com.openwebstart.proxy.config.ProxyConfiguration;
+import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -42,6 +42,7 @@ public class ManualConfigBasedProxyProvider extends ConfigBasedProvider {
         result.setFtpPort(toPort(config.getProperty(KEY_PROXY_FTP_PORT)));
         result.setSocksHost(toHost(config.getProperty(KEY_PROXY_SOCKS4_HOST)));
         result.setSocksPort(toPort(config.getProperty(KEY_PROXY_SOCKS4_PORT)));
+        result.setBypassLocal(Boolean.parseBoolean(config.getProperty(KEY_PROXY_BYPASS_LOCAL)));
 
         config.getPropertyAsList(KEY_PROXY_BYPASS_LIST, ',').stream()
                 .filter(host -> !StringUtils.isBlank(host))

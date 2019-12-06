@@ -4,7 +4,6 @@ import com.openwebstart.jvm.ui.dialogs.DialogButton;
 import com.openwebstart.jvm.ui.dialogs.DialogWithResult;
 import com.openwebstart.proxy.ProxyProviderType;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.sourceforge.jnlp.proxy.ProxyType;
 
 public class UnsupportedFeatureDialog extends DialogWithResult<ProxyDialogResult> {
 

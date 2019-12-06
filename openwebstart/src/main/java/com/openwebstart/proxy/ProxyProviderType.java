@@ -1,11 +1,11 @@
 package com.openwebstart.proxy;
 
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.proxy.config.ManualPacFileProxyProvider;
-import com.openwebstart.proxy.config.ManualConfigBasedProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
+import com.openwebstart.proxy.manual.ManualConfigBasedProxyProvider;
+import com.openwebstart.proxy.manual.ManualPacFileProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
