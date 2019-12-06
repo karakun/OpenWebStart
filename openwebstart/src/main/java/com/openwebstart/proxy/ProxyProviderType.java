@@ -111,6 +111,7 @@ public enum ProxyProviderType {
         return Stream.of(ProxyProviderType.values())
                 .filter(t -> value == t.getConfigValue())
                 .findFirst()
+                .filter(ProxyProviderType::isSupported)
                 .orElse(NONE);
     }
 }
