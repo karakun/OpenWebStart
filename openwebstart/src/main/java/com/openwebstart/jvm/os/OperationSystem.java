@@ -31,18 +31,18 @@ public enum OperationSystem {
     ;
 
     //TODO: Should be in ITW
-    private final static String OS_SYSTEM_PROPERTY = "os.name";
+    private static final String OS_SYSTEM_PROPERTY = "os.name";
 
     //TODO: Should be in ITW
-    private final static String OS_ARCH_SYSTEM_PROPERTY = "sun.arch.data.model";
+    private static final String OS_ARCH_SYSTEM_PROPERTY = "sun.arch.data.model";
 
-    private final static String WIN = "win";
+    private static final String WIN = "win";
 
-    private final static String LINUX = "linux";
+    private static final String LINUX = "linux";
 
-    private final static String MAC = "mac";
+    private static final String MAC = "mac";
 
-    private final static String ARCH_64 = "64";
+    private static final String ARCH_64 = "64";
 
     private final String name;
 
@@ -62,6 +62,10 @@ public enum OperationSystem {
 
     public boolean isWindows() {
         return this == WIN64 || this == WIN32;
+    }
+
+    public boolean isLinux() {
+        return this == LINUX64 || this == LINUX32;
     }
 
     public String getName() {

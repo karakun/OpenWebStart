@@ -5,6 +5,7 @@ import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
+import com.openwebstart.proxy.linux.LinuxProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
@@ -31,6 +32,11 @@ import static com.openwebstart.proxy.firefox.FirefoxConstants.SOCKS_PORT_PROPERT
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SOCKS_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SSL_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.firefox.FirefoxConstants.SSL_PROPERTY_NAME;
+import static com.openwebstart.proxy.firefox.FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL;
+import static com.openwebstart.proxy.firefox.FirefoxProxyType.BROWSER_PROXY_TYPE_NONE;
+import static com.openwebstart.proxy.firefox.FirefoxProxyType.BROWSER_PROXY_TYPE_PAC;
+import static com.openwebstart.proxy.firefox.FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM;
+import static com.openwebstart.proxy.firefox.FirefoxProxyType.getForConfigValue;
 import static com.openwebstart.proxy.util.ProxyConstants.DEFAULT_PROTOCOL_PORT;
 
 public class FirefoxProxyProvider implements ProxyProvider {
@@ -43,21 +49,28 @@ public class FirefoxProxyProvider implements ProxyProvider {
         final FirefoxPreferences prefs = new FirefoxPreferences();
         prefs.load();
 
-        final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM.getConfigValue());
-        final FirefoxProxyType browserProxyType = FirefoxProxyType.getForConfigValue(type);
-        LOG.debug("FireFoxProxyType : {}", browserProxyType);
-        if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_PAC) {
+        final int type = prefs.getIntValue(PROXY_TYPE_PROPERTY_NAME, BROWSER_PROXY_TYPE_SYSTEM.getConfigValue());
+        final FirefoxProxyType proxyType = getForConfigValue(type);
+        LOG.debug("FireFoxProxyType : {}", proxyType);
+        if (proxyType == BROWSER_PROXY_TYPE_PAC) {
             internalProvider = createForPac(prefs);
-        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_MANUAL) {
+        } else if (proxyType == BROWSER_PROXY_TYPE_MANUAL) {
             internalProvider = createForManualConfig(prefs);
-        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_NONE) {
+        } else if (proxyType == BROWSER_PROXY_TYPE_NONE) {
             internalProvider = DirectProxyProvider.getInstance();
-        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM && OperationSystem.getLocalSystem().isWindows()) {
-            internalProvider = new WindowsProxyProvider();
-        } else if (browserProxyType == FirefoxProxyType.BROWSER_PROXY_TYPE_SYSTEM && OperationSystem.getLocalSystem().isMac()) {
-            internalProvider = new MacProxyProvider();
+        } else if (proxyType == BROWSER_PROXY_TYPE_SYSTEM) {
+            final OperationSystem localSystem = OperationSystem.getLocalSystem();
+            if (localSystem.isWindows()) {
+                internalProvider = new WindowsProxyProvider();
+            } else if (localSystem.isMac()) {
+                internalProvider = new MacProxyProvider();
+            } else if (localSystem.isLinux()) {
+                internalProvider = new LinuxProxyProvider();
+            } else {
+                throw new IllegalStateException("Firefox Proxy Type '" + proxyType + "' is not supported for " + localSystem);
+            }
         } else {
-            throw new IllegalStateException("Firefox Proxy Type '" + browserProxyType + "' is not supported");
+            throw new IllegalStateException("Firefox Proxy Type '" + proxyType + "' is not supported");
         }
     }
 
