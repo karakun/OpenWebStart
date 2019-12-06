@@ -12,7 +12,7 @@ import java.util.List;
 public class DirectProxyProvider implements ProxyProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectProxyProvider.class);
-    private final static DirectProxyProvider INSTANCE = new DirectProxyProvider();
+    private static final DirectProxyProvider INSTANCE = new DirectProxyProvider();
 
     private DirectProxyProvider() {
     }

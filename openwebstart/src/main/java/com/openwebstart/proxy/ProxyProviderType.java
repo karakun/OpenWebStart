@@ -3,6 +3,7 @@ package com.openwebstart.proxy;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.firefox.FirefoxProxyProvider;
+import com.openwebstart.proxy.linux.LinuxProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.manual.ManualConfigBasedProxyProvider;
 import com.openwebstart.proxy.manual.ManualPacFileProxyProvider;
@@ -36,6 +37,20 @@ public enum ProxyProviderType {
 
     FIREFOX(3) {
         @Override
+        public void checkSupported() {
+            if (!isSupported()) {
+                // Not implemented: https://support.mozilla.org/en-US/questions/1152265
+                throw new IllegalStateException("Firefox proxy is not supported on " + OperationSystem.getLocalSystem());
+            }
+        }
+
+        @Override
+        public boolean isSupported() {
+            //Not implemented: https://support.mozilla.org/en-US/questions/1152265
+            return !OperationSystem.getLocalSystem().isMac();
+        }
+
+        @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
             return new FirefoxProxyProvider();
         }
@@ -43,13 +58,29 @@ public enum ProxyProviderType {
 
     OPERATION_SYSTEM(4) {
         @Override
-        public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
-            if(OperationSystem.getLocalSystem().isWindows()) {
-                return new WindowsProxyProvider();
-            } else if(OperationSystem.getLocalSystem().isMac()) {
-                return new MacProxyProvider();
+        public void checkSupported() {
+            if (isSupported()) {
+                throw new IllegalStateException("System proxy is not supported for " + OperationSystem.getLocalSystem());
             }
-            throw new IllegalStateException("Operation system proxy not supported for " + OperationSystem.getLocalSystem());
+        }
+
+        @Override
+        public boolean isSupported() {
+            final OperationSystem localSystem = OperationSystem.getLocalSystem();
+            return localSystem.isWindows() || localSystem.isMac() || localSystem.isLinux();
+        }
+
+        @Override
+        public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            final OperationSystem localSystem = OperationSystem.getLocalSystem();
+            if (localSystem.isWindows()) {
+                return new WindowsProxyProvider();
+            } else if (localSystem.isMac()) {
+                return new MacProxyProvider();
+            } else if (localSystem.isLinux()) {
+                return new LinuxProxyProvider();
+            }
+            throw new IllegalStateException("System proxy is not supported for " + OperationSystem.getLocalSystem());
         }
     };
 
@@ -68,23 +99,11 @@ public enum ProxyProviderType {
     }
 
     public void checkSupported() {
-        if (this == OPERATION_SYSTEM && !(OperationSystem.getLocalSystem().isWindows() || OperationSystem.getLocalSystem().isMac())) {
-            throw new IllegalStateException("Windows proxy is only supported on windows os");
-        }
-        if (this == FIREFOX && OperationSystem.getLocalSystem().isMac()) {
-            //Not implemented: https://support.mozilla.org/en-US/questions/1152265
-            throw new IllegalStateException("Firefox proxy is not supported on mac os");
-        }
+        // subclasses implement specific behavior
     }
 
     public boolean isSupported() {
-        if (this == OPERATION_SYSTEM && !(OperationSystem.getLocalSystem().isWindows() || OperationSystem.getLocalSystem().isMac())) {
-            return false;
-        }
-        if (this == FIREFOX && OperationSystem.getLocalSystem().isMac()) {
-            //Not implemented: https://support.mozilla.org/en-US/questions/1152265
-            return false;
-        }
+        // subclasses implement specific behavior
         return true;
     }
 
@@ -92,6 +111,7 @@ public enum ProxyProviderType {
         return Stream.of(ProxyProviderType.values())
                 .filter(t -> value == t.getConfigValue())
                 .findFirst()
+                .filter(ProxyProviderType::isSupported)
                 .orElse(NONE);
     }
 }
