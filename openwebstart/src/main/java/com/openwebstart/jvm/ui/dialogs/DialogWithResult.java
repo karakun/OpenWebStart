@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +28,7 @@ public class DialogWithResult<R> extends JDialog {
     public DialogWithResult(final String title, final String message, final ImageIcon imageIcon, final DialogButton<R>... buttons) {
         setModal(true);
         setModalityType(ModalityType.APPLICATION_MODAL);
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setTitle(title);
 
@@ -38,7 +39,7 @@ public class DialogWithResult<R> extends JDialog {
         messageLabel.setBackground(null);
         messageLabel.setWrapStyleWord(true);
         messageLabel.setLineWrap(true);
-        messageLabel.setColumns(50);
+        messageLabel.setColumns(100);
 
         final JPanel messageWrapperPanel = new JPanel();
         messageWrapperPanel.setLayout(new BorderLayout(12, 12));
@@ -65,10 +66,9 @@ public class DialogWithResult<R> extends JDialog {
         final JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BorderLayout(12, 12));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        contentPanel.add(messageWrapperPanel, BorderLayout.NORTH);
+        contentPanel.add(messageWrapperPanel, BorderLayout.CENTER);
         contentPanel.add(actionWrapperPanel, BorderLayout.SOUTH);
         add(contentPanel);
-
     }
 
     private void close(final R result) {
@@ -87,6 +87,7 @@ public class DialogWithResult<R> extends JDialog {
             final CompletableFuture<R> result = new CompletableFuture<>();
             try {
                 SwingUtilities.invokeAndWait(() -> {
+                    pack();
                     final R r = showAndWait();
                     result.complete(r);
                 });
@@ -97,7 +98,12 @@ public class DialogWithResult<R> extends JDialog {
         }
     }
 
-    public static void main(String[] args) {
-        new DialogWithResult<>("Title", "This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line.").showAndWait();
+    public static void main(String[] args) throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        String msg = "Connection failed for URL: https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/AccessibleScrollDemoProject/AccessibleScrollDemo.jnlp." +
+                "\n\n" +
+                "Do you want to continue with no proxy or exit the application?";
+        new DialogWithResult<>("Title", "This is a long text that should be displayed in more than 1 line. \n\n\n\n This is a long text that should be displayed in more than 1 line. \n This is a long text that should be displayed in more than 1 line.", new DialogButton<>("Ok", () -> 0)).showAndWait();
+        new DialogWithResult<>("Title", msg, new DialogButton<>("Ok", () -> 0)).showAndWait();
     }
 }
