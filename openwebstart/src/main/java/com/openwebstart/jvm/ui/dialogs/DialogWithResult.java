@@ -39,7 +39,7 @@ public class DialogWithResult<R> extends JDialog {
         messageLabel.setBackground(null);
         messageLabel.setWrapStyleWord(true);
         messageLabel.setLineWrap(true);
-        messageLabel.setColumns(100);
+        messageLabel.setColumns(50);
 
         final JPanel messageWrapperPanel = new JPanel();
         messageWrapperPanel.setLayout(new BorderLayout(12, 12));
@@ -53,7 +53,7 @@ public class DialogWithResult<R> extends JDialog {
 
         Arrays.asList(buttons).forEach(b -> {
             final JButton button = new JButton(b.getText());
-            if(b.getDescription() != null) {
+            if (b.getDescription() != null) {
                 button.setToolTipText(b.getDescription());
             }
             button.addActionListener(e -> {
@@ -78,7 +78,7 @@ public class DialogWithResult<R> extends JDialog {
     }
 
     public R showAndWait() {
-        if(SwingUtilities.isEventDispatchThread()) {
+        if (SwingUtilities.isEventDispatchThread()) {
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
@@ -100,10 +100,12 @@ public class DialogWithResult<R> extends JDialog {
 
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        String msg = "Connection failed for URL: https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/AccessibleScrollDemoProject/AccessibleScrollDemo.jnlp." +
-                "\n\n" +
-                "Do you want to continue with no proxy or exit the application?";
-        new DialogWithResult<>("Title", "This is a long text that should be displayed in more than 1 line. \n\n\n\n This is a long text that should be displayed in more than 1 line. \n This is a long text that should be displayed in more than 1 line.", new DialogButton<>("Ok", () -> 0)).showAndWait();
-        new DialogWithResult<>("Title", msg, new DialogButton<>("Ok", () -> 0)).showAndWait();
+        final String msg1 = "This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line. This is a long text that should be displayed in more than 1 line.";
+        final String msg2 = "Connection failed for URL: https://docs.oracle.com/javase/tutorialJWS/samples/uiswing/AccessibleScrollDemoProject/AccessibleScrollDemo.jnlp." +
+                "\n\nDo you want to continue with no proxy or exit the application?";
+        final DialogButton<Integer> exitButton = new DialogButton<>("Exit", () -> 0);
+
+        new DialogWithResult<>("Title", msg1, exitButton).showAndWait();
+        new DialogWithResult<>("Title", msg2, exitButton).showAndWait();
     }
 }
