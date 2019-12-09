@@ -59,7 +59,7 @@ public enum ProxyProviderType {
     OPERATION_SYSTEM(4) {
         @Override
         public void checkSupported() {
-            if (isSupported()) {
+            if (!isSupported()) {
                 throw new IllegalStateException("System proxy is not supported for " + OperationSystem.getLocalSystem());
             }
         }
