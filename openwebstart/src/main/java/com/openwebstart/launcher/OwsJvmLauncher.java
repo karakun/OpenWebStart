@@ -17,6 +17,7 @@ import net.sourceforge.jnlp.runtime.Boot;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -57,7 +58,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
-        final List<JREDesc> jres = Arrays.asList(jnlpFile.getResources().getJREs());
+        final List<JREDesc> jres = new ArrayList<>(Arrays.asList(jnlpFile.getResources().getJREs()));
         if (jres.isEmpty()) {
             jres.add(getDefaultJRE());
         }
