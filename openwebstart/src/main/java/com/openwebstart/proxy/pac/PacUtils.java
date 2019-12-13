@@ -5,7 +5,6 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,7 @@ class PacUtils {
      * case of malformed input, an empty list may be returned
      */
     static List<Proxy> getProxiesFromPacResult(final String pacString) {
-        if(pacString == null) {
+        if (pacString == null) {
             return Collections.singletonList(Proxy.NO_PROXY);
         }
         final String[] tokens = pacString.split(";");
@@ -53,7 +52,6 @@ class PacUtils {
                         throw new IllegalArgumentException("Unrecognized proxy token: " + token);
                     }
                 }).collect(Collectors.toList());
-
     }
 
     private static Optional<InetSocketAddress> getInetSocketAddress(String token) {
