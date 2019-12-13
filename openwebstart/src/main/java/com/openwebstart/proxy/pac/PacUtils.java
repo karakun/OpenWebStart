@@ -1,8 +1,5 @@
 package com.openwebstart.proxy.pac;
 
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Collections;
@@ -15,10 +12,8 @@ import static com.openwebstart.proxy.pac.PacConstants.DIRECT;
 import static com.openwebstart.proxy.pac.PacConstants.PROXY;
 import static com.openwebstart.proxy.pac.PacConstants.SOCKS;
 
-//TODO: Class should be refactored
 class PacUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PacUtils.class);
     private static final int PREFIX_LENGTH = PROXY.length();
 
     /**

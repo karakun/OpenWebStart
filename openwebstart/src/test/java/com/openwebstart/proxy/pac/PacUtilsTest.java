@@ -69,4 +69,13 @@ class PacUtilsTest {
         Assertions.assertEquals(Proxy.NO_PROXY, proxiesFromPacResult.get(0));
 
     }
+
+    @Test
+    void getProxiesFromPacResultTest5() {
+        //given
+        final String pacResult = "INVALID";
+
+        //than
+        Assertions.assertThrows(IllegalArgumentException.class, () -> PacUtils.getProxiesFromPacResult(pacResult));
+    }
 }
