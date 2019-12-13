@@ -6,11 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PacBasedProxyProviderTest {
 
