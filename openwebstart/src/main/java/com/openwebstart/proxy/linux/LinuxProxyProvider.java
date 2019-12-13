@@ -8,6 +8,7 @@ import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import java.io.IOException;
 import java.net.Proxy;
 import java.net.URI;
 import java.util.List;
@@ -31,7 +32,7 @@ public class LinuxProxyProvider implements ProxyProvider {
     private final ProxyProvider internalProvider;
 
 
-    public LinuxProxyProvider() {
+    public LinuxProxyProvider() throws IOException {
 
         final LinuxProxySettings proxySettings = readGnomeProxyConfig()
                 .orElseGet(() -> readSystemPropertiesProxyConfig()

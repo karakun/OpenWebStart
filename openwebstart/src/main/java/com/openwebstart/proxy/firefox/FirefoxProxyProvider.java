@@ -12,6 +12,7 @@ import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
@@ -94,7 +95,7 @@ public class FirefoxProxyProvider implements ProxyProvider {
         return new ConfigBasedProvider(proxyConfiguration);
     }
 
-    private ProxyProvider createForPac(final FirefoxPreferences prefs) throws MalformedURLException {
+    private ProxyProvider createForPac(final FirefoxPreferences prefs) throws IOException {
         final String url = prefs.getStringValue(AUTO_CONFIG_URL_PROPERTY_NAME);
         return new PacBasedProxyProvider(new URL(url));
     }

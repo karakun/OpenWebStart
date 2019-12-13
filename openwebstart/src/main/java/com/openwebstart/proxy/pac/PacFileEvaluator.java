@@ -37,18 +37,16 @@ exception statement from your version.
 
 package com.openwebstart.proxy.pac;
 
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Context;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.ContextFactory;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Function;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Scriptable;
-import net.sourceforge.jnlp.util.TimedHashMap;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.SocketPermission;
 import java.net.URL;
 import java.security.AccessControlContext;
@@ -56,8 +54,13 @@ import java.security.AccessController;
 import java.security.Permissions;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
+import java.util.Optional;
 import java.util.PropertyPermission;
 
+import static com.openwebstart.proxy.pac.PacConstants.JAVASCRIPT_RUNTIME_PERMISSION_NAME;
+import static com.openwebstart.proxy.pac.PacConstants.PAC_HELPER_FUNCTIONS_FILE;
+import static com.openwebstart.proxy.pac.PacConstants.PAC_HELPER_FUNCTIONS_INTERNAL_NAME;
+import static com.openwebstart.proxy.pac.PacConstants.PAC_METHOD;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.VM_NAME;
 import static sun.security.util.SecurityConstants.PROPERTY_READ_ACTION;
 
@@ -67,28 +70,31 @@ import static sun.security.util.SecurityConstants.PROPERTY_READ_ACTION;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Proxy_auto-config#The_PAC_file">The PAC File</a>
  */
-//TODO: Class should be refactored
 public class PacFileEvaluator {
 
     private static final Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
 
-    private static final String PAC_FUNCS_JS = "net/sourceforge/jnlp/runtime/pac-funcs.js";
-
     private final String pacHelperFunctionContents;
     private final String pacContents;
     private final URL pacUrl;
-    private final TimedHashMap<String, String> pacCache = new TimedHashMap<>();
+
+    private final PacProxyCache cache = new PacProxyCache();
 
     /**
      * Initialize a new object by using the PAC file located at the given URL.
      *
      * @param pacUrl the url of the PAC file to use
      */
-    public PacFileEvaluator(final URL pacUrl) {
-        LOG.debug("Create Rhino-based PAC evaluator for '{}'", pacUrl);
-        this.pacHelperFunctionContents = getHelperFunctionContents();
+    public PacFileEvaluator(final URL pacUrl) throws IOException {
+        LOG.debug("Create PAC evaluator for '{}'", pacUrl);
         this.pacUrl = pacUrl;
-        this.pacContents = getContent(pacUrl);
+        try (final InputStream inputStream = PacFileEvaluator.class.getResourceAsStream(PAC_HELPER_FUNCTIONS_FILE)) {
+            this.pacHelperFunctionContents = IOUtils.readContentAsUtf8String(inputStream);
+        }
+        try (final InputStream inputStream = pacUrl.openStream()) {
+            //PAC supports ASCII and new versions support UTF-8 -> https://en.wikipedia.org/wiki/Proxy_auto-config#PAC_Character-Encoding
+            this.pacContents = IOUtils.readContentAsUtf8String(inputStream);
+        }
     }
 
     /**
@@ -103,13 +109,13 @@ public class PacFileEvaluator {
      * @see #getProxiesWithoutCaching(URL)
      */
     String getProxies(final URL url) {
-        final String cachedResult = getFromCache(url);
+        final String cachedResult = cache.getFromCache(url);
         if (cachedResult != null) {
             return cachedResult;
         }
-
         final String result = getProxiesWithoutCaching(url);
-        addToCache(url, result);
+        LOG.debug("PAC result for url '{}' -> '{}'", url, result);
+        cache.addToCache(url, result);
         return result;
     }
 
@@ -123,100 +129,16 @@ public class PacFileEvaluator {
      * @see #getProxies(URL)
      */
     private String getProxiesWithoutCaching(final URL url) {
-        if (pacHelperFunctionContents == null) {
-            LOG.error("Error loading pac functions");
-            return PacConstants.DIRECT;
-        }
-
-        final EvaluatePacAction evaluatePacAction = new EvaluatePacAction(pacContents, pacUrl.toString(),
-                pacHelperFunctionContents, url);
-
-        // Purposefully giving only these permissions rather than using java.policy. The "evaluatePacAction"
-        // isn't supposed to do very much and so doesn't require all the default permissions given by
-        // java.policy
         final Permissions p = new Permissions();
-        p.add(new RuntimePermission("accessClassInPackage.org.mozilla.javascript"));
+        p.add(new RuntimePermission(JAVASCRIPT_RUNTIME_PERMISSION_NAME));
         p.add(new SocketPermission("*", "resolve"));
         p.add(new PropertyPermission(VM_NAME, PROPERTY_READ_ACTION));
 
         final ProtectionDomain pd = new ProtectionDomain(null, p);
         final AccessControlContext context = new AccessControlContext(new ProtectionDomain[]{pd});
 
-        return AccessController.doPrivileged(evaluatePacAction, context);
-    }
-
-    /**
-     * Returns the contents of file at pacUrl as a String.
-     */
-    private String getContent(final URL pacUrl) {
-        final StringBuilder contents = new StringBuilder();
-        try {
-            String line;
-            try (BufferedReader pacReader = new BufferedReader(new InputStreamReader(pacUrl.openStream()))) {
-                while ((line = pacReader.readLine()) != null) {
-                    contents.append(line).append("\n");
-                }
-            }
-        } catch (IOException e) {
-            return null;
-        }
-
-        return contents.toString();
-    }
-
-    /**
-     * Returns the pac helper functions as a String. The functions are read
-     * from net/sourceforge/jnlp/resources/pac-funcs.js
-     */
-    private String getHelperFunctionContents() {
-        return getContent(getPacFuncJsUrl());
-    }
-
-    private URL getPacFuncJsUrl() {
-        final ClassLoader cl = this.getClass().getClassLoader();
-        if (cl != null) {
-            return cl.getResource(PAC_FUNCS_JS);
-        }
-        return ClassLoader.getSystemClassLoader().getResource(PAC_FUNCS_JS);
-    }
-
-    /**
-     * Gets an entry from the cache
-     */
-    private String getFromCache(final URL url) {
-        final String lookupString = url.getProtocol() + "://" + url.getHost();
-        final String result = pacCache.get(lookupString);
-        return result;
-    }
-
-    /**
-     * Adds an entry to the cache
-     */
-    private void addToCache(final URL url, final String proxyResult) {
-        final String lookupString = url.getAuthority() + "://" + url.getHost();
-        pacCache.put(lookupString, proxyResult);
-    }
-
-    /**
-     * Helper classs to run remote javascript code (specified by the user as
-     * PAC URL) inside a sandbox.
-     */
-    private static class EvaluatePacAction implements PrivilegedAction<String> {
-
-        private final String pacContents;
-        private final String pacUrl;
-        private final String pacFuncsContents;
-        private final URL url;
-
-        EvaluatePacAction(String pacContents, String pacUrl, String pacFuncsContents, URL url) {
-            this.pacContents = pacContents;
-            this.pacUrl = pacUrl;
-            this.pacFuncsContents = pacFuncsContents;
-            this.url = url;
-        }
-
-        public String run() {
-            Context cx = ContextFactory.getGlobal().enterContext();
+        final PrivilegedAction<String> action = () -> {
+            final Context cx = ContextFactory.getGlobal().enterContext();
             try {
                 /*
                  * TODO defense in depth.
@@ -228,25 +150,23 @@ public class PacFileEvaluator {
                 // any optimization level greater than -1 will trigger code generation
                 // and this block will then need classloader permissions
                 cx.setOptimizationLevel(-1);
-                cx.evaluateString(scope, pacFuncsContents, "internal", 1, null);
-                cx.evaluateString(scope, pacContents, pacUrl, 1, null);
+                cx.evaluateString(scope, pacHelperFunctionContents, PAC_HELPER_FUNCTIONS_INTERNAL_NAME, 1, null);
+                cx.evaluateString(scope, pacContents, pacUrl.toString(), 1, null);
 
-                final Object functionObj = scope.get("FindProxyForURL", scope);
+                final Object functionObj = scope.get(PAC_METHOD, scope);
                 if (functionObj instanceof Function) {
                     final Object[] args = {url.toString(), url.getHost()};
                     final Object result = ((Function) functionObj).call(cx, scope, scope, args);
-                    return (String) result;
+                    //NULL is valid return value:
+                    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_(PAC)_file
+                    return Optional.ofNullable(result).map(r -> r.toString()).orElse(null);
                 } else {
-                    LOG.error("FindProxyForURL not found");
-                    return null;
+                    throw new IllegalStateException("'" + PAC_METHOD + "' function not found in pac file");
                 }
-            } catch (Exception e) {
-                LOG.error(IcedTeaWebConstants.DEFAULT_ERROR_MESSAGE, e);
-                return PacConstants.DIRECT;
             } finally {
                 Context.exit();
             }
-        }
+        };
+        return AccessController.doPrivileged(action, context);
     }
-
 }
