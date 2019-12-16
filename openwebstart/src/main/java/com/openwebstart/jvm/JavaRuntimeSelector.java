@@ -54,21 +54,24 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
             final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint));
             if (!installedRuntime.isPresent()) {
+                LOG.debug("No remote runtime found, will check deactivated local runtimes.");
                 return askForDeactivatedRuntime(versionString, vendor, os);
             }
             return installedRuntime;
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
-            LOG.debug("Local runtime {} found and will be used", localRuntime);
+            LOG.debug("Local runtime {} found and will be used", localRuntime.get());
             return localRuntime;
         } else {
-            LOG.debug("Local runtime {} found but remote endpoint is checked for newer versions", localRuntime);
+            LOG.debug("Local runtime {} found but remote endpoint is checked for newer versions", localRuntime.get());
             final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime.get(), remoteRuntime))
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
                     .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint));
             if (!installedRuntime.isPresent()) {
+                LOG.debug("No newer version found on remote endpoint");
                 return localRuntime;
             }
+            LOG.debug("Newer runtime {} found on remote endpoint and will be used", installedRuntime.get());
             return installedRuntime;
         }
     }
