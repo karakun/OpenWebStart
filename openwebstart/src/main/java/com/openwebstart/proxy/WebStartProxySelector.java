@@ -39,8 +39,7 @@ public class WebStartProxySelector extends ProxySelector {
             return providerType.createProvider(config);
         } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.creationFailed"), e);
-            JNLPRuntime.exit(-1);
-            return null;
+            return JNLPRuntime.exit(-1);
         }
     }
 
@@ -50,8 +49,7 @@ public class WebStartProxySelector extends ProxySelector {
             return proxyProvider.select(uri);
         } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.selectionFailed", uri), e);
-            JNLPRuntime.exit(-1);
-            return null;
+            return JNLPRuntime.exit(-1);
         }
     }
 

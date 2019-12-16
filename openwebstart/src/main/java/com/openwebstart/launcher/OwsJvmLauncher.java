@@ -68,7 +68,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         if(!javaRuntime.isPresent()) {
             final Exception e = new IllegalStateException("could not find any suitable runtime");
             DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.noRuntimeFound"), e);
-            JNLPRuntime.exit(-1);
+            return JNLPRuntime.exit(-1);
         }
         return javaRuntime.get();
     }
