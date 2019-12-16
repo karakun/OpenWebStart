@@ -68,7 +68,7 @@ public class DialogFactory {
         return handleYesNoDialogEdtConform(title, message);
     }
 
-    public static void showNotification(final String title, final String message) {
+    public static void showConfirmDialog(final String title, final String message) {
         final ModalDialog dialog = new ModalDialog();
         dialog.setTitle(title);
         final JLabel messageLabel = new JLabel(message);

@@ -77,7 +77,7 @@ public class UpdatePanel extends FormPanel {
                     if (Install4JUpdateHandler.hasUpdate()) {
                         Install4JUpdateHandler.doUpdate();
                     } else {
-                        DialogFactory.showNotification(translator.translate("updatesPanel.dialog.noUpdate.title"), translator.translate("updatesPanel.dialog.noUpdate.message"));
+                        DialogFactory.showConfirmDialog(translator.translate("updatesPanel.dialog.noUpdate.title"), translator.translate("updatesPanel.dialog.noUpdate.message"));
                     }
                 } catch (final Exception ex) {
                     DialogFactory.showErrorDialog(translator.translate("updatesPanel.error.updateCheck"), ex);

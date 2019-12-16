@@ -299,8 +299,8 @@ public final class LocalRuntimeManager {
         return newRuntime;
     }
 
-    LocalJavaRuntime getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
-        return findBestRuntime(versionString, vendor, operationSystem, true).orElse(null);
+    Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
+        return findBestRuntime(versionString, vendor, operationSystem, true);
     }
 
     Optional<LocalJavaRuntime> getBestDeactivatedRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
