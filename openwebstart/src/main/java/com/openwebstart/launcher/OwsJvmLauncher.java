@@ -4,7 +4,6 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
-import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
@@ -57,15 +56,15 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     @Override
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
-        final LocalJavaRuntime javaRuntime = getLocalJavaRuntimeOrExit(jnlpFile);
-        LOG.info("using java runtime at '{}' for launching managed application", javaRuntime.getJavaHome());
+        final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
+        LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
         final File webStartJar = getOpenWebStartJar();
-        launchExternal(javaRuntime, webStartJar, jnlpFile.getNewVMArgs(), args);
+        launchExternal(runtimeInfo, webStartJar, args);
     }
 
-    private LocalJavaRuntime getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
-        final Optional<LocalJavaRuntime> javaRuntime = getJavaRuntime(jnlpFile);
-        if(!javaRuntime.isPresent()) {
+    private RuntimeInfo getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
+        final Optional<RuntimeInfo> javaRuntime = getJavaRuntime(jnlpFile);
+        if (!javaRuntime.isPresent()) {
             final Exception e = new IllegalStateException("could not find any suitable runtime");
             DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.noRuntimeFound"), e);
             return JNLPRuntime.exit(-1);
@@ -73,7 +72,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         return javaRuntime.get();
     }
 
-    private Optional<LocalJavaRuntime> getJavaRuntime(final JNLPFile jnlpFile) {
+    private Optional<RuntimeInfo> getJavaRuntime(final JNLPFile jnlpFile) {
         final List<JREDesc> jres = new ArrayList<>(Arrays.asList(jnlpFile.getResources().getJREs()));
         if (jres.isEmpty()) {
             jres.add(getDefaultJRE());
@@ -85,7 +84,7 @@ public class OwsJvmLauncher implements JvmLauncher {
                 final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
                 if (javaRuntime.isPresent()) {
                     LOG.debug("Found JVM {}", javaRuntime.get());
-                    return javaRuntime;
+                    return javaRuntime.map(r -> new RuntimeInfo(r, jre));
                 }
             } catch (final Exception e) {
                 final String msg = Translator.getInstance().translate("jvmManager.error.downloadWithDetails", version, jre.getLocation());
@@ -106,17 +105,17 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param javaRuntime the JRE in which to start OWS
+     * @param runtimeInfo the JVM in which to start OWS
      * @param webstartJar the openwebstart.jar included in OWS
-     * @param vmArgs      the arguments to pass to the jvm
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
     private void launchExternal(
-            final LocalJavaRuntime javaRuntime,
+            final RuntimeInfo runtimeInfo,
             final File webstartJar,
-            final List<String> vmArgs,
             final List<String> javawsArgs
     ) throws Exception {
+        final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
+        final List<String> vmArgs = runtimeInfo.jreDesc.getAllVmArgs();
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
@@ -204,5 +203,15 @@ public class OwsJvmLauncher implements JvmLauncher {
             LOG.error("Failed in adding remote debug args.", e);
         }
         return Collections.emptyList();
+    }
+
+    private static class RuntimeInfo {
+        private final LocalJavaRuntime runtime;
+        private final JREDesc jreDesc;
+
+        private RuntimeInfo(LocalJavaRuntime runtime, JREDesc jreDesc) {
+            this.runtime = runtime;
+            this.jreDesc = jreDesc;
+        }
     }
 }
