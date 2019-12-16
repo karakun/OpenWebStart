@@ -1,10 +1,14 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
+import com.openwebstart.ui.ErrorDialog;
+import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -14,6 +18,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.Boot;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +28,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -51,29 +57,44 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     @Override
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
-        final LocalJavaRuntime javaRuntime = getJavaRuntime(jnlpFile);
+        final LocalJavaRuntime javaRuntime = getLocalJavaRuntimeOrExit(jnlpFile);
         LOG.info("using java runtime at '{}' for launching managed application", javaRuntime.getJavaHome());
         final File webStartJar = getOpenWebStartJar();
         launchExternal(javaRuntime, webStartJar, jnlpFile.getNewVMArgs(), args);
     }
 
-    private LocalJavaRuntime getJavaRuntime(final JNLPFile jnlpFile) {
+    private LocalJavaRuntime getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
+        final Optional<LocalJavaRuntime> javaRuntime = getJavaRuntime(jnlpFile);
+        if(!javaRuntime.isPresent()) {
+            final Exception e = new IllegalStateException("could not find any suitable runtime");
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.noRuntimeFound"), e);
+            JNLPRuntime.exit(-1);
+        }
+        return javaRuntime.get();
+    }
+
+    private Optional<LocalJavaRuntime> getJavaRuntime(final JNLPFile jnlpFile) {
         final List<JREDesc> jres = new ArrayList<>(Arrays.asList(jnlpFile.getResources().getJREs()));
         if (jres.isEmpty()) {
             jres.add(getDefaultJRE());
         }
-
         for (JREDesc jre : jres) {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
             LOG.debug("searching for JRE with version string '{}'", version);
-            final LocalJavaRuntime javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
-            if (javaRuntime != null) {
-                LOG.debug("Found JVM {}", javaRuntime);
-                return javaRuntime;
+            try {
+                final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
+                if (javaRuntime.isPresent()) {
+                    LOG.debug("Found JVM {}", javaRuntime.get());
+                    return javaRuntime;
+                }
+            } catch (final Exception e) {
+                final String msg = Translator.getInstance().translate("jvmManager.error.downloadWithDetails", version, jre.getLocation());
+                LOG.warn(msg, e);
+                Notifications.showError(msg);
             }
         }
 
-        throw new IllegalStateException("could not find any suitable runtime");
+        return Optional.empty();
     }
 
     private JREDesc getDefaultJRE() {

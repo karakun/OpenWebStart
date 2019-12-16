@@ -9,14 +9,13 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -39,19 +38,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     @Override
-    public LocalJavaRuntime getJavaRuntime(final VersionString version, final URL url) {
-        try {
-            return getRuntime(version, url);
-        } catch (final Exception e) {
-            final String msg = Translator.getInstance().translate("jvmManager.error.downloadWithDetails", version, url);
-            LOG.info(msg, e);
-            DialogFactory.showErrorDialog(msg, e);
-            JNLPRuntime.exit(1);
-            return null;
-        }
-    }
-
-    private LocalJavaRuntime getRuntime(final VersionString versionString, final URL serverEndpoint) {
+    public Optional<LocalJavaRuntime> getJavaRuntime(final VersionString versionString, final URL serverEndpoint) {
         Assert.requireNonNull(versionString, "versionString");
 
         final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
@@ -61,30 +48,34 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
         LOG.debug("Trying to find Java runtime. Requested version: '{}', vendor: '{}', os: '{}', server-url: '{}'", versionString, vendorName, os, serverEndpoint);
 
-        final LocalJavaRuntime localRuntime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, os);
-        if (localRuntime == null) {
+        final Optional<LocalJavaRuntime> localRuntime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, os);
+        if (!localRuntime.isPresent()) {
             LOG.debug("No local runtime found, will try to find remote runtime");
-            return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
-                    .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint))
-                    .orElseGet(() -> askForDeactivatedRuntime(versionString, vendor, os));
+            final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
+                    .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint));
+            if (!installedRuntime.isPresent()) {
+                return askForDeactivatedRuntime(versionString, vendor, os);
+            }
+            return installedRuntime;
         } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
             LOG.debug("Local runtime {} found and will be used", localRuntime);
             return localRuntime;
         } else {
             LOG.debug("Local runtime {} found but remote endpoint is checked for newer versions", localRuntime);
-            return RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
-                    .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime, remoteRuntime))
+            final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
+                    .filter(remoteRuntime -> remoteIsPreferredVersion(versionString, localRuntime.get(), remoteRuntime))
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
-                    .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint))
-                    .orElse(localRuntime);
+                    .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint));
+            if (!installedRuntime.isPresent()) {
+                return localRuntime;
+            }
+            return installedRuntime;
         }
     }
 
-    private LocalJavaRuntime askForDeactivatedRuntime(VersionString versionString, Vendor vendor, OperationSystem os) {
+    private Optional<LocalJavaRuntime> askForDeactivatedRuntime(VersionString versionString, Vendor vendor, OperationSystem os) {
         return LocalRuntimeManager.getInstance().getBestDeactivatedRuntime(versionString, vendor, os)
-                .filter(DialogFactory::askForDeactivatedRuntimeUsage)
-                .orElseThrow(() -> new RuntimeException("Cannot provide or find runtime for version '" +
-                        versionString + "', vendor '" + vendor + "' and operating system '" + os + "'"));
+                .filter(DialogFactory::askForDeactivatedRuntimeUsage);
     }
 
     private boolean remoteIsPreferredVersion(VersionString versionString, LocalJavaRuntime localRuntime, RemoteJavaRuntime remoteRuntime) {
