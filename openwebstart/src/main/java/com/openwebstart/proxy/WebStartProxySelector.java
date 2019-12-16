@@ -1,26 +1,20 @@
 package com.openwebstart.proxy;
 
-import com.openwebstart.proxy.direct.DirectProxyProvider;
-import com.openwebstart.proxy.ui.error.ConnectionFailedDialog;
-import com.openwebstart.proxy.ui.error.ProxyCreationFailedDialog;
-import com.openwebstart.proxy.ui.error.ProxyDialogResult;
-import com.openwebstart.proxy.ui.error.ProxyErrorDialog;
-import com.openwebstart.proxy.ui.error.ProxySelectionFailedDialog;
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
-import net.sourceforge.jnlp.util.UrlUtils;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WebStartProxySelector extends ProxySelector {
 
@@ -28,10 +22,7 @@ public class WebStartProxySelector extends ProxySelector {
 
     private final ProxyProvider proxyProvider;
 
-    private final AtomicBoolean useDirectAfterError;
-
     public WebStartProxySelector(final DeploymentConfiguration config) {
-        this.useDirectAfterError = new AtomicBoolean(false);
         this.proxyProvider = createProvider(config);
     }
 
@@ -47,46 +38,26 @@ public class WebStartProxySelector extends ProxySelector {
             LOG.debug("Selected ProxyProvider : {} ", providerType);
             return providerType.createProvider(config);
         } catch (final Exception e) {
-            LOG.error("Error in proxy creation", e);
-            final ProxyErrorDialog dialog = new ProxyCreationFailedDialog();
-            final ProxyDialogResult proxyDialogResult = dialog.showAndWait();
-            if (proxyDialogResult == ProxyDialogResult.EXIT) {
-                System.exit(0);
-            }
-            return DirectProxyProvider.getInstance();
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.creationFailed"), e);
+            JNLPRuntime.exit(-1);
+            return null;
         }
     }
 
     @Override
     public List<Proxy> select(final URI uri) {
-        if (useDirectAfterError.get()) {
-            LOG.debug("Falling back to NO_PROXY");
-            return Collections.singletonList(Proxy.NO_PROXY);
-        }
         try {
             return proxyProvider.select(uri);
         } catch (final Exception e) {
-            LOG.error("Error in proxy selection", e);
-            final ProxyErrorDialog dialog = new ProxySelectionFailedDialog();
-            final ProxyDialogResult proxyDialogResult = dialog.showAndWait();
-            if (proxyDialogResult == ProxyDialogResult.EXIT) {
-                System.exit(0);
-            } else {
-                useDirectAfterError.set(true);
-            }
-            return Collections.singletonList(Proxy.NO_PROXY);
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.selectionFailed", uri), e);
+            JNLPRuntime.exit(-1);
+            return null;
         }
     }
 
     @Override
     public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
-        LOG.error("Error in proxy connection", ioe);
-        final ProxyErrorDialog dialog = new ConnectionFailedDialog(uri);
-        final ProxyDialogResult proxyDialogResult = dialog.showAndWait();
-        if (proxyDialogResult == ProxyDialogResult.EXIT) {
-            System.exit(0);
-        } else {
-            useDirectAfterError.set(true);
-        }
+        DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", uri), ioe);
+        JNLPRuntime.exit(-1);
     }
 }
