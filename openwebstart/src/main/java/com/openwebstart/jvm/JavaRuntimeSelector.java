@@ -68,10 +68,10 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
                     .filter(remoteRuntime -> shouldInstallRemoteRuntime(updateStrategy, remoteRuntime))
                     .map(remoteRuntime -> installRemoteRuntime(remoteRuntime, serverEndpoint));
             if (!installedRuntime.isPresent()) {
-                LOG.debug("No newer version found on remote endpoint");
+                LOG.debug("No newer version was installed");
                 return localRuntime;
             }
-            LOG.debug("Newer runtime {} found on remote endpoint and will be used", installedRuntime.get());
+            LOG.debug("Newer runtime {} installed", installedRuntime.get());
             return installedRuntime;
         }
     }
