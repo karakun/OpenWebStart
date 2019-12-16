@@ -31,13 +31,13 @@ public class WindowsProxyProvider implements ProxyProvider {
 
     public WindowsProxyProvider() throws Exception {
         final Map<String, RegistryValue> proxyRegistryEntries = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
-        final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);
-        if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {
-            final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
-            if (autoConfigUrlValue != null) {
-                final String autoConfigUrl = autoConfigUrlValue.getValue();
-                internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl));
-            } else {
+        final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
+        if (autoConfigUrlValue != null) {
+            final String autoConfigUrl = autoConfigUrlValue.getValue();
+            internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl));
+        } else {
+            final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);
+            if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {
                 final RegistryValue proxyServerValue = proxyRegistryEntries.get(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
                     final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
@@ -87,9 +87,9 @@ public class WindowsProxyProvider implements ProxyProvider {
                     //TODO: is this correct?
                     internalProvider = DirectProxyProvider.getInstance();
                 }
+            } else {
+                internalProvider = DirectProxyProvider.getInstance();
             }
-        } else {
-            internalProvider = DirectProxyProvider.getInstance();
         }
     }
 
