@@ -7,7 +7,6 @@ import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,12 +16,16 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.openwebstart.jvm.os.OperationSystem.ARM32;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LocalRuntimeManagerTest {
 
@@ -38,8 +41,8 @@ public class LocalRuntimeManagerTest {
         final File cacheConfigTemplateFile = new File(cacheFolder.toFile(), "cache.template.json");
         final File cacheConfigFile = new File(cacheFolder.toFile(), "cache.json");
 
-        if(cacheConfigFile.exists()) {
-            cacheConfigFile.delete();
+        if (cacheConfigFile.exists()) {
+            assertTrue(cacheConfigFile.delete());
         }
 
         final FileInputStream templateInputStream = new FileInputStream(cacheConfigTemplateFile);
@@ -68,15 +71,15 @@ public class LocalRuntimeManagerTest {
         final VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_220, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
-        Assertions.assertTrue(runtime.isManaged());
-        Assertions.assertTrue(runtime.isActive());
+        assertTrue(runtime.isPresent());
+        assertEquals(VERSION_1_8_220, runtime.get().getVersion());
+        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(MAC64, runtime.get().getOperationSystem());
+        assertTrue(runtime.get().isManaged());
+        assertTrue(runtime.get().isActive());
     }
 
     @Test
@@ -85,15 +88,15 @@ public class LocalRuntimeManagerTest {
         final VersionString versionString = VersionString.fromString("1.8+");
 
         //when
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_11_0_1, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
-        Assertions.assertTrue(runtime.isManaged());
-        Assertions.assertTrue(runtime.isActive());
+        assertTrue(runtime.isPresent());
+        assertEquals(VERSION_11_0_1, runtime.get().getVersion());
+        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(MAC64, runtime.get().getOperationSystem());
+        assertTrue(runtime.get().isManaged());
+        assertTrue(runtime.get().isActive());
     }
 
     @Test
@@ -108,15 +111,15 @@ public class LocalRuntimeManagerTest {
                     final LocalJavaRuntime modified = r.getDeactivatedCopy();
                     LocalRuntimeManager.getInstance().replace(r, modified);
                 });
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_219, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
-        Assertions.assertTrue(runtime.isManaged());
-        Assertions.assertTrue(runtime.isActive());
+        assertTrue(runtime.isPresent());
+        assertEquals(VERSION_1_8_219, runtime.get().getVersion());
+        assertEquals(ORACLE, runtime.get().getVendor());
+        assertEquals(MAC64, runtime.get().getOperationSystem());
+        assertTrue(runtime.get().isManaged());
+        assertTrue(runtime.get().isActive());
     }
 
     @Test
@@ -125,15 +128,15 @@ public class LocalRuntimeManagerTest {
         VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ORACLE, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ORACLE, MAC64);
 
         //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_219, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
-        Assertions.assertTrue(runtime.isManaged());
-        Assertions.assertTrue(runtime.isActive());
+        assertTrue(runtime.isPresent());
+        assertEquals(VERSION_1_8_219, runtime.get().getVersion());
+        assertEquals(ORACLE, runtime.get().getVendor());
+        assertEquals(MAC64, runtime.get().getOperationSystem());
+        assertTrue(runtime.get().isManaged());
+        assertTrue(runtime.get().isActive());
     }
 
     @Test
@@ -143,15 +146,15 @@ public class LocalRuntimeManagerTest {
 
         //when
         RuntimeManagerConfig.setSupportedVersionRange(VersionString.fromString("1.8*"));
-        final LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
-        Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_220, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
-        Assertions.assertTrue(runtime.isManaged());
-        Assertions.assertTrue(runtime.isActive());
+        assertTrue(runtime.isPresent());
+        assertEquals(VERSION_1_8_220, runtime.get().getVersion());
+        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(MAC64, runtime.get().getOperationSystem());
+        assertTrue(runtime.get().isManaged());
+        assertTrue(runtime.get().isActive());
     }
 
     @Test
@@ -161,10 +164,10 @@ public class LocalRuntimeManagerTest {
         Vendor vendor = Vendor.fromString("not_found");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, MAC64);
 
         //than
-        Assertions.assertNull(runtime);
+        assertFalse(runtime.isPresent());
     }
 
     @Test
@@ -173,10 +176,10 @@ public class LocalRuntimeManagerTest {
         VersionString versionString = VersionString.fromString("1.8*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, ARM32);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, ARM32);
 
         //than
-        Assertions.assertNull(runtime);
+        assertFalse(runtime.isPresent());
     }
 
     @Test
@@ -185,9 +188,9 @@ public class LocalRuntimeManagerTest {
         VersionString versionString = VersionString.fromString("20*");
 
         //when
-        LocalJavaRuntime runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
+        final Optional<LocalJavaRuntime> runtime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, ANY_VENDOR, MAC64);
 
         //than
-        Assertions.assertNull(runtime);
+        assertFalse(runtime.isPresent());
     }
 }

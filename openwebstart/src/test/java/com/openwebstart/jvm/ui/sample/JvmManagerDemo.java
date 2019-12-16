@@ -149,7 +149,8 @@ public class JvmManagerDemo {
             try {
                 final VersionString version = JvmVersionUtils.fromJnlp(VersionString.fromString(requestedVersionField.getText()));
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());
-                final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, serverEndpoint);
+                final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, serverEndpoint)
+                        .orElseThrow(() -> new IllegalStateException("could not find any suitable JVM"));
 
                 SwingUtilities.invokeLater(() -> {
                     responseVersionLabel.setText(runtime.getVersion().toString());
