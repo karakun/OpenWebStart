@@ -40,48 +40,7 @@ public class WindowsProxyProvider implements ProxyProvider {
             if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {
                 final RegistryValue proxyServerValue = proxyRegistryEntries.get(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
-                    final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
-                    final List<String> hosts = Arrays.asList(proxyServerValue.getValue().split(Pattern.quote(";")));
-                    if (hosts.size() == 1) {
-                        //HTTP use for all other
-                        proxyConfiguration.setUseHttpForHttpsAndFtp(true);
-                        proxyConfiguration.setUseHttpForSocks(true);
-
-                        final String[] split = hosts.get(0).split(Pattern.quote(":"), 2);
-                        if (split.length == 1) {
-                            //TODO: Default port??
-                            throw new IllegalStateException("No port defined!");
-                        } else {
-                            //TODO: We need to check port behavior on win
-                            proxyConfiguration.setHttpHost(split[0]);
-                            proxyConfiguration.setHttpPort(Integer.parseInt(split[1]));
-                        }
-                    } else if (hosts.size() == 0) {
-                        //TODO: How does windows behave???
-                        throw new IllegalStateException("No host defined!");
-                    } else {
-                        findProxyForProtocol(hosts, "http", (host, port) -> {
-                            proxyConfiguration.setHttpHost(host);
-                            proxyConfiguration.setHttpPort(port);
-                        });
-                        findProxyForProtocol(hosts, "https", (host, port) -> {
-                            proxyConfiguration.setHttpsHost(host);
-                            proxyConfiguration.setHttpsPort(port);
-                        });
-                        findProxyForProtocol(hosts, "ftp", (host, port) -> {
-                            proxyConfiguration.setFtpHost(host);
-                            proxyConfiguration.setFtpPort(port);
-                        });
-                        findProxyForProtocol(hosts, "socks", (host, port) -> {
-                            proxyConfiguration.setSocksHost(host);
-                            proxyConfiguration.setSocksPort(port);
-                        });
-                    }
-                    final RegistryValue overrideHostsValue = proxyRegistryEntries.get(PROXY_SERVER_OVERRIDE_VAL);
-                    if (overrideHostsValue != null) {
-                        Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
-                    }
-                    proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
+                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(proxyRegistryEntries, proxyServerValue);
                     internalProvider = new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
@@ -91,6 +50,52 @@ public class WindowsProxyProvider implements ProxyProvider {
                 internalProvider = DirectProxyProvider.getInstance();
             }
         }
+    }
+
+    private ProxyConfigurationImpl getProxyConfiguration(Map<String, RegistryValue> proxyRegistryEntries, RegistryValue proxyServerValue) {
+        final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
+        final List<String> hosts = Arrays.asList(proxyServerValue.getValue().split(Pattern.quote(";")));
+        if (hosts.size() == 1) {
+            //HTTP use for all other
+            proxyConfiguration.setUseHttpForHttpsAndFtp(true);
+            proxyConfiguration.setUseHttpForSocks(true);
+
+            final String[] split = hosts.get(0).split(Pattern.quote(":"), 2);
+            if (split.length == 1) {
+                //TODO: Default port??
+                throw new IllegalStateException("No port defined!");
+            } else {
+                //TODO: We need to check port behavior on win
+                proxyConfiguration.setHttpHost(split[0]);
+                proxyConfiguration.setHttpPort(Integer.parseInt(split[1]));
+            }
+        } else if (hosts.size() == 0) {
+            //TODO: How does windows behave???
+            throw new IllegalStateException("No host defined!");
+        } else {
+            findProxyForProtocol(hosts, "http", (host, port) -> {
+                proxyConfiguration.setHttpHost(host);
+                proxyConfiguration.setHttpPort(port);
+            });
+            findProxyForProtocol(hosts, "https", (host, port) -> {
+                proxyConfiguration.setHttpsHost(host);
+                proxyConfiguration.setHttpsPort(port);
+            });
+            findProxyForProtocol(hosts, "ftp", (host, port) -> {
+                proxyConfiguration.setFtpHost(host);
+                proxyConfiguration.setFtpPort(port);
+            });
+            findProxyForProtocol(hosts, "socks", (host, port) -> {
+                proxyConfiguration.setSocksHost(host);
+                proxyConfiguration.setSocksPort(port);
+            });
+        }
+        final RegistryValue overrideHostsValue = proxyRegistryEntries.get(PROXY_SERVER_OVERRIDE_VAL);
+        if (overrideHostsValue != null) {
+            Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
+        }
+        proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
+        return proxyConfiguration;
     }
 
     private void findProxyForProtocol(final List<String> hosts, final String protocol, final BiConsumer<String, Integer> consumer) {
