@@ -209,7 +209,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         private final LocalJavaRuntime runtime;
         private final JREDesc jreDesc;
 
-        private RuntimeInfo(LocalJavaRuntime runtime, JREDesc jreDesc) {
+        private RuntimeInfo(final LocalJavaRuntime runtime, final JREDesc jreDesc) {
             this.runtime = runtime;
             this.jreDesc = jreDesc;
         }
