@@ -11,6 +11,7 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.EnvironmentPrinter;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import javax.naming.ConfigurationException;
@@ -24,6 +25,7 @@ public class ControlPanelLauncher {
 
 
     public static void main(final String[] args) {
+        EnvironmentPrinter.logEnvironment(args);
         if (Arrays.asList(args).contains(CommandLineOptions.VERBOSE.getOption())) {
             JNLPRuntime.setDebug(true);
         }
