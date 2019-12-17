@@ -1,23 +1,20 @@
 package com.openwebstart.jvm;
 
-import com.openwebstart.func.Result;
-import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.http.HttpGetRequest;
 import com.openwebstart.http.HttpResponse;
-import com.openwebstart.util.Subscription;
 import com.openwebstart.jvm.json.CacheStore;
 import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
+import com.openwebstart.util.Subscription;
 import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
@@ -26,18 +23,14 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -94,7 +87,7 @@ public final class LocalRuntimeManager {
             }
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
             if (jsonFile.exists()) {
-                if(!jsonFile.delete()) {
+                if (!jsonFile.delete()) {
                     throw new IOException("Unable to delete old config file!");
                 }
             }

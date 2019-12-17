@@ -26,7 +26,7 @@ public class DialogFactory {
 
         final Supplier<R> dialogHandler = dialog::showAndWait;
 
-        if(SwingUtils.isEventDispatchThread()) {
+        if (SwingUtils.isEventDispatchThread()) {
             final R result = dialogHandler.get();
             return Optional.ofNullable(result).orElseThrow(() -> new RuntimeException("Internal runtime error while handling dialog"));
         } else {
@@ -62,8 +62,8 @@ public class DialogFactory {
         Assert.requireNonNull(runtime, "runtime");
         final Translator translator = Translator.getInstance();
 
-            final String title = translator.translate("dialog.updateCheck.title");
-            final String message = translator.translate("dialog.updateCheck.text", runtime.getVersion(), runtime.getVendor());
+        final String title = translator.translate("dialog.updateCheck.title");
+        final String message = translator.translate("dialog.updateCheck.text", runtime.getVersion(), runtime.getVendor());
 
         return handleYesNoDialogEdtConform(title, message);
     }

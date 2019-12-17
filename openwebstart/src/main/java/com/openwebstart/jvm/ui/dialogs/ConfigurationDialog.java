@@ -49,7 +49,7 @@ public class ConfigurationDialog extends ModalDialog {
 
     private static final Color ERROR_BACKGROUND = Color.yellow;
 
-    private final Executor backgroundExecutor = Executors.newSingleThreadExecutor() ;
+    private final Executor backgroundExecutor = Executors.newSingleThreadExecutor();
     private final Translator translator = Translator.getInstance();
     private final JComboBox<String> vendorComboBox;
     private final Color originalBackground;

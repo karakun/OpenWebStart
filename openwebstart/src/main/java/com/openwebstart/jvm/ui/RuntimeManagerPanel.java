@@ -130,7 +130,7 @@ public final class RuntimeManagerPanel extends JPanel {
         final long added = results.stream()
                 .filter(result -> {
                     if (result.isSuccessful()) {
-                        return handleSucessfulFoundRuntime(result.getInput(), result.getResult());
+                        return handleSuccessfulFoundRuntime(result.getInput(), result.getResult());
                     } else {
                         LOG.error("Error while adding local JDK at '" + result.getInput() + "'", result.getException());
                         Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
@@ -146,7 +146,7 @@ public final class RuntimeManagerPanel extends JPanel {
         }
     }
 
-    private boolean handleSucessfulFoundRuntime(final Path path, final LocalJavaRuntime runtime) {
+    private boolean handleSuccessfulFoundRuntime(final Path path, final LocalJavaRuntime runtime) {
         if (runtime == null) {
             LOG.error("Error while adding local JDK at '" + path + "'", new NullPointerException("runtime == null"));
             Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));

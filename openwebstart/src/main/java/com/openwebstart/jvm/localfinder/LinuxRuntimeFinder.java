@@ -1,18 +1,17 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.func.Result;
 import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-
-import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 public class LinuxRuntimeFinder implements RuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(LinuxRuntimeFinder.class);

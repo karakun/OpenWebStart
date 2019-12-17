@@ -25,7 +25,7 @@ public class BasicVendorResolver implements VendorResolver {
 
     @Override
     public boolean isVendor(final String name) {
-        if(StringUtils.isBlank(name)) {
+        if (StringUtils.isBlank(name)) {
             return false;
         }
         return matchingNames.stream().anyMatch(name::equalsIgnoreCase);

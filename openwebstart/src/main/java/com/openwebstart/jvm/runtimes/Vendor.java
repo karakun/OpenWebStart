@@ -28,7 +28,8 @@ public class Vendor {
     public static final Vendor ADOPT = new Vendor("AdoptOpenJDK");
 
     private static final List<VendorResolver> resolver;
-    static  {
+
+    static {
         final List<VendorResolver> loaded = new ArrayList<>();
         loaded.add(new BasicVendorResolver(ANY_VENDOR, ANY_VENDOR.getName()));
         ServiceLoader.load(VendorResolver.class).iterator().forEachRemaining(loaded::add);

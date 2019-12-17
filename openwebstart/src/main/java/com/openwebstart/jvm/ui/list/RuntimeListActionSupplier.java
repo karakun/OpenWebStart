@@ -1,11 +1,11 @@
 package com.openwebstart.jvm.ui.list;
 
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import com.openwebstart.ui.Action;
 import com.openwebstart.jvm.ui.actions.ActivateRuntimeAction;
 import com.openwebstart.jvm.ui.actions.DeactivateRuntimeAction;
 import com.openwebstart.jvm.ui.actions.DeleteRuntimeAction;
 import com.openwebstart.jvm.ui.actions.RemoveRuntimeAction;
+import com.openwebstart.ui.Action;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.func.Result;
 import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
@@ -20,7 +19,7 @@ public interface RuntimeFinder {
     static List<ResultWithInput<Path, LocalJavaRuntime>> find() {
         final OperationSystem currentOs = OperationSystem.getLocalSystem();
 
-        final List<ResultWithInput<Path,LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
+        final List<ResultWithInput<Path, LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
         ServiceLoader.load(RuntimeFinder.class).iterator().forEachRemaining(f -> {
             if (f.getSupportedOperationSystems().contains(currentOs)) {
                 try {
