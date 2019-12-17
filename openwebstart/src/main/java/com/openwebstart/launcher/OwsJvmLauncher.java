@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
+import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
+import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
 import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 /**
@@ -146,6 +148,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("About to launch external with commands: '{}'", commands.toString());
 
         final ProcessBuilder pb = new ProcessBuilder();
+        pb.environment().put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
 
         final Process p = pb
                 .command(commands)
