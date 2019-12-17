@@ -1,21 +1,27 @@
 package com.openwebstart.proxy.mac;
 
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 class ScutilParserTest {
 
     @Test
-    public void testParse() throws IOException {
+    public void testParse() {
 
         //given:
-        final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out1.txt"));
+        final List<String> lines = new ArrayList<>();
+        try (final Scanner sc = new Scanner(ScutilParserTest.class.getResourceAsStream("out1.txt"))) {
+            while (sc.hasNextLine()) {
+                lines.add(sc.nextLine());
+            }
+        }
 
         //when:
-        final MacProxySettings proxySettings = ScutilUtil.parse(output);
+        final MacProxySettings proxySettings = ScutilUtil.parse(lines);
 
         //then:
         Assertions.assertNotNull(proxySettings);
@@ -33,13 +39,18 @@ class ScutilParserTest {
     }
 
     @Test
-    public void testParseWithList() throws IOException {
+    public void testParseWithList() {
 
         //given:
-        final String output = IOUtils.readContentAsUtf8String(ScutilParserTest.class.getResourceAsStream("out2.txt"));
+        final List<String> lines = new ArrayList<>();
+        try (final Scanner sc = new Scanner(ScutilParserTest.class.getResourceAsStream("out2.txt"))) {
+            while (sc.hasNextLine()) {
+                lines.add(sc.nextLine());
+            }
+        }
 
         //when:
-        final MacProxySettings proxySettings = ScutilUtil.parse(output);
+        final MacProxySettings proxySettings = ScutilUtil.parse(lines);
 
         //then:
         Assertions.assertNotNull(proxySettings);

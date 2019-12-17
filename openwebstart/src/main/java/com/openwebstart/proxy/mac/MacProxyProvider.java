@@ -5,14 +5,12 @@ import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 
-import java.io.IOException;
 import java.net.Proxy;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import static com.openwebstart.proxy.util.ProxyUtlis.showUnsupportedFeatureDialog;
 
@@ -22,7 +20,7 @@ public class MacProxyProvider implements ProxyProvider {
 
     private final ProxyProvider internalProvider;
 
-    public MacProxyProvider() throws IOException, InterruptedException, ExecutionException {
+    public MacProxyProvider() throws Exception {
 
         final MacProxySettings proxySettings = ScutilUtil.executeScutil();
 

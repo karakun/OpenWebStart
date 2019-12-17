@@ -5,7 +5,6 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -148,9 +146,6 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("About to launch external with commands: '{}'", commands.toString());
 
         final ProcessBuilder pb = new ProcessBuilder();
-
-        final Map<String, String> env = pb.environment();
-        env.put(IcedTeaWebConstants.ICEDTEA_WEB_SPLASH, IcedTeaWebConstants.NO_SPLASH);
 
         final Process p = pb
                 .command(commands)
