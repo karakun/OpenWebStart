@@ -1,24 +1,18 @@
 package com.openwebstart.jvm.util;
 
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
-import net.adoptopenjdk.icedteaweb.ProcessUtils;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
@@ -40,25 +34,17 @@ public class JavaRuntimePropertiesDetector {
 
     private static final String VERSION_ARG = "-version";
 
-    private static final ExecutorService READER_EXECUTOR = Executors.newSingleThreadExecutor();
-
     public static JavaRuntimeProperties getProperties(Path javaHome) {
         LOG.info("trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
-            final Process p = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG).start();
-            final Future<String> stdFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getInputStream()));
-            final Future<String> errFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getErrorStream()));
-            ProcessUtils.waitForSafely(p);
-
-            final String standardOut = stdFuture.get();
-            final String errorOut = errFuture.get();
-            final int returnCode = p.exitValue();
-            if (returnCode != 0) {
-                LOG.debug("The java process printed the following content on the error out: {}", errorOut);
+            final ProcessBuilder processBuilder = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG);
+            final ProcessUtil.ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+            if (!processResult.wasSuccessful()) {
+                LOG.debug("The java process printed the following content on the error out: {}", processResult.getErrorOut());
                 throw new RuntimeException("failed to execute java binary");
             }
-            return extractProperties(standardOut, errorOut);
+            return extractProperties(processResult.getStandardOut(), processResult.getErrorOut());
         } catch (final Exception ex) {
             final String message = "Can not get properties for JVM in path '" + java + "'";
             LOG.error(message, ex);
