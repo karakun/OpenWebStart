@@ -2,8 +2,8 @@ package com.openwebstart.os.linux;
 
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
 import com.openwebstart.os.ScriptFactory;
+import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
-import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -19,9 +19,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.JAVAWS;
 
@@ -42,7 +42,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void createDesktopEntry(final JNLPFile file) throws IOException {
+    public void createDesktopEntry(final JNLPFile file) throws Exception {
         final String iconLocation = getIconLocation(file);
         final File shortcutFile = getShortcutTmpFile(getDesktopIconName(file));
 
@@ -53,14 +53,15 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
         FileUtils.createRestrictedFile(shortcutFile);
         FileUtils.saveFileUtf8(getContent(file, false, iconLocation), shortcutFile);
 
-        final String[] execString = new String[]{"xdg-desktop-icon", "install", "--novendor",
-                shortcutFile.getCanonicalPath()};
-        LOG.debug("Executing: {}", Arrays.toString(execString));
-        final ProcessBuilder pb = new ProcessBuilder(execString);
-        pb.redirectError();
-        final Process installer = pb.start();
-        ProcessUtil.logIO(installer.getInputStream());
-        ProcessUtils.waitForSafely(installer);
+        final ProcessBuilder pb = new ProcessBuilder("xdg-desktop-icon", "install", "--novendor",
+                shortcutFile.getCanonicalPath());
+
+        final ProcessResult processResult = ProcessUtil.runProcess(pb, 5, TimeUnit.SECONDS);
+        if (processResult.wasUnsuccessful()) {
+            LOG.debug("The xdg-desktop-icon process printed the following content on the error out: {}", processResult.getErrorOut());
+            throw new RuntimeException("failed to execute xdg-desktop-icon binary");
+        }
+
         if (!shortcutFile.delete()) {
             throw new IOException("Unable to delete temporary file:" + shortcutFile);
         }
@@ -97,7 +98,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
                 LOG.warn("directory '{}' for storing menu entry cannot be created.", menuDir);
             }
         }
-        if(!menuDir.isDirectory()) {
+        if (!menuDir.isDirectory()) {
             throw new IllegalStateException("Not a directory: " + menuDir.getAbsolutePath());
         }
         return menuDir.getAbsolutePath();

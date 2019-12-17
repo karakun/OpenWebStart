@@ -1,9 +1,7 @@
 package com.openwebstart.proxy.windows;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.AUTO_CONFIG_URL_VAL;
@@ -14,7 +12,7 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_
 
 public class WindowsProxy {
 
-    private static void printProxySettings() throws InterruptedException, ExecutionException, IOException {
+    private static void printProxySettings() throws Exception {
         final Map<String, RegistryValue> proxyRegistryEntries = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
         final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);
         if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {

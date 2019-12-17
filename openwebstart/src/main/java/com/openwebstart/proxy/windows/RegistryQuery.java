@@ -1,32 +1,28 @@
 package com.openwebstart.proxy.windows;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import com.openwebstart.util.ProcessResult;
+import com.openwebstart.util.ProcessUtil;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 class RegistryQuery {
 
-    static Map<String, RegistryValue> getAllValuesForKey(final String key) throws IOException, InterruptedException, ExecutionException {
-        final Process start = new ProcessBuilder().command("reg", "query", "\"" + key + "\"")
-                .redirectErrorStream(true)
-                .start();
-        final Future<List<String>> linesFuture = getLines(start.getInputStream());
-        final int exitValue = start.waitFor();
-        if (exitValue != 0) {
-            throw new RuntimeException("Process ended with error code: " + exitValue);
-        }
-        final List<String> lines = linesFuture.get();
+    private static final Logger LOG = LoggerFactory.getLogger(RegistryQuery.class);
 
-        return getRegistryValuesFromLines(key, lines);
+    static Map<String, RegistryValue> getAllValuesForKey(final String key) throws Exception {
+        final ProcessBuilder processBuilder = new ProcessBuilder("reg", "query", "\"" + key + "\"");
+        final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+        if (processResult.wasUnsuccessful()) {
+            LOG.debug("The reg process printed the following content on the error out: {}", processResult.getErrorOut());
+            throw new RuntimeException("failed to execute reg binary");
+        }
+        return getRegistryValuesFromLines(key, processResult.getStandardOutLines());
     }
 
     static Map<String, RegistryValue> getRegistryValuesFromLines(final String key, final List<String> lines) {
@@ -56,23 +52,4 @@ class RegistryQuery {
             throw new IllegalArgumentException("Can not getPreferences type in line: '" + line + "'");
         }
     }
-
-    private static Future<List<String>> getLines(final InputStream src) {
-        final CompletableFuture<List<String>> result = new CompletableFuture<>();
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                final List<String> lines = new ArrayList<>();
-                final Scanner sc = new Scanner(src);
-                while (sc.hasNextLine()) {
-                    lines.add(sc.nextLine());
-                }
-                result.complete(lines);
-            } catch (final Exception e) {
-                result.completeExceptionally(e);
-            }
-        });
-        return result;
-    }
-
 }
