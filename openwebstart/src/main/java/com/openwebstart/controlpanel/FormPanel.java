@@ -36,6 +36,7 @@ public class FormPanel extends JPanel {
         c1.gridx = 0;
         c1.gridy = row;
         c1.weightx = 3;
+        c1.gridwidth = 3;
         c1.ipady = 20;
         c1.fill = GridBagConstraints.HORIZONTAL;
         add(component, c1);

@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
@@ -47,6 +48,8 @@ public class OwsJvmLauncher implements JvmLauncher {
      * The file "itw-modularjdk.args" can be found in the icedtea-web source.
      */
     private static final String ITW_MODULARJDK_ARGS = "itw-modularjdk.args";
+    public static final String REMOTE_DEBUGGING_PREFIX = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=";
+    public static final String REMOTE_DEBUGGING_SYSTEM_PROPERTY = "OWS_REMOTE_DEBUGGING_PORT";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
@@ -194,14 +197,29 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private List<String> getRemoteDebuggingArgs() {
         try {
-            final String remoteDebuggingPort = System.getProperty("OWS_REMOTE_DEBUGGING_PORT");
+            final String remoteDebuggingPort = System.getProperty(REMOTE_DEBUGGING_SYSTEM_PROPERTY);
             if (!isBlank(remoteDebuggingPort)) {
                 final int port = Integer.parseInt(remoteDebuggingPort);
-                return Collections.singletonList("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + port);
+                LOG.debug("Adding remote debug support on port " + port);
+                return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);
             }
         } catch (Exception e) {
-            LOG.error("Failed in adding remote debug args.", e);
+            LOG.error("Failed in adding remote logging args.", e);
         }
+
+        try {
+            final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.DEBUG);
+            if (Boolean.valueOf(debugActive)) {
+                final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.DEBUG_PORT);
+                final int port = Integer.parseInt(debugPort);
+                LOG.debug("Adding remote debug support on port " + port);
+                return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);
+            }
+        } catch (Exception e) {
+            LOG.error("Failed in adding remote logging args.", e);
+        }
+
+
         return Collections.emptyList();
     }
 
