@@ -63,11 +63,8 @@ public class ScutilUtil {
             throw new IllegalArgumentException("The given input can not be parsed!");
         }
 
-        //remove unneeded lines
-        lines.remove(0);
-        lines.remove(lines.size() - 1);
-
-        final List<String> parameterLines = lines.stream()
+        final List<String> parameterLines = lines.subList(1, lines.size() - 1)
+                .stream()
                 .map(l -> l.trim())
                 .collect(Collectors.toList());
 
