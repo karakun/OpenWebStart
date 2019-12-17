@@ -1,4 +1,4 @@
-package com.openwebstart.debug;
+package com.openwebstart.logging;
 
 import com.openwebstart.controlpanel.FormPanel;
 import net.adoptopenjdk.icedteaweb.Assert;
@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Vector;
 
 public class LoggingPanel extends FormPanel {

@@ -6,16 +6,16 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.JComponent;
 
-public class LoggingPanelProvider implements ControlPanelProvider {
+public class DebugPanelProvider implements ControlPanelProvider {
 
     @Override
     public String getTitle() {
-        return Translator.getInstance().translate("loggingPanel.title");
+        return Translator.getInstance().translate("debugPanel.title");
     }
 
     @Override
     public String getName() {
-        return "Logging";
+        return "DebugOptions";
     }
 
     @Override
@@ -25,6 +25,6 @@ public class LoggingPanelProvider implements ControlPanelProvider {
 
     @Override
     public JComponent createPanel(final DeploymentConfiguration deploymentConfiguration) {
-        return new LoggingPanel(deploymentConfiguration);
+        return new DebugPanel(deploymentConfiguration);
     }
 }

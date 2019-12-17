@@ -1,4 +1,4 @@
-package com.openwebstart.debug;
+package com.openwebstart.logging;
 
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
