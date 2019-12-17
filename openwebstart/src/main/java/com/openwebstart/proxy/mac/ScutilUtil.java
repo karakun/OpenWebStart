@@ -1,14 +1,16 @@
 package com.openwebstart.proxy.mac;
 
-import java.io.IOException;
+import com.openwebstart.util.ProcessResult;
+import com.openwebstart.util.ProcessUtil;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,22 +36,22 @@ import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_ENABLE_
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PORT_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_PROXY_PROPERTY_NAME;
 import static com.openwebstart.proxy.mac.MacProxyProviderConstants.SOCKS_USER_PROPERTY_NAME;
-import static com.openwebstart.util.ProcessUtil.executeProcessAndReturnOutput;
 
 public class ScutilUtil {
 
-    public static MacProxySettings executeScutil() throws IOException, InterruptedException, ExecutionException {
-        final String processOut = executeProcessAndReturnOutput("scutil", "--proxy");
-        return parse(processOut);
+    private static final Logger LOG = LoggerFactory.getLogger(ScutilUtil.class);
+
+    public static MacProxySettings executeScutil() throws Exception {
+        final ProcessBuilder processBuilder = new ProcessBuilder("scutil", "--proxy");
+        final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+        if (processResult.wasUnsuccessful()) {
+            LOG.debug("The scutil process printed the following content on the error out: {}", processResult.getErrorOut());
+            throw new RuntimeException("failed to execute scutil");
+        }
+        return parse(processResult.getStandardOutLines());
     }
 
-    public static MacProxySettings parse(final String processOut) {
-        final Scanner scanner = new Scanner(processOut);
-        final List<String> lines = new ArrayList<>();
-        while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine());
-        }
-
+    public static MacProxySettings parse(final List<String> lines) {
         //Initial checks
         if (lines.isEmpty()) {
             throw new IllegalArgumentException("The given input can not be parsed!");
@@ -61,11 +63,8 @@ public class ScutilUtil {
             throw new IllegalArgumentException("The given input can not be parsed!");
         }
 
-        //remove unneeded lines
-        lines.remove(0);
-        lines.remove(lines.size() - 1);
-
-        final List<String> parameterLines = lines.stream()
+        final List<String> parameterLines = lines.subList(1, lines.size() - 1)
+                .stream()
                 .map(l -> l.trim())
                 .collect(Collectors.toList());
 

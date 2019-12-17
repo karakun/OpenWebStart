@@ -2,7 +2,6 @@ package com.openwebstart.os;
 
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
@@ -51,7 +50,6 @@ public class ScriptFactory {
         builder.command("open", "-a", executable, "--args", fileLocation);
         builder.redirectErrorStream(true);
         final Process process = builder.start();
-        ProcessUtil.logIO(process.getInputStream());
         return process;
     }
 
