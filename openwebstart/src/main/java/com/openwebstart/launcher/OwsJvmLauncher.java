@@ -204,7 +204,7 @@ public class OwsJvmLauncher implements JvmLauncher {
                 return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);
             }
         } catch (Exception e) {
-            LOG.error("Failed in adding remote logging args.", e);
+            LOG.error("Failed in adding remote debugging args.", e);
         }
 
         try {
