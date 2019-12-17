@@ -48,8 +48,7 @@ public class JdkFinder {
                         .distinct()
                         .map(Result.withInput(JdkFinder::getLocalJavaRuntime))
                         .collect(Collectors.toList());
-            }
-            catch (final IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Error while searching for local JVMs at '" + searchRoot + "'", e);
             }
         }
@@ -80,7 +79,7 @@ public class JdkFinder {
             final String vendor = jreProps.getVendor();
             return LocalJavaRuntime.createPreInstalled(version, LOCAL_OS, vendor, javaHome);
         } catch (final Exception e) {
-            throw new IllegalStateException("Error while reading properties from JVM at '" + javaHome +"'", e);
+            throw new IllegalStateException("Error while reading properties from JVM at '" + javaHome + "'", e);
         }
     }
 

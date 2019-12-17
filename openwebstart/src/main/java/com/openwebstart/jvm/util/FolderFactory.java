@@ -2,7 +2,6 @@ package com.openwebstart.jvm.util;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.locks.Lock;
@@ -23,10 +22,10 @@ public class FolderFactory {
         subfolderLock.lock();
         try {
             final Path subfolderPath = Paths.get(basePath.toString(), name);
-            if(subfolderPath.toFile().exists()) {
+            if (subfolderPath.toFile().exists()) {
                 return createSubFolder(name, 1);
             } else {
-                if(subfolderPath.toFile().mkdirs()) {
+                if (subfolderPath.toFile().mkdirs()) {
                     return subfolderPath;
                 } else {
                     throw new RuntimeException("unable to create folder '" + subfolderPath + "'");
@@ -43,10 +42,10 @@ public class FolderFactory {
         try {
             final String foldername = name + "-" + suffix;
             final Path subfolderPath = Paths.get(basePath.toString(), foldername);
-            if(subfolderPath.toFile().exists()) {
+            if (subfolderPath.toFile().exists()) {
                 return createSubFolder(name, suffix + 1);
             } else {
-                if(subfolderPath.toFile().mkdirs()) {
+                if (subfolderPath.toFile().mkdirs()) {
                     return subfolderPath;
                 } else {
                     throw new RuntimeException("unable to create folder '" + subfolderPath + "'");
