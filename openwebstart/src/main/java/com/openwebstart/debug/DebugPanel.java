@@ -35,15 +35,15 @@ public class DebugPanel extends FormPanel {
         final JLabel debugPortLabel = new JLabel(translator.translate("debugPanel.debugPort.text") + ":");
         final JTextField debugPortField = new JTextField();
         debugPortField.setToolTipText(translator.translate("debugPanel.debugPort.description"));
-        debugPortField.setText(config.getProperty(OwsDefaultsProvider.DEBUG_PORT));
-        uiLock.update(OwsDefaultsProvider.DEBUG, debugPortField);
+        debugPortField.setText(config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT));
+        uiLock.update(OwsDefaultsProvider.REMOTE_DEBUG, debugPortField);
         addRow(1, debugPortLabel, debugPortField);
 
         final JCheckBox activateDebugCheckbox = new JCheckBox(translator.translate("debugPanel.activateDebug.text"));
         activateDebugCheckbox.setToolTipText(translator.translate("debugPanel.activateDebug.description"));
-        uiLock.update(OwsDefaultsProvider.DEBUG, activateDebugCheckbox);
-        activateDebugCheckbox.addChangeListener(e -> config.setProperty(OwsDefaultsProvider.DEBUG, Boolean.valueOf(activateDebugCheckbox.isSelected()).toString()));
-        activateDebugCheckbox.setSelected(Boolean.parseBoolean(config.getProperty(OwsDefaultsProvider.DEBUG)));
+        uiLock.update(OwsDefaultsProvider.REMOTE_DEBUG, activateDebugCheckbox);
+        activateDebugCheckbox.addChangeListener(e -> config.setProperty(OwsDefaultsProvider.REMOTE_DEBUG, Boolean.valueOf(activateDebugCheckbox.isSelected()).toString()));
+        activateDebugCheckbox.setSelected(Boolean.parseBoolean(config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG)));
         addEditorRow(2, activateDebugCheckbox);
 
         addRow(3, new JPanel());
@@ -61,10 +61,10 @@ public class DebugPanel extends FormPanel {
         final Consumer<String> onPortTextUpdate = s -> {
             try {
                 final int port = Integer.parseInt(debugPortField.getText());
-                config.setProperty(OwsDefaultsProvider.DEBUG_PORT, port + "");
+                config.setProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT, port + "");
                 messageLabel.setText(translator.translate("debugPanel.description.success", Integer.toString(port)));
             } catch (final Exception ignore) {
-                final String lastValidValue = config.getProperty(OwsDefaultsProvider.DEBUG_PORT);
+                final String lastValidValue = config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 messageLabel.setText(translator.translate("debugPanel.description.fail", lastValidValue));
             }
         };

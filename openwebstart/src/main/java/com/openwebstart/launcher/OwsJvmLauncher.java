@@ -208,9 +208,9 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
 
         try {
-            final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.DEBUG);
+            final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
             if (Boolean.valueOf(debugActive)) {
-                final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.DEBUG_PORT);
+                final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 final int port = Integer.parseInt(debugPort);
                 LOG.debug("Adding remote debug support on port " + port);
                 return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);

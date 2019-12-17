@@ -17,9 +17,8 @@ import java.util.stream.Stream;
 public class OwsDefaultsProvider implements DefaultsProvider {
 
 
-    public static final String DEBUG = "ows.jvm.manager.debug";
-    public static final String DEBUG_PORT = "ows.jvm.manager.debugPort";
-
+    public static final String REMOTE_DEBUG = "ows.jvm.manager.remoteDebug";
+    public static final String REMOTE_DEBUG_PORT = "ows.jvm.manager.remoteDebugPort";
 
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
@@ -33,12 +32,12 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public List<Setting<String>> getDefaults() {
         return Arrays.asList(
                 Setting.createDefault(
-                        DEBUG,
+                        REMOTE_DEBUG,
                         Boolean.FALSE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
-                        DEBUG_PORT,
+                        REMOTE_DEBUG_PORT,
                         "5005",
                         ValidatorFactory.createRangedIntegerValidator(0, 10_000)
                 ),
