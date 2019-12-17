@@ -1,12 +1,8 @@
 package com.openwebstart.launcher;
 
-import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
-import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
-import com.openwebstart.os.MenuAndDesktopEntryHandler;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -39,10 +35,6 @@ public class PhaseTwoWebStartLauncher {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");
-
-        LOG.info("OpenWebStartLauncher called with args {}.", Arrays.toString(args));
-        LOG.debug("OS detected: Win[{}], MacOS[{}], Linux[{}]",
-                InstallerUtil.isWindows(), InstallerUtil.isMacOS(), InstallerUtil.isLinux());
 
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {
