@@ -1,5 +1,6 @@
 package com.openwebstart.jvm.util;
 
+import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -39,8 +40,8 @@ public class JavaRuntimePropertiesDetector {
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final ProcessBuilder processBuilder = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG);
-            final ProcessUtil.ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
-            if (!processResult.wasSuccessful()) {
+            final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+            if (processResult.wasUnsuccessful()) {
                 LOG.debug("The java process printed the following content on the error out: {}", processResult.getErrorOut());
                 throw new RuntimeException("failed to execute java binary");
             }

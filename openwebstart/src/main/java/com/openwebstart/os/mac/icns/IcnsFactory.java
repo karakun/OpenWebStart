@@ -2,9 +2,12 @@ package com.openwebstart.os.mac.icns;
 
 import com.openwebstart.func.Result;
 import com.openwebstart.ui.ImageUtils;
+import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,10 +18,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class IcnsFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(IcnsFactory.class);
+    
     private final static String ICON_FOLDER_NAME = "icons.iconset";
 
     private final static String ICON_SET_NAME = "icons.icns";
@@ -68,15 +74,15 @@ public class IcnsFactory {
             }
         });
 
-        final ProcessBuilder processBuilder = new ProcessBuilder();
+        final ProcessBuilder processBuilder = new ProcessBuilder(ICONUTIL_COMMAND);
         processBuilder.command(ICONUTIL_COMMAND);
         processBuilder.directory(tempDirectory.toFile());
-        processBuilder.redirectError();
-        final Process process = processBuilder.start();
-        ProcessUtil.logIO(process.getInputStream());
-        final int exitValue = process.waitFor();
-        if(exitValue != 0) {
-            throw new RuntimeException("Error in creating icon file");
+
+        final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+
+        if (processResult.wasUnsuccessful()) {
+            LOG.debug("The iconutil process printed the following content on the error out: {}", processResult.getErrorOut());
+            throw new RuntimeException("failed to execute iconutil binary");
         }
 
         FileUtils.recursiveDelete(iconFolder, iconFolder);

@@ -20,37 +20,6 @@ public class ProcessUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessUtil.class);
 
-    public static class ProcessResult {
-
-        private final int exitValue;
-
-        private final String standardOut;
-
-        private final String errorOut;
-
-        public ProcessResult(final int exitValue, final String standardOut, final String errorOut) {
-            this.exitValue = exitValue;
-            this.standardOut = standardOut;
-            this.errorOut = errorOut;
-        }
-
-        public boolean wasSuccessful() {
-            return exitValue == 0;
-        }
-
-        public int getExitValue() {
-            return exitValue;
-        }
-
-        public String getErrorOut() {
-            return errorOut;
-        }
-
-        public String getStandardOut() {
-            return standardOut;
-        }
-    }
-
     private static final ExecutorService READER_EXECUTOR = Executors.newCachedThreadPool();
 
     public static ProcessResult runProcess(final ProcessBuilder builder, long timeout, TimeUnit timeUnit) throws Exception {

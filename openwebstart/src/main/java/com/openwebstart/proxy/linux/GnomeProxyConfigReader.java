@@ -1,5 +1,6 @@
 package com.openwebstart.proxy.linux;
 
+import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.proxy.linux.LinuxProxyProvider.LinuxProxyMode.MANUAL;
@@ -45,10 +47,16 @@ class GnomeProxyConfigReader {
     private static final String MODE_MANUAL = "manual";
 
     public static Optional<LinuxProxySettings> readGnomeProxyConfig() {
-
         try {
-            final String gnomeSettings = ProcessUtil.executeProcessAndReturnOutput("gsettings", "ist-recursively", "org.gnome.system.proxy");
-            final Map<String, String> values = parseGnomeSettings(gnomeSettings);
+            final ProcessBuilder processBuilder = new ProcessBuilder("gsettings", "ist-recursively", "org.gnome.system.proxy");
+            final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+
+            if (processResult.wasUnsuccessful()) {
+                LOG.debug("The gsettings process printed the following content on the error out: {}", processResult.getErrorOut());
+                throw new RuntimeException("failed to execute gsettings");
+            }
+
+            final Map<String, String> values = parseGnomeSettings(processResult.getStandardOut());
             final LinuxProxySettings result = convertToSettings(values);
             return Optional.of(result);
         } catch (Exception e) {
