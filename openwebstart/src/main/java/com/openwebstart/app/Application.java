@@ -7,6 +7,7 @@ import net.adoptopenjdk.icedteaweb.resources.cache.CacheFile;
 import net.adoptopenjdk.icedteaweb.resources.cache.CacheId;
 import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
+import net.sourceforge.jnlp.JNLPFileFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,7 +39,7 @@ public class Application {
     public Application(final CacheId cacheId) throws IOException, ParseException {
         this.cacheId = Assert.requireNonNull(cacheId, "cacheId");
         this.size = cacheId.getFiles().stream().mapToLong(CacheFile::getSize).sum();
-        jnlpFile = new JNLPFile(Paths.get(cacheId.getId()).toUri().toURL());
+        jnlpFile = new JNLPFileFactory().create(Paths.get(cacheId.getId()).toUri().toURL());
     }
 
     /**
