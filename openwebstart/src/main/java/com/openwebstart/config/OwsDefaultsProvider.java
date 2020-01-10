@@ -34,6 +34,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public List<Setting<String>> getDefaults() {
         return Arrays.asList(
                 Setting.createDefault(
+                        PROXY_PAC_CACHE,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
                         REMOTE_DEBUG,
                         Boolean.FALSE.toString(),
                         ValidatorFactory.createBooleanValidator()
