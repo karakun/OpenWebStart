@@ -5,6 +5,8 @@ import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacProxyCache;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.net.Proxy;
 import java.net.URI;
@@ -29,12 +31,12 @@ public class WindowsProxyProvider implements ProxyProvider {
 
     private final ProxyProvider internalProvider;
 
-    public WindowsProxyProvider() throws Exception {
+    public WindowsProxyProvider(final DeploymentConfiguration config) throws Exception {
         final Map<String, RegistryValue> proxyRegistryEntries = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
         final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
         if (autoConfigUrlValue != null) {
             final String autoConfigUrl = autoConfigUrlValue.getValue();
-            internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl));
+            internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl), PacProxyCache.createFor(config));
         } else {
             final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);
             if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {

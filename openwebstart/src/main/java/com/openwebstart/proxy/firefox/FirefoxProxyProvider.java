@@ -8,12 +8,12 @@ import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.linux.LinuxProxyProvider;
 import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacProxyCache;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
@@ -46,7 +46,7 @@ public class FirefoxProxyProvider implements ProxyProvider {
 
     private final ProxyProvider internalProvider;
 
-    public FirefoxProxyProvider() throws Exception {
+    public FirefoxProxyProvider(final DeploymentConfiguration config) throws Exception {
         final FirefoxPreferences prefs = new FirefoxPreferences();
         prefs.load();
 
@@ -54,7 +54,8 @@ public class FirefoxProxyProvider implements ProxyProvider {
         final FirefoxProxyType proxyType = getForConfigValue(type);
         LOG.debug("FireFoxProxyType : {}", proxyType);
         if (proxyType == BROWSER_PROXY_TYPE_PAC) {
-            internalProvider = createForPac(prefs);
+            final URL autoConfigUrl = new URL(prefs.getStringValue(AUTO_CONFIG_URL_PROPERTY_NAME));
+            internalProvider = new PacBasedProxyProvider(autoConfigUrl, PacProxyCache.createFor(config));
         } else if (proxyType == BROWSER_PROXY_TYPE_MANUAL) {
             internalProvider = createForManualConfig(prefs);
         } else if (proxyType == BROWSER_PROXY_TYPE_NONE) {
@@ -62,11 +63,11 @@ public class FirefoxProxyProvider implements ProxyProvider {
         } else if (proxyType == BROWSER_PROXY_TYPE_SYSTEM) {
             final OperationSystem localSystem = OperationSystem.getLocalSystem();
             if (localSystem.isWindows()) {
-                internalProvider = new WindowsProxyProvider();
+                internalProvider = new WindowsProxyProvider(config);
             } else if (localSystem.isMac()) {
-                internalProvider = new MacProxyProvider();
+                internalProvider = new MacProxyProvider(config);
             } else if (localSystem.isLinux()) {
-                internalProvider = new LinuxProxyProvider();
+                internalProvider = new LinuxProxyProvider(config);
             } else {
                 throw new IllegalStateException("Firefox Proxy Type '" + proxyType + "' is not supported for " + localSystem);
             }
@@ -93,11 +94,6 @@ public class FirefoxProxyProvider implements ProxyProvider {
                 .forEach(proxyConfiguration::addToBypassList);
 
         return new ConfigBasedProvider(proxyConfiguration);
-    }
-
-    private ProxyProvider createForPac(final FirefoxPreferences prefs) throws IOException {
-        final String url = prefs.getStringValue(AUTO_CONFIG_URL_PROPERTY_NAME);
-        return new PacBasedProxyProvider(new URL(url));
     }
 
     @Override

@@ -37,6 +37,7 @@ exception statement from your version.
 
 package com.openwebstart.proxy.pac;
 
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -48,6 +49,7 @@ import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Scriptable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketPermission;
+import java.net.URI;
 import java.net.URL;
 import java.security.AccessControlContext;
 import java.security.AccessController;
@@ -78,15 +80,16 @@ public class PacFileEvaluator {
     private final String pacContents;
     private final URL pacUrl;
 
-    private final PacProxyCache cache = new PacProxyCache();
+    private final PacProxyCache cache;
 
     /**
      * Initialize a new object by using the PAC file located at the given URL.
      *
      * @param pacUrl the url of the PAC file to use
      */
-    public PacFileEvaluator(final URL pacUrl) throws IOException {
+    public PacFileEvaluator(final URL pacUrl, PacProxyCache cache) throws IOException {
         LOG.debug("Create PAC evaluator for '{}'", pacUrl);
+        this.cache = Assert.requireNonNull(cache, "cache");
         this.pacUrl = pacUrl;
         try (final InputStream inputStream = PacFileEvaluator.class.getResourceAsStream(PAC_HELPER_FUNCTIONS_FILE)) {
             this.pacHelperFunctionContents = IOUtils.readContentAsUtf8String(inputStream);
@@ -103,19 +106,19 @@ public class PacFileEvaluator {
      * <p>
      * This method performs caching of the result.
      *
-     * @param url the url for which a proxy is desired
+     * @param uri the uri for which a proxy is desired
      * @return a list of proxies in a string like
      * <pre>"PROXY foo.example.com:8080; PROXY bar.example.com:8080; DIRECT"</pre>
-     * @see #getProxiesWithoutCaching(URL)
+     * @see #getProxiesWithoutCaching(URI)
      */
-    String getProxies(final URL url) {
-        final String cachedResult = cache.getFromCache(url);
+    String getProxies(final URI uri) {
+        final String cachedResult = cache.getFromCache(uri);
         if (cachedResult != null) {
             return cachedResult;
         }
-        final String result = getProxiesWithoutCaching(url);
-        LOG.debug("PAC result for url '{}' -> '{}'", url, result);
-        cache.addToCache(url, result);
+        final String result = getProxiesWithoutCaching(uri);
+        LOG.debug("PAC result for url '{}' -> '{}'", uri, result);
+        cache.addToCache(uri, result);
         return result;
     }
 
@@ -123,12 +126,12 @@ public class PacFileEvaluator {
      * Get the proxies for accessing a given URL. The result is obtained by
      * evaluating the PAC file with the given url (and the host) as input.
      *
-     * @param url the url for which a proxy is desired
+     * @param uri the url for which a proxy is desired
      * @return a list of proxies in a string like
      * <pre>"PROXY example.com:3128; DIRECT"</pre>
-     * @see #getProxies(URL)
+     * @see #getProxies(URI)
      */
-    private String getProxiesWithoutCaching(final URL url) {
+    private String getProxiesWithoutCaching(final URI uri) {
         final Permissions p = new Permissions();
         p.add(new RuntimePermission(JAVASCRIPT_RUNTIME_PERMISSION_NAME));
         p.add(new SocketPermission("*", "resolve"));
@@ -155,7 +158,7 @@ public class PacFileEvaluator {
 
                 final Object functionObj = scope.get(PAC_METHOD, scope);
                 if (functionObj instanceof Function) {
-                    final Object[] args = {url.toString(), url.getHost()};
+                    final Object[] args = {uri.toString(), uri.getHost()};
                     final Object result = ((Function) functionObj).call(cx, scope, scope, args);
                     //NULL is valid return value:
                     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_(PAC)_file

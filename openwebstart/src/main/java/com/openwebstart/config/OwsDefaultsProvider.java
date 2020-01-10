@@ -26,6 +26,8 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String JVM_UPDATE_STRATEGY = "ows.jvm.manager.updateStrategy";
     public static final String JVM_SUPPORTED_VERSION_RANGE = "ows.jvm.manager.versionRange";
 
+    public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
+
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
 
     @Override

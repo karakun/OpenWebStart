@@ -5,8 +5,10 @@ import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacProxyCache;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -32,7 +34,7 @@ public class LinuxProxyProvider implements ProxyProvider {
     private final ProxyProvider internalProvider;
 
 
-    public LinuxProxyProvider() throws IOException {
+    public LinuxProxyProvider(final DeploymentConfiguration config) throws IOException {
 
         final LinuxProxySettings proxySettings = readGnomeProxyConfig()
                 .orElseGet(() -> readSystemPropertiesProxyConfig()
@@ -45,7 +47,7 @@ public class LinuxProxyProvider implements ProxyProvider {
                 internalProvider = DirectProxyProvider.getInstance();
                 break;
             case PAC:
-                internalProvider = new PacBasedProxyProvider(proxySettings.getAutoConfigUrl());
+                internalProvider = new PacBasedProxyProvider(proxySettings.getAutoConfigUrl(), PacProxyCache.createFor(config));
                 break;
             case MANUAL:
                 if (proxySettings.isAuthenticationEnabled()) {
