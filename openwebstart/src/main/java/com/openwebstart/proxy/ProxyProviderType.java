@@ -52,7 +52,7 @@ public enum ProxyProviderType {
 
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
-            return new FirefoxProxyProvider();
+            return new FirefoxProxyProvider(config);
         }
     },
 
@@ -74,11 +74,11 @@ public enum ProxyProviderType {
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
             final OperationSystem localSystem = OperationSystem.getLocalSystem();
             if (localSystem.isWindows()) {
-                return new WindowsProxyProvider();
+                return new WindowsProxyProvider(config);
             } else if (localSystem.isMac()) {
-                return new MacProxyProvider();
+                return new MacProxyProvider(config);
             } else if (localSystem.isLinux()) {
-                return new LinuxProxyProvider();
+                return new LinuxProxyProvider(config);
             }
             throw new IllegalStateException("System proxy is not supported for " + OperationSystem.getLocalSystem());
         }

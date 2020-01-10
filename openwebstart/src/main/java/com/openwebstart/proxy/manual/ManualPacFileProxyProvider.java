@@ -1,6 +1,7 @@
 package com.openwebstart.proxy.manual;
 
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacProxyCache;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -11,7 +12,7 @@ import java.net.URL;
 public class ManualPacFileProxyProvider extends PacBasedProxyProvider {
 
     public ManualPacFileProxyProvider(final DeploymentConfiguration config) throws Exception {
-        super(getAutoConfigUrl(config));
+        super(getAutoConfigUrl(config), PacProxyCache.createFor(config));
     }
 
     private static URL getAutoConfigUrl(final DeploymentConfiguration config) throws MalformedURLException {

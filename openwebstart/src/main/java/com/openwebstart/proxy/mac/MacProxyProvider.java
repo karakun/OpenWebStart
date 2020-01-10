@@ -4,6 +4,8 @@ import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.pac.PacProxyCache;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.net.Proxy;
 import java.net.URI;
@@ -20,7 +22,7 @@ public class MacProxyProvider implements ProxyProvider {
 
     private final ProxyProvider internalProvider;
 
-    public MacProxyProvider() throws Exception {
+    public MacProxyProvider(final DeploymentConfiguration config) throws Exception {
 
         final MacProxySettings proxySettings = ScutilUtil.executeScutil();
 
@@ -47,7 +49,7 @@ public class MacProxyProvider implements ProxyProvider {
         }
 
         if (proxySettings.isAutoConfigEnabled()) {
-            internalProvider = new PacBasedProxyProvider(proxySettings.getAutoConfigUrl());
+            internalProvider = new PacBasedProxyProvider(proxySettings.getAutoConfigUrl(), PacProxyCache.createFor(config));
         } else {
             final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
             if (proxySettings.isHttpEnabled()) {

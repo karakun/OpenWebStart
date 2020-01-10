@@ -56,10 +56,11 @@ public class OpenWebStartLauncher {
     }
 
     private static ArrayList<String> getVerboseArgs(String[] args) {
-        // TODO: this makes sure any app launched with OWS is running in verbose/debug mode. Remove this once OWS is stable
+        // TODO: this makes sure any app launched with OWS is running in verbose/logging mode. Remove this once OWS is stable
         final ArrayList<String> result = new ArrayList<>(Arrays.asList(args));
         if (! result.contains(CommandLineOptions.VERBOSE.getOption())) {
             result.add(0, CommandLineOptions.VERBOSE.getOption());
+            result.add(0, CommandLineOptions.NOSEC.getOption());
         }
         return result;
     }

@@ -27,7 +27,7 @@ public class ErrorDialog extends ModalDialog {
 
     public ErrorDialog(final String message, final Exception error) {
         Assert.requireNonNull(error, "error");
-        LOG.error("Error: " + message, error);
+        LOG.error("Error-Dialog message: " + message, error);
 
         final Translator translator = Translator.getInstance();
 

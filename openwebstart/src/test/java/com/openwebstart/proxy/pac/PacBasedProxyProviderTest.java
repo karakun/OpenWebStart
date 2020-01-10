@@ -16,7 +16,7 @@ class PacBasedProxyProviderTest {
         //given
         final URL pacUrl = PacBasedProxyProviderTest.class.getResource("simple-pac.js");
         final URI uri = new URI("http://anyserver:8080");
-        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl);
+        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl, new NoopPacProxyCache());
 
         //when
         final List<Proxy> proxies = pacBasedProxyProvider.select(uri);
@@ -33,7 +33,7 @@ class PacBasedProxyProviderTest {
         //given
         final URL pacUrl = PacBasedProxyProviderTest.class.getResource("simple-pac.js");
         final URI uri = new URI("http://myserver:8080");
-        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl);
+        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl, new NoopPacProxyCache());
 
         //when
         final List<Proxy> proxies = pacBasedProxyProvider.select(uri);
@@ -49,7 +49,7 @@ class PacBasedProxyProviderTest {
         //given
         final URL pacUrl = PacBasedProxyProviderTest.class.getResource("simple-pac.js");
         final URI uri = new URI("http://noproxy:8080");
-        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl);
+        final PacBasedProxyProvider pacBasedProxyProvider = new PacBasedProxyProvider(pacUrl, new NoopPacProxyCache());
 
         //when
         final List<Proxy> proxies = pacBasedProxyProvider.select(uri);

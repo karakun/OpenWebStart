@@ -18,16 +18,16 @@ public class PacBasedProxyProvider implements ProxyProvider {
 
     private final PacFileEvaluator pacEvaluator;
 
-    public PacBasedProxyProvider(final URL pacConfigFileUrl) throws IOException {
+    public PacBasedProxyProvider(final URL pacConfigFileUrl, final PacProxyCache cache) throws IOException {
         Assert.requireNonNull(pacConfigFileUrl, "pacConfigFileUrl");
-        this.pacEvaluator = new PacFileEvaluator(pacConfigFileUrl);
+        this.pacEvaluator = new PacFileEvaluator(pacConfigFileUrl, cache);
     }
 
     @Override
-    public List<Proxy> select(final URI uri) throws Exception {
+    public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
 
-        final String proxiesString = pacEvaluator.getProxies(uri.toURL());
+        final String proxiesString = pacEvaluator.getProxies(uri);
         final List<Proxy> proxies = PacUtils.getProxiesFromPacResult(proxiesString);
         LOG.debug("PAC Proxies found for '{}' : {}", uri, proxies);
         return Collections.unmodifiableList(proxies);
