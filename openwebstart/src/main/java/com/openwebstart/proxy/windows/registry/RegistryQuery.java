@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.windows;
+package com.openwebstart.proxy.windows.registry;
 
 import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
@@ -11,18 +11,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-class RegistryQuery {
+public class RegistryQuery {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegistryQuery.class);
 
-    static Map<String, RegistryValue> getAllValuesForKey(final String key) throws Exception {
+    public static RegistryQueryResult getAllValuesForKey(final String key) throws Exception {
         final ProcessBuilder processBuilder = new ProcessBuilder("reg", "query", "\"" + key + "\"");
         final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
         if (processResult.wasUnsuccessful()) {
             LOG.debug("The reg process printed the following content on the error out: {}", processResult.getErrorOut());
             throw new RuntimeException("failed to execute reg binary");
         }
-        return getRegistryValuesFromLines(key, processResult.getStandardOutLines());
+        return new RegistryQueryResult(getRegistryValuesFromLines(key, processResult.getStandardOutLines()));
     }
 
     static Map<String, RegistryValue> getRegistryValuesFromLines(final String key, final List<String> lines) {
@@ -41,6 +41,10 @@ class RegistryQuery {
         }
         final String name = line.substring(0, index).trim();
         final String[] typeAndValue = line.substring(index).split("\\s+", 2);
+        if (typeAndValue.length == 1) {
+            final RegistryValueType type = RegistryValueType.valueOf(typeAndValue[0].trim());
+            return new RegistryValue(name, type, null);
+        }
         if (typeAndValue.length != 2) {
             throw new IllegalArgumentException("Can not getPreferences value in line: '" + line + "'");
         }
