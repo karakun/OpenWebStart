@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,8 +35,12 @@ public class WindowsProxyProvider implements ProxyProvider {
     public WindowsProxyProvider(final DeploymentConfiguration config) throws Exception {
         final Map<String, RegistryValue> proxyRegistryEntries = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
         final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
-        if (autoConfigUrlValue != null) {
-            final String autoConfigUrl = autoConfigUrlValue.getValue();
+
+        final String autoConfigUrl = Optional.ofNullable(autoConfigUrlValue)
+                .map(v -> v.getValue())
+                .orElse(null);
+
+        if (autoConfigUrl != null) {
             internalProvider = new PacBasedProxyProvider(new URL(autoConfigUrl), PacProxyCache.createFor(config));
         } else {
             final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);

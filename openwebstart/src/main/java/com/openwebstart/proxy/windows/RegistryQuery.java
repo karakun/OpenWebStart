@@ -41,6 +41,10 @@ class RegistryQuery {
         }
         final String name = line.substring(0, index).trim();
         final String[] typeAndValue = line.substring(index).split("\\s+", 2);
+        if (typeAndValue.length == 1) {
+            final RegistryValueType type = RegistryValueType.valueOf(typeAndValue[0].trim());
+            return new RegistryValue(name, type, null);
+        }
         if (typeAndValue.length != 2) {
             throw new IllegalArgumentException("Can not getPreferences value in line: '" + line + "'");
         }
