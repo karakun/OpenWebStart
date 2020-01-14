@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.windows;
+package com.openwebstart.proxy.windows.registry;
 
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import org.junit.jupiter.api.Assertions;

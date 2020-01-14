@@ -1,5 +1,8 @@
 package com.openwebstart.proxy.windows;
 
+import com.openwebstart.proxy.windows.registry.RegistryQuery;
+import com.openwebstart.proxy.windows.registry.RegistryQueryResult;
+
 import java.util.Arrays;
 import java.util.regex.Pattern;
 

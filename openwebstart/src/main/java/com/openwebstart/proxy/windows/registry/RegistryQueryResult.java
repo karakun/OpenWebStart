@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.windows;
+package com.openwebstart.proxy.windows.registry;
 
 import java.util.HashMap;
 import java.util.Map;

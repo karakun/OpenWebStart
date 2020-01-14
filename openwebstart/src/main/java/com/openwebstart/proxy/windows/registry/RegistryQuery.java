@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.windows;
+package com.openwebstart.proxy.windows.registry;
 
 import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-class RegistryQuery {
+public class RegistryQuery {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegistryQuery.class);
 
-    static RegistryQueryResult getAllValuesForKey(final String key) throws Exception {
+    public static RegistryQueryResult getAllValuesForKey(final String key) throws Exception {
         final ProcessBuilder processBuilder = new ProcessBuilder("reg", "query", "\"" + key + "\"");
         final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
         if (processResult.wasUnsuccessful()) {

@@ -3,6 +3,8 @@ package com.openwebstart.proxy.windows;
 import com.openwebstart.proxy.ProxyProvider;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
+import com.openwebstart.proxy.windows.registry.RegistryQueryResult;
+import com.openwebstart.proxy.windows.registry.RegistryValue;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,11 +15,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.openwebstart.proxy.windows.RegistryValueType.REG_DWORD;
-import static com.openwebstart.proxy.windows.RegistryValueType.REG_SZ;
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.AUTO_CONFIG_URL_VAL;
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_ENABLED_VAL;
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_REGISTRY_VAL;
+import static com.openwebstart.proxy.windows.registry.RegistryValueType.REG_DWORD;
+import static com.openwebstart.proxy.windows.registry.RegistryValueType.REG_SZ;
 
 class WindowsProxyUtilsTest {
 

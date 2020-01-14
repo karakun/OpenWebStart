@@ -6,6 +6,7 @@ import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
 import com.openwebstart.proxy.pac.PacProxyCache;
+import com.openwebstart.proxy.windows.registry.RegistryQueryResult;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.IOException;

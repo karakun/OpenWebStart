@@ -1,4 +1,4 @@
-package com.openwebstart.proxy.windows;
+package com.openwebstart.proxy.windows.registry;
 
 public enum RegistryValueType {
     REG_BINARY,

@@ -1,6 +1,8 @@
 package com.openwebstart.proxy.windows;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.windows.registry.RegistryQuery;
+import com.openwebstart.proxy.windows.registry.RegistryQueryResult;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.net.Proxy;
