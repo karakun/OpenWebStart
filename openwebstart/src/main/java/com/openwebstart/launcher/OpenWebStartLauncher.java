@@ -60,7 +60,6 @@ public class OpenWebStartLauncher {
         final ArrayList<String> result = new ArrayList<>(Arrays.asList(args));
         if (! result.contains(CommandLineOptions.VERBOSE.getOption())) {
             result.add(0, CommandLineOptions.VERBOSE.getOption());
-            result.add(0, CommandLineOptions.NOSEC.getOption());
         }
         return result;
     }
