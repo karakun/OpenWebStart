@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
@@ -27,16 +26,16 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_
 
 class WindowsProxyUtils {
 
-    static ProxyProvider createInternalProxy(final DeploymentConfiguration config, final Map<String, RegistryValue> proxyRegistryEntries) throws IOException {
-        final String autoConfigUrl = getValueOrNull(proxyRegistryEntries, AUTO_CONFIG_URL_VAL);
+    static ProxyProvider createInternalProxy(final DeploymentConfiguration config, final RegistryQueryResult queryResult) throws IOException {
+        final String autoConfigUrl = queryResult.getValue(AUTO_CONFIG_URL_VAL);
         if (autoConfigUrl != null) {
             return new PacBasedProxyProvider(new URL(autoConfigUrl), PacProxyCache.createFor(config));
         } else {
-            final boolean proxyEnabledValue = getBooleanValue(proxyRegistryEntries, PROXY_ENABLED_VAL);
+            final boolean proxyEnabledValue = queryResult.getValueAsBoolean(PROXY_ENABLED_VAL);
             if (proxyEnabledValue) {
-                final String proxyServerValue = getValueOrNull(proxyRegistryEntries, PROXY_SERVER_REGISTRY_VAL);
+                final String proxyServerValue = queryResult.getValue(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
-                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(proxyRegistryEntries);
+                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(queryResult);
                     return new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
@@ -48,10 +47,10 @@ class WindowsProxyUtils {
         }
     }
 
-    private static ProxyConfigurationImpl getProxyConfiguration(Map<String, RegistryValue> proxyRegistryEntries) {
+    private static ProxyConfigurationImpl getProxyConfiguration(final RegistryQueryResult queryResult) {
         final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
 
-        final List<String> hosts = Optional.ofNullable(getValueOrNull(proxyRegistryEntries, PROXY_SERVER_REGISTRY_VAL))
+        final List<String> hosts = Optional.ofNullable(queryResult.getValue(PROXY_SERVER_REGISTRY_VAL))
                 .map(v -> v.split(Pattern.quote(";")))
                 .map(Arrays::asList)
                 .orElse(Collections.emptyList());
@@ -91,24 +90,12 @@ class WindowsProxyUtils {
                 proxyConfiguration.setSocksPort(port);
             });
         }
-        final String overrideHostsValue = getValueOrNull(proxyRegistryEntries, PROXY_SERVER_OVERRIDE_VAL);
+        final String overrideHostsValue = queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL);
         if (overrideHostsValue != null) {
             Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
         }
         proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
         return proxyConfiguration;
-    }
-
-    private static boolean getBooleanValue(final Map<String, RegistryValue> proxyRegistryEntries, final String key) {
-        return Optional.ofNullable(proxyRegistryEntries.get(key)).map(v -> v.getValueAsBoolean()).orElse(false);
-    }
-
-    private static String getValueOrNull(final Map<String, RegistryValue> proxyRegistryEntries, final String key) {
-        return getValueOrNull(proxyRegistryEntries.get(key));
-    }
-
-    private static String getValueOrNull(final RegistryValue registryValue) {
-        return Optional.ofNullable(registryValue).map(v -> v.getValue()).orElse(null);
     }
 
     private static void findProxyForProtocol(final List<String> hosts, final String protocol, final BiConsumer<String, Integer> consumer) {

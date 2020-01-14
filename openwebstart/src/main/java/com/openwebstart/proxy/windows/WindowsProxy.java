@@ -1,7 +1,6 @@
 package com.openwebstart.proxy.windows;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.AUTO_CONFIG_URL_VAL;
@@ -13,24 +12,23 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_
 public class WindowsProxy {
 
     private static void printProxySettings() throws Exception {
-        final Map<String, RegistryValue> proxyRegistryEntries = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
-        final RegistryValue proxyEnabledValue = proxyRegistryEntries.get(PROXY_ENABLED_VAL);
-        if (proxyEnabledValue != null && proxyEnabledValue.getValueAsBoolean()) {
+        final RegistryQueryResult queryResult = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
+        if (queryResult.getValueAsBoolean(PROXY_ENABLED_VAL)) {
             System.out.println("Windows Proxy Server is enabled");
 
-            final RegistryValue autoConfigUrlValue = proxyRegistryEntries.get(AUTO_CONFIG_URL_VAL);
+            final String autoConfigUrlValue = queryResult.getValue(AUTO_CONFIG_URL_VAL);
             if (autoConfigUrlValue != null) {
-                System.out.println("Windows Proxy Server use PAC with URL: " + autoConfigUrlValue.getValue());
+                System.out.println("Windows Proxy Server use PAC with URL: " + autoConfigUrlValue);
             } else {
-                final RegistryValue proxyServerValue = proxyRegistryEntries.get(PROXY_SERVER_REGISTRY_VAL);
+                final String proxyServerValue = queryResult.getValue(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
-                    Arrays.asList(proxyServerValue.getValue().split(Pattern.quote(";"))).forEach(p -> System.out.println("Proxy: " + p));
+                    Arrays.asList(proxyServerValue.split(Pattern.quote(";"))).forEach(p -> System.out.println("Proxy: " + p));
                 } else {
                     System.out.println("No specific Proxy server defined. DIRECT will be used");
                 }
-                final RegistryValue overrideHostsValue = proxyRegistryEntries.get(PROXY_SERVER_OVERRIDE_VAL);
+                final String overrideHostsValue = queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL);
                 if (overrideHostsValue != null) {
-                    Arrays.asList(overrideHostsValue.getValue().split(Pattern.quote(";"))).forEach(p -> System.out.println("Exclusion: " + p));
+                    Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(p -> System.out.println("Exclusion: " + p));
                 } else {
                     System.out.println("No exclusion defined");
                 }

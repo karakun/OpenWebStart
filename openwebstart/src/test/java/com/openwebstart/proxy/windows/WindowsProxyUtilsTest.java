@@ -28,9 +28,10 @@ class WindowsProxyUtilsTest {
         final Map<String, RegistryValue> proxyRegistryEntries = new HashMap<>();
         final String pacUrl = WindowsProxyUtilsTest.class.getResource("simple-pac.js").toExternalForm();
         proxyRegistryEntries.put(AUTO_CONFIG_URL_VAL, new RegistryValue(AUTO_CONFIG_URL_VAL, REG_SZ, pacUrl));
+        final RegistryQueryResult queryResult = new RegistryQueryResult(proxyRegistryEntries);
 
         //when
-        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, proxyRegistryEntries);
+        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, queryResult);
 
         //than
         Assertions.assertNotNull(proxyProvider);
@@ -45,9 +46,10 @@ class WindowsProxyUtilsTest {
         final Map<String, RegistryValue> proxyRegistryEntries = new HashMap<>();
         proxyRegistryEntries.put(AUTO_CONFIG_URL_VAL, new RegistryValue(AUTO_CONFIG_URL_VAL, REG_SZ, null));
         proxyRegistryEntries.put(PROXY_ENABLED_VAL, new RegistryValue(PROXY_ENABLED_VAL, REG_DWORD, "0x0"));
+        final RegistryQueryResult queryResult = new RegistryQueryResult(proxyRegistryEntries);
 
         //when
-        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, proxyRegistryEntries);
+        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, queryResult);
 
         //than
         Assertions.assertNotNull(proxyProvider);
@@ -60,9 +62,10 @@ class WindowsProxyUtilsTest {
         final DeploymentConfiguration config = new DeploymentConfiguration();
         final Map<String, RegistryValue> proxyRegistryEntries = new HashMap<>();
         proxyRegistryEntries.put(PROXY_ENABLED_VAL, new RegistryValue(PROXY_ENABLED_VAL, REG_DWORD, "0x0"));
+        final RegistryQueryResult queryResult = new RegistryQueryResult(proxyRegistryEntries);
 
         //when
-        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, proxyRegistryEntries);
+        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, queryResult);
 
         //than
         Assertions.assertNotNull(proxyProvider);
@@ -75,9 +78,10 @@ class WindowsProxyUtilsTest {
         final DeploymentConfiguration config = new DeploymentConfiguration();
         final Map<String, RegistryValue> proxyRegistryEntries = new HashMap<>();
         proxyRegistryEntries.put(PROXY_ENABLED_VAL, new RegistryValue(PROXY_ENABLED_VAL, REG_DWORD, "0x1"));
+        final RegistryQueryResult queryResult = new RegistryQueryResult(proxyRegistryEntries);
 
         //when
-        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, proxyRegistryEntries);
+        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, queryResult);
 
         //than
         Assertions.assertNotNull(proxyProvider);
@@ -91,9 +95,10 @@ class WindowsProxyUtilsTest {
         final Map<String, RegistryValue> proxyRegistryEntries = new HashMap<>();
         proxyRegistryEntries.put(PROXY_ENABLED_VAL, new RegistryValue(PROXY_ENABLED_VAL, REG_DWORD, "0x1"));
         proxyRegistryEntries.put(PROXY_SERVER_REGISTRY_VAL, new RegistryValue(PROXY_SERVER_REGISTRY_VAL, REG_SZ, null));
+        final RegistryQueryResult queryResult = new RegistryQueryResult(proxyRegistryEntries);
 
         //when
-        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, proxyRegistryEntries);
+        final ProxyProvider proxyProvider = WindowsProxyUtils.createInternalProxy(config, queryResult);
 
         //than
         Assertions.assertNotNull(proxyProvider);

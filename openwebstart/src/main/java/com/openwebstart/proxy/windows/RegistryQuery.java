@@ -15,14 +15,14 @@ class RegistryQuery {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegistryQuery.class);
 
-    static Map<String, RegistryValue> getAllValuesForKey(final String key) throws Exception {
+    static RegistryQueryResult getAllValuesForKey(final String key) throws Exception {
         final ProcessBuilder processBuilder = new ProcessBuilder("reg", "query", "\"" + key + "\"");
         final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
         if (processResult.wasUnsuccessful()) {
             LOG.debug("The reg process printed the following content on the error out: {}", processResult.getErrorOut());
             throw new RuntimeException("failed to execute reg binary");
         }
-        return getRegistryValuesFromLines(key, processResult.getStandardOutLines());
+        return new RegistryQueryResult(getRegistryValuesFromLines(key, processResult.getStandardOutLines()));
     }
 
     static Map<String, RegistryValue> getRegistryValuesFromLines(final String key, final List<String> lines) {
