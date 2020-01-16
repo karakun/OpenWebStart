@@ -31,6 +31,8 @@ public class ConfigBasedProvider implements ProxyProvider {
 
     public ConfigBasedProvider(final ProxyConfiguration proxyConfiguration) {
         this.configuration = Assert.requireNonNull(proxyConfiguration, "proxyConfiguration");
+
+        logConfig();
     }
 
     @Override
@@ -119,5 +121,13 @@ public class ConfigBasedProvider implements ProxyProvider {
         }
 
         return false;
+    }
+
+    private void logConfig() {
+        LOG.debug("Http proxy congfig: host {} - port {}", configuration.getHttpHost(), configuration.getHttpPort());
+        LOG.debug("Https proxy congfig: host {} - port {}", configuration.getHttpsHost(), configuration.getHttpsPort());
+        LOG.debug("Ftp proxy congfig: host {} - port {}", configuration.getFtpHost(), configuration.getFtpPort());
+        LOG.debug("Socks proxy congfig: host {} - port {}", configuration.getSocksHost(), configuration.getSocksPort());
+        LOG.debug("proxy bypass list: {}", configuration.getBypassList());
     }
 }
