@@ -8,6 +8,8 @@ import com.openwebstart.proxy.mac.MacProxyProvider;
 import com.openwebstart.proxy.manual.ManualConfigBasedProxyProvider;
 import com.openwebstart.proxy.manual.ManualPacFileProxyProvider;
 import com.openwebstart.proxy.windows.WindowsProxyProvider;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.util.stream.Stream;
@@ -17,6 +19,7 @@ public enum ProxyProviderType {
     NONE(0) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) {
+            LOG.debug("Direct proxy created");
             return DirectProxyProvider.getInstance();
         }
     },
@@ -24,6 +27,7 @@ public enum ProxyProviderType {
     MANUAL_HOSTS(1) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) {
+            LOG.debug("Manual proxy created");
             return new ManualConfigBasedProxyProvider(config);
         }
     },
@@ -31,6 +35,7 @@ public enum ProxyProviderType {
     MANUAL_PAC_URL(2) {
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            LOG.debug("Pac based proxy created");
             return new ManualPacFileProxyProvider(config);
         }
     },
@@ -52,6 +57,7 @@ public enum ProxyProviderType {
 
         @Override
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
+            LOG.debug("Firefox based proxy created");
             return new FirefoxProxyProvider(config);
         }
     },
@@ -74,15 +80,21 @@ public enum ProxyProviderType {
         public ProxyProvider createProvider(final DeploymentConfiguration config) throws Exception {
             final OperationSystem localSystem = OperationSystem.getLocalSystem();
             if (localSystem.isWindows()) {
+                LOG.debug("Windows based proxy created");
                 return new WindowsProxyProvider(config);
             } else if (localSystem.isMac()) {
+                LOG.debug("Mac based proxy created");
                 return new MacProxyProvider(config);
             } else if (localSystem.isLinux()) {
+                LOG.debug("Linux based proxy created");
                 return new LinuxProxyProvider(config);
             }
             throw new IllegalStateException("System proxy is not supported for " + OperationSystem.getLocalSystem());
         }
     };
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyProviderType.class);
+
 
     private final int configValue;
 
