@@ -179,7 +179,7 @@ public class ProxyConfigPanel extends FormPanel {
         bypassLocalhostCheckboxContraints.weighty = 0;
         bypassLocalhostCheckboxContraints.fill = GridBagConstraints.HORIZONTAL;
         manualSettingsDetailsPanel.add(bypassLocalhostCheckbox, bypassLocalhostCheckboxContraints);
-
+        bindToSettings(config, bypassLocalhostCheckbox, ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL);
 
         final JPanel manualSettingsPanel = new JPanel(new BorderLayout());
         manualSettingsPanel.add(useManualSettings, BorderLayout.NORTH);
@@ -260,5 +260,12 @@ public class ProxyConfigPanel extends FormPanel {
 
         bypassLocalhostCheckbox.setSelected(Boolean.parseBoolean(config.getProperty(ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL)));
 
+    }
+
+    private void bindToSettings(final DeploymentConfiguration config, final JCheckBox checkbox, final String propertyName) {
+        final UiLock uiLock = new UiLock(config);
+        uiLock.update(propertyName, checkbox);
+        checkbox.addChangeListener(e -> config.setProperty(propertyName, Boolean.valueOf(checkbox.isSelected()).toString()));
+        checkbox.setSelected(Boolean.parseBoolean(config.getProperty(propertyName)));
     }
 }
