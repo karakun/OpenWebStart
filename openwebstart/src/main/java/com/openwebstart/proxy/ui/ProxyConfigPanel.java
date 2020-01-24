@@ -29,7 +29,7 @@ import java.awt.event.FocusListener;
 
 public class ProxyConfigPanel extends FormPanel {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ProxyConfigPanel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyConfigPanel.class);
 
     private final JRadioButton noProxySelection;
 
@@ -233,7 +233,7 @@ public class ProxyConfigPanel extends FormPanel {
                 noProxySelection.setSelected(true);
                 updateEnabledStateForProxyType(ProxyProviderType.NONE);
             } else {
-                final int proxyTypeConfigValue = Integer.valueOf(proxyTypeString);
+                final int proxyTypeConfigValue = Integer.parseInt(proxyTypeString);
                 final ProxyProviderType providerType = ProxyProviderType.getForConfigValue(proxyTypeConfigValue);
                 if (providerType == ProxyProviderType.NONE) {
                     noProxySelection.setSelected(true);
