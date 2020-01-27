@@ -29,6 +29,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_PORT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
+import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
 
 class InitialConfigurationCheck {
 
@@ -75,6 +76,7 @@ class InitialConfigurationCheck {
             setLastUpdateProperty();
 
             deploymentConfiguration.save();
+            getConfiguration().load(); // load the runtime config to make sure the initial config is applied.
             LOG.debug("Import of initial configuration done");
         }
     }
