@@ -4,6 +4,7 @@ import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.AdvancedProxySettingsDialog;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -227,7 +228,7 @@ public class ProxyConfigPanel extends FormPanel {
     }
 
     private static String returnNullForEmpty(final String value) {
-        if (value == null || value.isEmpty()) {
+        if (StringUtils.isBlank(value)) {
             return null;
         }
         return value;
