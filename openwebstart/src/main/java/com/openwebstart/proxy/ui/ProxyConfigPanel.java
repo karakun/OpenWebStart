@@ -4,6 +4,7 @@ import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.AdvancedProxySettingsDialog;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -220,10 +221,17 @@ public class ProxyConfigPanel extends FormPanel {
             config.setProperty(ConfigurationConstants.KEY_PROXY_TYPE, ProxyProviderType.MANUAL_PAC_URL.getConfigValue() + "");
         }
 
-        config.setProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL, pacUrlField.getText());
-        config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST, proxyHostField.getText());
-        config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_PORT, proxyPortField.getText());
+        config.setProperty(ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL, returnNullForEmpty(pacUrlField.getText()));
+        config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_HOST, returnNullForEmpty(proxyHostField.getText()));
+        config.setProperty(ConfigurationConstants.KEY_PROXY_HTTP_PORT, returnNullForEmpty(proxyPortField.getText()));
         config.setProperty(ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL, bypassLocalhostCheckbox.isSelected() + "");
+    }
+
+    private static String returnNullForEmpty(final String value) {
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        return value;
     }
 
     private void updateUi() {
