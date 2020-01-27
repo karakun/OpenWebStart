@@ -48,7 +48,7 @@ class GnomeProxyConfigReader {
 
     public static Optional<LinuxProxySettings> readGnomeProxyConfig() {
         try {
-            final ProcessBuilder processBuilder = new ProcessBuilder("gsettings", "ist-recursively", "org.gnome.system.proxy");
+            final ProcessBuilder processBuilder = new ProcessBuilder("gsettings", "list-recursively", "org.gnome.system.proxy");
             final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
 
             if (processResult.wasUnsuccessful()) {
