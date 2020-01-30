@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.openwebstart.jvm.RuntimeUpdateStrategy.DO_NOTHING_ON_LOCAL_MATCH;
+import static com.openwebstart.jvm.RuntimeUpdateStrategy.NO_REMOTE;
 
 class JavaRuntimeSelector implements JavaRuntimeProvider {
 
@@ -49,7 +50,12 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
         LOG.debug("Trying to find Java runtime. Requested version: '{}', vendor: '{}', os: '{}', server-url: '{}'", versionString, vendorName, os, serverEndpoint);
 
         final Optional<LocalJavaRuntime> localRuntime = LocalRuntimeManager.getInstance().getBestActiveRuntime(versionString, vendor, os);
+
         if (!localRuntime.isPresent()) {
+            if (updateStrategy == NO_REMOTE) {
+                LOG.debug("No local runtime found and remote strategy prevents remote lookup");
+                return Optional.empty();
+            }
             LOG.debug("No local runtime found, will try to find remote runtime");
             final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpoint, vendor, os)
                     .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpoint));
