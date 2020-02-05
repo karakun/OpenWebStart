@@ -35,19 +35,19 @@ public class JavaRuntimePropertiesDetector {
 
     private static final String VERSION_ARG = "-version";
 
- public static JavaRuntimeProperties getProperties(Path javaHome) {
-        LOG.info("trying to get definition of local JVM at '{}'", javaHome);
+ public static JavaRuntimeProperties getProperties(Path javaHome) throws IllegalStateException {
+        LOG.info("Trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {
             final ProcessBuilder processBuilder = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG);
             final ProcessResult processResult = ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
             if (processResult.wasUnsuccessful()) {
-                LOG.debug("The java process printed the following content on the error out: {}", processResult.getErrorOut());
-                throw new RuntimeException("failed to execute java binary");
+                LOG.debug("The java process printed the following content to 'error out': {}", processResult.getErrorOut());
+                throw new RuntimeException("Failed to execute java binary");
             }
             return extractProperties(processResult.getStandardOut(), processResult.getErrorOut());
         } catch (final Exception ex) {
-            final String message = "Can not get properties for JVM in path '" + java + "'";
+            final String message = String.format("Can not get properties for JVM in path '%s'.", java);
             LOG.error(message, ex);
             throw new IllegalStateException(message, ex);
         }
@@ -58,7 +58,8 @@ public class JavaRuntimePropertiesDetector {
         props.putAll(extractProps(stdErr));
         props.putAll(extractProps(stdOut));
         if (props.size() != REQUIRED_PROPS.size()) {
-            throw new RuntimeException("Could not find all required properties. Only found " + props);
+            throw new RuntimeException(String.format("Could not find all required properties %s, Only found %s.",
+                    REQUIRED_PROPS, props));
         }
         return new JavaRuntimeProperties(
                 props.get(JAVA_VENDOR),
