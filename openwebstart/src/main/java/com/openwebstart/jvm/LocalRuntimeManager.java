@@ -22,11 +22,14 @@ import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.adoptopenjdk.icedteaweb.os.OsUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +77,7 @@ public final class LocalRuntimeManager {
         return () -> updatedListeners.remove(listener);
     }
 
-    private void saveRuntimes() throws Exception {
+    private void saveRuntimes() throws IOException {
         jsonStoreLock.lock();
         try {
             LOG.debug("Saving runtime cache to filesystem");
@@ -99,6 +102,11 @@ public final class LocalRuntimeManager {
         }
     }
 
+    /**
+     * Load runtimes from filesystem into cache. Do some housekeeping by checking if a runtime is still present
+     * on the file system as stated in the cache json file. If not present any more, it will be removed from the
+     * json file and the cache.
+     */
     void loadRuntimes() {
         LOG.debug("Loading runtime cache from filesystem");
         jsonStoreLock.lock();
@@ -108,7 +116,14 @@ public final class LocalRuntimeManager {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 clear();
-                cacheStore.getRuntimes().forEach(this::add);
+                cacheStore.getRuntimes().stream()
+                        .filter(this::isJvmPresent)
+                        .forEach(this::add);
+                try {
+                    saveRuntimes();
+                } catch (final Exception e) {
+                    throw new RuntimeException("Error while saving JVM cache.", e);
+                }
             } else {
                 clear();
             }
@@ -118,6 +133,13 @@ public final class LocalRuntimeManager {
         } finally {
             jsonStoreLock.unlock();
         }
+    }
+
+    private boolean isJvmPresent(final LocalJavaRuntime localJavaRuntime) {
+        final Path javaHome = localJavaRuntime.getJavaHome();
+        final Path javaRuntimePath = Paths.get(javaHome.toString(), "bin", OsUtil.isWindows() ? "java.exe" : "java");
+
+        return Files.exists(javaHome) && Files.isDirectory(javaHome) && Files.exists(javaRuntimePath);
     }
 
     private void clear() {
