@@ -36,7 +36,7 @@ public class Notification extends JWindow {
 
 
         final IconComponent iconComponent;
-        if(error) {
+        if (error) {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("error-32.png")));
         } else {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("info-32.png")));
