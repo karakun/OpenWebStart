@@ -30,6 +30,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -268,6 +269,20 @@ public final class LocalRuntimeManager {
                 throw new RuntimeException("Error while saving JVM cache.", e);
             }
         }
+    }
+
+    public static void touch(final LocalJavaRuntime currentRuntime) {
+        LocalJavaRuntime newRuntime = new LocalJavaRuntime(
+                currentRuntime.getVersion().toString(),
+                currentRuntime.getOperationSystem(),
+                currentRuntime.getVendor().toString(),
+                currentRuntime.getJavaHome(),
+                LocalDateTime.now(),
+                currentRuntime.isActive(),
+                currentRuntime.isManaged()
+        );
+
+        LocalRuntimeManager.getInstance().replace(currentRuntime, newRuntime);
     }
 
     public static LocalRuntimeManager getInstance() {
