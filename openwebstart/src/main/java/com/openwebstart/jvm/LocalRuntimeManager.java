@@ -55,6 +55,7 @@ public final class LocalRuntimeManager {
     private final List<RuntimeUpdateListener> updatedListeners = new CopyOnWriteArrayList<>();
 
     private final Lock jsonStoreLock = new ReentrantLock();
+    public static final int MAX_DAYS_STAY_IN_JVM_CACHE = 100;
 
     private LocalRuntimeManager() {
     }
@@ -117,9 +118,16 @@ public final class LocalRuntimeManager {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 clear();
+                // load runtimes in the cache
                 cacheStore.getRuntimes().stream()
                         .filter(this::isJvmPresent)
                         .forEach(this::add);
+
+                // after runtimes loaded to cache, cleanup unused managed runtimes
+                cacheStore.getRuntimes().stream()
+                        .filter(LocalJavaRuntime::isManaged)
+                        .filter(this::isUnused)
+                        .forEach(this::delete);
                 try {
                     saveRuntimes();
                 } catch (final Exception e) {
@@ -134,6 +142,17 @@ public final class LocalRuntimeManager {
         } finally {
             jsonStoreLock.unlock();
         }
+    }
+
+    private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
+            final LocalDateTime lastUsage = localJavaRuntime.getLastUsage();
+            final LocalDateTime today = LocalDateTime.now();
+            if (lastUsage.plusDays(MAX_DAYS_STAY_IN_JVM_CACHE).isBefore(today)) {
+                LOG.info(String.format("Delete unused runtime '%s' from JVM cache as it exceeds max number of %s days " +
+                        "allowed to stay in cache.", localJavaRuntime.getJavaHome(), MAX_DAYS_STAY_IN_JVM_CACHE));
+                return true;
+            }
+        return false;
     }
 
     private boolean isJvmPresent(final LocalJavaRuntime localJavaRuntime) {
