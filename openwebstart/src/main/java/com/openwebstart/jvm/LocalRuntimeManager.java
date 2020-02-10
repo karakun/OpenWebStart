@@ -146,12 +146,12 @@ public final class LocalRuntimeManager {
     private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
         final int maxDaysUnusedInJvmCache = RuntimeManagerConfig.getMaxDaysUnusedInJvmCache();
         final LocalDateTime lastUsage = localJavaRuntime.getLastUsage();
-            final LocalDateTime today = LocalDateTime.now();
-            if (lastUsage.plusDays(maxDaysUnusedInJvmCache).isBefore(today)) {
-                LOG.info(String.format("Delete unused runtime '%s' from JVM cache as it exceeds max number of %s days " +
-                        "allowed to stay in cache.", localJavaRuntime.getJavaHome(), maxDaysUnusedInJvmCache));
-                return true;
-            }
+        final LocalDateTime today = LocalDateTime.now();
+        if (lastUsage.plusDays(maxDaysUnusedInJvmCache).isBefore(today)) {
+            LOG.info("Delete unused runtime '{}' from JVM cache as it exceeds max number of {} days " +
+                    "allowed to stay in cache.", localJavaRuntime.getJavaHome(), maxDaysUnusedInJvmCache);
+            return true;
+        }
         return false;
     }
 
