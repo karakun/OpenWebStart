@@ -32,10 +32,6 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AGENT_PROPERTY;
-import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY;
-import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY;
-import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_MAX_REDIRECTS_PROPERTY;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
@@ -46,6 +42,11 @@ import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
  */
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
+
+    private static final String HTTP_AGENT_PROPERTY = "http.agent";
+    private static final String HTTP_MAX_REDIRECTS_PROPERTY = "http.maxRedirects";
+    private static final String HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY = "http.auth.digest.validateProxy";
+    private static final String HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY = "http.auth.digest.validateServer";
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
@@ -159,7 +160,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
         if (properties.containsKey(argumentName)) {
             result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
-            LOG.info("Set HTTP {} from JNLP file properties map.", argumentName);
+            LOG.debug("Set property {} from JNLP file properties map.", argumentName);
         }
     }
 
@@ -238,7 +239,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         try {
             final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
-            if (Boolean.valueOf(debugActive)) {
+            if (Boolean.parseBoolean(debugActive)) {
                 final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 final int port = Integer.parseInt(debugPort);
                 LOG.debug("Adding remote debug support on port " + port);
