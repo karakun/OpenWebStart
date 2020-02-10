@@ -19,6 +19,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_S
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_COMPRESSION_ENABLED;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
@@ -67,6 +68,7 @@ class InitialConfigurationCheck {
             initProperty(KEY_HTTPS_DONT_ENFORCE);
             initProperty(KEY_ASSUME_FILE_STEM_IN_CODEBASE);
             initProperty(KEY_SECURITY_SERVER_WHITELIST);
+            initProperty(MAX_DAYS_UNUSED_IN_JVM_CACHE);
 
             initProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME);
             initProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME);

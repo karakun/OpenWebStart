@@ -15,6 +15,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEG
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 
 public class RuntimeManagerConfig {
 
@@ -53,6 +54,14 @@ public class RuntimeManagerConfig {
 
     public static String getVendor() {
         return config().getProperty(JVM_VENDOR);
+    }
+
+     public static int getMaxDaysUnusedInJvmCache() {
+        return Integer.parseInt(config().getProperty(MAX_DAYS_UNUSED_IN_JVM_CACHE));
+    }
+
+    public static void setMaxDaysUnusedInJvmCache(final String maxDaysUnusedInJvmCache) {
+        config().setProperty(MAX_DAYS_UNUSED_IN_JVM_CACHE, maxDaysUnusedInJvmCache);
     }
 
     public static void setDefaultVendor(final String defaultVendor) {

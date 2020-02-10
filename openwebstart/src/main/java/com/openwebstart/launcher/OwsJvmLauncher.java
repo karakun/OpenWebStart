@@ -1,6 +1,8 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.jvm.JavaRuntimeManager;
+import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
@@ -141,6 +143,8 @@ public class OwsJvmLauncher implements JvmLauncher {
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
+
+        LocalRuntimeManager.touch(javaRuntime);
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
