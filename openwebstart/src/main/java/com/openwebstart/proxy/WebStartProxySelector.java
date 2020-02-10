@@ -15,12 +15,15 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WebStartProxySelector extends ProxySelector {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebStartProxySelector.class);
 
     private final ProxyProvider proxyProvider;
+
+    private List<Proxy> proxyList;
 
     public WebStartProxySelector(final DeploymentConfiguration config) {
         this.proxyProvider = createProvider(config);
@@ -46,7 +49,8 @@ public class WebStartProxySelector extends ProxySelector {
     @Override
     public List<Proxy> select(final URI uri) {
         try {
-            return proxyProvider.select(uri);
+            proxyList = proxyProvider.select(uri);
+            return proxyList;
         } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.selectionFailed", uri), e);
             return JNLPRuntime.exit(-1);
@@ -55,7 +59,12 @@ public class WebStartProxySelector extends ProxySelector {
 
     @Override
     public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
-        DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", uri), ioe);
-        JNLPRuntime.exit(-1);
+            assert proxyList != null;
+            final List<String> proxyAddresses = proxyList.stream().map(p -> p.address().toString()).collect(Collectors.toList());
+            LOG.debug("Connection failed for proxy {} out of  {}", sa.toString(), proxyAddresses);
+            if (proxyAddresses.indexOf(sa.toString()) == proxyList.size() - 1) {
+                DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", sa.toString(), uri), ioe);
+                JNLPRuntime.exit(-1);
+            }
     }
 }
