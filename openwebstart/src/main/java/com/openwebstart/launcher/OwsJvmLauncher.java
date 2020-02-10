@@ -147,29 +147,21 @@ public class OwsJvmLauncher implements JvmLauncher {
             final List<String> result = new ArrayList<>();
 
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
-
-            if (properties.containsKey(HTTP_AGENT_PROPERTY)) {
-                addVmArg(result, properties, HTTP_AGENT_PROPERTY);
-            }
-            if (properties.containsKey(HTTP_MAX_REDIRECTS_PROPERTY)) {
-                addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
-            }
-            if (properties.containsKey(HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY)) {
-                addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
-            }
-            if (properties.containsKey(HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY)) {
-                addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
-            }
+            addVmArg(result, properties, HTTP_AGENT_PROPERTY);
+            addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
             return result;
         }
         return Collections.emptyList();
     }
 
     private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
-        result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
-        LOG.info("Set HTTP {} from JNLP file properties map.", argumentName);
+        if (properties.containsKey(argumentName)) {
+            result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
+            LOG.info("Set HTTP {} from JNLP file properties map.", argumentName);
+        }
     }
-
 
     private void launchExternal(
             final String pathToJavaBinary,
