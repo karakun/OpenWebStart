@@ -16,6 +16,9 @@ public abstract class JavaRuntime implements Serializable {
     private final OperationSystem operationSystem;
 
     public static final String HTTP_AGENT_PROPERTY = "http.agent";
+    public static final String HTTP_MAX_REDIRECTS_PROPERTY = "http.maxRedirects";
+    public static final String HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY = "http.auth.digest.validateProxy";
+    public static final String HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY = "http.auth.digest.validateServer";
 
     public JavaRuntime(final JavaRuntime other) {
         this(other.version, other.operationSystem, other.vendor);

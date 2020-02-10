@@ -9,7 +9,6 @@ import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
-import net.adoptopenjdk.icedteaweb.jnlp.element.resource.ResourcesDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
@@ -34,6 +33,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AGENT_PROPERTY;
+import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY;
+import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY;
+import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_MAX_REDIRECTS_PROPERTY;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
@@ -125,7 +127,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
 
-        vmArgs.addAll(extractVmArgs(jnlpFile, runtimeInfo));
+        vmArgs.addAll(extractVmArgs(jnlpFile));
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
@@ -140,31 +142,34 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
-    private List<String> extractVmArgs(final JNLPFile jnlpFile, final RuntimeInfo runtimeInfo) {
+    private List<String> extractVmArgs(final JNLPFile jnlpFile) {
         if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
             final List<String> result = new ArrayList<>();
 
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
 
             if (properties.containsKey(HTTP_AGENT_PROPERTY)) {
-                result.add(String.format("-D%s=%s", HTTP_AGENT_PROPERTY, properties.get(HTTP_AGENT_PROPERTY)));
-                LOG.info("Set HTTP User-Agent from JNLP file properties map.");
+                addVmArg(result, properties, HTTP_AGENT_PROPERTY);
             }
-            else {
-                final Optional<String> httpAgentValue = runtimeInfo.jreDesc.getResourcesDesc().stream()
-                        .map(ResourcesDesc::getPropertiesMap)
-                        .filter(propMap -> propMap.containsKey(HTTP_AGENT_PROPERTY))
-                        .map(propMap -> propMap.get(HTTP_AGENT_PROPERTY))
-                        .findFirst();
-                httpAgentValue.ifPresent(s ->  {
-                    result.add(String.format("-D%s=%s", HTTP_AGENT_PROPERTY, s));
-                    LOG.info("Set HTTP User-Agent from runtimeInfo properties map.");
-                });
+            if (properties.containsKey(HTTP_MAX_REDIRECTS_PROPERTY)) {
+                addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
+            }
+            if (properties.containsKey(HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY)) {
+                addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
+            }
+            if (properties.containsKey(HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY)) {
+                addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
             }
             return result;
         }
         return Collections.emptyList();
     }
+
+    private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
+        result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
+        LOG.info("Set HTTP {} from JNLP file properties map.", argumentName);
+    }
+
 
     private void launchExternal(
             final String pathToJavaBinary,
