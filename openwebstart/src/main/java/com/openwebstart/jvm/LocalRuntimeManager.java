@@ -30,6 +30,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public final class LocalRuntimeManager {
 
@@ -116,9 +118,16 @@ public final class LocalRuntimeManager {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 clear();
+                // load runtimes in the cache
                 cacheStore.getRuntimes().stream()
                         .filter(this::isJvmPresent)
                         .forEach(this::add);
+
+                // after runtimes loaded to cache, cleanup unused managed runtimes
+                cacheStore.getRuntimes().stream()
+                        .filter(LocalJavaRuntime::isManaged)
+                        .filter(this::isUnused)
+                        .forEach(this::delete);
                 try {
                     saveRuntimes();
                 } catch (final Exception e) {
@@ -133,6 +142,18 @@ public final class LocalRuntimeManager {
         } finally {
             jsonStoreLock.unlock();
         }
+    }
+
+    private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
+        final int maxDaysUnusedInJvmCache = RuntimeManagerConfig.getMaxDaysUnusedInJvmCache();
+        final LocalDateTime lastUsage = localJavaRuntime.getLastUsage();
+        final long daysSinceLastUsage = DAYS.between(lastUsage, LocalDateTime.now());
+
+        if (daysSinceLastUsage > maxDaysUnusedInJvmCache) {
+            LOG.info("Runtime '{}' is unused as it has not been touched since {} days", localJavaRuntime.getJavaHome(), daysSinceLastUsage);
+            return true;
+        }
+        return false;
     }
 
     private boolean isJvmPresent(final LocalJavaRuntime localJavaRuntime) {
@@ -219,7 +240,7 @@ public final class LocalRuntimeManager {
     public void delete(final LocalJavaRuntime localJavaRuntime) {
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
 
-        LOG.debug("Deleting runtime");
+        LOG.debug("Deleting runtime '{}'", localJavaRuntime.getJavaHome());
 
         if (!localJavaRuntime.isManaged()) {
             throw new IllegalArgumentException("Cannot delete runtime that is not managed");
@@ -268,6 +289,20 @@ public final class LocalRuntimeManager {
                 throw new RuntimeException("Error while saving JVM cache.", e);
             }
         }
+    }
+
+    public static void touch(final LocalJavaRuntime currentRuntime) {
+        LocalJavaRuntime newRuntime = new LocalJavaRuntime(
+                currentRuntime.getVersion().toString(),
+                currentRuntime.getOperationSystem(),
+                currentRuntime.getVendor().toString(),
+                currentRuntime.getJavaHome(),
+                LocalDateTime.now(),
+                currentRuntime.isActive(),
+                currentRuntime.isManaged()
+        );
+
+        LocalRuntimeManager.getInstance().replace(currentRuntime, newRuntime);
     }
 
     public static LocalRuntimeManager getInstance() {

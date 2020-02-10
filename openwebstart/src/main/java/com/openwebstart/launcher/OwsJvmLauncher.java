@@ -1,6 +1,8 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.jvm.JavaRuntimeManager;
+import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
@@ -63,6 +65,9 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
         final File webStartJar = getOpenWebStartJar();
         launchExternal(runtimeInfo, webStartJar, args);
+
+        // reload to ensure unused runtime cleanup check happens regularly
+        JavaRuntimeManager.reloadLocalRuntimes();
     }
 
     private RuntimeInfo getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
@@ -130,7 +135,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
+
+        LocalRuntimeManager.getInstance().touch(javaRuntime);
     }
+
 
     private void launchExternal(
             final String pathToJavaBinary,
