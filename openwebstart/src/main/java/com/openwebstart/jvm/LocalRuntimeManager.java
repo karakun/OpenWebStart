@@ -41,6 +41,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public final class LocalRuntimeManager {
 
@@ -146,10 +147,10 @@ public final class LocalRuntimeManager {
     private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
         final int maxDaysUnusedInJvmCache = RuntimeManagerConfig.getMaxDaysUnusedInJvmCache();
         final LocalDateTime lastUsage = localJavaRuntime.getLastUsage();
-        final LocalDateTime today = LocalDateTime.now();
-        if (lastUsage.plusDays(maxDaysUnusedInJvmCache).isBefore(today)) {
-            LOG.info("Delete unused runtime '{}' from JVM cache as it exceeds max number of {} days " +
-                    "allowed to stay in cache.", localJavaRuntime.getJavaHome(), maxDaysUnusedInJvmCache);
+        final long daysSinceLastUsage = DAYS.between(lastUsage, LocalDateTime.now());
+
+        if (daysSinceLastUsage > maxDaysUnusedInJvmCache) {
+            LOG.info("Runtime '{}' is unused as it has not been touched since {} days", localJavaRuntime.getJavaHome(), daysSinceLastUsage);
             return true;
         }
         return false;
@@ -239,7 +240,7 @@ public final class LocalRuntimeManager {
     public void delete(final LocalJavaRuntime localJavaRuntime) {
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
 
-        LOG.debug("Deleting runtime");
+        LOG.debug("Deleting runtime '{}'", localJavaRuntime.getJavaHome());
 
         if (!localJavaRuntime.isManaged()) {
             throw new IllegalArgumentException("Cannot delete runtime that is not managed");
