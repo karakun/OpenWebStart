@@ -15,6 +15,8 @@ public abstract class JavaRuntime implements Serializable {
 
     private final OperationSystem operationSystem;
 
+    public static final String HTTP_AGENT_PROPERTY = "http.agent";
+
     public JavaRuntime(final JavaRuntime other) {
         this(other.version, other.operationSystem, other.vendor);
     }

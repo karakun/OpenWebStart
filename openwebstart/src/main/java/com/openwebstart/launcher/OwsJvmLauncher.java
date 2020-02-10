@@ -9,6 +9,8 @@ import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
+import net.adoptopenjdk.icedteaweb.jnlp.element.resource.ResourcesDesc;
+import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
@@ -26,10 +28,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.openwebstart.jvm.runtimes.JavaRuntime.HTTP_AGENT_PROPERTY;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
@@ -59,10 +63,8 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     @Override
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
-        final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
-        LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
         final File webStartJar = getOpenWebStartJar();
-        launchExternal(runtimeInfo, webStartJar, args);
+        launchExternal(jnlpFile, webStartJar, args);
     }
 
     private RuntimeInfo getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
@@ -108,17 +110,23 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param runtimeInfo the JVM in which to start OWS
+     * @param jnlpFile the JNLPFile defining the application to launch
      * @param webstartJar the openwebstart.jar included in OWS
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
     private void launchExternal(
-            final RuntimeInfo runtimeInfo,
+            final JNLPFile jnlpFile,
             final File webstartJar,
             final List<String> javawsArgs
     ) throws Exception {
+        final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
+        LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
+
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
-        final List<String> vmArgs = runtimeInfo.jreDesc.getAllVmArgs();
+        final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
+
+        vmArgs.addAll(extractVmArgs(jnlpFile, runtimeInfo));
+
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
@@ -130,6 +138,32 @@ public class OwsJvmLauncher implements JvmLauncher {
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
+    }
+
+    private List<String> extractVmArgs(final JNLPFile jnlpFile, final RuntimeInfo runtimeInfo) {
+        if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
+            final List<String> result = new ArrayList<>();
+
+            final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
+
+            if (properties.containsKey(HTTP_AGENT_PROPERTY)) {
+                result.add(String.format("-D%s=%s", HTTP_AGENT_PROPERTY, properties.get(HTTP_AGENT_PROPERTY)));
+                LOG.info("Set HTTP User-Agent from JNLP file properties map.");
+            }
+            else {
+                final Optional<String> httpAgentValue = runtimeInfo.jreDesc.getResourcesDesc().stream()
+                        .map(ResourcesDesc::getPropertiesMap)
+                        .filter(propMap -> propMap.containsKey(HTTP_AGENT_PROPERTY))
+                        .map(propMap -> propMap.get(HTTP_AGENT_PROPERTY))
+                        .findFirst();
+                httpAgentValue.ifPresent(s ->  {
+                    result.add(String.format("-D%s=%s", HTTP_AGENT_PROPERTY, s));
+                    LOG.info("Set HTTP User-Agent from runtimeInfo properties map.");
+                });
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 
     private void launchExternal(
