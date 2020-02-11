@@ -1,11 +1,11 @@
 package com.openwebstart.proxy.ui.error;
 
-import com.openwebstart.jvm.ui.dialogs.DialogButton;
-import com.openwebstart.jvm.ui.dialogs.DialogWithResult;
 import com.openwebstart.proxy.ProxyProviderType;
+import com.openwebstart.ui.dialogs.DialogButton;
+import com.openwebstart.ui.dialogs.SimpleDialogWithResult;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
-public class UnsupportedFeatureDialog extends DialogWithResult<ProxyDialogResult> {
+public class UnsupportedFeatureDialog extends SimpleDialogWithResult<ProxyDialogResult> {
 
     private final static String DIALOG_TITLE = "proxy.unsupportedFeatureDialog.title";
     private final static String DIALOG_MESSAGE = "proxy.unsupportedFeatureDialog.message";
