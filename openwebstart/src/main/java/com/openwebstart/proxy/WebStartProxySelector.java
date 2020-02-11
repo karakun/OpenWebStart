@@ -59,10 +59,13 @@ public class WebStartProxySelector extends ProxySelector {
 
     @Override
     public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
-            assert proxyList != null;
-            final List<String> proxyAddresses = proxyList.stream().map(p -> p.address().toString()).collect(Collectors.toList());
-            LOG.debug("Connection failed for proxy {} out of  {}", sa.toString(), proxyAddresses);
-            if (proxyAddresses.indexOf(sa.toString()) == proxyList.size() - 1) {
+            assert proxyList != null && proxyList.size() != 0;
+
+            final String currentSocketAddress = sa != null ? sa.toString() : "DIRECT";
+            final List<String> proxyAddresses = proxyList.stream().map(p -> p.address() != null ? p.address().toString() : "DIRECT").collect(Collectors.toList());
+            LOG.debug("Connection failed for proxy {} out of  {}", currentSocketAddress, proxyAddresses);
+            // if failed proxy is the last in the list means all proxies in the list have failed
+            if (proxyAddresses.get(proxyAddresses.size() - 1).equals(currentSocketAddress)) {
                 DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", sa.toString(), uri), ioe);
                 JNLPRuntime.exit(-1);
             }
