@@ -4,7 +4,7 @@ import com.openwebstart.proxy.ProxyProvider;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-import net.sourceforge.jnlp.util.UrlUtils;
+import net.sourceforge.jnlp.util.IpUtil;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -39,7 +39,7 @@ public class ConfigBasedProvider implements ProxyProvider {
     public List<Proxy> select(final URI uri) {
         Assert.requireNonNull(uri, "uri");
 
-        if (configuration.isBypassLocal() && UrlUtils.isLocalhost(uri)) {
+        if (configuration.isBypassLocal() && IpUtil.isLocalhostOrLoopback(uri)) {
             return Collections.singletonList(Proxy.NO_PROXY);
         }
 
