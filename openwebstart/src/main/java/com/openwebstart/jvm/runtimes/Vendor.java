@@ -3,6 +3,7 @@ package com.openwebstart.jvm.runtimes;
 import com.openwebstart.jvm.vendor.BasicVendorResolver;
 import com.openwebstart.jvm.vendor.VendorResolver;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class Vendor {
     public static final Vendor AMAZON = new Vendor("Amazon.com Inc.");
     public static final Vendor BELLSOFT = new Vendor("BellSoft");
     public static final Vendor ADOPT = new Vendor("AdoptOpenJDK");
+    public static final Vendor AZUL = new Vendor("Azul Systems, Inc.");
 
     private static final List<VendorResolver> resolver;
 
@@ -53,16 +55,25 @@ public class Vendor {
         return knownVendors.computeIfAbsent(name, Vendor::getVendor);
     }
 
+    public static Vendor fromStringOrAny(final String name) {
+        if (StringUtils.isBlank(name)) {
+            return Vendor.ANY_VENDOR;
+        }
+        return fromString(name);
+    }
+
     private static Vendor getVendor(final String name) {
+        Assert.requireNonBlank(name, "name");
+        final String trimmedName = name.trim();
         List<VendorResolver> possibleResolvers = resolver.stream()
-                .filter(r -> r.isVendor(name))
+                .filter(r -> r.isVendor(trimmedName))
                 .collect(Collectors.toList());
 
         if (possibleResolvers.isEmpty()) {
-            return new Vendor(name);
+            return new Vendor(trimmedName);
         }
         if (possibleResolvers.size() > 1) {
-            throw new IllegalStateException("More than 1 possible vendor for '" + name + "'");
+            throw new IllegalStateException("More than 1 possible vendor for '" + trimmedName + "'");
         }
         return possibleResolvers.get(0).getVendor();
     }
