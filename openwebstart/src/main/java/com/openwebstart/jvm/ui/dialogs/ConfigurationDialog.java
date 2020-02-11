@@ -5,6 +5,7 @@ import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.ui.LookAndFeel;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
@@ -18,16 +19,23 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.text.NumberFormatter;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +47,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
+import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 import static java.awt.Cursor.WAIT_CURSOR;
 import static java.awt.Cursor.getDefaultCursor;
 import static java.awt.Cursor.getPredefinedCursor;
@@ -47,13 +56,13 @@ public class ConfigurationDialog extends ModalDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
 
-    private static final Color ERROR_BACKGROUND = Color.yellow;
-
     private final Executor backgroundExecutor = Executors.newSingleThreadExecutor();
     private final Translator translator = Translator.getInstance();
     private final JComboBox<String> vendorComboBox;
     private final Color originalBackground;
     private boolean urlValidationError = false;
+    private final JButton okButton;
+    private final JButton cancelButton;
 
     public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
@@ -88,7 +97,20 @@ public class ConfigurationDialog extends ModalDialog {
         allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
         uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowAnyUpdateServerCheckBox);
 
-        final JButton okButton = new JButton(translator.translate("action.ok"));
+        final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
+        final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
+        uiLock.update(MAX_DAYS_UNUSED_IN_JVM_CACHE, maxDaysStayInJvmCacheField);
+        try {
+            maxDaysStayInJvmCacheField.setText(Optional.of(RuntimeManagerConfig.getMaxDaysUnusedInJvmCache() + "").orElse("0"));
+        } catch (final Exception e) {
+            LOG.error("Can not set default for max days unused in JVM cache!", e);
+        }
+        final JPanel numberOfDaysPanel = new JPanel();
+        numberOfDaysPanel.setLayout(new BorderLayout());
+        numberOfDaysPanel.add(maxDaysStayInJvmCacheField, BorderLayout.WEST);
+        numberOfDaysPanel.add(new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.days.text")), BorderLayout.CENTER);
+
+        okButton = new JButton(translator.translate("action.ok"));
         okButton.addActionListener(e -> {
             try {
                 if (urlValidationError) {
@@ -99,13 +121,20 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
+                try {
+                    maxDaysStayInJvmCacheField.commitEdit();
+                } catch (ParseException ex) {
+                    LOG.error("Error in UI field.", ex);
+                    RuntimeManagerConfig.setMaxDaysUnusedInJvmCache(String.valueOf(RuntimeManagerConfig.getMaxDaysUnusedInJvmCache()));
+                }
+                RuntimeManagerConfig.setMaxDaysUnusedInJvmCache(maxDaysStayInJvmCacheField.getValue().toString());
                 close();
             } catch (final MalformedURLException ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.invalidServerUri"), ex);
             }
         });
 
-        final JButton cancelButton = new JButton(translator.translate("action.cancel"));
+        cancelButton = new JButton(translator.translate("action.cancel"));
         cancelButton.addActionListener(e -> close());
 
         final FormPanel mainPanel = new FormPanel();
@@ -115,6 +144,7 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
         mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
         mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
+        mainPanel.addRow(4, unusedRuntimeCleanupLabel, numberOfDaysPanel);
         mainPanel.addFlexibleRow(5);
 
         final JPanel panel = new JPanel();
@@ -123,6 +153,44 @@ public class ConfigurationDialog extends ModalDialog {
         panel.add(ButtonPanelFactory.createButtonPanel(okButton, cancelButton), BorderLayout.SOUTH);
 
         add(panel);
+    }
+
+    private JFormattedTextField getMaxDaysInJvmCacheField() {
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format) {
+            @Override
+            public Object stringToValue(final String text) throws ParseException {
+                if (text.length() == 0) {
+                    return null;
+                }
+                return super.stringToValue(text);
+            }
+        };
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(1000);
+        formatter.setAllowsInvalid(false);
+        formatter.setCommitsOnValidEdit(true);
+
+        final JFormattedTextField maxDaysStayInJvmCacheField = new JFormattedTextField(formatter);
+        maxDaysStayInJvmCacheField.setPreferredSize(new Dimension(50, 20));
+
+        maxDaysStayInJvmCacheField.addPropertyChangeListener("value", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent evt) {
+                if (okButton != null) {
+                    if (maxDaysStayInJvmCacheField.getText().isEmpty()) {
+                        maxDaysStayInJvmCacheField.setBackground(LookAndFeel.FIELD_VALIDATION_PROBLEM);
+                        okButton.setEnabled(false);
+
+                    } else {
+                        maxDaysStayInJvmCacheField.setBackground(originalBackground);
+                        okButton.setEnabled(true);
+                    }
+                }
+            }
+        });
+        return maxDaysStayInJvmCacheField;
     }
 
     private void updateVendorComboBox(final URL specifiedServerURL) {
@@ -152,10 +220,12 @@ public class ConfigurationDialog extends ModalDialog {
                 field.setBackground(originalBackground);
                 urlValidationError = false;
                 backgroundExecutor.execute(() -> updateVendorComboBox(url));
+                okButton.setEnabled(true);
             } catch (final MalformedURLException exception) {
-                field.setBackground(ERROR_BACKGROUND);
+                field.setBackground(LookAndFeel.FIELD_VALIDATION_PROBLEM);
                 urlValidationError = true;
                 field.requestFocus();
+                okButton.setEnabled(false);
             }
         }
     }

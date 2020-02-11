@@ -1,6 +1,8 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.jvm.JavaRuntimeManager;
+import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
@@ -9,6 +11,7 @@ import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
+import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
@@ -26,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,6 +44,11 @@ import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
  */
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
+
+    private static final String HTTP_AGENT_PROPERTY = "http.agent";
+    private static final String HTTP_MAX_REDIRECTS_PROPERTY = "http.maxRedirects";
+    private static final String HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY = "http.auth.digest.validateProxy";
+    private static final String HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY = "http.auth.digest.validateServer";
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
@@ -59,10 +68,8 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     @Override
     public void launchExternal(final JNLPFile jnlpFile, final List<String> args) throws Exception {
-        final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
-        LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
         final File webStartJar = getOpenWebStartJar();
-        launchExternal(runtimeInfo, webStartJar, args);
+        launchExternal(jnlpFile, webStartJar, args);
     }
 
     private RuntimeInfo getLocalJavaRuntimeOrExit(final JNLPFile jnlpFile) {
@@ -108,17 +115,23 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param runtimeInfo the JVM in which to start OWS
+     * @param jnlpFile the JNLPFile defining the application to launch
      * @param webstartJar the openwebstart.jar included in OWS
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
     private void launchExternal(
-            final RuntimeInfo runtimeInfo,
+            final JNLPFile jnlpFile,
             final File webstartJar,
             final List<String> javawsArgs
     ) throws Exception {
+        final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
+        LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
+
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
-        final List<String> vmArgs = runtimeInfo.jreDesc.getAllVmArgs();
+        final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
+
+        vmArgs.addAll(extractVmArgs(jnlpFile));
+
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
@@ -129,6 +142,29 @@ public class OwsJvmLauncher implements JvmLauncher {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
+        }
+
+        LocalRuntimeManager.touch(javaRuntime);
+    }
+
+    private List<String> extractVmArgs(final JNLPFile jnlpFile) {
+        if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
+            final List<String> result = new ArrayList<>();
+
+            final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
+            addVmArg(result, properties, HTTP_AGENT_PROPERTY);
+            addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
+            return result;
+        }
+        return Collections.emptyList();
+    }
+
+    private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
+        if (properties.containsKey(argumentName)) {
+            result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
+            LOG.debug("Set property {} from JNLP file properties map.", argumentName);
         }
     }
 
@@ -207,7 +243,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         try {
             final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
-            if (Boolean.valueOf(debugActive)) {
+            if (Boolean.parseBoolean(debugActive)) {
                 final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 final int port = Integer.parseInt(debugPort);
                 LOG.debug("Adding remote debug support on port " + port);
