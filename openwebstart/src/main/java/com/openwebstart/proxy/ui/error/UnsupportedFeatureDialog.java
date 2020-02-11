@@ -59,5 +59,11 @@ public class UnsupportedFeatureDialog extends SimpleDialogWithResult<ProxyDialog
 
         return new DialogButton<>(continueText, () -> ProxyDialogResult.CONTINUE, continueDescription);
     }
+
+    public static void main(String[] args){
+        Translator.addBundle("i18n");
+        final String featureName = Translator.getInstance().translate("proxy.unsupportedFeature.httpUser");
+        final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, featureName).showAndWait();
+    }
 }
 
