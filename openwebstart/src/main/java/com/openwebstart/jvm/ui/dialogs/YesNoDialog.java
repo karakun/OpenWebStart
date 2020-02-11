@@ -1,8 +1,10 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.ui.dialogs.DialogButton;
+import com.openwebstart.ui.dialogs.SimpleDialogWithResult;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
-public class YesNoDialog extends DialogWithResult<Boolean> {
+public class YesNoDialog extends SimpleDialogWithResult<Boolean> {
 
     public YesNoDialog(final String title, final String message) {
         super(title, message, createYesButton(), createNoButton());
