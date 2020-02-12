@@ -23,8 +23,6 @@ public class WebStartProxySelector extends ProxySelector {
 
     private final ProxyProvider proxyProvider;
 
-    private List<Proxy> proxyList;
-
     public WebStartProxySelector(final DeploymentConfiguration config) {
         this.proxyProvider = createProvider(config);
     }
@@ -49,8 +47,7 @@ public class WebStartProxySelector extends ProxySelector {
     @Override
     public List<Proxy> select(final URI uri) {
         try {
-            proxyList = proxyProvider.select(uri);
-            return proxyList;
+            return proxyProvider.select(uri);
         } catch (final Exception e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.selectionFailed", uri), e);
             return JNLPRuntime.exit(-1);
@@ -58,16 +55,15 @@ public class WebStartProxySelector extends ProxySelector {
     }
 
     @Override
-    public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
-            assert proxyList != null && proxyList.size() != 0;
-
-            final String currentSocketAddress = sa != null ? sa.toString() : "DIRECT";
-            final List<String> proxyAddresses = proxyList.stream().map(p -> p.address() != null ? p.address().toString() : "DIRECT").collect(Collectors.toList());
-            LOG.debug("Connection failed for proxy {} out of  {}", currentSocketAddress, proxyAddresses);
-            // if failed proxy is the last in the list means all proxies in the list have failed
-            if (proxyAddresses.get(proxyAddresses.size() - 1).equals(currentSocketAddress)) {
-                DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", sa.toString(), uri), ioe);
-                JNLPRuntime.exit(-1);
-            }
+    public void connectFailed(final URI uri, final SocketAddress proxyAddress, final IOException ioe) {
+        final List<Proxy> proxyList = select(uri);
+        final String currentProxyAddress = proxyAddress != null ? proxyAddress.toString() : "DIRECT";
+        final List<String> proxyAddresses = proxyList.stream().map(p -> p.address() != null ? p.address().toString() : "DIRECT").collect(Collectors.toList());
+        LOG.debug("Connection failed for proxy {} out of  {}", currentProxyAddress, proxyAddresses);
+        // if the failed proxy is the last in the list that means all proxies in the list have failed
+        if (proxyAddresses.get(proxyAddresses.size() - 1).equals(currentProxyAddress)) {
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", currentProxyAddress, uri), ioe);
+            JNLPRuntime.exit(-1);
+        }
     }
 }
