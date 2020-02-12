@@ -92,7 +92,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         for (JREDesc jre : jres) {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
             final Vendor vendor = Vendor.fromStringOrAny(jre.getVendor());
-            LOG.debug("searching for JRE with version string '{}'", version);
+            LOG.debug("searching for JRE with version string '{}' and vendor '{}'", version, vendor);
             try {
                 final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, vendor, jre.getLocation());
                 if (javaRuntime.isPresent()) {
