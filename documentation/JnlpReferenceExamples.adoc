@@ -55,5 +55,13 @@ a| Oracle Corporation 1.8.0_144
 a| Oracle Corporation 1.8.0_144
 a| Oracle Corporation 1.8.0_201
 | Needs a JVM that comes with JavaFX. https://www.oracle.com/technetwork/java/javase/overview/javafx-samples-2158687.html
-|=======================
 
+|6
+|https://icedtea.classpath.org/wiki/IcedTea-Web-Tests[ITW Tests]
+|ITW Test JNLPs
+|
+a|
+a|
+a|
+|
+|=======================
