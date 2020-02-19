@@ -33,7 +33,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
             return;
         }
 
-        final String appName = jnlpFile.createNameForDesktopFile();
+        final String appName = jnlpFile.getShortcutName();
 
         final boolean hasMenu = factory.existsMenuEntry(jnlpFile);
         final boolean hasDesktop = factory.existsDesktopEntry(jnlpFile);
