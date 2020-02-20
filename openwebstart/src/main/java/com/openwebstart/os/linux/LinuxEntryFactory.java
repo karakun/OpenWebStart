@@ -109,7 +109,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     private static String getDesktopIconName(JNLPFile file) {
-        return sanitize(file.createNameForDesktopFile());
+        return sanitize(file.getShortcutName());
     }
 
     private static String sanitize(String input) {

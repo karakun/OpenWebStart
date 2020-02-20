@@ -52,7 +52,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
     public void createMenuEntry(final JNLPFile file) throws Exception {
-        final String name = file.createNameForDesktopFile();
+        final String name = file.getShortcutName();
         final String script = ScriptFactory.createStartScript(file);
         final String[] icons = getIcons(file);
 
@@ -77,7 +77,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
     public boolean existsMenuEntry(final JNLPFile file) {
-        return AppFactory.exists(file.createNameForDesktopFile());
+        return AppFactory.exists(file.getShortcutName());
     }
 
     private static File downloadIcon(final URL url) throws IOException {
