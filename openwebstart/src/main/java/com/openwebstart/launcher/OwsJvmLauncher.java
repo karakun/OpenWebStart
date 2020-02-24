@@ -1,13 +1,13 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.config.OwsDefaultsProvider;
-import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
+import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -156,6 +156,7 @@ public class OwsJvmLauncher implements JvmLauncher {
             addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
             addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
             addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
+            addVmArg(result, properties, JavaSystemPropertiesConstants.AWT_DISABLE_MIXING);
             return result;
         }
         return Collections.emptyList();
