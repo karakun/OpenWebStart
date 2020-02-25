@@ -7,7 +7,6 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
-import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -37,18 +36,17 @@ import java.util.stream.Collectors;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.AWT_DISABLE_MIXING;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AGENT;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AUTH_DIGEST_VALIDATEPROXY;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AUTH_DIGEST_VALIDATESERVER;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_MAX_REDIRECTS;
 import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
-
 /**
  * Launches OWS with a JNLP in a matching JRE.
  */
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
-
-    private static final String HTTP_AGENT_PROPERTY = "http.agent";
-    private static final String HTTP_MAX_REDIRECTS_PROPERTY = "http.maxRedirects";
-    private static final String HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY = "http.auth.digest.validateProxy";
-    private static final String HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY = "http.auth.digest.validateServer";
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
@@ -152,11 +150,11 @@ public class OwsJvmLauncher implements JvmLauncher {
             final List<String> result = new ArrayList<>();
 
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
-            addVmArg(result, properties, HTTP_AGENT_PROPERTY);
-            addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
-            addVmArg(result, properties, JavaSystemPropertiesConstants.AWT_DISABLE_MIXING);
+            addVmArg(result, properties, HTTP_AGENT);
+            addVmArg(result, properties, HTTP_MAX_REDIRECTS);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY);
+            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER);
+            addVmArg(result, properties, AWT_DISABLE_MIXING);
             return result;
         }
         return Collections.emptyList();
