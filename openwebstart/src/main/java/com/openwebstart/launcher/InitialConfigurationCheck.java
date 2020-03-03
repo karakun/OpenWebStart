@@ -92,7 +92,7 @@ class InitialConfigurationCheck {
 
         LOG.debug("Checking if property '{}' is predefined", propertyName);
 
-        final Map<String, Setting<String>> config = deploymentConfiguration.getRaw();
+        final Map<String, Setting> config = deploymentConfiguration.getRaw();
 
         install4JConfiguration.getInstallerVariableAsString(propertyName)
                 .ifPresent(v -> {
@@ -107,7 +107,7 @@ class InitialConfigurationCheck {
                 });
     }
 
-    private Setting<String> createNewSetting(String k) {
+    private Setting createNewSetting(String k) {
         return Setting.createUnknown(k, null);
     }
 

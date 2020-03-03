@@ -32,7 +32,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
 
     @Override
-    public List<Setting<String>> getDefaults() {
+    public List<Setting> getDefaults() {
         return Arrays.asList(
                 Setting.createDefault(
                         PROXY_PAC_CACHE,
