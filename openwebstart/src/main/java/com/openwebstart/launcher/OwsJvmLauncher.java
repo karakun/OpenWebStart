@@ -150,8 +150,6 @@ public class OwsJvmLauncher implements JvmLauncher {
                 if (JvmUtils.isValidSecureProperty(property)) {
                     result.add(String.format("-D%s=%s", property, properties.get(property)));
                     LOG.debug("Set -D jvm arg for property {} from JNLP file properties map.", property);
-                } else {
-                    LOG.warn("Illegal Property '{}' in JNLP file properties map", property);
                 }
             });
             return result;
