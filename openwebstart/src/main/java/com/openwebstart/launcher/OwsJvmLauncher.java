@@ -13,6 +13,7 @@ import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.jvm.JvmUtils;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -36,12 +37,8 @@ import java.util.stream.Collectors;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
-import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.AWT_DISABLE_MIXING;
-import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AGENT;
-import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AUTH_DIGEST_VALIDATEPROXY;
-import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_AUTH_DIGEST_VALIDATESERVER;
-import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.HTTP_MAX_REDIRECTS;
 import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
+
 /**
  * Launches OWS with a JNLP in a matching JRE.
  */
@@ -113,7 +110,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param jnlpFile the JNLPFile defining the application to launch
+     * @param jnlpFile    the JNLPFile defining the application to launch
      * @param webstartJar the openwebstart.jar included in OWS
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
@@ -148,23 +145,16 @@ public class OwsJvmLauncher implements JvmLauncher {
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
         if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
             final List<String> result = new ArrayList<>();
-
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
-            addVmArg(result, properties, HTTP_AGENT);
-            addVmArg(result, properties, HTTP_MAX_REDIRECTS);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER);
-            addVmArg(result, properties, AWT_DISABLE_MIXING);
+            properties.keySet().forEach(property -> {
+                if (JvmUtils.isValidSecureProperty(property)) {
+                    result.add(String.format("-D%s=%s", property, properties.get(property)));
+                    LOG.debug("Set -D jvm arg for property {} from JNLP file properties map.", property);
+                }
+            });
             return result;
         }
         return Collections.emptyList();
-    }
-
-    private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
-        if (properties.containsKey(argumentName)) {
-            result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
-            LOG.debug("Set property {} from JNLP file properties map.", argumentName);
-        }
     }
 
     private void launchExternal(
