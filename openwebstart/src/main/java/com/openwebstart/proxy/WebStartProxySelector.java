@@ -15,6 +15,7 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WebStartProxySelector extends ProxySelector {
 
@@ -54,8 +55,23 @@ public class WebStartProxySelector extends ProxySelector {
     }
 
     @Override
-    public void connectFailed(final URI uri, final SocketAddress sa, final IOException ioe) {
-        DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", uri), ioe);
-        JNLPRuntime.exit(-1);
+    public void connectFailed(final URI uri, final SocketAddress proxyAddress, final IOException ioe) {
+        final String currentProxyAddress = addressString(proxyAddress);
+        final List<String> proxyAddresses = select(uri).stream()
+                .map(Proxy::address)
+                .map(this::addressString)
+                .collect(Collectors.toList());
+
+        LOG.debug("Connection failed for proxy {} out of  {}", currentProxyAddress, proxyAddresses);
+
+        // if the failed proxy is the last in the list that means all proxies in the list have failed
+        if (proxyAddresses.get(proxyAddresses.size() - 1).equals(currentProxyAddress)) {
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.connectionFailed", currentProxyAddress, uri), ioe);
+            JNLPRuntime.exit(-1);
+        }
+    }
+
+    private String addressString(SocketAddress proxyAddress) {
+        return proxyAddress != null ? proxyAddress.toString() : "DIRECT";
     }
 }

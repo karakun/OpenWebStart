@@ -15,6 +15,7 @@ import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.jvm.JvmUtils;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -45,11 +46,6 @@ import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
  */
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
-
-    private static final String HTTP_AGENT_PROPERTY = "http.agent";
-    private static final String HTTP_MAX_REDIRECTS_PROPERTY = "http.maxRedirects";
-    private static final String HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY = "http.auth.digest.validateProxy";
-    private static final String HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY = "http.auth.digest.validateServer";
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
@@ -118,7 +114,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     /**
-     * @param jnlpFile the JNLPFile defining the application to launch
+     * @param jnlpFile    the JNLPFile defining the application to launch
      * @param webstartJar the openwebstart.jar included in OWS
      * @param javawsArgs  the arguments to pass to javaws (aka IcedTea-Web)
      */
@@ -153,22 +149,16 @@ public class OwsJvmLauncher implements JvmLauncher {
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
         if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
             final List<String> result = new ArrayList<>();
-
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
-            addVmArg(result, properties, HTTP_AGENT_PROPERTY);
-            addVmArg(result, properties, HTTP_MAX_REDIRECTS_PROPERTY);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATEPROXY_PROPERTY);
-            addVmArg(result, properties, HTTP_AUTH_DIGEST_VALIDATESERVER_PROPERTY);
+            properties.keySet().forEach(property -> {
+                if (JvmUtils.isValidSecureProperty(property)) {
+                    result.add(String.format("-D%s=%s", property, properties.get(property)));
+                    LOG.debug("Set -D jvm arg for property {} from JNLP file properties map.", property);
+                }
+            });
             return result;
         }
         return Collections.emptyList();
-    }
-
-    private void addVmArg(final List<String> result, final Map<String, String> properties, final String argumentName) {
-        if (properties.containsKey(argumentName)) {
-            result.add(String.format("-D%s=%s", argumentName, properties.get(argumentName)));
-            LOG.debug("Set property {} from JNLP file properties map.", argumentName);
-        }
     }
 
     private void launchExternal(
