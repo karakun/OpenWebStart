@@ -103,7 +103,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private JREDesc getDefaultJRE() {
         try {
-            return new JREDesc(VersionString.fromString("1.8+"), null, null, null, null, null);
+            return new JREDesc(VersionString.fromString("1.8+"), null, null, null, null, null, null);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
