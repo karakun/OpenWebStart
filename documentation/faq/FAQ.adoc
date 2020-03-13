@@ -52,7 +52,7 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 
 ==== What are the costs for subscription and premium support?
 
-tbd: do we give a contact option or do we provide the figures here
+To figure out which support model fits best to your needs, you should contact openwebstart@karakun.com.
 
 == Installation
 

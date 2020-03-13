@@ -1,13 +1,12 @@
-= The Defintive Guide To OpenWebStart
 :imagesdir: ./images
 :Author:    ...
 :Email:     openwebstart@karakun.com
 :Date:      ...
 :Revision:  1.1.6
-:toc:
-:toclevels: 4
 
-NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation. The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
+= The Defintive Guide To OpenWebStart
+
+:toc:
 
 == Introduction
 
