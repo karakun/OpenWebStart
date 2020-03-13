@@ -44,6 +44,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
+import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
@@ -80,6 +81,10 @@ public class ConfigurationDialog extends ModalDialog {
         backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
         uiLock.update(JVM_VENDOR, vendorComboBox);
+
+        final JCheckBox allowVendorFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowVendorFromJnlp.text"));
+        allowVendorFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isVendorFromJnlpAllowed());
+        uiLock.update(ALLOW_VENDOR_FROM_JNLP, allowVendorFromJnlpCheckBox);
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
         final JTextField defaultUpdateServerField = new JTextField();
@@ -119,6 +124,7 @@ public class ConfigurationDialog extends ModalDialog {
                 }
                 RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
                 RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
+                RuntimeManagerConfig.setVendorFromJnlpAllowed(allowVendorFromJnlpCheckBox.isSelected());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
                 try {
@@ -144,8 +150,9 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
         mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
         mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
-        mainPanel.addRow(4, unusedRuntimeCleanupLabel, numberOfDaysPanel);
-        mainPanel.addFlexibleRow(5);
+        mainPanel.addEditorRow(4, allowVendorFromJnlpCheckBox);
+        mainPanel.addRow(5, unusedRuntimeCleanupLabel, numberOfDaysPanel);
+        mainPanel.addFlexibleRow(6);
 
         final JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(8, 8));

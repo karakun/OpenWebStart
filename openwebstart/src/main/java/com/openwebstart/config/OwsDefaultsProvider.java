@@ -23,6 +23,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
+    public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";
     public static final String JVM_UPDATE_STRATEGY = "ows.jvm.manager.updateStrategy";
     public static final String JVM_SUPPORTED_VERSION_RANGE = "ows.jvm.manager.versionRange";
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE = "ows.jvm.manager.maxDaysUnusedInJvmCache";
@@ -68,6 +69,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         JVM_VENDOR,
                         Vendor.ANY_VENDOR.getName(),
                         null
+                ),
+                Setting.createDefault(
+                        ALLOW_VENDOR_FROM_JNLP,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
                         JVM_UPDATE_STRATEGY,

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
+import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
@@ -54,6 +55,14 @@ public class RuntimeManagerConfig {
 
     public static String getVendor() {
         return config().getProperty(JVM_VENDOR);
+    }
+
+    public static boolean isVendorFromJnlpAllowed() {
+        return Boolean.parseBoolean(config().getProperty(ALLOW_VENDOR_FROM_JNLP));
+    }
+
+    public static void setVendorFromJnlpAllowed(final boolean vendorFromJnlpAllowed) {
+        config().setProperty(ALLOW_VENDOR_FROM_JNLP, Boolean.toString(vendorFromJnlpAllowed));
     }
 
      public static int getMaxDaysUnusedInJvmCache() {
