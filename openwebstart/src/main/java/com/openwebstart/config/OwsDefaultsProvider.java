@@ -2,7 +2,6 @@ package com.openwebstart.config;
 
 import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.jvm.PathAndFiles;
-import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.update.UpdatePanelConfigConstants;
@@ -16,12 +15,12 @@ import java.util.stream.Stream;
 
 public class OwsDefaultsProvider implements DefaultsProvider {
 
-
     public static final String REMOTE_DEBUG = "ows.jvm.manager.remoteDebug";
     public static final String REMOTE_DEBUG_PORT = "ows.jvm.manager.remoteDebugPort";
 
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
+    public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String JVM_UPDATE_STRATEGY = "ows.jvm.manager.updateStrategy";
     public static final String JVM_SUPPORTED_VERSION_RANGE = "ows.jvm.manager.versionRange";
@@ -50,7 +49,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         ValidatorFactory.createRangedIntegerValidator(0, 10_000)
                 ),
                 Setting.createDefault(
-                        RuntimeManagerConfig.KEY_USER_JVM_CACHE_DIR,
+                        JVM_CACHE_DIR,
                         PathAndFiles.JVM_CACHE_DIR.getDefaultFullPath(),
                         ValidatorFactory.createFilePathValidator()
                 ),
