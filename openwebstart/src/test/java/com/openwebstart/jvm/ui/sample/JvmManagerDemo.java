@@ -7,6 +7,7 @@ import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.RuntimeManagerPanel;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
@@ -149,7 +150,7 @@ public class JvmManagerDemo {
             try {
                 final VersionString version = JvmVersionUtils.fromJnlp(VersionString.fromString(requestedVersionField.getText()));
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());
-                final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, serverEndpoint)
+                final LocalJavaRuntime runtime = javaRuntimeProvider.getJavaRuntime(version, Vendor.ANY_VENDOR, serverEndpoint)
                         .orElseThrow(() -> new IllegalStateException("could not find any suitable JVM"));
 
                 SwingUtilities.invokeLater(() -> {

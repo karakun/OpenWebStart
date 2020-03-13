@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jnlp spec="6.0+" codebase=".">
+    <information>
+        <title>OpenWebStart Test App</title>
+        <vendor>Karakun AG</vendor>
+    </information>
+    <resources>
+        <java version="1.8*" vendor="   "/>
+        <jar href="some.jar"/>
+    </resources>
+    <application-desc main-class="UnknownMainClass"/>
+</jnlp>

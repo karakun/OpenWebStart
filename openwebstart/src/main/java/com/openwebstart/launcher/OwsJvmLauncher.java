@@ -3,10 +3,12 @@ package com.openwebstart.launcher;
 import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
+import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -77,16 +79,18 @@ public class OwsJvmLauncher implements JvmLauncher {
         return javaRuntime.get();
     }
 
-    private Optional<RuntimeInfo> getJavaRuntime(final JNLPFile jnlpFile) {
+    Optional<RuntimeInfo> getJavaRuntime(final JNLPFile jnlpFile) {
+        Assert.requireNonNull(jnlpFile, "jnlpFile");
         final List<JREDesc> jres = new ArrayList<>(Arrays.asList(jnlpFile.getResources().getJREs()));
         if (jres.isEmpty()) {
             jres.add(getDefaultJRE());
         }
         for (JREDesc jre : jres) {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
-            LOG.debug("searching for JRE with version string '{}'", version);
+            final Vendor vendor = Vendor.fromStringOrAny(jre.getVendor());
+            LOG.debug("searching for JRE with version string '{}' and vendor '{}'", version, vendor);
             try {
-                final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, jre.getLocation());
+                final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, vendor, jre.getLocation());
                 if (javaRuntime.isPresent()) {
                     LOG.debug("Found JVM {}", javaRuntime.get());
                     return javaRuntime.map(r -> new RuntimeInfo(r, jre));
