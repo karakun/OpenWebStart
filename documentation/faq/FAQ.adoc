@@ -1,12 +1,13 @@
+= Frequently Asked Questions on OpenWebStart
 :imagesdir: ./images
 :Author:    ...
 :Email:     openwebstart@karakun.com
 :Date:      ...
 :Revision:  1.1.6
-
-= Frequently Asked Questions on OpenWebStart
-
 :toc:
+:toclevels: 2
+
+NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation. The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
 
 == General
 
@@ -31,7 +32,7 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 
 ==== What are the costs for subscription and premium support?
 
-tbd: do we give a contact option or do we provide the figures here
+To figure out which support model fits best to your needs, you should contact openwebstart@karakun.com.
 
 == Installation
 
