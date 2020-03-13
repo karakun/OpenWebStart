@@ -12,6 +12,7 @@ import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
@@ -63,7 +64,6 @@ public class ConfigurationDialog extends ModalDialog {
     private final Color originalBackground;
     private boolean urlValidationError = false;
     private final JButton okButton;
-    private final JButton cancelButton;
 
     public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
@@ -140,7 +140,7 @@ public class ConfigurationDialog extends ModalDialog {
             }
         });
 
-        cancelButton = new JButton(translator.translate("action.cancel"));
+        JButton cancelButton = new JButton(translator.translate("action.cancel"));
         cancelButton.addActionListener(e -> close());
 
         final FormPanel mainPanel = new FormPanel();
@@ -160,6 +160,12 @@ public class ConfigurationDialog extends ModalDialog {
         panel.add(ButtonPanelFactory.createButtonPanel(okButton, cancelButton), BorderLayout.SOUTH);
 
         add(panel);
+
+        // FIXME: this is a workaround for a look&feel issue introduced with 8_242
+        // The numberOfDays was
+        if (OsUtil.isLinux()) {
+            SwingUtilities.invokeLater(() -> numberOfDaysPanel.setPreferredSize(new Dimension(50, vendorComboBox.getHeight())));
+        }
     }
 
     private JFormattedTextField getMaxDaysInJvmCacheField() {
@@ -182,18 +188,15 @@ public class ConfigurationDialog extends ModalDialog {
         final JFormattedTextField maxDaysStayInJvmCacheField = new JFormattedTextField(formatter);
         maxDaysStayInJvmCacheField.setPreferredSize(new Dimension(50, 20));
 
-        maxDaysStayInJvmCacheField.addPropertyChangeListener("value", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                if (okButton != null) {
-                    if (maxDaysStayInJvmCacheField.getText().isEmpty()) {
-                        maxDaysStayInJvmCacheField.setBackground(LookAndFeel.FIELD_VALIDATION_PROBLEM);
-                        okButton.setEnabled(false);
+        maxDaysStayInJvmCacheField.addPropertyChangeListener("value", evt -> {
+            if (okButton != null) {
+                if (maxDaysStayInJvmCacheField.getText().isEmpty()) {
+                    maxDaysStayInJvmCacheField.setBackground(LookAndFeel.FIELD_VALIDATION_PROBLEM);
+                    okButton.setEnabled(false);
 
-                    } else {
-                        maxDaysStayInJvmCacheField.setBackground(originalBackground);
-                        okButton.setEnabled(true);
-                    }
+                } else {
+                    maxDaysStayInJvmCacheField.setBackground(originalBackground);
+                    okButton.setEnabled(true);
                 }
             }
         });
