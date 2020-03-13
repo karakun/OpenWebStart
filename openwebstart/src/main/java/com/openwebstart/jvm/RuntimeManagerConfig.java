@@ -1,5 +1,6 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
@@ -19,7 +20,6 @@ import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM
 
 public class RuntimeManagerConfig {
 
-    public static final String KEY_USER_JVM_CACHE_DIR = "deployment.user.jvmcachedir";
     private static DeploymentConfiguration deploymentConfiguration;
 
     private RuntimeManagerConfig() {
@@ -93,7 +93,7 @@ public class RuntimeManagerConfig {
     }
 
     public static void setCachePath(final Path cachePath) {
-        config().setProperty(KEY_USER_JVM_CACHE_DIR, cachePath.normalize().toAbsolutePath().toString());
+        config().setProperty(OwsDefaultsProvider.JVM_CACHE_DIR, cachePath.normalize().toAbsolutePath().toString());
     }
 
     private static DeploymentConfiguration config() {

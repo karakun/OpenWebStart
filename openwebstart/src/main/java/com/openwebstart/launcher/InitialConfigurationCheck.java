@@ -16,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_DIR;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
@@ -55,6 +56,7 @@ class InitialConfigurationCheck {
         if (isFirstStart()) {
             LOG.debug("Looks like OpenWebStart is started for the first time. Will import initial configuration");
 
+            initProperty(JVM_CACHE_DIR);
             initProperty(DEFAULT_JVM_DOWNLOAD_SERVER);
             initProperty(ALLOW_DOWNLOAD_SERVER_FROM_JNLP);
             initProperty(JVM_VENDOR);
