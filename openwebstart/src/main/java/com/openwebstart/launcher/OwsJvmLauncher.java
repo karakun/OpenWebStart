@@ -250,7 +250,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         return Collections.emptyList();
     }
 
-    static class RuntimeInfo {
+    private static class RuntimeInfo {
         private final LocalJavaRuntime runtime;
         private final JREDesc jreDesc;
 

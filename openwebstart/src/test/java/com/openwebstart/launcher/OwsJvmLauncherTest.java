@@ -47,7 +47,7 @@ class OwsJvmLauncherTest {
         final OwsJvmLauncher launcher = new OwsJvmLauncher(provider);
 
         //when
-        final Optional<OwsJvmLauncher.RuntimeInfo> javaRuntime = launcher.getJavaRuntime(file);
+        launcher.getJavaRuntime(file);
 
         //no 'than' part since the assertations happens in the dummy JavaRuntimeProvider
     }
