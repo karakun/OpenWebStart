@@ -8,11 +8,19 @@
 
 :toc:
 
-== <Category>
+== General
 
-Q:
+==== What is OpenWebStart?
+tbd.
 
-A:
+== Installation
 
+tbd.
 
+== Functionality
 
+==== Does OpenWebStart support Applets?
+Applets are not supported and there are no plans to support them in the future. We also do not consider this as a deviation from the JNLP-standard as this is an optional feature according to the JSR-56 specs.
+
+==== Is there a MSI installer for OpenWebStart?
+Currently we do not provide a MSI installer. More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98
