@@ -11,18 +11,18 @@ NOTE: The authors assume no responsibility or liability for any errors or omissi
 
 == Introduction
 
--work in progress-
+#<this documentation is work in progress>#
 
 === What is OpenWebStart?
 
--work in progress-
+#<this documentation is work in progress>#
 
 == Installation
 
--work in progress-
+#<this documentation is work in progress>#
 
 == Configuration
 
--work in progress-
+#<this documentation is work in progress>#
 
 

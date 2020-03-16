@@ -12,8 +12,8 @@ NOTE: The authors assume no responsibility or liability for any errors or omissi
 == General
 
 ==== What is OpenWebStart?
-tbd.
 
+#<this documentation is work in progress>#
 
 == Subscription and Premium Support
 
@@ -36,7 +36,7 @@ To figure out which support model fits best to your needs, you should contact op
 
 == Installation
 
-tbd.
+#<this documentation is work in progress>#
 
 == Functionality
 
