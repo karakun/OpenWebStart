@@ -10,15 +10,15 @@
 
 == Introduction
 
-#<this documentation is work in progress>#
+-work in progress-
 
 === What is OpenWebStart?
 
-#<this documentation is work in progress>#
+-work in progress-
 
 == Installation
 
-#<this documentation is work in progress>#
+-work in progress-
 
 == Configuration
 
