@@ -44,7 +44,7 @@ public class ManualConfigBasedProxyProvider extends ConfigBasedProvider {
         result.setSocksPort(toPort(config.getProperty(KEY_PROXY_SOCKS4_PORT)));
         result.setBypassLocal(Boolean.parseBoolean(config.getProperty(KEY_PROXY_BYPASS_LOCAL)));
 
-        config.getPropertyAsList(KEY_PROXY_BYPASS_LIST, ',').stream()
+        config.getPropertyAsList(KEY_PROXY_BYPASS_LIST).stream()
                 .filter(host -> !StringUtils.isBlank(host))
                 .forEach(result::addToBypassList);
 
