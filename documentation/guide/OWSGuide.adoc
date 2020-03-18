@@ -25,4 +25,33 @@ NOTE: The authors assume no responsibility or liability for any errors or omissi
 
 #<this documentation is work in progress>#
 
+=== JVM Download Server
 
+OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application. The default points to https://download-openwebstart.com/jvms.
+
+==== Setup a Custom Download Server
+If you want to setup your own JVM download server you have to prepare downloadable artifacts of your JVMs you want to provide and specify them in a jvms configuration file named "jvms".
+
+The jvms configuration file is located in the root of the download server defines which JVMs are available for download by OpenWebStart from the server.
+
+This file format is json and looks like this:
+```
+{
+    "cacheTimeInMillis":<miliseconds>,
+    "runtimes":[
+        {
+            "version":<JVM version>,
+            "vendor":<vendor name>,
+            "os":<OS identifier>,
+            "href":<url to the download artifact on this download server>
+        },
+
+        ... more runtime definitions
+}
+
+```
+
+cacheTimeInMillis: The time that needs to be elapsed before a client is allowed to request the server again. Usually the server is accessed once per application startup.
+
+
+#<this documentation is work in progress>#
