@@ -2,6 +2,7 @@ package com.openwebstart.ui.dialogs;
 
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.IconComponent;
+import net.adoptopenjdk.icedteaweb.image.ImageGallery;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,7 +22,7 @@ public class SimpleDialogWithResult<R> extends ButtonBasedDialogWithResult<R> {
     private final ImageIcon imageIcon;
 
     public SimpleDialogWithResult(final String title, final String message, final DialogButton<R>... buttons) {
-        this(title, message, new ImageIcon(Images.QUESTION_64_URL), buttons);
+        this(title, message, ImageGallery.QUESTION.asImageIcon(), buttons);
 
     }
 

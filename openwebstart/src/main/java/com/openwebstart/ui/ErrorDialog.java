@@ -1,15 +1,14 @@
 package com.openwebstart.ui;
 
 import com.openwebstart.controlpanel.ButtonPanelFactory;
-import com.openwebstart.jvm.ui.Images;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.image.ImageGallery;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,8 +32,7 @@ public class ErrorDialog extends ModalDialog {
 
         setTitle(translator.translate("dialog.error.title"));
 
-        final ImageIcon imageIcon = new ImageIcon(Images.ERROR_64_URL);
-        final IconComponent downloadIcon = new IconComponent(imageIcon);
+        final IconComponent downloadIcon = new IconComponent(ImageGallery.ERROR.asImageIcon());
 
         final JLabel messageLabel = new JLabel(message);
 
