@@ -12,6 +12,7 @@ public class ModalDialog extends JDialog {
     public void showAndWait() {
         pack();
         setLocationRelativeTo(null);
+        setAlwaysOnTop(true);
         setVisible(true);
     }
 
