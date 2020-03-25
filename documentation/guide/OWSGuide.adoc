@@ -1,12 +1,11 @@
+= The Defintive Guide To OpenWebStart
 :imagesdir: ./images
 :Author:    ...
 :Email:     openwebstart@karakun.com
 :Date:      ...
 :Revision:  1.1.6
-
-= The Defintive Guide To OpenWebStart
-
 :toc:
+:toclevels: 2
 
 == Introduction
 
@@ -23,6 +22,11 @@
 == Configuration
 
 #<this documentation is work in progress>#
+
+
+=== Centralized Configuration
+
+- list all the properties that allows to configure a centralized installation
 
 === JVM Download Server
 
