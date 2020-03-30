@@ -9,6 +9,9 @@
 
 NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation. The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
 
+
+#<this documentation is work in progress>#
+
 == General
 
 ==== What is OpenWebStart?
@@ -56,12 +59,24 @@ To figure out which support model fits best to your needs, you should contact op
 
 == Installation
 
-#<this documentation is work in progress>#
+==== Is there a MSI installer for OpenWebStart?
+Currently we do not provide a MSI installer. More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98
 
 == Functionality
 
 ==== Does OpenWebStart support Applets?
 Applets are not supported and there are no plans to support them in the future. We also do not consider this as a deviation from the JNLP-standard as this is an optional feature according to the JSR-56 specs.
 
-==== Is there a MSI installer for OpenWebStart?
-Currently we do not provide a MSI installer. More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98
+==== How can I define a server whitelist for OWS?
+
+This field is currently not editable in the UI. Edit the deployment properties file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
+
+```
+deployment.security.whitelist=10.10.10.10, google.com, some.server.net
+```
+
+The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.
+
+Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.
+
+It is also possible to specify the content of the whitelist when installing OWS (unattended installation), see https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details
