@@ -16,7 +16,7 @@ import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.util.ExtractUtil;
 import com.openwebstart.util.MimeType;
-import com.openwebstart.util.MimeTypeDetection;
+import com.openwebstart.util.MimeTypeInputStream;
 import com.openwebstart.util.Subscription;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
@@ -28,7 +28,6 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PushbackInputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -337,8 +336,8 @@ public final class LocalRuntimeManager {
             }
             LOG.info("Trying to download and extract runtime {}", remoteRuntime);
 
-            final PushbackInputStream wrappedStream = MimeTypeDetection.wrap(inputStream);
-            final MimeType mimeType = MimeTypeDetection.getMimetype(wrappedStream);
+            MimeTypeInputStream wrappedStream = new MimeTypeInputStream(inputStream);
+            final MimeType mimeType = wrappedStream.getMimeType();
             if (Objects.equals(MimeType.ZIP, mimeType)) {
                 LOG.info("Remote runtime is distributed as ZIP. Will extract it");
                 ExtractUtil.unZip(wrappedStream, runtimePath);
