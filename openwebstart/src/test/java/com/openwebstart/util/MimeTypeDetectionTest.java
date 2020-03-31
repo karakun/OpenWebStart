@@ -94,9 +94,7 @@ class MimeTypeDetectionTest {
 
         //than
         Assertions.assertNull(mimeType);
-        Assertions.assertEquals(0x51, inputStream.read());
-        Assertions.assertEquals(0x2b, inputStream.read());
-        Assertions.assertEquals(0x11, inputStream.read());
+        Assertions.assertEquals(-1, inputStream.read());
 
     }
 }
