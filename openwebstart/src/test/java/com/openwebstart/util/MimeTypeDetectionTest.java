@@ -4,9 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 class MimeTypeDetectionTest {
 
@@ -96,5 +99,37 @@ class MimeTypeDetectionTest {
         Assertions.assertNull(mimeType);
         Assertions.assertEquals(-1, inputStream.read());
 
+    }
+
+    @Test
+    void checkForZipFile() throws IOException {
+        //given
+        final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.zip").getFile());
+
+        //when
+        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetection.getMimetype(inputStream);
+
+        //than
+        Assertions.assertEquals(MimeType.ZIP, mimeType);
+        final ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        final ZipEntry entry = zipInputStream.getNextEntry();
+        Assertions.assertNotNull(entry);
+        Assertions.assertEquals("data.txt", entry.getName());
+    }
+
+    @Test
+    void checkForUnsupportedFile() throws IOException {
+        //given
+        final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.txt").getFile());
+
+        //when
+        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetection.getMimetype(inputStream);
+
+        //than
+        Assertions.assertNull(mimeType);
+        Assertions.assertEquals(0x53, inputStream.read());
+        Assertions.assertEquals(0x6f, inputStream.read());
     }
 }

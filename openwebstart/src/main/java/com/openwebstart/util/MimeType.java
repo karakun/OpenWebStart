@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 public enum MimeType {
 
-    ZIP(new byte[]{0x50, 0x4b});
+    ZIP(new byte[]{0x50, 0x4b}),
+    GZIP(new byte[]{0x1f, (byte) 0x8b});
 
     private final byte[] magicBytes;
 
