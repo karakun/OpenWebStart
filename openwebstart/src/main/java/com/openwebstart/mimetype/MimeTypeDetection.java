@@ -12,12 +12,12 @@ public class MimeTypeDetection {
 
     private static final Logger LOG = LoggerFactory.getLogger(MimeTypeDetection.class);
 
-    private static final int PUSHBACK_SIZE = MimeType.getMaxMagicByteSize();
+    private static final int PUSH_BACK_SIZE = MimeType.getMaxMagicByteSize();
 
-    public static MimeType getMimetype(final PushbackInputStream inputStream) throws IOException {
+    public static MimeType getMimeType(final PushbackInputStream inputStream) throws IOException {
         Assert.requireNonNull(inputStream, "inputStream");
-        final byte[] buffer = new byte[PUSHBACK_SIZE];
-        final int bytesRead = inputStream.read(buffer, 0, PUSHBACK_SIZE);
+        final byte[] buffer = new byte[PUSH_BACK_SIZE];
+        final int bytesRead = inputStream.read(buffer, 0, PUSH_BACK_SIZE);
         if (bytesRead > 0) {
             inputStream.unread(buffer, 0, bytesRead);
             LOG.debug("Magic bytes detection read: {}", printHumanReadable(buffer));
@@ -30,7 +30,7 @@ public class MimeTypeDetection {
 
     public static PushbackInputStream wrap(final InputStream stream) {
         Assert.requireNonNull(stream, "stream");
-        return new PushbackInputStream(stream, PUSHBACK_SIZE);
+        return new PushbackInputStream(stream, PUSH_BACK_SIZE);
     }
 
     private static String printHumanReadable(byte[] bytes) {

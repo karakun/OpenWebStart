@@ -341,6 +341,9 @@ public final class LocalRuntimeManager {
             if (Objects.equals(MimeType.ZIP, mimeType)) {
                 LOG.info("Remote runtime is distributed as ZIP. Will extract it");
                 ExtractUtil.unZip(wrappedStream, runtimePath);
+            } else if (Objects.equals(MimeType.GZIP, mimeType)) {
+                LOG.info("Remote runtime is distributed as GZIP. Will extract it");
+                ExtractUtil.unTarGzip(wrappedStream, runtimePath); //We assume that GZIP is always a tar.gz
             } else {
                 throw new IllegalStateException("The remote runtime is distributed in an unknown mimetype.");
             }
