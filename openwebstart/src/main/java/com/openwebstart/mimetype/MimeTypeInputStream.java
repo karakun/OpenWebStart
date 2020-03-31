@@ -1,4 +1,4 @@
-package com.openwebstart.util;
+package com.openwebstart.mimetype;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

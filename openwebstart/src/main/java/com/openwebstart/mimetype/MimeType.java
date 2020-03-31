@@ -1,4 +1,4 @@
-package com.openwebstart.util;
+package com.openwebstart.mimetype;
 
 import net.adoptopenjdk.icedteaweb.Assert;
 

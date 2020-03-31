@@ -1,5 +1,6 @@
 package com.openwebstart.util;
 
+import com.openwebstart.mimetype.MimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
