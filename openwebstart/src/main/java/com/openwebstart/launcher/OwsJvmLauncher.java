@@ -134,6 +134,8 @@ public class OwsJvmLauncher implements JvmLauncher {
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
+        LocalRuntimeManager.touch(javaRuntime);
+
         if (JAVA_1_8.contains(version)) {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
@@ -142,8 +144,6 @@ public class OwsJvmLauncher implements JvmLauncher {
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
-
-        LocalRuntimeManager.touch(javaRuntime);
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
