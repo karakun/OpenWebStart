@@ -68,6 +68,6 @@ class MimeTypeTest {
 
     @Test
     void checkMaxMagicByteSize() {
-        Assertions.assertEquals(2, MimeType.getMaxMagicByteSize());
+        Assertions.assertEquals(5, MimeType.getMaxMagicByteSize());
     }
 }

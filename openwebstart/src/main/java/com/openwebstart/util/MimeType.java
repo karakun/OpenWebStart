@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 public enum MimeType {
 
+    //see https://en.wikipedia.org/wiki/List_of_file_signatures
+
+    TAR(new byte[]{0x75, 0x73, 0x74, 0x61, 0x72}),
     ZIP(new byte[]{0x50, 0x4b}),
     GZIP(new byte[]{0x1f, (byte) 0x8b});
 

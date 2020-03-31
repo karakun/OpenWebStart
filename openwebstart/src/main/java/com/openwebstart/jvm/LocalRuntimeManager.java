@@ -14,10 +14,10 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
+import com.openwebstart.util.ExtractUtil;
 import com.openwebstart.util.MimeType;
 import com.openwebstart.util.MimeTypeDetection;
 import com.openwebstart.util.Subscription;
-import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
@@ -341,7 +341,7 @@ public final class LocalRuntimeManager {
             final MimeType mimeType = MimeTypeDetection.getMimetype(wrappedStream);
             if (Objects.equals(MimeType.ZIP, mimeType)) {
                 LOG.info("Remote runtime is distributed as ZIP. Will extract it");
-                ZipUtil.unzip(wrappedStream, runtimePath);
+                ExtractUtil.unZip(wrappedStream, runtimePath);
             } else {
                 throw new IllegalStateException("The remote runtime is distributed in an unknown mimetype.");
             }
