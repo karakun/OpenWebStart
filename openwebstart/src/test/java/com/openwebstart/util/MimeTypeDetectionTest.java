@@ -119,6 +119,32 @@ class MimeTypeDetectionTest {
     }
 
     @Test
+    void checkForGZipFile() throws IOException {
+        //given
+        final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.gz").getFile());
+
+        //when
+        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetection.getMimetype(inputStream);
+
+        //than
+        Assertions.assertEquals(MimeType.GZIP, mimeType);
+    }
+
+    @Test
+    void checkForTarGzFile() throws IOException {
+        //given
+        final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.tar.gz").getFile());
+
+        //when
+        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetection.getMimetype(inputStream);
+
+        //than
+        Assertions.assertEquals(MimeType.GZIP, mimeType);
+    }
+
+    @Test
     void checkForUnsupportedFile() throws IOException {
         //given
         final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.txt").getFile());
