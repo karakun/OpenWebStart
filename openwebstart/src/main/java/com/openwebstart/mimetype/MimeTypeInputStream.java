@@ -1,6 +1,5 @@
 package com.openwebstart.mimetype;
 
-import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -8,6 +7,8 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+
+import static net.adoptopenjdk.icedteaweb.Assert.requireNonNull;
 
 public class MimeTypeInputStream extends FilterInputStream {
 
@@ -26,14 +27,13 @@ public class MimeTypeInputStream extends FilterInputStream {
         return mimeType;
     }
 
-    private static MimeType getMimeType(final PushbackInputStream inputStream) throws IOException {
-        Assert.requireNonNull(inputStream, "inputStream");
+    private MimeType getMimeType(final PushbackInputStream stream) throws IOException {
         final byte[] buffer = new byte[PUSH_BACK_SIZE];
-        final int bytesRead = inputStream.read(buffer, 0, PUSH_BACK_SIZE);
+        final int bytesRead = stream.read(buffer, 0, PUSH_BACK_SIZE);
         if (bytesRead > 0) {
-            inputStream.unread(buffer, 0, bytesRead);
-            LOG.debug("Magic bytes detection read: {}", printHumanReadable(buffer));
-            return MimeType.getForMagicBytes(buffer).orElse(null);
+            stream.unread(buffer, 0, bytesRead);
+            LOG.debug("Magic bytes detection read: {}", printHumanReadable(buffer, bytesRead));
+            return MimeType.getForMagicBytes(buffer, bytesRead).orElse(null);
         } else {
             LOG.error("Magic bytes can not be read!");
             return null;
@@ -41,14 +41,15 @@ public class MimeTypeInputStream extends FilterInputStream {
     }
 
     private static PushbackInputStream wrap(final InputStream stream) {
-        Assert.requireNonNull(stream, "stream");
+        requireNonNull(stream, "stream");
         return new PushbackInputStream(stream, PUSH_BACK_SIZE);
     }
 
-    private static String printHumanReadable(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
+    private String printHumanReadable(final byte[] bytes, final int bytesRead) {
+        final StringBuilder sb = new StringBuilder();
         sb.append("[ ");
-        for (byte b : bytes) {
+        for (int i = 0; i < bytesRead; i++) {
+            final byte b = bytes[i];
             sb.append(String.format("0x%02X ", b));
         }
         sb.append("]");

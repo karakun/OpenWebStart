@@ -11,7 +11,7 @@ class MimeTypeTest {
         final byte[] data = {0x50, 0x4b, 0x11, 0x3a, 0x4e};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
         Assertions.assertEquals(MimeType.ZIP, mimeType);
@@ -23,7 +23,7 @@ class MimeTypeTest {
         final byte[] data = {0x22, 0x1b, 0x11, 0x3a, 0x4e};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
         Assertions.assertNull(mimeType);
@@ -31,14 +31,10 @@ class MimeTypeTest {
 
     @Test
     void checkNoData() {
-        //given
-        final byte[] data = null;
-
-        //when
         try {
-            MimeType.getForMagicBytes(data);
+            MimeType.getForMagicBytes(null, 0);
             Assertions.fail();
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
         }
     }
 
@@ -48,7 +44,7 @@ class MimeTypeTest {
         final byte[] data = new byte[0];
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
         Assertions.assertNull(mimeType);
@@ -60,7 +56,7 @@ class MimeTypeTest {
         final byte[] data = {0x50};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
         Assertions.assertNull(mimeType);
