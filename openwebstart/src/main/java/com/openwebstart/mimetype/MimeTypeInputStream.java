@@ -10,8 +10,8 @@ public class MimeTypeInputStream extends FilterInputStream {
     private final MimeType mimeType;
 
     public MimeTypeInputStream(final InputStream inputStream) throws IOException {
-        super(MimeTypeDetection.wrap(inputStream));
-        mimeType = MimeTypeDetection.getMimeType((PushbackInputStream) in);
+        super(MimeTypeDetectionUtils.wrap(inputStream));
+        mimeType = MimeTypeDetectionUtils.getMimeType((PushbackInputStream) in);
     }
 
     public MimeType getMimeType() {

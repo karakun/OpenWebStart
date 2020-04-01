@@ -1,7 +1,5 @@
-package com.openwebstart.util;
+package com.openwebstart.mimetype;
 
-import com.openwebstart.mimetype.MimeType;
-import com.openwebstart.mimetype.MimeTypeDetection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +20,7 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new ByteArrayInputStream(rawData);
 
         //when
-        final InputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final InputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
 
         //than
         Assertions.assertNotNull(inputStream);
@@ -41,7 +39,7 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new ByteArrayInputStream(rawData);
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
         final byte[] readBytes = new byte[2];
         inputStream.read(readBytes, 0, 2);
         inputStream.unread(readBytes, 0, 2);
@@ -58,8 +56,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new ByteArrayInputStream(rawData);
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertEquals(MimeType.ZIP, mimeType);
@@ -76,8 +74,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new ByteArrayInputStream(rawData);
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertNull(mimeType);
@@ -94,8 +92,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new ByteArrayInputStream(rawData);
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertNull(mimeType);
@@ -109,8 +107,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.zip").getFile());
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertEquals(MimeType.ZIP, mimeType);
@@ -126,8 +124,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.gz").getFile());
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertEquals(MimeType.GZIP, mimeType);
@@ -139,8 +137,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.tar.gz").getFile());
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertEquals(MimeType.GZIP, mimeType);
@@ -152,8 +150,8 @@ class MimeTypeDetectionTest {
         final InputStream rawInputStream = new FileInputStream(MimeTypeDetectionTest.class.getResource("data.txt").getFile());
 
         //when
-        final PushbackInputStream inputStream = MimeTypeDetection.wrap(rawInputStream);
-        final MimeType mimeType = MimeTypeDetection.getMimeType(inputStream);
+        final PushbackInputStream inputStream = MimeTypeDetectionUtils.wrap(rawInputStream);
+        final MimeType mimeType = MimeTypeDetectionUtils.getMimeType(inputStream);
 
         //than
         Assertions.assertNull(mimeType);
