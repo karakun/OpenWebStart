@@ -1,7 +1,10 @@
 package com.openwebstart.mimetype;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MimeTypeTest {
 
@@ -14,7 +17,7 @@ class MimeTypeTest {
         final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertEquals(MimeType.ZIP, mimeType);
+        assertEquals(MimeType.ZIP, mimeType);
     }
 
     @Test
@@ -26,16 +29,12 @@ class MimeTypeTest {
         final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
     void checkNoData() {
-        try {
-            MimeType.getForMagicBytes(null, 0);
-            Assertions.fail();
-        } catch (final Exception ignored) {
-        }
+        assertThrows(NullPointerException.class, () -> MimeType.getForMagicBytes(null, 0));
     }
 
     @Test
@@ -47,7 +46,7 @@ class MimeTypeTest {
         final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
@@ -59,11 +58,11 @@ class MimeTypeTest {
         final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
     void checkMaxMagicByteSize() {
-        Assertions.assertEquals(5, MimeType.getMaxMagicByteSize());
+        assertEquals(5, MimeType.getMaxMagicByteSize());
     }
 }

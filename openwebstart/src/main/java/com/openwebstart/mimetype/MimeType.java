@@ -1,7 +1,5 @@
 package com.openwebstart.mimetype;
 
-import net.adoptopenjdk.icedteaweb.Assert;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +7,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static net.adoptopenjdk.icedteaweb.Assert.requireNonNull;
 
 public enum MimeType {
 
@@ -29,7 +28,7 @@ public enum MimeType {
     }
 
     public static Optional<MimeType> getForMagicBytes(final byte[] data, final int bytesInData) {
-        Assert.requireNonNull(data, "data");
+        requireNonNull(data, "data");
         final int bytesToCompare = min(max(0, bytesInData), data.length); // 0 <= bytesToCompare <= data.length
         final List<MimeType> matchingTypes = Arrays.stream(MimeType.values())
                 .filter(m -> startWith(data, m.magicBytes, bytesToCompare))
