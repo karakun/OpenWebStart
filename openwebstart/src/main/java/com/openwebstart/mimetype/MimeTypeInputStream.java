@@ -18,8 +18,8 @@ public class MimeTypeInputStream extends FilterInputStream {
 
     private final MimeType mimeType;
 
-    public MimeTypeInputStream(final InputStream inputStream) throws IOException {
-        super(wrap(inputStream));
+    public MimeTypeInputStream(final InputStream stream) throws IOException {
+        super(new PushbackInputStream(requireNonNull(stream, "stream"), PUSH_BACK_SIZE));
         mimeType = getMimeType((PushbackInputStream) in);
     }
 
@@ -38,11 +38,6 @@ public class MimeTypeInputStream extends FilterInputStream {
             LOG.error("Magic bytes can not be read!");
             return null;
         }
-    }
-
-    private static PushbackInputStream wrap(final InputStream stream) {
-        requireNonNull(stream, "stream");
-        return new PushbackInputStream(stream, PUSH_BACK_SIZE);
     }
 
     private String printHumanReadable(final byte[] bytes, final int bytesRead) {
