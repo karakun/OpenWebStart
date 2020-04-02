@@ -1,11 +1,13 @@
 package com.openwebstart.mimetype;
 
-import net.adoptopenjdk.icedteaweb.Assert;
-
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static net.adoptopenjdk.icedteaweb.Assert.requireNonNull;
 
 public enum MimeType {
 
@@ -25,29 +27,30 @@ public enum MimeType {
         return magicBytes;
     }
 
-    public static Optional<MimeType> getForMagicBytes(final byte[] data) {
-        Assert.requireNonNull(data, "data");
-        final Set<MimeType> matchingTypes = Arrays.asList(MimeType.values()).stream()
-                .filter(m -> startWith(data, m.magicBytes))
-                .collect(Collectors.toSet());
+    public static Optional<MimeType> getForMagicBytes(final byte[] data, final int bytesInData) {
+        requireNonNull(data, "data");
+        final int bytesToCompare = min(max(0, bytesInData), data.length); // 0 <= bytesToCompare <= data.length
+        final List<MimeType> matchingTypes = Arrays.stream(MimeType.values())
+                .filter(m -> startWith(data, m.magicBytes, bytesToCompare))
+                .collect(Collectors.toList());
         if (matchingTypes.isEmpty()) {
             return Optional.empty();
         }
         if (matchingTypes.size() == 1) {
-            return Optional.of(matchingTypes.iterator().next());
+            return Optional.of(matchingTypes.get(0));
         }
-        throw new IllegalStateException("More than 1 matching mimetype found!");
+        throw new IllegalStateException("More than 1 matching MimeType found!");
     }
 
-    public static int getMaxMagicByteSize() {
-        return Arrays.asList(MimeType.values()).stream()
+    static int getMaxMagicByteSize() {
+        return Arrays.stream(MimeType.values())
                 .mapToInt(m -> m.getMagicBytes().length)
                 .max()
                 .orElse(0);
     }
 
-    private static boolean startWith(final byte[] data, final byte[] start) {
-        if (start.length > data.length) {
+    private static boolean startWith(final byte[] data, final byte[] start, final int bytesToCompare) {
+        if (start.length > bytesToCompare) {
             return false;
         }
         for (int i = 0; i < start.length; i++) {

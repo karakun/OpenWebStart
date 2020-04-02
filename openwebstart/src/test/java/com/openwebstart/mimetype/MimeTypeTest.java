@@ -1,7 +1,10 @@
 package com.openwebstart.mimetype;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MimeTypeTest {
 
@@ -11,10 +14,10 @@ class MimeTypeTest {
         final byte[] data = {0x50, 0x4b, 0x11, 0x3a, 0x4e};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertEquals(MimeType.ZIP, mimeType);
+        assertEquals(MimeType.ZIP, mimeType);
     }
 
     @Test
@@ -23,23 +26,15 @@ class MimeTypeTest {
         final byte[] data = {0x22, 0x1b, 0x11, 0x3a, 0x4e};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
     void checkNoData() {
-        //given
-        final byte[] data = null;
-
-        //when
-        try {
-            MimeType.getForMagicBytes(data);
-            Assertions.fail();
-        } catch (final Exception e) {
-        }
+        assertThrows(NullPointerException.class, () -> MimeType.getForMagicBytes(null, 0));
     }
 
     @Test
@@ -48,10 +43,10 @@ class MimeTypeTest {
         final byte[] data = new byte[0];
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
@@ -60,14 +55,14 @@ class MimeTypeTest {
         final byte[] data = {0x50};
 
         //when
-        final MimeType mimeType = MimeType.getForMagicBytes(data).orElse(null);
+        final MimeType mimeType = MimeType.getForMagicBytes(data, data.length).orElse(null);
 
         //than
-        Assertions.assertNull(mimeType);
+        assertNull(mimeType);
     }
 
     @Test
     void checkMaxMagicByteSize() {
-        Assertions.assertEquals(5, MimeType.getMaxMagicByteSize());
+        assertEquals(5, MimeType.getMaxMagicByteSize());
     }
 }
