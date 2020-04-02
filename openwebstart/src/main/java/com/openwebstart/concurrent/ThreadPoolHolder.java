@@ -10,13 +10,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ThreadPoolHolder {
 
-    private static final ThreadFactory DAEMON_THREAD_FACTORY = new OwsThreadFactory(true, "daemon-");
-    private static final ThreadFactory NON_DAEMON_THREAD_FACTORY = new OwsThreadFactory(false, "");
+    private static final ThreadGroup OWS_THREAD_GROUP = new ThreadGroup("OWS parent");
+
+    private static final ThreadFactory DAEMON_THREAD_FACTORY = new OwsThreadFactory(OWS_THREAD_GROUP, true, "daemon-");
+    private static final ThreadFactory NON_DAEMON_THREAD_FACTORY = new OwsThreadFactory(OWS_THREAD_GROUP, false, "");
 
     private static final ExecutorService DAEMON_THREAD_POOL = Executors.newCachedThreadPool(DAEMON_THREAD_FACTORY);
     private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool(NON_DAEMON_THREAD_FACTORY);
 
-    private static ThreadGroup OWS_THREAD_GROUP = new ThreadGroup("OWS parent");
 
     public static ExecutorService getDaemonExecutorService() {
         return DAEMON_THREAD_POOL;
@@ -32,9 +33,9 @@ public class ThreadPoolHolder {
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
 
-        OwsThreadFactory(final boolean isDaemon, final String name) {
+        OwsThreadFactory(ThreadGroup parentThreadGroup, final boolean isDaemon, final String name) {
             this.isDaemon = isDaemon;
-            group = new ThreadGroup(OWS_THREAD_GROUP, "OWS " + name + "threads");
+            group = new ThreadGroup(parentThreadGroup, "OWS " + name + "threads");
             namePrefix = "ows-" + name + "pool-";
         }
 
