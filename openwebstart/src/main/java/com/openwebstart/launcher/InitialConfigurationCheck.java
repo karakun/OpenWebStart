@@ -44,10 +44,36 @@ class InitialConfigurationCheck {
     private static final String INSTALL4J_INSTALLATION_DATE_PROPERTY_NAME = "installationDate";
     private static final String LAST_UPDATE_PROPERTY_NAME = "ows.install4j.propertyUpdate";
 
+    private static final List<String> KEYS_OF_PROPERTIES_TO_TAKE_FROM_RESPONSE_VAR_FILE = Arrays.asList(
+            JVM_CACHE_DIR,
+            DEFAULT_JVM_DOWNLOAD_SERVER,
+            ALLOW_DOWNLOAD_SERVER_FROM_JNLP,
+            JVM_VENDOR,
+            ALLOW_VENDOR_FROM_JNLP,
+            JVM_UPDATE_STRATEGY,
+            JVM_SUPPORTED_VERSION_RANGE,
+            KEY_PROXY_HTTP_HOST,
+            KEY_PROXY_HTTP_PORT,
+            KEY_PROXY_BYPASS_LOCAL,
+            KEY_PROXY_TYPE,
+            KEY_PROXY_AUTO_CONFIG_URL,
+            KEY_CACHE_MAX_SIZE,
+            KEY_CACHE_COMPRESSION_ENABLED,
+            KEY_HTTPS_DONT_ENFORCE,
+            KEY_ASSUME_FILE_STEM_IN_CODEBASE,
+            KEY_SECURITY_SERVER_WHITELIST,
+            MAX_DAYS_UNUSED_IN_JVM_CACHE,
+            KEY_ENABLE_LOGGING,
+            KEY_ENABLE_LOGGING_TOFILE,
+
+            UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
+            UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
+            UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME,
+            UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME
+    );
+
     private final Install4JConfiguration install4JConfiguration;
-
     private final DeploymentConfiguration deploymentConfiguration;
-
     private final Lock preferencesStoreLock = new ReentrantLock();
 
     InitialConfigurationCheck(final DeploymentConfiguration deploymentConfiguration) {
@@ -59,35 +85,7 @@ class InitialConfigurationCheck {
         if (isFirstStart()) {
             LOG.debug("Looks like OpenWebStart is started for the first time. Will import initial configuration");
 
-            final List<String> keysOfPropertiesToTakeFromResponseVarFile = Arrays.asList(
-                    JVM_CACHE_DIR,
-                    DEFAULT_JVM_DOWNLOAD_SERVER,
-                    ALLOW_DOWNLOAD_SERVER_FROM_JNLP,
-                    JVM_VENDOR,
-                    ALLOW_VENDOR_FROM_JNLP,
-                    JVM_UPDATE_STRATEGY,
-                    JVM_SUPPORTED_VERSION_RANGE,
-                    KEY_PROXY_HTTP_HOST,
-                    KEY_PROXY_HTTP_PORT,
-                    KEY_PROXY_BYPASS_LOCAL,
-                    KEY_PROXY_TYPE,
-                    KEY_PROXY_AUTO_CONFIG_URL,
-                    KEY_CACHE_MAX_SIZE,
-                    KEY_CACHE_COMPRESSION_ENABLED,
-                    KEY_HTTPS_DONT_ENFORCE,
-                    KEY_ASSUME_FILE_STEM_IN_CODEBASE,
-                    KEY_SECURITY_SERVER_WHITELIST,
-                    MAX_DAYS_UNUSED_IN_JVM_CACHE,
-                    KEY_ENABLE_LOGGING,
-                    KEY_ENABLE_LOGGING_TOFILE,
-
-                    UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
-                    UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
-                    UpdatePanelConfigConstants.UPDATED_STRATEGY_SETTINGS_PARAM_NAME,
-                    UpdatePanelConfigConstants.UPDATED_STRATEGY_LAUNCH_PARAM_NAME
-            );
-
-            keysOfPropertiesToTakeFromResponseVarFile.forEach(this::initProperty);
+            KEYS_OF_PROPERTIES_TO_TAKE_FROM_RESPONSE_VAR_FILE.forEach(this::initProperty);
 
             setLastUpdateProperty();
 
