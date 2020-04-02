@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="&#8230;&#8203;">
+<meta name="author" content="The OWS Community">
 <title>Frequently Asked Questions on OpenWebStart</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,8 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Frequently Asked Questions on OpenWebStart</h1>
 <div class="details">
-<span id="author" class="author">&#8230;&#8203;</span><br>
-<span id="email" class="email"><a href="mailto:openwebstart@karakun.com">openwebstart@karakun.com</a></span><br>
+<span id="author" class="author">The OWS Community</span><br>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -459,11 +458,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_what_are_the_costs_for_subscription_and_premium_support">What are the costs for subscription and premium support?</a></li>
 </ul>
 </li>
-<li><a href="#_installation">Installation</a></li>
+<li><a href="#_subscription_and_premium_support_2">Subscription and Premium Support</a>
+<ul class="sectlevel3">
+<li><a href="#_is_there_a_subscription_for_openwebstart_2">Is there a subscription for OpenWebStart?</a></li>
+<li><a href="#_is_there_a_premium_support_for_openwebstart_2">Is there a premium support for OpenWebStart?</a></li>
+<li><a href="#_what_are_the_costs_for_subscription_and_premium_support_2">What are the costs for subscription and premium support?</a></li>
+</ul>
+</li>
+<li><a href="#_installation">Installation</a>
+<ul class="sectlevel3">
+<li><a href="#_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</a></li>
+</ul>
+</li>
 <li><a href="#_functionality">Functionality</a>
 <ul class="sectlevel3">
 <li><a href="#_does_openwebstart_support_applets">Does OpenWebStart support Applets?</a></li>
-<li><a href="#_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</a></li>
+<li><a href="#_how_can_i_define_a_server_whitelist_for_ows">How can I define a server whitelist for OWS?</a></li>
 </ul>
 </li>
 </ul>
@@ -483,6 +493,9 @@ The authors assume no responsibility or liability for any errors or omissions in
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p><mark>&lt;this documentation is work in progress&gt;</mark></p>
 </div>
 </div>
 </div>
@@ -528,10 +541,43 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 </div>
 </div>
 <div class="sect1">
+<h2 id="_subscription_and_premium_support_2">Subscription and Premium Support</h2>
+<div class="sectionbody">
+<div class="sect3">
+<h4 id="_is_there_a_subscription_for_openwebstart_2">Is there a subscription for OpenWebStart?</h4>
+<div class="paragraph">
+<p>Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
+With this option, you may report bugs using a dedicated communication channel and your bug reports will have a higher priority.
+If you wish, we will add your company logo to our sponsor list for free.
+And you&#8217;ll get a 10% discount for development of individual features.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_is_there_a_premium_support_for_openwebstart_2">Is there a premium support for OpenWebStart?</h4>
+<div class="paragraph">
+<p>With premium support provided by Karakun you may report bugs or issues using the premium communication channel.
+Your bug reports will have the highest priority.
+Karakun will guarantee reaction times depending on the severity of bugs (during business hours).
+Plus, you&#8217;ll get a 25% discount for the development of individual features.
+Upon your wish, your company logo will be listed as a premium sponsor on our website.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_are_the_costs_for_subscription_and_premium_support_2">What are the costs for subscription and premium support?</h4>
+<div class="paragraph">
+<p>To figure out which support model fits best to your needs, you should contact <a href="mailto:openwebstart@karakun.com">openwebstart@karakun.com</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_installation">Installation</h2>
 <div class="sectionbody">
+<div class="sect3">
+<h4 id="_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</h4>
 <div class="paragraph">
-<p><mark>&lt;this documentation is work in progress&gt;</mark></p>
+<p>Currently we do not provide a MSI installer. More details on the reasons can be found at <a href="https://github.com/karakun/OpenWebStart/issues/98" class="bare">https://github.com/karakun/OpenWebStart/issues/98</a></p>
+</div>
 </div>
 </div>
 </div>
@@ -545,9 +591,23 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 </div>
 </div>
 <div class="sect3">
-<h4 id="_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</h4>
+<h4 id="_how_can_i_define_a_server_whitelist_for_ows">How can I define a server whitelist for OWS?</h4>
 <div class="paragraph">
-<p>Currently we do not provide a MSI installer. More details on the reasons can be found at <a href="https://github.com/karakun/OpenWebStart/issues/98" class="bare">https://github.com/karakun/OpenWebStart/issues/98</a></p>
+<p>This field is currently not editable in the UI. Edit the deployment properties file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>deployment.security.whitelist=10.10.10.10, google.com, some.server.net</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.</p>
+</div>
+<div class="paragraph">
+<p>Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to specify the content of the whitelist when installing OWS (unattended installation), see <a href="https://openwebstart.com/installation/" class="bare">https://openwebstart.com/installation/</a> and <a href="https://openwebstart.com/configuration/" class="bare">https://openwebstart.com/configuration/</a> for further details</p>
 </div>
 </div>
 </div>
@@ -555,7 +615,7 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-16 07:33:47 +0100
+Last updated 2020-04-02 16:15:53 +0200
 </div>
 </div>
 </body>

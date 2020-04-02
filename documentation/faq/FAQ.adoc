@@ -1,9 +1,8 @@
 = Frequently Asked Questions on OpenWebStart
 :imagesdir: ./images
-:Author:    ...
-:Email:     openwebstart@karakun.com
-:Date:      ...
-:Revision:  1.1.6
+:Author:    The OWS Community
+:Date:      4/2020
+:Revision:  1.1.7
 :toc:
 :toclevels: 2
 

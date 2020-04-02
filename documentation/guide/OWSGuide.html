@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="&#8230;&#8203;">
+<meta name="author" content="The OWS Community">
 <title>The Defintive Guide To OpenWebStart</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,8 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>The Defintive Guide To OpenWebStart</h1>
 <div class="details">
-<span id="author" class="author">&#8230;&#8203;</span><br>
-<span id="email" class="email"><a href="mailto:openwebstart@karakun.com">openwebstart@karakun.com</a></span><br>
+<span id="author" class="author">The OWS Community</span><br>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -452,28 +451,35 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_what_is_openwebstart">What is OpenWebStart?</a></li>
 </ul>
 </li>
-<li><a href="#_installation">Installation</a></li>
-<li><a href="#_configuration">Configuration</a></li>
+<li><a href="#_installation">Installation</a>
+<ul class="sectlevel2">
+<li><a href="#_basic_installation">Basic Installation</a></li>
+<li><a href="#_unattended_installation">Unattended Installation</a></li>
+</ul>
+</li>
+<li><a href="#_updates">Updates</a></li>
+<li><a href="#_configuration">Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#_jvm_manager">JVM Manager</a>
+<ul class="sectlevel3">
+<li><a href="#_jvm_download_server">JVM Download Server</a></li>
+<li><a href="#_setup_a_custom_download_server">Setup a Custom Download Server</a></li>
+</ul>
+</li>
+<li><a href="#_cache_management">Cache Management</a></li>
+<li><a href="#_proxy_settings">Proxy Settings</a></li>
+<li><a href="#_certificates">Certificates</a></li>
+<li><a href="#_security_settings">Security Settings</a></li>
+<li><a href="#_server_whitelists">Server Whitelists</a></li>
+<li><a href="#_logging">Logging</a></li>
+<li><a href="#_remote_debugging">Remote Debugging</a></li>
+<li><a href="#_centralized_configuration">Centralized Configuration</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The authors assume no responsibility or liability for any errors or omissions in the content of this documentation. The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
@@ -494,6 +500,31 @@ The authors assume no responsibility or liability for any errors or omissions in
 <div class="paragraph">
 <p><mark>&lt;this documentation is work in progress&gt;</mark></p>
 </div>
+<div class="sect2">
+<h3 id="_basic_installation">Basic Installation</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_unattended_installation">Unattended Installation</h3>
+<div class="paragraph">
+<p>OWS also offers an unattended mode installation which is useful when you have to install OWS the same way on different computers and where your environment offers only a command line interface. Instead of walk through the graphical user interface of the OWS installer you provide the options as a response file.</p>
+</div>
+<div class="paragraph">
+<p><mark>&lt;add more details as on the homepage&gt;</mark></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_updates">Updates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OpenWebStart can be configured to automatically check for new releases and perform automatic updates.</p>
+</div>
+<div class="paragraph">
+<p>To do so go to the "Updates" Panel in the OWS Settings.
+It is possible to define an update strategy on every start, daily, weekly, monthly, or never.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -502,12 +533,121 @@ The authors assume no responsibility or liability for any errors or omissions in
 <div class="paragraph">
 <p><mark>&lt;this documentation is work in progress&gt;</mark></p>
 </div>
+<div class="sect2">
+<h3 id="_jvm_manager">JVM Manager</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+<div class="sect3">
+<h4 id="_jvm_download_server">JVM Download Server</h4>
+<div class="paragraph">
+<p>OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application. The default points to <a href="https://download-openwebstart.com/jvms" class="bare">https://download-openwebstart.com/jvms</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setup_a_custom_download_server">Setup a Custom Download Server</h4>
+<div class="paragraph">
+<p>If you want to setup your own JVM download server you have to prepare downloadable artifacts of your JVMs you want to provide and specify them in a jvms configuration file named "jvms".</p>
+</div>
+<div class="paragraph">
+<p>The jvms configuration file is located in the root of the download server defines which JVMs are available for download by OpenWebStart from the server.</p>
+</div>
+<div class="paragraph">
+<p>This file format is json and looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>{
+    &quot;cacheTimeInMillis&quot;:&lt;miliseconds&gt;,
+    &quot;runtimes&quot;:[
+        {
+            &quot;version&quot;:&lt;JVM version&gt;,
+            &quot;vendor&quot;:&lt;vendor name&gt;,
+            &quot;os&quot;:&lt;OS identifier&gt;,
+            &quot;href&quot;:&lt;url to the download artifact on this download server&gt;
+        },
+
+        ... more runtime definitions
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>cacheTimeInMillis: The time that needs to be elapsed before a client is allowed to request the server again. Usually the server is accessed once per application startup.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cache_management">Cache Management</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_proxy_settings">Proxy Settings</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_certificates">Certificates</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security_settings">Security Settings</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_server_whitelists">Server Whitelists</h3>
+<div class="paragraph">
+<p>The "Server Whitelists" panel in OWS settings displays the server whitelist. To define a server whitelist you have to edit the <code>deployment.properties</code> file in your config directory with a text editor by adding a new line similar to the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>deployment.security.whitelist=10.10.10.10, google.com, some.server.net</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.</p>
+</div>
+<div class="paragraph">
+<p>Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_logging">Logging</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_remote_debugging">Remote Debugging</h3>
+<div class="paragraph">
+<p><mark>&lt;TODO: describe OWS settings options&gt;</mark></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_centralized_configuration">Centralized Configuration</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>list all the properties that allows to configure a centralized installation (Terminalserver)</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-16 07:34:24 +0100
+Last updated 2020-04-02 16:15:31 +0200
 </div>
 </div>
 </body>

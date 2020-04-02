@@ -1,34 +1,47 @@
 = The Defintive Guide To OpenWebStart
 :imagesdir: ./images
-:Author:    ...
-:Email:     openwebstart@karakun.com
-:Date:      ...
-:Revision:  1.1.6
+:Author:    The OWS Community
+:Date:      4/2020
+:Revision:  1.1.7
 :toc:
-:toclevels: 2
+:toclevels: 4
 
 == Introduction
 
--work in progress-
+#<this documentation is work in progress>#
 
 === What is OpenWebStart?
 
--work in progress-
+#<this documentation is work in progress>#
 
 == Installation
 
--work in progress-
+#<this documentation is work in progress>#
+
+=== Basic Installation
+
+=== Unattended Installation
+
+OWS also offers an unattended mode installation which is useful when you have to install OWS the same way on different computers and where your environment offers only a command line interface. Instead of walk through the graphical user interface of the OWS installer you provide the options as a response file.
+
+#<add more details as on the homepage>#
+
+== Updates
+
+OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
+
+To do so go to the "Updates" Panel in the OWS Settings.
+It is possible to define an update strategy on every start, daily, weekly, monthly, or never.
 
 == Configuration
 
 #<this documentation is work in progress>#
 
+=== JVM Manager
 
-=== Centralized Configuration
+#<TODO: describe OWS settings options>#
 
-- list all the properties that allows to configure a centralized installation
-
-=== JVM Download Server
+==== JVM Download Server
 
 OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application. The default points to https://download-openwebstart.com/jvms.
 
@@ -56,5 +69,45 @@ This file format is json and looks like this:
 
 cacheTimeInMillis: The time that needs to be elapsed before a client is allowed to request the server again. Usually the server is accessed once per application startup.
 
+=== Cache Management
 
-#<this documentation is work in progress>#
+#<TODO: describe OWS settings options>#
+
+=== Proxy Settings
+
+#<TODO: describe OWS settings options>#
+
+=== Certificates
+
+#<TODO: describe OWS settings options>#
+
+=== Security Settings
+
+#<TODO: describe OWS settings options>#
+
+=== Server Whitelists
+
+The "Server Whitelists" panel in OWS settings displays the server whitelist. To define a server whitelist you have to edit the `deployment.properties` file in your config directory with a text editor by adding a new line similar to the following:
+
+```
+deployment.security.whitelist=10.10.10.10, google.com, some.server.net
+```
+
+The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.
+
+Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.
+
+It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.
+
+=== Logging
+
+#<TODO: describe OWS settings options>#
+
+=== Remote Debugging
+
+#<TODO: describe OWS settings options>#
+
+=== Centralized Configuration
+
+- list all the properties that allows to configure a centralized installation (Terminalserver)
+
