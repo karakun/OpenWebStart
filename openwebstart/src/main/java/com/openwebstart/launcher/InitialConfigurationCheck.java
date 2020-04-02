@@ -34,6 +34,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_HOST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_PORT;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
 import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
@@ -57,6 +58,7 @@ class InitialConfigurationCheck {
             KEY_PROXY_BYPASS_LOCAL,
             KEY_PROXY_TYPE,
             KEY_PROXY_AUTO_CONFIG_URL,
+            KEY_PROXY_SAME,
             KEY_CACHE_MAX_SIZE,
             KEY_CACHE_COMPRESSION_ENABLED,
             KEY_HTTPS_DONT_ENFORCE,
