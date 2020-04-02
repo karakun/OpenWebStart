@@ -59,18 +59,23 @@ public class ExtractUtil {
             storeFileOnDisc(inputStream, baseDir, entry);
             entry = inputStream.getNextEntry();
         }
-        final List<File> directChilds = listFiles(baseDir);
-        if (directChilds.size() == 1) {
+        unwrapPossibleSubDirectories(baseDir, baseDir);
+    }
+
+    // only visible for testing
+    static void unwrapPossibleSubDirectories(final Path srcDir, final Path targetDir) {
+        final List<File> directChildren = listFiles(srcDir);
+        if (directChildren.size() == 1) {
             LOG.debug("Only 1 file extracted...");
-            final File onlyChild = directChilds.get(0);
+            final File onlyChild = directChildren.get(0);
             //let's check if we extracted everything in an internal directory
             boolean wrappedDir = onlyChild.isDirectory();
             if (wrappedDir) {
                 //let's move the complete content 1 level up
-                final Path directoryPath = baseDir.resolve(onlyChild.toPath());
-                LOG.debug("Will unwrapp extracted folder {}", directoryPath);
+                final Path directoryPath = srcDir.resolve(onlyChild.toPath());
+                LOG.debug("Will unwrap extracted folder {}", directoryPath);
                 listFiles(directoryPath).stream()
-                        .map(Result.of(f -> moveToDirAndReplace(baseDir, f)))
+                        .map(Result.of(f -> moveToDirAndReplace(targetDir, f)))
                         .filter(Result::isFailed)
                         .findFirst()
                         .ifPresent(r -> {
