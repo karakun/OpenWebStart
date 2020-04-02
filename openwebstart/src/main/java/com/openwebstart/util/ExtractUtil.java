@@ -20,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 public class ExtractUtil {
 
@@ -56,20 +59,19 @@ public class ExtractUtil {
             storeFileOnDisc(inputStream, baseDir, entry);
             entry = inputStream.getNextEntry();
         }
-        final File[] directChilds = baseDir.toFile().listFiles();
-        if (directChilds.length == 1) {
+        final List<File> directChilds = listFiles(baseDir);
+        if (directChilds.size() == 1) {
             LOG.debug("Only 1 file extracted...");
-            final File onlyChild = directChilds[0];
+            final File onlyChild = directChilds.get(0);
             //let's check if we extracted everything in an internal directory
             boolean wrappedDir = onlyChild.isDirectory();
             if (wrappedDir) {
                 //let's move the complete content 1 level up
                 final Path directoryPath = baseDir.resolve(onlyChild.toPath());
                 LOG.debug("Will unwrapp extracted folder {}", directoryPath);
-                Arrays.asList(directoryPath.toFile().listFiles())
-                        .stream()
+                listFiles(directoryPath).stream()
                         .map(Result.of(f -> moveToDirAndReplace(baseDir, f)))
-                        .filter(r -> r.isFailed())
+                        .filter(Result::isFailed)
                         .findFirst()
                         .ifPresent(r -> {
                             throw new RuntimeException("Error in unwrapping extracted directory!", r.getException());
@@ -77,6 +79,11 @@ public class ExtractUtil {
             }
             FileUtils.deleteWithErrMesg(onlyChild);
         }
+    }
+
+    private static List<File> listFiles(Path baseDir) {
+        final File[] files = baseDir.toFile().listFiles();
+        return files != null ? Arrays.asList(files) : emptyList();
     }
 
     private static Path moveToDirAndReplace(final Path baseDir, final File toMove) throws IOException {
