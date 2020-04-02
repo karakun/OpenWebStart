@@ -128,22 +128,31 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
-
         vmArgs.addAll(extractVmArgs(jnlpFile));
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
+        LocalRuntimeManager.touch(javaRuntime);
+
         if (JAVA_1_8.contains(version)) {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
-            vmArgs.add(quoteIfRequired('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS));
-            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+            // Give preference to ITW's Java9 args over the same args specified in Jnlp.
+            final String itwJava9ArgsStr = quoteIfRequired('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS);
+            final String[] itwJava9Args = itwJava9ArgsStr.split("\\s+");
+            final List<String> combinedVMArgs = new ArrayList<String>(Arrays.asList(itwJava9Args));
+            vmArgs.forEach(arg -> {
+                if (combinedVMArgs.contains(arg) == false) {
+                    combinedVMArgs.add(arg);
+                }
+            });
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), combinedVMArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
 
-        LocalRuntimeManager.touch(javaRuntime);
+
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
