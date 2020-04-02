@@ -15,9 +15,9 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import javax.naming.ConfigurationException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
 
 
@@ -55,7 +55,7 @@ public class PhaseTwoWebStartLauncher {
         }
 
         if (UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
-            Executors.newSingleThreadExecutor().execute(() -> {
+            getNonDaemonExecutorService().execute(() -> {
                 try {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForLauncher(config)).triggerPossibleUpdate();
                 } catch (Exception e) {

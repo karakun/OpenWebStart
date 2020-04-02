@@ -10,8 +10,8 @@ import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
 import net.sourceforge.jnlp.util.ShortcutCreationOptions;
 
 import java.util.Optional;
-import java.util.concurrent.Executors;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ALWAYS;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ALWAYS_IF_HINTED;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ASK_USER;
@@ -67,7 +67,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
     }
 
     private void updateEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile, final boolean updateMenu, final boolean updateDesktop) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        getDaemonExecutorService().execute(() -> {
             if (updateMenu) {
                 try {
                     factory.updateMenuEntry(jnlpFile);
@@ -87,7 +87,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
     }
 
     private void addEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile, final boolean addMenu, final boolean addDesktop) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        getDaemonExecutorService().execute(() -> {
             if (addMenu) {
                 try {
                     factory.createMenuEntry(jnlpFile);

@@ -17,7 +17,8 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
 import java.util.Arrays;
-import java.util.concurrent.Executors;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ControlPanelLauncher {
 
@@ -53,7 +54,7 @@ public class ControlPanelLauncher {
         }
 
         if (UpdatePanelConfigConstants.isAutoUpdateActivated(config)) {
-            Executors.newSingleThreadExecutor().execute(() -> {
+            getNonDaemonExecutorService().execute(() -> {
                 try {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForSettings(config)).triggerPossibleUpdate();
                 } catch (Exception e) {

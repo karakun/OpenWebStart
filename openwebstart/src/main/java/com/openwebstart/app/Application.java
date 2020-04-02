@@ -18,7 +18,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
 
 /**
  * Defines a JNLP based application that is manged by OpenWebStart
@@ -69,7 +70,7 @@ public class Application {
         final URL iconURL = Optional.ofNullable(jnlpFile.getInformation().getIconLocation(IconKind.SHORTCUT, dimension, dimension))
                 .orElseGet(() -> jnlpFile.getInformation().getIconLocation(IconKind.DEFAULT, dimension, dimension));
         if (iconURL == null) {
-            Executors.newSingleThreadExecutor().submit(() -> {
+            getDaemonExecutorService().submit(() -> {
                 try {
                     final FavIcon favIcon = new FavIcon(jnlpFile);
                     final File favIconFile = favIcon.download();
@@ -80,7 +81,7 @@ public class Application {
             });
 
         } else {
-            Executors.newSingleThreadExecutor().submit(() -> {
+            getDaemonExecutorService().submit(() -> {
                 try (final InputStream inputStream = iconURL.openStream()) {
                     result.complete(ImageIO.read(inputStream));
                 } catch (final IOException e) {

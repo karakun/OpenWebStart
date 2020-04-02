@@ -5,25 +5,23 @@ import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
+
 public class ProcessUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessUtil.class);
-
-    private static final ExecutorService READER_EXECUTOR = Executors.newCachedThreadPool();
 
     public static ProcessResult runProcess(final ProcessBuilder builder, long timeout, TimeUnit timeUnit) throws Exception {
         Assert.requireNonNull(builder, "builder");
         Assert.requireNonNull(timeUnit, "timeUnit");
 
         final Process p = builder.start();
-        final Future<String> stdFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getInputStream()));
-        final Future<String> errFuture = READER_EXECUTOR.submit(() -> IOUtils.readContentAsUtf8String(p.getErrorStream()));
+        final Future<String> stdFuture = getDaemonExecutorService().submit(() -> IOUtils.readContentAsUtf8String(p.getInputStream()));
+        final Future<String> errFuture = getDaemonExecutorService().submit(() -> IOUtils.readContentAsUtf8String(p.getErrorStream()));
         try {
             final int returnCode = waitFor(p, timeout, timeUnit);
             final String standardOut = stdFuture.get(1, TimeUnit.SECONDS);
