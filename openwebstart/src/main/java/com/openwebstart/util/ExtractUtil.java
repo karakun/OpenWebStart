@@ -1,44 +1,41 @@
 package com.openwebstart.util;
 
-
+import com.openwebstart.func.Result;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 
 public class ExtractUtil {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExtractUtil.class);
+
     public static void unZip(final InputStream inputStream, final Path baseDir) throws IOException {
         Assert.requireNonNull(inputStream, "inputStream");
-        Assert.requireNonNull(baseDir, "baseDir");
-        try (final ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
-            ZipEntry entry = zipInputStream.getNextEntry();
-            while (entry != null) {
-                storeFileOnDisc(zipInputStream, baseDir, entry.isDirectory(), entry.getName());
-                entry = zipInputStream.getNextEntry();
-            }
-            zipInputStream.closeEntry();
+        try (final ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(inputStream)) {
+            extract(zipInputStream, baseDir);
         }
     }
 
     public static void unTar(final InputStream inputStream, final Path baseDir) throws IOException {
         Assert.requireNonNull(inputStream, "inputStream");
-        Assert.requireNonNull(baseDir, "baseDir");
         try (final TarArchiveInputStream tarInputstream = new TarArchiveInputStream(inputStream)) {
-            ArchiveEntry entry = tarInputstream.getNextEntry();
-            while (entry != null) {
-                storeFileOnDisc(tarInputstream, baseDir, entry.isDirectory(), entry.getName());
-                entry = tarInputstream.getNextEntry();
-            }
+            extract(tarInputstream, baseDir);
         }
     }
 
@@ -50,9 +47,50 @@ public class ExtractUtil {
         }
     }
 
-    private static void storeFileOnDisc(final InputStream inputStream, final Path baseDir, final boolean isDirectory, final String fileName) throws IOException {
-        final Path newFile = baseDir.resolve(fileName);
-        if (isDirectory) {
+    private static void extract(final ArchiveInputStream inputStream, final Path baseDir) throws IOException {
+        Assert.requireNonNull(inputStream, "inputStream");
+        Assert.requireNonNull(baseDir, "baseDir");
+
+        ArchiveEntry entry = inputStream.getNextEntry();
+        while (entry != null) {
+            storeFileOnDisc(inputStream, baseDir, entry);
+            entry = inputStream.getNextEntry();
+        }
+        final File[] directChilds = baseDir.toFile().listFiles();
+        if (directChilds.length == 1) {
+            LOG.debug("Only 1 file extracted...");
+            final File onlyChild = directChilds[0];
+            //let's check if we extracted everything in an internal directory
+            boolean wrappedDir = onlyChild.isDirectory();
+            if (wrappedDir) {
+                //let's move the complete content 1 level up
+                final Path directoryPath = baseDir.resolve(onlyChild.toPath());
+                LOG.debug("Will unwrapp extracted folder {}", directoryPath);
+                Arrays.asList(directoryPath.toFile().listFiles())
+                        .stream()
+                        .map(Result.of(f -> moveToDirAndReplace(baseDir, f)))
+                        .filter(r -> r.isFailed())
+                        .findFirst()
+                        .ifPresent(r -> {
+                            throw new RuntimeException("Error in unwrapping extracted directory!", r.getException());
+                        });
+            }
+            FileUtils.deleteWithErrMesg(onlyChild);
+        }
+    }
+
+    private static Path moveToDirAndReplace(final Path baseDir, final File toMove) throws IOException {
+        final Path p = toMove.toPath();
+        return Files.move(p, baseDir.resolve(p.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private static void storeFileOnDisc(final InputStream inputStream, final Path baseDir, final ArchiveEntry entry) throws IOException {
+        Assert.requireNonNull(inputStream, "inputStream");
+        Assert.requireNonNull(baseDir, "baseDir");
+        Assert.requireNonNull(entry, "entry");
+
+        final Path newFile = baseDir.resolve(entry.getName());
+        if (entry.isDirectory()) {
             Files.createDirectories(newFile);
         } else {
             Files.createDirectories(newFile.getParent());
