@@ -170,6 +170,7 @@ public class ConfigurationDialog extends ModalDialog {
 
     private JFormattedTextField getMaxDaysInJvmCacheField() {
         NumberFormat format = NumberFormat.getInstance();
+        format.setGroupingUsed(false);
         NumberFormatter formatter = new NumberFormatter(format) {
             @Override
             public Object stringToValue(final String text) throws ParseException {
@@ -181,12 +182,12 @@ public class ConfigurationDialog extends ModalDialog {
         };
         formatter.setValueClass(Integer.class);
         formatter.setMinimum(0);
-        formatter.setMaximum(1000);
+        formatter.setMaximum(9999);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
 
         final JFormattedTextField maxDaysStayInJvmCacheField = new JFormattedTextField(formatter);
-        maxDaysStayInJvmCacheField.setPreferredSize(new Dimension(50, 20));
+        maxDaysStayInJvmCacheField.setPreferredSize(new Dimension(60, 20));
 
         maxDaysStayInJvmCacheField.addPropertyChangeListener("value", evt -> {
             if (okButton != null) {

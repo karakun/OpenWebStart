@@ -70,6 +70,8 @@ public class PhaseTwoWebStartLauncher {
         final List<String> bootArgs = skipNotRelevantArgs(args);
         LOG.info("Calling ITW Boot with args {}.", bootArgs);
         Boot.main(bootArgs.toArray(new String[0]));
+
+        System.exit(0);
     }
 
     private static List<String> skipNotRelevantArgs(final String[] args) {

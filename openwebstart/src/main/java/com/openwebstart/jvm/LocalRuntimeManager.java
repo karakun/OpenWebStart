@@ -14,8 +14,10 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
+import com.openwebstart.mimetype.MimeType;
+import com.openwebstart.mimetype.MimeTypeInputStream;
+import com.openwebstart.util.ExtractUtil;
 import com.openwebstart.util.Subscription;
-import com.openwebstart.util.ZipUtil;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
@@ -322,7 +324,7 @@ public final class LocalRuntimeManager {
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
         final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "-" + remoteRuntime.getVersion());
 
-        LOG.debug("Runtime will be installed in {}", runtimePath);
+        LOG.info("Runtime will be installed in {}", runtimePath);
 
         final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
@@ -332,8 +334,19 @@ public final class LocalRuntimeManager {
             if (downloadConsumer != null) {
                 downloadConsumer.accept(inputStream);
             }
-            LOG.debug("Trying to download and extract runtime {}", remoteRuntime);
-            ZipUtil.unzip(inputStream, runtimePath);
+            LOG.info("Trying to download and extract runtime {}", remoteRuntime);
+
+            MimeTypeInputStream wrappedStream = new MimeTypeInputStream(inputStream);
+            final MimeType mimeType = wrappedStream.getMimeType();
+            if (Objects.equals(MimeType.ZIP, mimeType)) {
+                LOG.info("Remote runtime is distributed as ZIP. Will extract it");
+                ExtractUtil.unZip(wrappedStream, runtimePath);
+            } else if (Objects.equals(MimeType.GZIP, mimeType)) {
+                LOG.info("Remote runtime is distributed as GZIP. Will extract it");
+                ExtractUtil.unTarGzip(wrappedStream, runtimePath); //We assume that GZIP is always a tar.gz
+            } else {
+                throw new IllegalStateException("The remote runtime is distributed in an unknown mimetype.");
+            }
         } catch (final Exception e) {
             try {
                 FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
@@ -342,7 +355,7 @@ public final class LocalRuntimeManager {
             }
             throw new IOException("Error in runtime download", e);
         }
-        LOG.debug("Remote runtime {} successfully installed in {}", remoteRuntime, runtimePath);
+        LOG.info("Remote runtime {} successfully installed in {}", remoteRuntime, runtimePath);
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
 
         add(newRuntime);

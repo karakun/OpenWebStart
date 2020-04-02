@@ -77,7 +77,7 @@ class RemoteRuntimeManager {
             LOG.debug("Received {} possible runtime definitions from server", result.getResult().getRuntimes().size());
             return result.getResult().getRuntimes();
         } else {
-            LOG.error("Error while trying to find a remote version: {}", result.getException().getMessage());
+            LOG.error("Error while trying to find a remote version", result.getException());
             return Collections.emptyList();
         }
 

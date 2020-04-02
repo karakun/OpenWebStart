@@ -200,11 +200,9 @@ public class DownloadInputStream extends InputStream {
     private synchronized void update(final int len) {
         final long currentSize = downloaded.addAndGet(len);
         if (lastUpdateSize.get() + updateChunkSize.get() <= currentSize) {
-            LOG.debug("Downloaded {} bytes of {}", currentSize, dataSize);
             lastUpdateSize.set(currentSize);
             if (Objects.equals(downloadType, DownloadType.NORMAL)) {
                 final double percentageDone = (((double) currentSize) / ((double) dataSize / 100.0)) / 100.0;
-                LOG.debug("Downloaded {} %", percentageDone);
                 downloadPercentageListeners.forEach(l -> l.accept(percentageDone));
             } else {
                 downloadPercentageListeners.forEach(l -> l.accept(-1d));
