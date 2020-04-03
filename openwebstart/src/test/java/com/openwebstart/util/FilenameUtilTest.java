@@ -18,7 +18,7 @@ class FilenameUtilTest {
         //when
         final String converted = FilenameUtil.toSimplifiedFileName(name);
 
-        //than
+        //then
         Assertions.assertEquals(name, converted);
     }
 
@@ -31,7 +31,7 @@ class FilenameUtilTest {
         //when
         final String converted = FilenameUtil.toSimplifiedFileName(name);
 
-        //than
+        //then
         Assertions.assertEquals(expectedResult, converted);
     }
 
