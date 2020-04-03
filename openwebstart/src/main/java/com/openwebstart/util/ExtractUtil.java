@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Collections.emptyList;
 
@@ -62,8 +63,17 @@ public class ExtractUtil {
         unwrapPossibleSubDirectories(baseDir, baseDir);
     }
 
-    // only visible for testing
-    static void unwrapPossibleSubDirectories(final Path srcDir, final Path targetDir) {
+    /**
+     * Sometimes an archive contains a folder as root entry and all content is part of this folder.
+     * This method unwraps such folder and moves the complete content 1 level up.
+     * The method support several folders that are wrapped in each other.
+     * This method is only visible for testing.
+     *
+     * @param srcDir
+     * @param targetDir
+     * @return
+     */
+    static boolean unwrapPossibleSubDirectories(final Path srcDir, final Path targetDir) {
         final List<File> directChildren = listFiles(srcDir);
         if (directChildren.size() == 1) {
             LOG.debug("Only 1 file extracted...");
@@ -71,19 +81,27 @@ public class ExtractUtil {
             //let's check if we extracted everything in an internal directory
             boolean wrappedDir = onlyChild.isDirectory();
             if (wrappedDir) {
-                //let's move the complete content 1 level up
-                final Path directoryPath = srcDir.resolve(onlyChild.toPath());
-                LOG.debug("Will unwrap extracted folder {}", directoryPath);
-                listFiles(directoryPath).stream()
-                        .map(Result.of(f -> moveToDirAndReplace(targetDir, f)))
-                        .filter(Result::isFailed)
-                        .findFirst()
-                        .ifPresent(r -> {
-                            throw new RuntimeException("Error in unwrapping extracted directory!", r.getException());
-                        });
+                final File folder = new File(onlyChild.getParent(), UUID.randomUUID().toString());
+                onlyChild.renameTo(folder);
+
+                if (!unwrapPossibleSubDirectories(folder.toPath(), targetDir)) {
+                    //let's move the complete content 1 level up
+                    final Path directoryPath = srcDir.resolve(folder.toPath());
+                    LOG.debug("Will unwrap extracted folder {}", directoryPath);
+                    listFiles(directoryPath).stream()
+                            .map(Result.of(f -> moveToDirAndReplace(targetDir, f)))
+                            .filter(Result::isFailed)
+                            .findFirst()
+                            .ifPresent(r -> {
+                                throw new RuntimeException("Error in unwrapping extracted directory!", r.getException());
+                            });
+                }
+                FileUtils.deleteWithErrMesg(folder);
+                return true;
             }
-            FileUtils.deleteWithErrMesg(onlyChild);
         }
+        return false;
+
     }
 
     private static List<File> listFiles(Path baseDir) {
