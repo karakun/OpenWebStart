@@ -5,6 +5,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,54 +15,73 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ExtractUtilTest {
 
     @Test
-    void unwrapFromNoSubDir(@TempDir final File tempDir) throws IOException {
+    void unwrapFromNoSubDir(@TempDir final File cacheDir) throws IOException {
         // given
-        createJvmFilesIn(tempDir);
+        final File extractDir = createDir(cacheDir, UUID.randomUUID().toString());
+        createJvmFilesIn(extractDir);
 
         // when
-        ExtractUtil.unwrapPossibleSubDirectories(tempDir.toPath(), tempDir.toPath());
+        ExtractUtil.moveJavaHomeToTarget(extractDir.toPath(), cacheDir.toPath());
 
         // then
-        assertJvmFilesIn(tempDir);
+        assertJvmFilesIn(cacheDir);
     }
 
     @Test
-    void unwrapFromSingleSubDir(@TempDir final File tempDir) throws IOException {
+    void unwrapFromSingleSubDir(@TempDir final File cacheDir) throws IOException {
         // given
-        final File subDir = createDir(tempDir, "v1.8_242");
+        final File extractDir = createDir(cacheDir, UUID.randomUUID().toString());
+        final File subDir = createDir(extractDir, "v1.8_242");
         createJvmFilesIn(subDir);
 
         // when
-        ExtractUtil.unwrapPossibleSubDirectories(tempDir.toPath(), tempDir.toPath());
+        ExtractUtil.moveJavaHomeToTarget(extractDir.toPath(), cacheDir.toPath());
 
         // then
-        assertJvmFilesIn(tempDir);
+        assertJvmFilesIn(cacheDir);
     }
 
     @Test
-    void unwrapFromTwoSubDir(@TempDir final File tempDir) throws IOException {
+    void unwrapFromTwoSubDir(@TempDir final File cacheDir) throws IOException {
         // given
-        final File subDir = createDir(createDir(tempDir, "azul"), "v1.8_242");
+        final File extractDir = createDir(cacheDir, UUID.randomUUID().toString());
+        final File subDir = createDir(createDir(extractDir, "azul"), "v1.8_242");
         createJvmFilesIn(subDir);
 
         // when
-        ExtractUtil.unwrapPossibleSubDirectories(tempDir.toPath(), tempDir.toPath());
+        ExtractUtil.moveJavaHomeToTarget(extractDir.toPath(), cacheDir.toPath());
 
         // then
-        assertJvmFilesIn(tempDir);
+        assertJvmFilesIn(cacheDir);
     }
 
     @Test
-    void unwrapFromOddlyNamedSingleSubDir(@TempDir final File tempDir) throws IOException {
+    void unwrapFromOddlyNamedSingleSubDir(@TempDir final File cacheDir) throws IOException {
         // given
-        final File subDir = createDir(tempDir, "bin");
+        final File extractDir = createDir(cacheDir, UUID.randomUUID().toString());
+        final File subDir = createDir(extractDir, "bin");
         createJvmFilesIn(subDir);
 
         // when
-        ExtractUtil.unwrapPossibleSubDirectories(tempDir.toPath(), tempDir.toPath());
+        ExtractUtil.moveJavaHomeToTarget(extractDir.toPath(), cacheDir.toPath());
 
         // then
-        assertJvmFilesIn(tempDir);
+        assertJvmFilesIn(cacheDir);
+    }
+
+    @Test
+    void unwrapFromSubDirWithReadme(@TempDir final File cacheDir) throws IOException {
+        // given
+        final File extractDir = createDir(cacheDir, UUID.randomUUID().toString());
+        final File subDir = createDir(extractDir, "v1.8_242");
+        createFile(extractDir, "README.txt");
+        createJvmFilesIn(subDir);
+
+        // when
+        ExtractUtil.moveJavaHomeToTarget(extractDir.toPath(), cacheDir.toPath());
+
+        // then
+        assertJvmFilesIn(cacheDir);
     }
 
     private void createJvmFilesIn(final File dir) throws IOException {
@@ -119,5 +139,6 @@ class ExtractUtilTest {
     private void createFile(final File parent, final String name) throws IOException {
         final File result = new File(parent, name);
         assertTrue(result.createNewFile(), "Failed to create file " + result);
+        assertTrue(result.setExecutable(true));
     }
 }

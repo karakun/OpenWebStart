@@ -1,6 +1,6 @@
 package com.openwebstart.util;
 
-import com.openwebstart.func.Result;
+import com.openwebstart.jvm.localfinder.JdkFinder;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,12 +56,22 @@ public class ExtractUtil {
         Assert.requireNonNull(inputStream, "inputStream");
         Assert.requireNonNull(baseDir, "baseDir");
 
-        ArchiveEntry entry = inputStream.getNextEntry();
-        while (entry != null) {
-            storeFileOnDisc(inputStream, baseDir, entry);
-            entry = inputStream.getNextEntry();
+        final File tempDir = new File(baseDir.toFile(), UUID.randomUUID().toString());
+        if (!tempDir.mkdirs()) {
+            throw new RuntimeException("could not create temp dir " + tempDir);
         }
-        unwrapPossibleSubDirectories(baseDir, baseDir);
+
+        try {
+            ArchiveEntry entry = inputStream.getNextEntry();
+            while (entry != null) {
+                storeFileOnDisc(inputStream, tempDir.toPath(), entry);
+                entry = inputStream.getNextEntry();
+            }
+            moveJavaHomeToTarget(tempDir.toPath(), baseDir);
+        }
+        finally {
+            FileUtils.deleteWithErrMesg(tempDir);
+        }
     }
 
     /**
@@ -69,39 +80,22 @@ public class ExtractUtil {
      * The method support several folders that are wrapped in each other.
      * This method is only visible for testing.
      *
-     * @param srcDir
+     * @param searchRoot
      * @param targetDir
-     * @return
      */
-    static boolean unwrapPossibleSubDirectories(final Path srcDir, final Path targetDir) {
-        final List<File> directChildren = listFiles(srcDir);
-        if (directChildren.size() == 1) {
-            LOG.debug("Only 1 file extracted...");
-            final File onlyChild = directChildren.get(0);
-            //let's check if we extracted everything in an internal directory
-            boolean wrappedDir = onlyChild.isDirectory();
-            if (wrappedDir) {
-                final File folder = new File(onlyChild.getParent(), UUID.randomUUID().toString());
-                onlyChild.renameTo(folder);
-
-                if (!unwrapPossibleSubDirectories(folder.toPath(), targetDir)) {
-                    //let's move the complete content 1 level up
-                    final Path directoryPath = srcDir.resolve(folder.toPath());
-                    LOG.debug("Will unwrap extracted folder {}", directoryPath);
-                    listFiles(directoryPath).stream()
-                            .map(Result.of(f -> moveToDirAndReplace(targetDir, f)))
-                            .filter(Result::isFailed)
-                            .findFirst()
-                            .ifPresent(r -> {
-                                throw new RuntimeException("Error in unwrapping extracted directory!", r.getException());
-                            });
-                }
-                FileUtils.deleteWithErrMesg(folder);
-                return true;
+    static void moveJavaHomeToTarget(final Path searchRoot, final Path targetDir) {
+        if (Files.isDirectory(searchRoot)) {
+            try {
+                Files.find(searchRoot, 5, JdkFinder::isJavaHome)
+                        .map(Path::toAbsolutePath)
+                        .map(Path::normalize)
+                        .min(Comparator.comparingInt(Path::getNameCount))
+                        .map(ExtractUtil::listFiles)
+                        .ifPresent(javaHomeContent -> javaHomeContent.forEach(file -> moveToDirAndReplace(targetDir, file)));
+            } catch (final IOException e) {
+                throw new RuntimeException("Error while searching for local JVMs at '" + searchRoot + "'", e);
             }
         }
-        return false;
-
     }
 
     private static List<File> listFiles(Path baseDir) {
@@ -109,9 +103,13 @@ public class ExtractUtil {
         return files != null ? Arrays.asList(files) : emptyList();
     }
 
-    private static Path moveToDirAndReplace(final Path baseDir, final File toMove) throws IOException {
-        final Path p = toMove.toPath();
-        return Files.move(p, baseDir.resolve(p.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+    private static void moveToDirAndReplace(final Path targetDir, final File toMove) {
+        try {
+            final Path p = toMove.toPath();
+            Files.move(p, targetDir.resolve(p.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Error in moving file " + toMove + " to " + targetDir, e);
+        }
     }
 
     private static void storeFileOnDisc(final InputStream inputStream, final Path baseDir, final ArchiveEntry entry) throws IOException {
