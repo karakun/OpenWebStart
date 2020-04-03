@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ApplicationManagerPanel extends JPanel {
 
@@ -72,7 +72,7 @@ public class ApplicationManagerPanel extends JPanel {
 
     private void refreshModel() {
         listModel.clear();
-        getDaemonExecutorService().execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 final List<Result<Application>> loadedData = ApplicationManager.getInstance().getAllApplications();
 

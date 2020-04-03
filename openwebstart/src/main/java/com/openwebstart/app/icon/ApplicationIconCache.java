@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ApplicationIconCache {
 
@@ -44,7 +44,7 @@ public class ApplicationIconCache {
 
     public synchronized void triggerDownload(final Application application, final IconDimensions dimension, final boolean reloadIfAlreadyInCache) {
         if (reloadIfAlreadyInCache || !isInCache(application, dimension)) {
-            getDaemonExecutorService().execute(() -> loadAndAdd(application, dimension));
+            getNonDaemonExecutorService().execute(() -> loadAndAdd(application, dimension));
         }
     }
 
@@ -57,7 +57,7 @@ public class ApplicationIconCache {
             } else {
                 final CompletableFuture<BufferedImage> result = new CompletableFuture<>();
                 inProgressMap.put(iconDescription, result);
-                getDaemonExecutorService().execute(() -> {
+                getNonDaemonExecutorService().execute(() -> {
                     try {
                         final BufferedImage icon = ApplicationIconDownloadUtils.downloadIcon(application, dimension);
                         cacheLock.lock();

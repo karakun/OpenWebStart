@@ -70,7 +70,7 @@ public class Application {
         final URL iconURL = Optional.ofNullable(jnlpFile.getInformation().getIconLocation(IconKind.SHORTCUT, dimension, dimension))
                 .orElseGet(() -> jnlpFile.getInformation().getIconLocation(IconKind.DEFAULT, dimension, dimension));
         if (iconURL == null) {
-            getDaemonExecutorService().submit(() -> {
+            getDaemonExecutorService().execute(() -> {
                 try {
                     final FavIcon favIcon = new FavIcon(jnlpFile);
                     final File favIconFile = favIcon.download();
@@ -81,7 +81,7 @@ public class Application {
             });
 
         } else {
-            getDaemonExecutorService().submit(() -> {
+            getDaemonExecutorService().execute(() -> {
                 try (final InputStream inputStream = iconURL.openStream()) {
                     result.complete(ImageIO.read(inputStream));
                 } catch (final IOException e) {

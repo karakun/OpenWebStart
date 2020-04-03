@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public final class RuntimeManagerPanel extends JPanel {
@@ -95,7 +94,7 @@ public final class RuntimeManagerPanel extends JPanel {
     }
 
     private void onRefresh() {
-        getDaemonExecutorService().execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 JavaRuntimeManager.reloadLocalRuntimes();
             } catch (Exception ex) {
@@ -167,7 +166,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private void onFindLocalRuntimes() {
         LOG.info("Starting to search for local JVMs");
-        getDaemonExecutorService().execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 handleFoundRuntimes(RuntimeFinder.find());
             } catch (final Exception ex) {
