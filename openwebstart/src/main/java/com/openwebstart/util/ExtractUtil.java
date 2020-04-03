@@ -75,13 +75,8 @@ public class ExtractUtil {
     }
 
     /**
-     * Sometimes an archive contains a folder as root entry and all content is part of this folder.
-     * This method unwraps such folder and moves the complete content 1 level up.
-     * The method support several folders that are wrapped in each other.
-     * This method is only visible for testing.
-     *
-     * @param searchRoot
-     * @param targetDir
+     * Finds a Java home within the search directory and moves it to the target directory.
+     * This is required as some vendors do have a subdirectory structure in their archives.
      */
     static void moveJavaHomeToTarget(final Path searchRoot, final Path targetDir) {
         if (Files.isDirectory(searchRoot)) {
