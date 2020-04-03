@@ -1,0 +1,95 @@
+= Frequently Asked Questions on OpenWebStart
+:imagesdir: ./images
+:Author:    The OWS Community
+:Date:      4/2020
+:Revision:  1.1.7
+:toc:
+:toclevels: 3
+
+NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation. The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
+
+
+#<this documentation is work in progress>#
+
+== General
+
+==== What is OpenWebStart?
+
+#<this documentation is work in progress>#
+
+== Subscription and Premium Support
+
+==== Is there a subscription for OpenWebStart?
+Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
+With this option, you may report bugs using a dedicated communication channel and your bug reports will have a higher priority.
+If you wish, we will add your company logo to our sponsor list for free.
+And you'll get a 10% discount for development of individual features.
+
+==== Is there a premium support for OpenWebStart?
+With premium support provided by Karakun you may report bugs or issues using the premium communication channel.
+Your bug reports will have the highest priority.
+Karakun will guarantee reaction times depending on the severity of bugs (during business hours).
+Plus, you'll get a 25% discount for the development of individual features.
+Upon your wish, your company logo will be listed as a premium sponsor on our website.
+
+==== What are the costs for subscription and premium support?
+
+To figure out which support model fits best to your needs, you should contact openwebstart@karakun.com.
+
+
+== Subscription and Premium Support
+
+==== Is there a subscription for OpenWebStart?
+Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
+With this option, you may report bugs using a dedicated communication channel and your bug reports will have a higher priority.
+If you wish, we will add your company logo to our sponsor list for free.
+And you'll get a 10% discount for development of individual features.
+
+==== Is there a premium support for OpenWebStart?
+With premium support provided by Karakun you may report bugs or issues using the premium communication channel.
+Your bug reports will have the highest priority.
+Karakun will guarantee reaction times depending on the severity of bugs (during business hours).
+Plus, you'll get a 25% discount for the development of individual features.
+Upon your wish, your company logo will be listed as a premium sponsor on our website.
+
+==== What are the costs for subscription and premium support?
+
+To figure out which support model fits best to your needs, you should contact openwebstart@karakun.com.
+
+== Installation
+
+==== Do I have to install a Java on my system to run OWS?
+OpenWebStart comes with a JVM Manager and a bundled Java runtime. There is no need to have any JVM installed on your system.
+
+The bundled JVM is used solely to run OWS. The JVMs manged by the JVM Manager are used to run the JNLP applications.
+
+==== Which Java versions can be used to run my JNLP applications?
+
+Your JNLP applications can be run with either Java 8 and 11. We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
+
+OpenWebStart JVM Manager will download and manage JVMs as they are requested by an applications.
+Currently we provide Azul and Adopt JDKs on the default download server. In the future we will add more vendors.
+
+If your preferred JVM is not provided by our default download server, you can either add locally installed JVMs or host your own download server for JVMs to run your JNLP applications.
+
+==== Is there a MSI installer for OpenWebStart?
+Currently we do not provide a MSI installer. More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98
+
+== Functionality
+
+==== Does OpenWebStart support Applets?
+Applets are not supported and there are no plans to support them in the future. We also do not consider this as a deviation from the JNLP-standard as this is an optional feature according to the JSR-56 specs.
+
+==== How can I define a server whitelist for OWS?
+
+This field is currently not editable in the UI. Edit the deployment properties file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
+
+```
+deployment.security.whitelist=10.10.10.10, google.com, some.server.net
+```
+
+The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.
+
+Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.
+
+It is also possible to specify the content of the whitelist when installing OWS (unattended installation), see https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details
