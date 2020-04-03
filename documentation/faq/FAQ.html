@@ -467,6 +467,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_installation">Installation</a>
 <ul class="sectlevel3">
+<li><a href="#_do_i_have_to_install_a_java_on_my_system_to_run_ows">Do I have to install a Java on my system to run OWS?</a></li>
+<li><a href="#_which_java_versions_can_be_used_to_run_my_jnlp_applications">Which Java versions can be used to run my JNLP applications?</a></li>
 <li><a href="#_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</a></li>
 </ul>
 </li>
@@ -574,6 +576,28 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 <h2 id="_installation">Installation</h2>
 <div class="sectionbody">
 <div class="sect3">
+<h4 id="_do_i_have_to_install_a_java_on_my_system_to_run_ows">Do I have to install a Java on my system to run OWS?</h4>
+<div class="paragraph">
+<p>OpenWebStart comes with a JVM Manager and a bundled Java runtime. There is no need to have any JVM installed on your system.</p>
+</div>
+<div class="paragraph">
+<p>The bundled JVM is used solely to run OWS. The JVMs manged by the JVM Manager are used to run the JNLP applications.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_which_java_versions_can_be_used_to_run_my_jnlp_applications">Which Java versions can be used to run my JNLP applications?</h4>
+<div class="paragraph">
+<p>Your JNLP applications can be run with either Java 8 and 11. We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.</p>
+</div>
+<div class="paragraph">
+<p>OpenWebStart JVM Manager will download and manage JVMs as they are requested by an applications.
+Currently we provide Azul and Adopt JDKs on the default download server. In the future we will add more vendors.</p>
+</div>
+<div class="paragraph">
+<p>If your preferred JVM is not provided by our default download server, you can either add locally installed JVMs or host your own download server for JVMs to run your JNLP applications.</p>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_is_there_a_msi_installer_for_openwebstart">Is there a MSI installer for OpenWebStart?</h4>
 <div class="paragraph">
 <p>Currently we do not provide a MSI installer. More details on the reasons can be found at <a href="https://github.com/karakun/OpenWebStart/issues/98" class="bare">https://github.com/karakun/OpenWebStart/issues/98</a></p>
@@ -615,7 +639,7 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-02 16:15:53 +0200
+Last updated 2020-04-03 08:39:52 +0200
 </div>
 </div>
 </body>
