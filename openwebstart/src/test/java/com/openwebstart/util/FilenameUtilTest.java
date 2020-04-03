@@ -47,6 +47,7 @@ class FilenameUtilTest {
                 Arguments.of("         a b ", "a-b"),
                 Arguments.of(" a              b ", "a-b"),
                 Arguments.of(" a b              ", "a-b"),
+                Arguments.of("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", "123456789012345678901234567890123456789012345678901234567890123"),
                 Arguments.of("java------12.3.4", "java-12.3.4"),
                 Arguments.of("Azul Systems, Inc.-11.0.6", "azul-systems-inc.-11.0.6"),
                 Arguments.of("Hello", "hello"));
