@@ -1,5 +1,6 @@
 package com.openwebstart.jvm.ui.dialogs;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.jvm.JavaRuntimeManager;
@@ -8,6 +9,7 @@ import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.ui.LookAndFeel;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -31,8 +33,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -227,7 +228,10 @@ public class ConfigurationDialog extends ModalDialog {
         public void focusLost(final FocusEvent e) {
             final JTextField field = (JTextField) e.getSource();
             try {
-                final URL url = new URL(field.getText());
+                final String text = field.getText();
+                final String urlString = StringUtils.isBlank(text) ? getDefaultServer() : text;
+                field.setText(urlString);
+                final URL url = new URL(urlString);
                 field.setBackground(originalBackground);
                 urlValidationError = false;
                 backgroundExecutor.execute(() -> updateVendorComboBox(url));
@@ -238,6 +242,14 @@ public class ConfigurationDialog extends ModalDialog {
                 field.requestFocus();
                 okButton.setEnabled(false);
             }
+        }
+
+        private String getDefaultServer() {
+            return new OwsDefaultsProvider().getDefaults().stream()
+                    .filter(d -> Objects.equals(d.getName(), DEFAULT_JVM_DOWNLOAD_SERVER))
+                    .map(d -> d.getDefaultValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Could not find default for " + DEFAULT_JVM_DOWNLOAD_SERVER));
         }
     }
 }
