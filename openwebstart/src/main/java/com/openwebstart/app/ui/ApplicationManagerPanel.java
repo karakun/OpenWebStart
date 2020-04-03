@@ -24,16 +24,14 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ApplicationManagerPanel extends JPanel {
 
     private final static Logger LOG = LoggerFactory.getLogger(ApplicationManagerPanel.class);
-
-    private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
     private final ListComponentModel<Application> listModel;
 
@@ -53,7 +51,7 @@ public class ApplicationManagerPanel extends JPanel {
 
 
         final JButton refreshButton = new JButton(translator.translate("appManager.action.refresh.text"));
-        refreshButton.addActionListener(e -> backgroundExecutor.execute(this::refreshModel));
+        refreshButton.addActionListener(e -> refreshModel());
 
         setLayout(new BorderLayout(12, 12));
 
@@ -74,7 +72,7 @@ public class ApplicationManagerPanel extends JPanel {
 
     private void refreshModel() {
         listModel.clear();
-        backgroundExecutor.execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 final List<Result<Application>> loadedData = ApplicationManager.getInstance().getAllApplications();
 

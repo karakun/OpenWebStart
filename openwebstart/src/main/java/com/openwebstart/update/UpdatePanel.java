@@ -19,7 +19,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import java.util.concurrent.Executors;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class UpdatePanel extends FormPanel {
 
@@ -72,7 +73,7 @@ public class UpdatePanel extends FormPanel {
         uiLock.update(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME, checkForUpdateButton);
         checkForUpdateButton.addActionListener(e -> {
             checkForUpdateButton.setEnabled(false);
-            Executors.newSingleThreadExecutor().execute(() -> {
+            getNonDaemonExecutorService().execute(() -> {
                 try {
                     if (Install4JUpdateHandler.hasUpdate()) {
                         Install4JUpdateHandler.doUpdate();
@@ -87,7 +88,7 @@ public class UpdatePanel extends FormPanel {
             });
         });
         if (checkForUpdateButton.isEnabled()) {
-            Executors.newSingleThreadExecutor().execute(() -> {
+            getNonDaemonExecutorService().execute(() -> {
                 try {
                     Install4JUpdateHandler.getUpdate()
                             .map(UpdateDescriptorEntry::getNewVersion)

@@ -42,9 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorService;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
@@ -59,7 +58,6 @@ public class ConfigurationDialog extends ModalDialog {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
 
-    private final Executor backgroundExecutor = Executors.newSingleThreadExecutor();
     private final Translator translator = Translator.getInstance();
     private final JComboBox<String> vendorComboBox;
     private final Color originalBackground;
@@ -79,7 +77,7 @@ public class ConfigurationDialog extends ModalDialog {
 
         final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
         vendorComboBox = new JComboBox<>();
-        backgroundExecutor.execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
+        getDaemonExecutorService().execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         vendorComboBox.setEditable(true);
         uiLock.update(JVM_VENDOR, vendorComboBox);
 
@@ -234,7 +232,7 @@ public class ConfigurationDialog extends ModalDialog {
                 final URL url = new URL(urlString);
                 field.setBackground(originalBackground);
                 urlValidationError = false;
-                backgroundExecutor.execute(() -> updateVendorComboBox(url));
+                getDaemonExecutorService().execute(() -> updateVendorComboBox(url));
                 okButton.setEnabled(true);
             } catch (final MalformedURLException exception) {
                 field.setBackground(LookAndFeel.FIELD_VALIDATION_PROBLEM);

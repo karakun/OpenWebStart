@@ -32,8 +32,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 import static com.openwebstart.jvm.os.OperationSystem.LINUX64;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.os.OperationSystem.WIN64;
@@ -146,7 +146,7 @@ public class JvmManagerDemo {
                 DialogFactory::askForRuntimeUpdate
         );
 
-        requestButton.addActionListener(event -> Executors.newSingleThreadExecutor().execute(() -> {
+        requestButton.addActionListener(event -> getNonDaemonExecutorService().execute(() -> {
             try {
                 final VersionString version = JvmVersionUtils.fromJnlp(VersionString.fromString(requestedVersionField.getText()));
                 final URL serverEndpoint = new URL(requestedEndpointField.getText());

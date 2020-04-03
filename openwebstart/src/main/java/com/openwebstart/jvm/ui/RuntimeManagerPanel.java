@@ -32,15 +32,13 @@ import java.awt.BorderLayout;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public final class RuntimeManagerPanel extends JPanel {
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerPanel.class);
 
     private final ListComponentModel<LocalJavaRuntime> listModel;
-
-    private final Executor backgroundExecutor = Executors.newCachedThreadPool();
 
     private final Translator translator;
 
@@ -49,7 +47,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes();
-        final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> backgroundExecutor.execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
+        final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> getNonDaemonExecutorService().execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
 
@@ -96,7 +94,7 @@ public final class RuntimeManagerPanel extends JPanel {
     }
 
     private void onRefresh() {
-        backgroundExecutor.execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 JavaRuntimeManager.reloadLocalRuntimes();
             } catch (Exception ex) {
@@ -115,7 +113,7 @@ public final class RuntimeManagerPanel extends JPanel {
         fileChooser.setAcceptAllFileFilterUsed(false);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             final Path selected = fileChooser.getSelectedFile().toPath();
-            backgroundExecutor.execute(() -> {
+            getNonDaemonExecutorService().execute(() -> {
                 try {
                     handleFoundRuntimes(JdkFinder.findLocalJdks(selected));
                 } catch (final Exception ex) {
@@ -168,7 +166,7 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private void onFindLocalRuntimes() {
         LOG.info("Starting to search for local JVMs");
-        backgroundExecutor.execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 handleFoundRuntimes(RuntimeFinder.find());
             } catch (final Exception ex) {

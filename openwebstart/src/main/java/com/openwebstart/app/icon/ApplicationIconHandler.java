@@ -9,7 +9,6 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ApplicationIconHandler {
@@ -31,7 +30,7 @@ public class ApplicationIconHandler {
     private final BufferedImage defaultIcon512;
 
     public ApplicationIconHandler() {
-        this.applicationIconCache = new ApplicationIconCache(Executors.newCachedThreadPool());
+        applicationIconCache = new ApplicationIconCache();
         defaultIcon32 = createDefaultIcon(IconDimensions.SIZE_32);
         defaultIcon64 = createDefaultIcon(IconDimensions.SIZE_64);
         defaultIcon128 = createDefaultIcon(IconDimensions.SIZE_128);
