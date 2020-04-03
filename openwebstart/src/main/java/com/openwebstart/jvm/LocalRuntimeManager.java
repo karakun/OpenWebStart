@@ -12,11 +12,11 @@ import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
-import com.openwebstart.jvm.util.FolderFactory;
 import com.openwebstart.jvm.util.RuntimeVersionComparator;
 import com.openwebstart.mimetype.MimeType;
 import com.openwebstart.mimetype.MimeTypeInputStream;
 import com.openwebstart.util.ExtractUtil;
+import com.openwebstart.util.FolderFactory;
 import com.openwebstart.util.Subscription;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
@@ -321,8 +321,8 @@ public final class LocalRuntimeManager {
             throw new IllegalArgumentException("Cannot install JVM for another os than " + OperationSystem.getLocalSystem().getName());
         }
 
-        final FolderFactory folderFactory = new FolderFactory(cacheBasePath());
-        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "-" + remoteRuntime.getVersion());
+        final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);
+        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "_" + remoteRuntime.getVersion());
 
         LOG.info("Runtime will be installed in {}", runtimePath);
 
