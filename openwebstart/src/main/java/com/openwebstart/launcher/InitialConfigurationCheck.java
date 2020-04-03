@@ -25,13 +25,15 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
-import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_COMPRESSION_ENABLED;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTPS_HOST;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTPS_PORT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_HOST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_PORT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
@@ -54,13 +56,15 @@ class InitialConfigurationCheck {
             JVM_UPDATE_STRATEGY,
             JVM_SUPPORTED_VERSION_RANGE,
             KEY_PROXY_HTTP_HOST,
+            KEY_PROXY_HTTPS_HOST,
             KEY_PROXY_HTTP_PORT,
+            KEY_PROXY_HTTPS_PORT,
             KEY_PROXY_BYPASS_LOCAL,
+            KEY_PROXY_BYPASS_LIST,
             KEY_PROXY_TYPE,
             KEY_PROXY_AUTO_CONFIG_URL,
             KEY_PROXY_SAME,
             KEY_CACHE_MAX_SIZE,
-            KEY_CACHE_COMPRESSION_ENABLED,
             KEY_HTTPS_DONT_ENFORCE,
             KEY_ASSUME_FILE_STEM_IN_CODEBASE,
             KEY_SECURITY_SERVER_WHITELIST,
