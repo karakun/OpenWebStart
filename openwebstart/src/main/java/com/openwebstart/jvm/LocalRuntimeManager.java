@@ -322,7 +322,7 @@ public final class LocalRuntimeManager {
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);
-        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor() + "_" + remoteRuntime.getVersion());
+        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor().getShortName() + "_" + remoteRuntime.getVersion());
 
         LOG.info("Runtime will be installed in {}", runtimePath);
 
