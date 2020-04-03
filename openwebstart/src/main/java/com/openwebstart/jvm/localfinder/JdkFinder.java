@@ -55,7 +55,7 @@ public class JdkFinder {
         return Collections.emptyList();
     }
 
-    private static boolean isJavaHome(final Path path, final BasicFileAttributes basicFileAttributes) {
+    public static boolean isJavaHome(final Path path, final BasicFileAttributes basicFileAttributes) {
         if (!basicFileAttributes.isDirectory()) {
             return false;
         }
