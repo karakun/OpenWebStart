@@ -135,11 +135,9 @@ public class OwsJvmLauncher implements JvmLauncher {
         LocalRuntimeManager.touch(javaRuntime);
 
         if (JAVA_1_8.contains(version)) {
-            LOG.debug("Launching jnlp app with java 8 args: ", vmArgs);
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
-            LOG.debug("Launching jnlp app with java Module args: ", mergedVMArgs);
             launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
