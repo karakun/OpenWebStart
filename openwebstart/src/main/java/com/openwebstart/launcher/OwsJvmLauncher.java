@@ -53,7 +53,6 @@ public class OwsJvmLauncher implements JvmLauncher {
     /**
      * The file "itw-modularjdk.args" can be found in the icedtea-web source.
      */
-    private static final String ITW_MODULARJDK_ARGS = "itw-modularjdk.args";
     public static final String REMOTE_DEBUGGING_PREFIX = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=";
     public static final String REMOTE_DEBUGGING_SYSTEM_PROPERTY = "OWS_REMOTE_DEBUGGING_PORT";
 
@@ -139,15 +138,9 @@ public class OwsJvmLauncher implements JvmLauncher {
             LOG.debug("Launching jnlp app with java 8 args: ", vmArgs);
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
-            // Give preference to ITW's Java9 args over the same args specified in Jnlp.
-            final List<String> combinedVMArgs = new ArrayList<String>(JvmUtils.PREDEFINED_JAVA9_ARGUMENTS);
-            vmArgs.forEach(arg -> {
-                if (combinedVMArgs.contains(arg) == false) {
-                    combinedVMArgs.add(arg);
-                }
-            });
-            LOG.debug("Launching jnlp app with java 9 args: ", combinedVMArgs);
-            launchExternal(pathToJavaBinary, webstartJar.getPath(), combinedVMArgs, javawsArgs);
+            List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
+            LOG.debug("Launching jnlp app with java Module args: ", mergedVMArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
