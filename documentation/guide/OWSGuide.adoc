@@ -46,11 +46,9 @@ It is possible to define an update strategy on every start, daily, weekly, month
 OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application. The default points to https://download-openwebstart.com/jvms.
 
 ==== Setup a Custom Download Server
-If you want to setup your own JVM download server you have to prepare downloadable artifacts of your JVMs you want to provide and specify them in a jvms configuration file named "jvms".
+If you want to setup your own JVM download server you must provide a json file which lists all available JVMs.
 
-The jvms configuration file is located in the root of the download server defines which JVMs are available for download by OpenWebStart from the server.
-
-This file format is json and looks like this:
+This json file must contain the following data:
 ```
 {
     "cacheTimeInMillis":<miliseconds>,
@@ -59,7 +57,7 @@ This file format is json and looks like this:
             "version":<JVM version>,
             "vendor":<vendor name>,
             "os":<OS identifier>,
-            "href":<url to the download artifact on this download server>
+            "href":<absolute url to the archive containing the JVM>
         },
 
         ... more runtime definitions
@@ -67,7 +65,9 @@ This file format is json and looks like this:
 
 ```
 
-cacheTimeInMillis: The time that needs to be elapsed before a client is allowed to request the server again. Usually the server is accessed once per application startup.
+cacheTimeInMillis:: The time that needs to be elapsed before a client is allowed to contact the server again. Usually the server is accessed once per application startup.
+
+os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
 === Cache Management
 
