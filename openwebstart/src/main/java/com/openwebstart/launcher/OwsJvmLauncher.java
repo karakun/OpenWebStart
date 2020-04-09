@@ -53,7 +53,6 @@ public class OwsJvmLauncher implements JvmLauncher {
     /**
      * The file "itw-modularjdk.args" can be found in the icedtea-web source.
      */
-    private static final String ITW_MODULARJDK_ARGS = "itw-modularjdk.args";
     public static final String REMOTE_DEBUGGING_PREFIX = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=";
     public static final String REMOTE_DEBUGGING_SYSTEM_PROPERTY = "OWS_REMOTE_DEBUGGING_PORT";
 
@@ -128,22 +127,23 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
-
         vmArgs.addAll(extractVmArgs(jnlpFile));
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
+        LocalRuntimeManager.touch(javaRuntime);
+
         if (JAVA_1_8.contains(version)) {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
-            vmArgs.add(quoteIfRequired('@' + webstartJar.getParent() + File.separator + ITW_MODULARJDK_ARGS));
-            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+            List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
 
-        LocalRuntimeManager.touch(javaRuntime);
+
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
