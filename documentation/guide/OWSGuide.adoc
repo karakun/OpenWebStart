@@ -148,15 +148,15 @@ Any changes the user makes in his personal configuration file will not have any 
 
 The system configuration needs to be defined in the following way.
 
-*Windows:* create the file `%windir%\Sun\Java\deployment.config` and add the following properties:
+*Windows:* create the file `%windir%\Sun\Java\deployment\deployment.config` and add the following properties:
 
-*MacOs and Linux:* create the file `/etc/.java/deployment.config` and add the following properties:
+*MacOs and Linux:* create the file `/etc/.java/deployment/deployment.config` and add the following properties:
 
 deployment.system.config:: The URL to the system configuration.
 Special characters need escaping.
 See the following examples:
 * `deployment.system.config=file\:/C\:/Window/Sun/Java/system.properties`
-* `deployment.system.config=file\:/etc/.java/system.properties`
+* `deployment.system.config=file\:/etc/.java/deployment/system.properties`
 * `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
 
 deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings
