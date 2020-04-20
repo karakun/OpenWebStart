@@ -22,7 +22,8 @@
 
 === Unattended Installation
 
-OWS also offers an unattended mode installation which is useful when you have to install OWS the same way on different computers and where your environment offers only a command line interface. Instead of walk through the graphical user interface of the OWS installer you provide the options as a response file.
+OWS also offers an unattended installation mode which is useful when you have to install OWS on many computers.
+Instead of walking through the graphical installer of OWS on every machine you can provide the options as a response file.
 
 #<add more details as on the homepage>#
 
@@ -31,7 +32,7 @@ OWS also offers an unattended mode installation which is useful when you have to
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
 
 To do so go to the "Updates" Panel in the OWS Settings.
-It is possible to define an update strategy on every start, daily, weekly, monthly, or never.
+It is possible to define an update strategy on every `start`, `daily`, `weekly`, `monthly`, or `never`.
 
 == Configuration
 
@@ -43,13 +44,16 @@ It is possible to define an update strategy on every start, daily, weekly, month
 
 ==== JVM Download Server
 
-OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application. The default points to https://download-openwebstart.com/jvms.
+OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application.
+The default points to `https://download-openwebstart.com/jvms.json`.
 
 ==== Setup a Custom Download Server
-If you want to setup your own JVM download server you must provide a json file which lists all available JVMs.
+If you want to set up your own JVM download server you must provide a json file which lists all available JVMs.
 
 This json file must contain the following data:
-```
+
+[source]
+----
 {
     "cacheTimeInMillis":<miliseconds>,
     "runtimes":[
@@ -63,9 +67,9 @@ This json file must contain the following data:
         ... more runtime definitions
 }
 
-```
+----
 
-cacheTimeInMillis:: The time that needs to be elapsed before a client is allowed to contact the server again. Usually the server is accessed once per application startup.
+cacheTimeInMillis:: The time which needs to elapse before a client is allowed to contact the server again. Usually the server is accessed once per application startup.
 
 os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
@@ -87,15 +91,20 @@ os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
 === Server Whitelists
 
-The "Server Whitelists" panel in OWS settings displays the server whitelist. To define a server whitelist you have to edit the `deployment.properties` file in your config directory with a text editor by adding a new line similar to the following:
+The "Server Whitelists" panel in OWS settings displays the server whitelist.
+To define a server whitelist you have to edit the `deployment.properties` file in your config directory with a text editor by adding a new line similar to the following:
 
-```
+[source]
+----
 deployment.security.whitelist=10.10.10.10, google.com, some.server.net
-```
+----
 
-The different servers are listed as a comma separated string. Localhost is implicitly always in the white list. If you delete the line again then no whitelisting is applied and all servers are reachable.
+The different servers are listed as a comma separated string.
+Localhost is implicitly always in the white list.
+If you delete the line again then no whitelisting is applied and all servers are reachable.
 
-Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running. Thus an application can open a connection to a server which is not in the white list.
+Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running.
+Thus an application can open a connection to a server which is not in the white list.
 
 It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.
 
