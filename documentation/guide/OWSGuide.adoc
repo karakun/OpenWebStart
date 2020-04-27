@@ -41,7 +41,7 @@ The executable is located in the installation directory and is named `itw-settin
 
 All settings are stored on the file system.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployments.properties`.
+For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
 This file can be edited with a regular text editor.
 For some expert configurations this may be necessary but for most cases the graphical UI will be sufficient.
 
@@ -153,10 +153,11 @@ The system configuration needs to be defined in the following way.
 *MacOs and Linux:* create the file `/etc/.java/deployment/deployment.config` and add the following properties:
 
 deployment.system.config:: The URL to the system configuration.
+The name of the file can be freely chosen.
 Special characters need escaping.
 See the following examples:
-* `deployment.system.config=file\:/C\:/Window/Sun/Java/system.properties`
-* `deployment.system.config=file\:/etc/.java/deployment/system.properties`
+* `deployment.system.config=file\:/C\:/Window/Sun/Java/global.properties`
+* `deployment.system.config=file\:/etc/.java/deployment/base.properties`
 * `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
 
 deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings
@@ -176,7 +177,7 @@ deployment.system.config.mandatory=true
 The simplest way to create a system configuration is to start the `itw-settings`.
 After saving the configuration the modified properties are written to the user configuration file.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployments.properties`.
+For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
 
 The customized user configuration can be used as a starting point for the system configuration.
 Simply copy the file and remove the properties which should not be defined on the system level.
