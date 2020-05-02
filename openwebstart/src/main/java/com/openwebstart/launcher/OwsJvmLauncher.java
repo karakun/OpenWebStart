@@ -21,6 +21,7 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
@@ -222,6 +223,21 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
+    public static String getRemoteDebugParameters(final boolean usingAnyPort, final boolean startSuspended, final int port) {
+        String yes = "y";
+        String no = "n";
+        String debugCommandPrefix = "-agentlib:jdwp=transport=dt_socket,server=y";
+        String suspendedParameter = String.format(",suspend=%s", (startSuspended ? yes : no));
+        String specificPortParameter = String.format(",address=%d",port);
+
+        String parameters = debugCommandPrefix + suspendedParameter;
+        if(!usingAnyPort)
+        {
+            parameters += specificPortParameter;
+        }
+        return parameters;
+    }
+
     private List<String> getRemoteDebuggingArgs() {
         try {
             final String remoteDebuggingPort = System.getProperty(REMOTE_DEBUGGING_SYSTEM_PROPERTY);
@@ -235,12 +251,29 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
 
         try {
-            final String debugActive = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
+            final DeploymentConfiguration configuration = JNLPRuntime.getConfiguration();
+            final String debugActive = configuration.getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
             if (Boolean.parseBoolean(debugActive)) {
-                final String debugPort = JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
+
+                final String randomPortString = configuration.getProperty(OwsDefaultsProvider.RANDOM_DEBUG_PORT);
+                final boolean usingAnyPort = Boolean.parseBoolean(randomPortString);
+
+                final String startSuspendedString = configuration.getProperty(OwsDefaultsProvider.START_SUSPENDED);
+                final boolean startSuspended = Boolean.parseBoolean(startSuspendedString);
+
+                final String debugPort = configuration.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 final int port = Integer.parseInt(debugPort);
-                LOG.debug("Adding remote debug support on port " + port);
-                return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);
+
+                LOG.debug("Using any port:" + usingAnyPort);
+                LOG.debug("Start suspended:" + startSuspended);
+                if (!usingAnyPort) {
+                    // print only when relevant
+                    LOG.debug("debug port " + port);
+                }
+
+                String parameters = OwsJvmLauncher.getRemoteDebugParameters(usingAnyPort,startSuspended,port);
+
+                return Collections.singletonList(parameters);
             }
         } catch (Exception e) {
             LOG.error("Failed in adding remote logging args.", e);

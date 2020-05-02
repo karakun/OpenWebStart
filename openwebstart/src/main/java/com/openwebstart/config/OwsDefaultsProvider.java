@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String REMOTE_DEBUG = "ows.jvm.manager.remoteDebug";
+    public static final String START_SUSPENDED = "ows.jvm.manager.startSuspended";
+    public static final String RANDOM_DEBUG_PORT = "ows.jvm.manager.randomDebugPort";
     public static final String REMOTE_DEBUG_PORT = "ows.jvm.manager.remoteDebugPort";
     public static final String REMOTE_DEBUG_PORT_DEFAULT_VALUE = "5005";
 
@@ -49,6 +51,16 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 Setting.createDefault(
                         REMOTE_DEBUG,
                         Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        START_SUSPENDED,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        RANDOM_DEBUG_PORT,
+                        Boolean.TRUE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
