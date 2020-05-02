@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.openwebstart.debug.DebugParameterHelper.getRemoteDebugParameters;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
@@ -51,10 +52,6 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
 
-    /**
-     * The file "itw-modularjdk.args" can be found in the icedtea-web source.
-     */
-    public static final String REMOTE_DEBUGGING_PREFIX = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=";
     public static final String REMOTE_DEBUGGING_SYSTEM_PROPERTY = "OWS_REMOTE_DEBUGGING_PORT";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
@@ -223,28 +220,13 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
-    public static String getRemoteDebugParameters(final boolean usingAnyPort, final boolean startSuspended, final int port) {
-        String yes = "y";
-        String no = "n";
-        String debugCommandPrefix = "-agentlib:jdwp=transport=dt_socket,server=y";
-        String suspendedParameter = String.format(",suspend=%s", (startSuspended ? yes : no));
-        String specificPortParameter = String.format(",address=%d",port);
-
-        String parameters = debugCommandPrefix + suspendedParameter;
-        if(!usingAnyPort)
-        {
-            parameters += specificPortParameter;
-        }
-        return parameters;
-    }
-
     private List<String> getRemoteDebuggingArgs() {
         try {
             final String remoteDebuggingPort = System.getProperty(REMOTE_DEBUGGING_SYSTEM_PROPERTY);
             if (!isBlank(remoteDebuggingPort)) {
                 final int port = Integer.parseInt(remoteDebuggingPort);
                 LOG.debug("Adding remote debug support on port " + port);
-                return Collections.singletonList(REMOTE_DEBUGGING_PREFIX + port);
+                return Collections.singletonList(getRemoteDebugParameters(false, true, port));
             }
         } catch (Exception e) {
             LOG.error("Failed in adding remote debugging args.", e);
@@ -271,9 +253,7 @@ public class OwsJvmLauncher implements JvmLauncher {
                     LOG.debug("debug port " + port);
                 }
 
-                String parameters = OwsJvmLauncher.getRemoteDebugParameters(usingAnyPort,startSuspended,port);
-
-                return Collections.singletonList(parameters);
+                return Collections.singletonList(getRemoteDebugParameters(usingAnyPort, startSuspended, port));
             }
         } catch (Exception e) {
             LOG.error("Failed in adding remote logging args.", e);
