@@ -6,6 +6,7 @@ import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
+import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.LookAndFeel;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
@@ -24,12 +25,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.text.NumberFormatter;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -37,8 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,7 +61,7 @@ public class ConfigurationDialog extends ModalDialog {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
 
     private final Translator translator = Translator.getInstance();
-    private final JComboBox<String> vendorComboBox;
+    private final JComboBox<Vendor> vendorComboBox;
     private final Color originalBackground;
     private boolean urlValidationError = false;
     private final JButton okButton;
@@ -77,8 +79,8 @@ public class ConfigurationDialog extends ModalDialog {
 
         final JLabel defaultVendorLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.vendor.text"));
         vendorComboBox = new JComboBox<>();
+        vendorComboBox.setRenderer(new VendorComboBoxRenderer());
         getDaemonExecutorService().execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
-        vendorComboBox.setEditable(true);
         uiLock.update(JVM_VENDOR, vendorComboBox);
 
         final JCheckBox allowVendorFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowVendorFromJnlp.text"));
@@ -121,8 +123,12 @@ public class ConfigurationDialog extends ModalDialog {
                     defaultUpdateServerField.requestFocus();
                     return;
                 }
-                RuntimeManagerConfig.setStrategy((RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem());
-                RuntimeManagerConfig.setDefaultVendor((String) vendorComboBox.getSelectedItem());
+
+                final RuntimeUpdateStrategy updateStrategy = (RuntimeUpdateStrategy) updateStrategyComboBox.getSelectedItem();
+                final Vendor vendor = (Vendor) vendorComboBox.getSelectedItem();
+
+                RuntimeManagerConfig.setStrategy(updateStrategy);
+                RuntimeManagerConfig.setDefaultVendor((vendor != null ? vendor : Vendor.ANY_VENDOR).getName());
                 RuntimeManagerConfig.setVendorFromJnlpAllowed(allowVendorFromJnlpCheckBox.isSelected());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
                 RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
@@ -206,18 +212,52 @@ public class ConfigurationDialog extends ModalDialog {
     private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
-            final List<String> vendorNamesList = new ArrayList<>(Arrays.asList(JavaRuntimeManager.getAllVendors(specifiedServerURL)));
-            if (!vendorNamesList.contains(RuntimeManagerConfig.getVendor())) {
-                vendorNamesList.add(RuntimeManagerConfig.getVendor());
+            final List<Vendor> vendors = JavaRuntimeManager.getAllVendors(specifiedServerURL);
+            final Vendor currentVendor = Vendor.fromString(RuntimeManagerConfig.getVendor());
+            if (!vendors.contains(currentVendor)) {
+                vendors.add(currentVendor);
             }
             SwingUtilities.invokeLater(() -> {
-                vendorComboBox.setModel(new DefaultComboBoxModel<>(vendorNamesList.toArray(new String[0])));
-                vendorComboBox.setSelectedItem(RuntimeManagerConfig.getVendor());
+                vendorComboBox.setModel(new DefaultComboBoxModel<>(vendors.toArray(new Vendor[0])));
+                vendorComboBox.setSelectedItem(currentVendor);
             });
         } catch (final Exception ex) {
             DialogFactory.showErrorDialog(translator.translate("jvmManager.error.updateVendorNames"), ex);
         } finally {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getDefaultCursor()));
+        }
+    }
+
+    private static class VendorComboBoxRenderer extends JLabel implements ListCellRenderer<Vendor> {
+
+        private static final String ANY_VENDOR_DISPLAY_NAME = Translator.R("dialog.jvmManagerConfig.vendor.anyVendor.text");
+
+        public VendorComboBoxRenderer() {
+            setOpaque(true);
+            setHorizontalAlignment(LEFT);
+            setVerticalAlignment(CENTER);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Vendor> list, Vendor value, int index, boolean isSelected, boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+
+            setText(displayStringForVendor(value));
+
+            return this;
+        }
+
+        private String displayStringForVendor(Vendor vendor) {
+            if (Objects.equals(vendor, Vendor.ANY_VENDOR)) {
+                return ANY_VENDOR_DISPLAY_NAME;
+            }
+            return vendor.getName();
         }
     }
 

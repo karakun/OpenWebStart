@@ -8,6 +8,7 @@ import com.openwebstart.launcher.JavaRuntimeProvider;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,21 +28,21 @@ public class JavaRuntimeManager {
         return new JavaRuntimeSelector(downloadHandler, askForUpdateFunction);
     }
 
-    public static String[] getAllVendors(URL serverEndpoint) {
+    public static List<Vendor> getAllVendors(URL serverEndpoint) {
 
-        final Set<String> vendors = new HashSet<>();
+        final Set<Vendor> vendors = new HashSet<>();
 
         LocalRuntimeManager.getInstance().loadRuntimes();
         List<LocalJavaRuntime> localList = LocalRuntimeManager.getInstance().getAll();
         List<RemoteJavaRuntime> remoteList = RemoteRuntimeManager.getInstance().loadListOfRemoteRuntimes(serverEndpoint);
 
-        localList.forEach(rt -> vendors.add(rt.getVendor().getName()));
-        remoteList.forEach(rt -> vendors.add(rt.getVendor().getName()));
+        localList.forEach(rt -> vendors.add(rt.getVendor()));
+        remoteList.forEach(rt -> vendors.add(rt.getVendor()));
 
-        final List<String> vendorList = new ArrayList<>(vendors);
-        vendorList.sort(String::compareTo);
-        vendorList.add(0, Vendor.ANY_VENDOR.getName());
-        return vendorList.toArray(new String[0]);
+        final List<Vendor> vendorList = new ArrayList<>(vendors);
+        vendorList.sort(Comparator.comparing(Vendor::getName));
+        vendorList.add(0, Vendor.ANY_VENDOR);
+        return vendorList;
     }
 
     public static void reloadLocalRuntimes() {
