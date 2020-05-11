@@ -60,6 +60,22 @@ If your preferred JVM is not provided by our default download server, you can ei
 Currently, we do not provide an MSI installer.
 More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98.
 
+== Debugging and Error Reporting
+
+==== Does OWS write log files and where do I find them?
+The log files of OWS are located in a hidden directory below your user home directory:
+
+  <user-home>/.config/icedtea-web/log
+
+where `<user-home>` depends on your operating system.
+By default this should be
+```
+<root>\Users\<your-username>    (Windows 10)
+/Users/<your-username>          (MacOS)
+/home/<your-username>/          (Linux)
+```
+Note that logging has to be activated using the OWS Settings application by checking "Activate debug logging" and "Log to file" on the "Logging" tab.
+
 == Functionality
 
 ==== Does OpenWebStart support Applets?
