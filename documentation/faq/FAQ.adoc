@@ -100,4 +100,117 @@ Note that whitelisting only applies while downloading resources (jars and jnlps)
 Thus, an application can open a connection to a server which is not in the white list.
 
 It is also possible to specify the content of the whitelist when installing OWS (unattended installation),
-see https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
+See https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
+
+==== How to run OpenJFX based JavaFX applications with OpenWebStart?
+
+*With JDK 8*
+
+To be able to run a JavaFX application with OWS using Java 8 requires an installation of Java 8 JVM that includes JavaFX.
+Some of the vendors that have JavaFX as part of their Java 8 JVMs are Oracle, Azul, BellSoft and Amazon. OpenJDK 8 from
+Adopt does not include JavaFX.
+
+Using the JVM Server feature of OWS JVM Manager it can be ensured that a suitable JDK 8 with JavaFX will be installed on
+the machine for OWS to start a JavaFX app. The required JVM from a preferred vendor can be specified in the Jnlp file:
+
+....
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="$$codebase">
+<information>
+    <title>JavaFX 8 App</title>
+    <vendor>Karakun AG</vendor>
+    <offline-allowed/>
+</information>
+<security>
+    <all-permissions/>
+</security>
+<resources>
+    <java version="1.8*" vendor="zulu" href="http://localhost:8081/jvms/jvms.json"/>
+    <jar href="generated-jars/javafx-test.jar"/>
+</resources>
+<application-desc main-class="com.karakun.ows.javafx_test.HelloWorld"/>
+</jnlp>
+....
+
+In the above Jnlp file, the <java> tag specifies the name of the JVM vendor and URL of the JVM server which hosts a JSON
+that points to the appropriate JVM with JavaFX. For example:
+
+....
+{
+  "cacheTimeInMillis":5000,
+  "runtimes":
+  [
+    {
+     "version":"1.8.0_252",
+     "vendor":"Zulu Community Edition",
+     "os":"WIN64",
+     "href":"https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-fx-jdk8.0.252-win_x64.zip"
+    }
+  ]
+}
+....
+
+When the above Jnlp file is started with OWS, OWS will install the specified JVM with JavaFX for running the JavaFX
+application.
+
+*With JDK 11+*
+
+Create a JavaFX project which should have https://openjfx.io/openjfx-docs/#install-java[OpenJFX] libraries on its path
+for compilation. Required OpenJFX version can be obtained from:
+https://gluonhq.com/products/javafx/[OpneJFX Download].
+
+In order to deploy a JavaFX application using OWS:
+- package the JavaFX application in a jar
+- gather platform (OS) specific jars from the OpenJFX libraries.
+- all jars must be signed and must have required security attributes in their manifests.
+- deploy all jars in a server
+- create a Jnlp file. For example The following file is meant to run on Windows.
+  However one can also specify OS specific jars under OS specific <resources>
+
+....
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="$$codebase">
+<information>
+    <title>JavaFX 11 App</title>
+    <vendor>Karakun AG</vendor>
+    <offline-allowed/>
+</information>
+<security>
+    <all-permissions/>
+</security>
+<resources>
+    <java version="11+"/>
+    <jar href="jars/jfxapp.jar"/>
+    <jar href="jars/javafx-controls-11.0.2-win.jar"/>
+    <jar href="jars/javafx-graphics-11.0.2-win.jar"/>
+    <jar href="jars/javafx-base-11.0.2-win.jar"/>
+    <jar href="jars/javafx-fxml-11.0.2-win.jar"/>
+</resources>
+<application-desc main-class="com.karakun.ows.javafx_test.HelloWorld11Launcher"/>
+</jnlp>
+....
+
+*Note:* When running with Java 11+ the JavaFX Application is required to be launched via a launcher class:
+
+....
+// Launcher for JavaFX application which is specified in the Jnlp file
+public class HelloWorld11Launcher {
+    public static void main(String[] args) {
+        HelloWorld11.main(args);
+    }
+}
+
+// JavaFX Application
+public class HelloWorld11 extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+	public void start(Stage primaryStage) {
+        ... // JavaFX code
+    }
+    ...
+}
+....
+
