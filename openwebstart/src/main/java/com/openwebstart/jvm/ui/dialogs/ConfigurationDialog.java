@@ -21,14 +21,17 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.text.NumberFormatter;
@@ -104,8 +107,14 @@ public class ConfigurationDialog extends ModalDialog {
         allowServerFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
         uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowServerFromJnlpCheckBox);
 
-        final JLabel waringLabel = new JLabel("!!!");
-        waringLabel.setToolTipText("Warning: Selecting the JVM download server from a URL given by the JNLP file might be a security risk.");
+        final JLabel waringLabel = new JLabel() {
+            @Override
+            public JToolTip createToolTip() {
+                return (new WarningToolTip(this));
+            }
+        };
+        waringLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
+        waringLabel.setToolTipText(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.warning"));
         waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
         allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
 
@@ -304,4 +313,14 @@ public class ConfigurationDialog extends ModalDialog {
                     .orElseThrow(() -> new RuntimeException("Could not find default for " + DEFAULT_JVM_DOWNLOAD_SERVER));
         }
     }
+
+    private class WarningToolTip extends JToolTip {
+
+            public WarningToolTip(JComponent component) {
+                super();
+                setComponent(component);
+                setBackground(Color.white);
+                setForeground(Color.decode("#f57c00"));
+            }
+        }
 }
