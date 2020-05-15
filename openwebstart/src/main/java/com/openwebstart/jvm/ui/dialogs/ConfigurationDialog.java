@@ -19,6 +19,7 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -99,9 +100,19 @@ public class ConfigurationDialog extends ModalDialog {
         uiLock.update(DEFAULT_JVM_DOWNLOAD_SERVER, defaultUpdateServerField);
 
 
-        final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
-        allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
-        uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowAnyUpdateServerCheckBox);
+        final JCheckBox allowServerFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
+        allowServerFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
+        uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowServerFromJnlpCheckBox);
+
+        final JLabel waringLabel = new JLabel("!!!");
+        waringLabel.setToolTipText("Warning: Selecting the JVM download server from a URL given by the JNLP file might be a security risk.");
+        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
+        allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
+
+        final JPanel allowServerFromJnlpContainer = new JPanel();
+        allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
+        allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
+        allowServerFromJnlpContainer.add(waringLabel);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
         final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
@@ -131,7 +142,7 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setDefaultVendor((vendor != null ? vendor : Vendor.ANY_VENDOR).getName());
                 RuntimeManagerConfig.setVendorFromJnlpAllowed(allowVendorFromJnlpCheckBox.isSelected());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
-                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
+                RuntimeManagerConfig.setNonDefaultServerAllowed(allowServerFromJnlpCheckBox.isSelected());
                 try {
                     maxDaysStayInJvmCacheField.commitEdit();
                 } catch (ParseException ex) {
@@ -153,7 +164,7 @@ public class ConfigurationDialog extends ModalDialog {
 
         mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
         mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
-        mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
+        mainPanel.addEditorRow(2, allowServerFromJnlpContainer);
         mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
         mainPanel.addEditorRow(4, allowVendorFromJnlpCheckBox);
         mainPanel.addRow(5, unusedRuntimeCleanupLabel, numberOfDaysPanel);
