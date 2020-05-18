@@ -115,7 +115,7 @@ the machine for OWS to start a JavaFX app. The required JVM from a preferred ven
 
 ....
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="$$codebase">
+<jnlp spec="1.0+" codebase="https://myhost.com">
 <information>
     <title>JavaFX 8 App</title>
     <vendor>Karakun AG</vendor>
@@ -125,7 +125,7 @@ the machine for OWS to start a JavaFX app. The required JVM from a preferred ven
     <all-permissions/>
 </security>
 <resources>
-    <java version="1.8*" vendor="zulu" href="http://localhost:8081/jvms/jvms.json"/>
+    <java version="1.8*" vendor="zulu" href="http://myjvmserver.com/jvms/jvms.json"/>
     <jar href="generated-jars/javafx-test.jar"/>
 </resources>
 <application-desc main-class="com.karakun.ows.javafx_test.HelloWorld"/>
@@ -160,16 +160,17 @@ for compilation. Required OpenJFX version can be obtained from:
 https://gluonhq.com/products/javafx/[OpneJFX Download].
 
 In order to deploy a JavaFX application using OWS:
-- package the JavaFX application in a jar
-- gather platform (OS) specific jars from the OpenJFX libraries.
-- all jars must be signed and must have required security attributes in their manifests.
-- deploy all jars in a server
-- create a Jnlp file. For example The following file is meant to run on Windows.
+
+. package the JavaFX application in a jar
+. gather platform (OS) specific jars from the OpenJFX libraries.
+. all jars must be signed and must have required security attributes in their manifests.
+. deploy all jars in a server
+. create a Jnlp file. For example The following file is meant to run on Windows.
   However one can also specify OS specific jars under OS specific <resources>
 
 ....
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0+" codebase="$$codebase">
+<jnlp spec="1.0+" codebase="https://myhost.com">
 <information>
     <title>JavaFX 11 App</title>
     <vendor>Karakun AG</vendor>
