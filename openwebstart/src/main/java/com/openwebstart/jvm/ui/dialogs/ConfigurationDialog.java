@@ -19,15 +19,19 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.text.NumberFormatter;
@@ -99,9 +103,25 @@ public class ConfigurationDialog extends ModalDialog {
         uiLock.update(DEFAULT_JVM_DOWNLOAD_SERVER, defaultUpdateServerField);
 
 
-        final JCheckBox allowAnyUpdateServerCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
-        allowAnyUpdateServerCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
-        uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowAnyUpdateServerCheckBox);
+        final JCheckBox allowServerFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
+        allowServerFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
+        uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowServerFromJnlpCheckBox);
+
+        final JLabel waringLabel = new JLabel() {
+            @Override
+            public JToolTip createToolTip() {
+                return (new WarningToolTip(this));
+            }
+        };
+        waringLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
+        waringLabel.setToolTipText(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.warning"));
+        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
+        allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
+
+        final JPanel allowServerFromJnlpContainer = new JPanel();
+        allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
+        allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
+        allowServerFromJnlpContainer.add(waringLabel);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
         final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
@@ -131,7 +151,7 @@ public class ConfigurationDialog extends ModalDialog {
                 RuntimeManagerConfig.setDefaultVendor((vendor != null ? vendor : Vendor.ANY_VENDOR).getName());
                 RuntimeManagerConfig.setVendorFromJnlpAllowed(allowVendorFromJnlpCheckBox.isSelected());
                 RuntimeManagerConfig.setDefaultRemoteEndpoint(new URL(defaultUpdateServerField.getText()));
-                RuntimeManagerConfig.setNonDefaultServerAllowed(allowAnyUpdateServerCheckBox.isSelected());
+                RuntimeManagerConfig.setNonDefaultServerAllowed(allowServerFromJnlpCheckBox.isSelected());
                 try {
                     maxDaysStayInJvmCacheField.commitEdit();
                 } catch (ParseException ex) {
@@ -153,7 +173,7 @@ public class ConfigurationDialog extends ModalDialog {
 
         mainPanel.addRow(0, updateStrategyLabel, updateStrategyComboBox);
         mainPanel.addRow(1, defaultUpdateServerLabel, defaultUpdateServerField);
-        mainPanel.addEditorRow(2, allowAnyUpdateServerCheckBox);
+        mainPanel.addEditorRow(2, allowServerFromJnlpContainer);
         mainPanel.addRow(3, defaultVendorLabel, vendorComboBox);
         mainPanel.addEditorRow(4, allowVendorFromJnlpCheckBox);
         mainPanel.addRow(5, unusedRuntimeCleanupLabel, numberOfDaysPanel);
@@ -293,4 +313,14 @@ public class ConfigurationDialog extends ModalDialog {
                     .orElseThrow(() -> new RuntimeException("Could not find default for " + DEFAULT_JVM_DOWNLOAD_SERVER));
         }
     }
+
+    private class WarningToolTip extends JToolTip {
+
+            public WarningToolTip(JComponent component) {
+                super();
+                setComponent(component);
+                setBackground(Color.white);
+                setForeground(Color.decode("#f57c00"));
+            }
+        }
 }
