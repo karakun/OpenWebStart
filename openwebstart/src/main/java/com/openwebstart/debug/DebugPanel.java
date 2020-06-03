@@ -160,7 +160,7 @@ public class DebugPanel extends FormPanel {
             final String host = getHostToBeUsed();
             config.setProperty(OwsDefaultsProvider.REMOTE_DEBUG_HOST, host);
         } catch (final Exception ignore) {
-            // invalid port
+            // invalid host
         }
        updateMessageLabel();
     }
