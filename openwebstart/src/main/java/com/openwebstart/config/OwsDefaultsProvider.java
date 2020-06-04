@@ -69,7 +69,6 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         REMOTE_DEBUG_PORT_DEFAULT_VALUE,
                         ValidatorFactory.createRangedIntegerValidator(0, 10_000)
                 ),
-                // TODO : Validater for IP Addr
                 Setting.createDefault(
                         REMOTE_DEBUG_HOST,
                         REMOTE_DEBUG_HOST_DEFAULT_VALUE,
