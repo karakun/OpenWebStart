@@ -75,6 +75,7 @@ final class FirefoxPreferences {
     private static final String USER_PREF_PREFIX = "user_pref(";
     private static final int USER_PREF_PREFIX_LENGTH = USER_PREF_PREFIX.length();
     private static final String DOUBLE_QUOTE = "\"";
+    private static final String ABSOLUTE_PATH = "0";
 
     private final Map<String, String> prefs = new HashMap<>();
 
@@ -245,7 +246,7 @@ final class FirefoxPreferences {
                 .filter(line -> line.startsWith(IS_RELATIVE_PATH_PREFIX))
                 .findFirst()
                 .map(line -> line.substring(IS_RELATIVE_PATH_PREFIX.length()))
-                .map(value -> !"0".equals(value)) // 0 == absolute path
+                .map(value -> !ABSOLUTE_PATH.equals(value))
                 .orElse(true);
 
         final String path = linesInSection.stream()
