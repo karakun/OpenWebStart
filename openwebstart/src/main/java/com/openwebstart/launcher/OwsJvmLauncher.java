@@ -41,7 +41,6 @@ import static com.openwebstart.debug.DebugParameterHelper.getRemoteDebugParamete
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
-import static net.adoptopenjdk.icedteaweb.StringUtils.isBlank;
 
 /**
  * Launches OWS with a JNLP in a matching JRE.
@@ -51,8 +50,6 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
-
-    public static final String REMOTE_DEBUGGING_SYSTEM_PROPERTY = "OWS_REMOTE_DEBUGGING_PORT";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
@@ -222,17 +219,6 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private List<String> getRemoteDebuggingArgs() {
         try {
-            final String remoteDebuggingPort = System.getProperty(REMOTE_DEBUGGING_SYSTEM_PROPERTY);
-            if (!isBlank(remoteDebuggingPort)) {
-                final int port = Integer.parseInt(remoteDebuggingPort);
-                LOG.debug("Adding remote debug support on port " + port);
-                return Collections.singletonList(getRemoteDebugParameters(false, true, port));
-            }
-        } catch (Exception e) {
-            LOG.error("Failed in adding remote debugging args.", e);
-        }
-
-        try {
             final DeploymentConfiguration configuration = JNLPRuntime.getConfiguration();
             final String debugActive = configuration.getProperty(OwsDefaultsProvider.REMOTE_DEBUG);
             if (Boolean.parseBoolean(debugActive)) {
@@ -243,9 +229,12 @@ public class OwsJvmLauncher implements JvmLauncher {
                 final String startSuspendedString = configuration.getProperty(OwsDefaultsProvider.START_SUSPENDED);
                 final boolean startSuspended = Boolean.parseBoolean(startSuspendedString);
 
+                final String debugHost = configuration.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_HOST);
+
                 final String debugPort = configuration.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
                 final int port = Integer.parseInt(debugPort);
 
+                LOG.debug("Using Debug Host:" + usingAnyPort);
                 LOG.debug("Using any port:" + usingAnyPort);
                 LOG.debug("Start suspended:" + startSuspended);
                 if (!usingAnyPort) {
@@ -253,12 +242,11 @@ public class OwsJvmLauncher implements JvmLauncher {
                     LOG.debug("debug port " + port);
                 }
 
-                return Collections.singletonList(getRemoteDebugParameters(usingAnyPort, startSuspended, port));
+                return Collections.singletonList(getRemoteDebugParameters(usingAnyPort, startSuspended, debugHost, port));
             }
         } catch (Exception e) {
             LOG.error("Failed in adding remote logging args.", e);
         }
-
 
         return Collections.emptyList();
     }
