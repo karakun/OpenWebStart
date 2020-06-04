@@ -73,7 +73,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 Setting.createDefault(
                         REMOTE_DEBUG_HOST,
                         REMOTE_DEBUG_HOST_DEFAULT_VALUE,
-                        null
+                        ValidatorFactory.createNotBlankValidator()
                 ),
                 Setting.createDefault(
                         JVM_CACHE_DIR,
