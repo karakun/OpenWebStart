@@ -200,3 +200,6 @@ Here an example:
 ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
 ows.jvm.manager.server.default.locked=true
 ----
+
+TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
+The presence of the key is sufficient for locking the property.
