@@ -16,26 +16,34 @@ import java.util.List;
 public class WindowsRuntimeFinder implements RuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(WindowsRuntimeFinder.class);
 
-    private static final String JVM_BASEFOLDER_32 = System.getenv("ProgramFiles(X86)") + File.separatorChar + "java";
-    private static final String JVM_BASEFOLDER_64 = System.getenv("ProgramFiles") + File.separatorChar + "java";
-    public static final String CYGWIN_HOME = "cygwin64" + File.separatorChar + "home";
+    private static final String PROGRAMS_32 = System.getenv("ProgramFiles(X86)") + File.separatorChar;
+    private static final String PROGRAM_64 = System.getenv("ProgramFiles") + File.separatorChar;
+
+    private static final String JVM_FOLDER_32 = PROGRAMS_32 + "java";
+    private static final String JVM_FOLDER_64 = PROGRAM_64 + "java";
+
+    private static final String CORRETTO_FOLDER_32 = PROGRAMS_32 + "Amazon Corretto";
+    private static final String CORRETTO_FOLDER_64 = PROGRAM_64 + "Amazon Corretto";
+
+    private static final String ADOPT_FOLDER_32 = PROGRAMS_32 + "AdoptOpenJDK";
+    private static final String ADOPT_FOLDER_64 = PROGRAM_64 + "AdoptOpenJDK";
+
+    // This is based on the assumption that the windows installation and the cygwin installation left the
+    // Windows' default user directory and the cygwin home directory pretty much to the defaults
+    private static final String CYGWIN_HOME = "cygwin64" + File.separatorChar + "home";
+    private static final String CYGWIN_USER_HOME = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
+    private static final String SDK_MAN_FOLDER = CYGWIN_USER_HOME + File.separatorChar + ".sdkman";
 
     @Override
     public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
-        final Path systemPath32 = Paths.get(JVM_BASEFOLDER_32);
-        final Path systemPath64 = Paths.get(JVM_BASEFOLDER_64);
-
-        final Path correttoPath1 = Paths.get(System.getenv("ProgramFiles(X86)") + File.separatorChar + "Amazon Corretto");
-        final Path correttoPath2 = Paths.get(System.getenv("ProgramFiles") + File.separatorChar + "Amazon Corretto");
-
-        // This is based on the assumption that the windows installation and the cygwin installation left the
-        // Windows' default user directory and the cygwin home directory pretty much to the defaults
-        final String cygwinUserHome = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
-        final Path sdkmanPath = Paths.get(cygwinUserHome + File.separatorChar + ".sdkman");
-
-        return JdkFinder.findLocalJdks(systemPath32, systemPath64, sdkmanPath, correttoPath1, correttoPath2);
+        return JdkFinder.findLocalJdks(
+                Paths.get(JVM_FOLDER_32), Paths.get(JVM_FOLDER_64),
+                Paths.get(CORRETTO_FOLDER_32), Paths.get(CORRETTO_FOLDER_64),
+                Paths.get(ADOPT_FOLDER_32), Paths.get(ADOPT_FOLDER_64),
+                Paths.get(SDK_MAN_FOLDER)
+        );
     }
 
     @Override
