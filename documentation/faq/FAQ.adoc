@@ -82,6 +82,28 @@ Note that logging has to be activated using the OWS Settings application by chec
 Applets are not supported and there are no plans to support them in the future.
 We also do not consider this as a deviation from the JNLP-standard as this is an optional feature according to the JSR-56 specs.
 
+==== How to start a Jnlp application in Offline mode with OpenWebStart?
+
+The Offline mode means that OWS will not access a server to fetch resources specified in the Jnlp file.
+
+You can start a previously cached Jnlp application in Offline mode using the following command:
+
+[source]
+----
+javaws -Xoffline myapp.jnlp
+----
+
+In the above example myapp.jnlp is a previously downloaded and cached Jnlp file. OWS expects that
+the jars files for the app are available in the cache. For example:
+
+[source]
+----
+<User Home>/.cache/icedtea-web/cache/0/0/myapp.jar
+----
+
+Note that you will get `java.net.ConnectException` if you run _javaws_ *without* the _-Xoffline_ parameter when NOT
+connected to the server as OWS will try to fetch the resources from the server and fail.
+
 ==== How can I define a server whitelist for OWS?
 
 This field is currently not editable in the UI.
