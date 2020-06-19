@@ -28,6 +28,12 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
     private static final String ADOPT_FOLDER_32 = PROGRAMS_32 + "AdoptOpenJDK";
     private static final String ADOPT_FOLDER_64 = PROGRAM_64 + "AdoptOpenJDK";
 
+    private static final String ZULU_FOLDER_32 = PROGRAMS_32 + "Zulu";
+    private static final String ZULU_FOLDER_64 = PROGRAM_64 + "Zulu";
+
+    private static final String BELLSOFT_FOLDER_32 = PROGRAMS_32 + "BellSoft";
+    private static final String BELLSOFT_FOLDER_64 = PROGRAM_64 + "BellSoft";
+
     // This is based on the assumption that the windows installation and the cygwin installation left the
     // Windows' default user directory and the cygwin home directory pretty much to the defaults
     private static final String CYGWIN_HOME = "cygwin64" + File.separatorChar + "home";
@@ -42,6 +48,8 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
                 Paths.get(JVM_FOLDER_32), Paths.get(JVM_FOLDER_64),
                 Paths.get(CORRETTO_FOLDER_32), Paths.get(CORRETTO_FOLDER_64),
                 Paths.get(ADOPT_FOLDER_32), Paths.get(ADOPT_FOLDER_64),
+                Paths.get(ZULU_FOLDER_32), Paths.get(ZULU_FOLDER_64),
+                Paths.get(BELLSOFT_FOLDER_32), Paths.get(BELLSOFT_FOLDER_64),
                 Paths.get(SDK_MAN_FOLDER)
         );
     }
