@@ -15,6 +15,8 @@
  */
 package com.openwebstart.jvm.os;
 
+import java.util.Optional;
+
 import static com.openwebstart.jvm.os.Architecture.X64;
 import static com.openwebstart.jvm.os.Architecture.X86;
 
@@ -87,23 +89,27 @@ public enum OperationSystem {
     public static OperationSystem getLocalSystem() {
         final String osName = System.getProperty(OS_SYSTEM_PROPERTY).toLowerCase();
         final String arch = System.getProperty(OS_ARCH_SYSTEM_PROPERTY).toLowerCase();
+        return getOperationSystem(osName, arch).orElseThrow(() -> new IllegalStateException("Cannot specify OS"));
+    }
+
+    public static Optional<OperationSystem> getOperationSystem(String osName, String arch) {
         if (osName.contains(WIN)) {
             if (arch.contains(ARCH_64)) {
-                return OperationSystem.WIN64;
+                return Optional.of(OperationSystem.WIN64);
             } else {
-                return OperationSystem.WIN32;
+                return Optional.of(OperationSystem.WIN32);
             }
         }
         if (osName.contains(MAC)) {
-            return OperationSystem.MAC64;
+            return Optional.of(OperationSystem.MAC64);
         }
         if (osName.contains(LINUX)) {
             if (arch.contains(ARCH_64)) {
-                return OperationSystem.LINUX64;
+                return Optional.of(OperationSystem.LINUX64);
             } else {
-                return OperationSystem.LINUX32;
+                return Optional.of(OperationSystem.LINUX32);
             }
         }
-        throw new IllegalStateException("Cannot specify OS");
+        return Optional.empty();
     }
 }
