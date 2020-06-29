@@ -15,17 +15,27 @@ import java.util.stream.Stream;
 
 public class OwsDefaultsProvider implements DefaultsProvider {
 
-    public static final String REMOTE_DEBUG = "ows.jvm.manager.remoteDebug";
-    public static final String REMOTE_DEBUG_PORT = "ows.jvm.manager.remoteDebugPort";
+    public static final String REMOTE_DEBUG = "ows.remote.debug.enabled";
+    public static final String START_SUSPENDED = "ows.remote.debug.startSuspended";
+    public static final String RANDOM_DEBUG_PORT = "ows.remote.debug.randomDebugPort";
+    public static final String REMOTE_DEBUG_PORT = "ows.remote.debug.fixedPort";
+    public static final String REMOTE_DEBUG_PORT_DEFAULT_VALUE = "5005";
+    public static final String REMOTE_DEBUG_HOST = "ows.remote.debug.host";
+    public static final String REMOTE_DEBUG_HOST_DEFAULT_VALUE = "127.0.0.1";
 
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
+    public static final String DEFAULT_JVM_DOWNLOAD_SERVER_DEFAULT_VALUE = "https://download-openwebstart.com/jvms.json";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
     public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";
     public static final String JVM_UPDATE_STRATEGY = "ows.jvm.manager.updateStrategy";
     public static final String JVM_SUPPORTED_VERSION_RANGE = "ows.jvm.manager.versionRange";
+    public static final String JVM_SUPPORTED_VERSION_RANGE_DEFAULT_VALUE = "1.8+";
+
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE = "ows.jvm.manager.maxDaysUnusedInJvmCache";
+    public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE = "30";
+
 
     public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
 
@@ -45,9 +55,24 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
+                        START_SUSPENDED,
+                        Boolean.TRUE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        RANDOM_DEBUG_PORT,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
                         REMOTE_DEBUG_PORT,
-                        "5005",
+                        REMOTE_DEBUG_PORT_DEFAULT_VALUE,
                         ValidatorFactory.createRangedIntegerValidator(0, 10_000)
+                ),
+                Setting.createDefault(
+                        REMOTE_DEBUG_HOST,
+                        REMOTE_DEBUG_HOST_DEFAULT_VALUE,
+                        ValidatorFactory.createNotBlankValidator()
                 ),
                 Setting.createDefault(
                         JVM_CACHE_DIR,
@@ -56,7 +81,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         DEFAULT_JVM_DOWNLOAD_SERVER,
-                        "https://download-openwebstart.com/jvms",
+                        DEFAULT_JVM_DOWNLOAD_SERVER_DEFAULT_VALUE,
                         ValidatorFactory.createUrlValidator()
                 ),
                 Setting.createDefault(
@@ -85,12 +110,12 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         JVM_SUPPORTED_VERSION_RANGE,
-                        "1.8+",
+                        JVM_SUPPORTED_VERSION_RANGE_DEFAULT_VALUE,
                         null
                 ),
                 Setting.createDefault(
                         UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
-                        "true",
+                        Boolean.TRUE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
@@ -113,7 +138,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         MAX_DAYS_UNUSED_IN_JVM_CACHE,
-                        "30",
+                        MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE,
                         ValidatorFactory.createRangedIntegerValidator(0, 3_650)
                 )
         );

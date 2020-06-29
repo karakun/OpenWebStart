@@ -6,7 +6,7 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.ui.BasicAction;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
-import java.util.concurrent.Executors;
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
 
@@ -16,7 +16,7 @@ public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
 
     @Override
     public void call(final LocalJavaRuntime item) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        getNonDaemonExecutorService().execute(() -> {
             try {
                 LocalRuntimeManager.getInstance().delete(item);
             } catch (final Exception e) {

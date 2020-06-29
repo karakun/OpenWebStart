@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.openwebstart.jvm.os.OperationSystem.getOperationSystem;
+
 public class JdkFinder {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdkFinder.class);
@@ -55,7 +57,7 @@ public class JdkFinder {
         return Collections.emptyList();
     }
 
-    private static boolean isJavaHome(final Path path, final BasicFileAttributes basicFileAttributes) {
+    public static boolean isJavaHome(final Path path, final BasicFileAttributes basicFileAttributes) {
         if (!basicFileAttributes.isDirectory()) {
             return false;
         }
@@ -77,7 +79,8 @@ public class JdkFinder {
             final JavaRuntimePropertiesDetector.JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
             final String version = jreProps.getVersion();
             final String vendor = jreProps.getVendor();
-            return LocalJavaRuntime.createPreInstalled(version, LOCAL_OS, vendor, javaHome);
+            final OperationSystem os = getOperationSystem(jreProps.getOsName(), jreProps.getOsArch()).orElse(LOCAL_OS);
+            return LocalJavaRuntime.createPreInstalled(version, os, vendor, javaHome);
         } catch (final Exception e) {
             throw new IllegalStateException("Error while reading properties from JVM at '" + javaHome + "'", e);
         }

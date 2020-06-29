@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 public class Vendor {
 
     public static final Vendor ANY_VENDOR = new Vendor("*");
-    public static final Vendor ORACLE = new Vendor("Oracle Corporation");
-    public static final Vendor AMAZON = new Vendor("Amazon.com Inc.");
+    public static final Vendor ORACLE = new Vendor("Oracle Corporation", "Oracle");
+    public static final Vendor AMAZON = new Vendor("Amazon.com Inc.", "Amazon");
     public static final Vendor BELLSOFT = new Vendor("BellSoft");
-    public static final Vendor ADOPT = new Vendor("AdoptOpenJDK");
-    public static final Vendor AZUL = new Vendor("Azul Systems, Inc.");
+    public static final Vendor ADOPT = new Vendor("AdoptOpenJDK", "Adopt");
+    public static final Vendor AZUL = new Vendor("Azul Systems, Inc.", "Azul");
 
     private static final List<VendorResolver> resolver;
 
@@ -79,6 +79,7 @@ public class Vendor {
     }
 
     private final String name;
+    private final String shortName;
 
     /**
      * Should only be used by implementations of {@link VendorResolver}.
@@ -86,11 +87,26 @@ public class Vendor {
      * @param name of the vendor
      */
     public Vendor(String name) {
+        this(name, name);
+    }
+
+    /**
+     * Should only be used by implementations of {@link VendorResolver}.
+     *
+     * @param name      of the vendor
+     * @param shortName of the vendor
+     */
+    public Vendor(String name, String shortName) {
         this.name = Assert.requireNonBlank(name, "name");
+        this.shortName = Assert.requireNonBlank(shortName, "shortName");
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.openwebstart.app.icon;
 
 import com.openwebstart.app.Application;
-import net.adoptopenjdk.icedteaweb.Assert;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -9,9 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ApplicationIconCache {
 
@@ -22,12 +22,6 @@ public class ApplicationIconCache {
     private final Lock inProgressMapLock = new ReentrantLock();
 
     private final Lock cacheLock = new ReentrantLock();
-
-    private final Executor executor;
-
-    public ApplicationIconCache(final Executor executor) {
-        this.executor = Assert.requireNonNull(executor, "executor");
-    }
 
     public synchronized Optional<BufferedImage> get(final Application application, final IconDimensions dimension) {
         final IconDescription description = new IconDescription(application.getId(), dimension);
@@ -50,7 +44,7 @@ public class ApplicationIconCache {
 
     public synchronized void triggerDownload(final Application application, final IconDimensions dimension, final boolean reloadIfAlreadyInCache) {
         if (reloadIfAlreadyInCache || !isInCache(application, dimension)) {
-            executor.execute(() -> loadAndAdd(application, dimension));
+            getNonDaemonExecutorService().execute(() -> loadAndAdd(application, dimension));
         }
     }
 
@@ -63,7 +57,7 @@ public class ApplicationIconCache {
             } else {
                 final CompletableFuture<BufferedImage> result = new CompletableFuture<>();
                 inProgressMap.put(iconDescription, result);
-                executor.execute(() -> {
+                getNonDaemonExecutorService().execute(() -> {
                     try {
                         final BufferedImage icon = ApplicationIconDownloadUtils.downloadIcon(application, dimension);
                         cacheLock.lock();

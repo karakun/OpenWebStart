@@ -71,9 +71,11 @@ final class FirefoxPreferences {
     private static final Logger LOG = LoggerFactory.getLogger(FirefoxPreferences.class);
 
     private static final String PATH_PREFIX = "Path=";
+    private static final String IS_RELATIVE_PATH_PREFIX = "IsRelative=";
     private static final String USER_PREF_PREFIX = "user_pref(";
     private static final int USER_PREF_PREFIX_LENGTH = USER_PREF_PREFIX.length();
     private static final String DOUBLE_QUOTE = "\"";
+    private static final String ABSOLUTE_PATH = "0";
 
     private final Map<String, String> prefs = new HashMap<>();
 
@@ -240,13 +242,25 @@ final class FirefoxPreferences {
             throw new FileNotFoundException("preferences file");
         }
 
+        final boolean isRelativePath = linesInSection.stream()
+                .filter(line -> line.startsWith(IS_RELATIVE_PATH_PREFIX))
+                .findFirst()
+                .map(line -> line.substring(IS_RELATIVE_PATH_PREFIX.length()))
+                .map(value -> !ABSOLUTE_PATH.equals(value))
+                .orElse(true);
+
         final String path = linesInSection.stream()
                 .filter(line -> line.startsWith(PATH_PREFIX))
                 .findFirst()
                 .map(line -> line.substring(PATH_PREFIX.length()))
                 .orElseThrow(() -> new FileNotFoundException("preferences file"));
 
-        String fullPath = getConfigPath() + path + File.separator + "prefs.js";
+        final String fullPath;
+        if (isRelativePath) {
+            fullPath = getConfigPath() + path + File.separator + "prefs.js";
+        } else {
+            fullPath = path;
+        }
         LOG.info("Found preferences file: ", fullPath);
         return new File(fullPath);
     }
