@@ -1,5 +1,7 @@
 package com.openwebstart.os.mac;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.net.URL;
 
 import org.junit.jupiter.api.Test;
@@ -15,14 +17,14 @@ class ScriptFactoryTest {
 		final JNLPFileFactory f = new JNLPFileFactory();
 		final URL jnlpUrl = this.getClass().getClassLoader()
 				.getResource("com/openwebstart/jnlp/with-http-location.jnlp");
-		assert jnlpUrl != null;
+		assertTrue(jnlpUrl != null);
 
 		final JNLPFile jnlp = f.create(jnlpUrl);
-		assert jnlp != null;
-		assert "http://localhost/jnlp.jnlp".equals(jnlp.getSourceLocation().toString());
+		assertTrue(jnlp != null);
+		assertTrue("http://localhost/jnlp.jnlp".equals(jnlp.getSourceLocation().toString()));
 
 		final String script = ScriptFactory.createSimpleStartScriptForMac(jnlp);
-		assert script.contains("open \"jnlp://localhost/jnlp.jnlp\"");
+		assertTrue(script.contains("open \"jnlp://localhost/jnlp.jnlp\""));
 	}
 
 	@Test
@@ -30,14 +32,14 @@ class ScriptFactoryTest {
 		final JNLPFileFactory f = new JNLPFileFactory();
 		final URL jnlpUrl = this.getClass().getClassLoader()
 				.getResource("com/openwebstart/jnlp/with-https-location.jnlp");
-		assert jnlpUrl != null;
+		assertTrue(jnlpUrl != null);
 
 		final JNLPFile jnlp = f.create(jnlpUrl);
-		assert jnlp != null;
-		assert "https://localhost/jnlp.jnlp".equals(jnlp.getSourceLocation().toString());
+		assertTrue(jnlp != null);
+		assertTrue("https://localhost/jnlp.jnlp".equals(jnlp.getSourceLocation().toString()));
 
 		final String script = ScriptFactory.createSimpleStartScriptForMac(jnlp);
-		assert script.contains("open \"jnlps://localhost/jnlp.jnlp\"");
+		assertTrue(script.contains("open \"jnlps://localhost/jnlp.jnlp\""));
 	}
 
 	@Test
@@ -45,13 +47,13 @@ class ScriptFactoryTest {
 		final JNLPFileFactory f = new JNLPFileFactory();
 		final URL jnlpUrl = this.getClass().getClassLoader()
 				.getResource("com/openwebstart/jnlp/with-file-location.jnlp");
-		assert jnlpUrl != null;
+		assertTrue(jnlpUrl != null);
 
 		final JNLPFile jnlp = f.create(jnlpUrl);
-		assert jnlp != null;
-		assert "file:/path/jnlp.jnlp".equals(jnlp.getSourceLocation().toString());
+		assertTrue(jnlp != null);
+		assertTrue("file:/path/jnlp.jnlp".equals(jnlp.getSourceLocation().toString()));
 
 		final String script = ScriptFactory.createSimpleStartScriptForMac(jnlp);
-		assert script.contains("open \"file:/path/jnlp.jnlp\"");
+		assertTrue(script.contains("open \"file:/path/jnlp.jnlp\""));
 	}
 }
