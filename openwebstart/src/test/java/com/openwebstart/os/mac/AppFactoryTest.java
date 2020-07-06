@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -30,6 +32,22 @@ public final class AppFactoryTest extends Object {
 	private final static String userHome = "/tmp/dummy";
 	private final static String userCache = "/tmp/dummy/.cache";
 
+	@BeforeEach
+	public void beforeEach() throws Exception {
+		System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
+		assertTrue(userHome.equals(JavaSystemProperties.getUserHome()));
+		updateCacheHome(userCache);
+		assertTrue(userCache.equals(FilesystemConfiguration.getCacheHome()));
+	}
+
+	@AfterAll
+	void restoreOrigins() throws Exception {
+		System.setProperty(JavaSystemPropertiesConstants.USER_HOME, originUserHome);
+		assert originUserHome.equals(JavaSystemProperties.getUserHome());
+		updateCacheHome(originCacheHome);
+		assert originCacheHome.equals(FilesystemConfiguration.getCacheHome());
+	}
+	
 	@Test
 	@EnabledOnOs(OS.MAC)
 	public void testCreateApp() throws Exception {
@@ -37,34 +55,25 @@ public final class AppFactoryTest extends Object {
 		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
 		assertTrue(new File(userHome).exists() == false);
 
-		try {
-			System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
-			assertTrue(userHome.equals(JavaSystemProperties.getUserHome()));
-			updateCacheHome(userCache);
-			assertTrue(userCache.equals(FilesystemConfiguration.getCacheHome()));
+		final String appName = "MyFirstApp";
 
-			final String appName = "MyFirstApp";
+		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
 
-			final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
+		AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
 
-			AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
+		assertTrue(Files.exists(Paths.get(userHome)));
+		assertTrue(Files.exists(Paths.get(userCache)));
+		assertTrue(Files.exists(Paths.get(userCache, "applications")));
+		assertTrue(Files.exists(Paths.get(userCache, "applications", appNameWithSuffix)));
 
-			assertTrue(Files.exists(Paths.get(userHome)));
-			assertTrue(Files.exists(Paths.get(userCache)));
-			assertTrue(Files.exists(Paths.get(userCache, "applications")));
-			assertTrue(Files.exists(Paths.get(userCache, "applications", appNameWithSuffix)));
+		assertTrue(Files.exists(Paths.get(userHome, "Applications")));
+		final Path link = Paths.get(userHome, "Applications", appNameWithSuffix);
+		assertTrue(Files.exists(link));
+		assertTrue(Files.isSymbolicLink(link));
+		assertTrue(link.toRealPath().equals(Paths.get(userCache, "applications", appNameWithSuffix).toRealPath()));
 
-			assertTrue(Files.exists(Paths.get(userHome, "Applications")));
-			final Path link = Paths.get(userHome, "Applications", appNameWithSuffix);
-			assertTrue(Files.exists(link));
-			assertTrue(Files.isSymbolicLink(link));
-			assertTrue(link.toRealPath().equals(Paths.get(userCache, "applications", appNameWithSuffix).toRealPath()));
-
-			// do it again
-			AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
-		} finally {
-			restoreOrigins();
-		}
+		// do it again
+		AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
 	}
 
 	@Test
@@ -76,56 +85,47 @@ public final class AppFactoryTest extends Object {
 		final String appName = "MyFirstApp";
 		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
 
-		try {
-			System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
-			assertTrue(userHome.equals(JavaSystemProperties.getUserHome()));
-			updateCacheHome(userCache);
-			assertTrue(userCache.equals(FilesystemConfiguration.getCacheHome()));
+		assertTrue(AppFactory.desktopLinkExists(appName) == false);
 
+		final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop");
+		Files.createDirectories(desktop);
+		assertTrue(Files.isDirectory(desktop));
+
+		final Path link = desktop.resolve(appNameWithSuffix);
+
+		{ // regular file
+			assertTrue(Files.exists(link) == false);
+			Files.createFile(link);
+			assertTrue(Files.exists(link) == true);
 			assertTrue(AppFactory.desktopLinkExists(appName) == false);
+			Files.delete(link);
+		}
 
-			final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop");
-			Files.createDirectories(desktop);
-			assertTrue(Files.isDirectory(desktop));
+		{ // directory
+			assertTrue(Files.exists(link) == false);
+			Files.createDirectories(link);
+			assertTrue(Files.isDirectory(link) == true);
+			assertTrue(AppFactory.desktopLinkExists(appName) == false);
+			Files.delete(link);
+		}
 
-			final Path link = desktop.resolve(appNameWithSuffix);
+		final Path appRoot = AppFactory.createAppWithoutMenuEntry(appName, appNameWithSuffix,
+				IcnsFactorySample.class.getResource("icon.png").getFile()).toPath();
 
-			{ // regular file
-				assertTrue(Files.exists(link) == false);
-				Files.createFile(link);
-				assertTrue(Files.exists(link) == true);
-				assertTrue(AppFactory.desktopLinkExists(appName) == false);
-				Files.delete(link);
-			}
+		{ // wrong link
+			assertTrue(Files.exists(link) == false);
+			Files.createSymbolicLink(link, appRoot.resolve(AppFactory.CONTENTS_FOLDER_NAME));
+			assertTrue(Files.isSymbolicLink(link) == true);
+			assertTrue(AppFactory.desktopLinkExists(appName) == false);
+			Files.delete(link);
+		}
 
-			{ // directory
-				assertTrue(Files.exists(link) == false);
-				Files.createDirectories(link);
-				assertTrue(Files.isDirectory(link) == true);
-				assertTrue(AppFactory.desktopLinkExists(appName) == false);
-				Files.delete(link);
-			}
-
-			final Path appRoot = AppFactory.createAppWithoutMenuEntry(appName, appNameWithSuffix,
-					IcnsFactorySample.class.getResource("icon.png").getFile()).toPath();
-
-			{ // wrong link
-				assertTrue(Files.exists(link) == false);
-				Files.createSymbolicLink(link, appRoot.resolve(AppFactory.CONTENTS_FOLDER_NAME));
-				assertTrue(Files.isSymbolicLink(link) == true);
-				assertTrue(AppFactory.desktopLinkExists(appName) == false);
-				Files.delete(link);
-			}
-
-			{ // wrong link
-				assertTrue(Files.exists(link) == false);
-				Files.createSymbolicLink(link, appRoot);
-				assertTrue(Files.isSymbolicLink(link) == true);
-				assertTrue(AppFactory.desktopLinkExists(appName) == true);
-				Files.delete(link);
-			}
-		} finally {
-			restoreOrigins();
+		{ // wrong link
+			assertTrue(Files.exists(link) == false);
+			Files.createSymbolicLink(link, appRoot);
+			assertTrue(Files.isSymbolicLink(link) == true);
+			assertTrue(AppFactory.desktopLinkExists(appName) == true);
+			Files.delete(link);
 		}
 	}
 
@@ -138,32 +138,16 @@ public final class AppFactoryTest extends Object {
 		final String appName = "MyFirstApp";
 		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
 
-		try {
-			System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
-			assertTrue(userHome.equals(JavaSystemProperties.getUserHome()));
-			updateCacheHome(userCache);
-			assertTrue(userCache.equals(FilesystemConfiguration.getCacheHome()));
+		final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop");
+		Files.createDirectories(desktop);
+		assertTrue(Files.isDirectory(desktop));
 
-			final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop");
-			Files.createDirectories(desktop);
-			assertTrue(Files.isDirectory(desktop));
+		final Path link = desktop.resolve(appNameWithSuffix);
+		assertTrue(Files.exists(link) == false);
 
-			final Path link = desktop.resolve(appNameWithSuffix);
-			assertTrue(Files.exists(link) == false);
+		AppFactory.createDesktopLink(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
 
-			AppFactory.createDesktopLink(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
-
-			assertTrue(Files.isSymbolicLink(link));
-		} finally {
-			restoreOrigins();
-		}
-	}
-
-	private final static void restoreOrigins() throws Exception {
-		System.setProperty(JavaSystemPropertiesConstants.USER_HOME, originUserHome);
-		assert originUserHome.equals(JavaSystemProperties.getUserHome());
-		updateCacheHome(originCacheHome);
-		assert originCacheHome.equals(FilesystemConfiguration.getCacheHome());
+		assertTrue(Files.isSymbolicLink(link));
 	}
 
 	@SuppressWarnings("unchecked")
