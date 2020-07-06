@@ -39,21 +39,17 @@ public class ScriptFactory
         return SCRIPT_START + System.lineSeparator() + "open -a " + executable + " " + jnlpLocation;
     }
 
-    public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) 
-    {
-    	final URL 		srcUrl = jnlpFile.getSourceLocation();
-    	final String	schema = srcUrl.getProtocol();
-    	final String	url;
-   		if ( "http".equalsIgnoreCase(schema) || "https".equalsIgnoreCase(schema) )
-   		{
-   			url = "jnlp" + srcUrl.toString().substring( 4 );
-    	}
-   		else
-   		{
-   			url = srcUrl.toString();
-   		}
-        return SCRIPT_START + System.lineSeparator() + "open \"" + url + "\"";
-    }
+	public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) {
+		final URL srcUrl = jnlpFile.getSourceLocation();
+		final String schema = srcUrl.getProtocol();
+		final String url;
+		if ("http".equalsIgnoreCase(schema) || "https".equalsIgnoreCase(schema)) {
+			url = "jnlp" + srcUrl.toString().substring(4);
+		} else {
+			url = srcUrl.toString();
+		}
+		return SCRIPT_START + System.lineSeparator() + "open \"" + url + "\"";
+	}
 
     public static Process createStartProcess(final JNLPFile jnlpFile) throws IOException {
         final String executable = "\"" + Install4JUtils.installationDirectory()

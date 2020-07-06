@@ -59,93 +59,82 @@ public class AppFactory {
         return appPackage.exists();
     }
 
-    public static void createApp
-    (
-    	final String name, final String script, final String... iconPaths
-    ) 
-    	throws Exception 
-    {
-    	final File appPackage = createAppWithoutMenuEntry(name, script, iconPaths);
-    	
-        final Path linkFolder = ensureUserApplicationFolder();
-        final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
-        if ( Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS) )
-        {
-        	Files.delete(appLinkPath);
-        }
-        Files.createSymbolicLink(appLinkPath, appPackage.toPath());
-    }
+	public static void createApp(final String name, final String script, final String... iconPaths) throws Exception {
+		final File appPackage = createAppWithoutMenuEntry(name, script, iconPaths);
 
-    final static File createAppWithoutMenuEntry
-    (
-    	final String name, final String script, final String... iconPaths
-    ) 
-    	throws Exception 
-    {
-        Assert.requireNonBlank(name, "name");
-        Assert.requireNonBlank(script, "script");
+		final Path linkFolder = ensureUserApplicationFolder();
+		final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
+		if (Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS)) {
+			Files.delete(appLinkPath);
+		}
+		Files.createSymbolicLink(appLinkPath, appPackage.toPath());
+	}
 
-        LOG.info("Creating app '{}'", name);
+	final static File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
+			throws Exception {
+		Assert.requireNonBlank(name, "name");
+		Assert.requireNonBlank(script, "script");
 
-        final Path applicationsFolder = ensureUserApplicationCacheFolder();
-        final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
-        if( !appPackage.exists() ) 
-        {
-        	if(!appPackage.mkdirs()) 
-        	{
-        		throw new IOException("Cannot create app directory");
-        	}
-        }
-        LOG.debug("App '{}' will be placed at '{}'", name, appPackage);
+		LOG.info("Creating app '{}'", name);
 
-        final File contentsFolder = new File(appPackage, CONTENTS_FOLDER_NAME);
-        FileUtils.recursiveDelete(contentsFolder, appPackage);
-        if(!contentsFolder.mkdirs()) {
-            throw new IOException("Cannot create contents directory");
-        }
-        LOG.debug("Folder '{}' for app '{}' created", CONTENTS_FOLDER_NAME, name);
+		final Path applicationsFolder = ensureUserApplicationCacheFolder();
+		final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
+		if (!appPackage.exists()) {
+			if (!appPackage.mkdirs()) {
+				throw new IOException("Cannot create app directory");
+			}
+		}
+		LOG.debug("App '{}' will be placed at '{}'", name, appPackage);
 
-        final File resourcesFolder = new File(contentsFolder, RESOURCES_FOLDER_NAME);
-        if(!resourcesFolder.mkdirs()) {
-            throw new IOException("Cannot create resources directory");
-        }
-        LOG.debug("Folder '{}' for app '{}' created", RESOURCES_FOLDER_NAME, name);
+		final File contentsFolder = new File(appPackage, CONTENTS_FOLDER_NAME);
+		FileUtils.recursiveDelete(contentsFolder, appPackage);
+		if (!contentsFolder.mkdirs()) {
+			throw new IOException("Cannot create contents directory");
+		}
+		LOG.debug("Folder '{}' for app '{}' created", CONTENTS_FOLDER_NAME, name);
 
-        final File macFolder = new File(contentsFolder, MAC_OS_FOLDER_NAME);
-        if(!macFolder.mkdirs()) {
-            throw new IOException("Cannot create macOs directory");
-        }
-        LOG.debug("Folder '{}' for app '{}' created", MAC_OS_FOLDER_NAME, name);
+		final File resourcesFolder = new File(contentsFolder, RESOURCES_FOLDER_NAME);
+		if (!resourcesFolder.mkdirs()) {
+			throw new IOException("Cannot create resources directory");
+		}
+		LOG.debug("Folder '{}' for app '{}' created", RESOURCES_FOLDER_NAME, name);
 
-        final File iconsFile = new File(resourcesFolder, ICON_FILE_NAME + ICON_FILE_EXTENSION);
-        try(final InputStream inputStream = getIcnsInputStream(iconPaths); final FileOutputStream outputStream = new FileOutputStream(iconsFile)) {
-            IOUtils.copy(inputStream, outputStream);
-        }
-        LOG.debug("Iconfile for app '{}' created", name);
+		final File macFolder = new File(contentsFolder, MAC_OS_FOLDER_NAME);
+		if (!macFolder.mkdirs()) {
+			throw new IOException("Cannot create macOs directory");
+		}
+		LOG.debug("Folder '{}' for app '{}' created", MAC_OS_FOLDER_NAME, name);
 
+		final File iconsFile = new File(resourcesFolder, ICON_FILE_NAME + ICON_FILE_EXTENSION);
+		try (final InputStream inputStream = getIcnsInputStream(iconPaths);
+				final FileOutputStream outputStream = new FileOutputStream(iconsFile)) {
+			IOUtils.copy(inputStream, outputStream);
+		}
+		LOG.debug("Iconfile for app '{}' created", name);
 
-        final File infoFile = new File(contentsFolder, INFO_PLIST_NAME);
-        try(final InputStream inputStream = AppFactory.class.getResourceAsStream(INFO_PLIST_TEMPLATE_NAME)) {
-            final String infoContent = IOUtils.readContentAsUtf8String(inputStream)
-                    .replaceAll(Pattern.quote(SCRIPT_NAME_PROPERTY), SCRIPT_NAME)
-                    .replaceAll(Pattern.quote(ICON_FILE_PROPERTY), ICON_FILE_NAME);
-            try(final FileOutputStream outputStream = new FileOutputStream(infoFile)) {
-                IOUtils.writeUtf8Content(outputStream, infoContent);
-            }
-        }
-        LOG.debug("{} for app '{}' created", INFO_PLIST_NAME, name);
+		final File infoFile = new File(contentsFolder, INFO_PLIST_NAME);
+		try (final InputStream inputStream = AppFactory.class.getResourceAsStream(INFO_PLIST_TEMPLATE_NAME)) {
+			final String infoContent = IOUtils.readContentAsUtf8String(inputStream)
+					.replaceAll(Pattern.quote(SCRIPT_NAME_PROPERTY), SCRIPT_NAME)
+					.replaceAll(Pattern.quote(ICON_FILE_PROPERTY), ICON_FILE_NAME);
+			try (final FileOutputStream outputStream = new FileOutputStream(infoFile)) {
+				IOUtils.writeUtf8Content(outputStream, infoContent);
+			}
+		}
+		LOG.debug("{} for app '{}' created", INFO_PLIST_NAME, name);
 
-        //TODO: Here we need to change the calculator sample to a concrete OpenWebStart call
-        final File scriptFile = new File(macFolder, SCRIPT_NAME);
-        try(final FileOutputStream outputStream = new FileOutputStream(scriptFile)) {
-            IOUtils.writeUtf8Content(outputStream, script);
-        }
-        if(!scriptFile.setExecutable(true)) {
-            throw new IOException("Cannot create script file");
-        }
-        LOG.debug("Script for app '{}' created", name);
-        return appPackage;
-    }
+		// TODO: Here we need to change the calculator sample to a concrete OpenWebStart
+		// call
+		final File scriptFile = new File(macFolder, SCRIPT_NAME);
+		try (final FileOutputStream outputStream = new FileOutputStream(scriptFile)) {
+			IOUtils.writeUtf8Content(outputStream, script);
+		}
+		if (!scriptFile.setExecutable(true)) {
+			throw new IOException("Cannot create script file");
+		}
+		LOG.debug("Script for app '{}' created", name);
+		return appPackage;
+	}
 
     private static InputStream getIcnsInputStream(final String... iconPaths) throws Exception {
         if(iconPaths == null || iconPaths.length == 0) {
@@ -167,70 +156,53 @@ public class AppFactory {
     	return appFolder.toPath();
     }
     
-    private final static Path ensureUserApplicationCacheFolder()
-    {
-    	final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), "applications");
-    	if ( !Files.isDirectory(appcache) )
-    	{
-    		try
-    		{
-    			Files.createDirectories(appcache);
-    		}
-    		catch( final IOException ioExc )
-    		{
-    			throw new RuntimeException("Could not create application cache directory [" + appcache + "]", ioExc); 
-    		}
-    	}
-    	return appcache;
-    }
+	private final static Path ensureUserApplicationCacheFolder() {
+		final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), "applications");
+		if (!Files.isDirectory(appcache)) {
+			try {
+				Files.createDirectories(appcache);
+			} catch (final IOException ioExc) {
+				throw new RuntimeException("Could not create application cache directory [" + appcache + "]", ioExc);
+			}
+		}
+		return appcache;
+	}
     
     final static Path getApplicationRootInCache( final String name )
     {
     	return Paths.get(FilesystemConfiguration.getCacheHome(), "applications", name + APP_EXTENSION );
     }
     
-    public final static boolean desktopLinkExists( final String appname )
-    {
-        Assert.requireNonBlank(appname, "appname");
-        final Path cache = getApplicationRootInCache(appname);
-        if ( Files.isDirectory(cache) )
-        {
-        	final Path link = getDesktopLink(appname);
-        	if ( Files.isSymbolicLink(link) )
-        	{
-        		try
-        		{
-            		final Path linkRealPath = link.toRealPath();
-            		return cache.toRealPath().equals(linkRealPath);
-        		}
-        		catch( final Exception e )
-        		{
-        			/* ignore this error */
-        		}
-        	}	
-        }
-        return false;
-    }
+	public final static boolean desktopLinkExists(final String appname) {
+		Assert.requireNonBlank(appname, "appname");
+		final Path cache = getApplicationRootInCache(appname);
+		if (Files.isDirectory(cache)) {
+			final Path link = getDesktopLink(appname);
+			if (Files.isSymbolicLink(link)) {
+				try {
+					final Path linkRealPath = link.toRealPath();
+					return cache.toRealPath().equals(linkRealPath);
+				} catch (final Exception e) {
+					/* ignore this error */
+				}
+			}
+		}
+		return false;
+	}
 
-    public final static void createDesktopLink
-    (
-       	final String appname, final String script, final String... iconPaths
-    ) 
-       	throws Exception 
-    {
-        Assert.requireNonBlank(appname, "appname");
-        if ( !desktopLinkExists(appname) )
-        {
-            final Path approot = getApplicationRootInCache(appname);
-            if ( !Files.isDirectory(approot) )
-            {
-            	createAppWithoutMenuEntry(appname, script, iconPaths);
-            }
-            final Path link = getDesktopLink(appname);
-        	Files.deleteIfExists(link);
-        	Files.createSymbolicLink(link, approot);
-        }	
-    }
+	public final static void createDesktopLink(final String appname, final String script, final String... iconPaths)
+			throws Exception {
+		Assert.requireNonBlank(appname, "appname");
+		if (!desktopLinkExists(appname)) {
+			final Path approot = getApplicationRootInCache(appname);
+			if (!Files.isDirectory(approot)) {
+				createAppWithoutMenuEntry(appname, script, iconPaths);
+			}
+			final Path link = getDesktopLink(appname);
+			Files.deleteIfExists(link);
+			Files.createSymbolicLink(link, approot);
+		}
+	}
 
     private final static Path getDesktopLink(final String appname)
     {

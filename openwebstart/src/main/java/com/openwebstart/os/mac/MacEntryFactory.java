@@ -37,16 +37,14 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     	createDesktopEntry(file);    
     }
 
-    @Override
-    public void createDesktopEntry(final JNLPFile file) 
-    	throws Exception
-    {
-        final String name = file.getShortcutName();
-        final String script = ScriptFactory.createStartScript(file);
-        final String[] icons = getIcons(file);
-    	
-        AppFactory.createDesktopLink(name, script, icons);
-    }
+	@Override
+	public void createDesktopEntry(final JNLPFile file) throws Exception {
+		final String name = file.getShortcutName();
+		final String script = ScriptFactory.createStartScript(file);
+		final String[] icons = getIcons(file);
+
+		AppFactory.createDesktopLink(name, script, icons);
+	}
 
     @Override
     public boolean existsDesktopEntry(final JNLPFile file) 
