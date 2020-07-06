@@ -45,9 +45,10 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file) {
-        throw new RuntimeException("not implemented yet!");
-        // not implemented
+    public void updateMenuEntry(final JNLPFile file)
+    	throws Exception
+    {
+    	this.createMenuEntry(file);
     }
 
     @Override

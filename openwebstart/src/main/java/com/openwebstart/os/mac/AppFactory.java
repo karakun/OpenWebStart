@@ -1,22 +1,28 @@
 package com.openwebstart.os.mac;
 
-import com.openwebstart.os.mac.icns.IcnsFactory;
-import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.openwebstart.os.mac.icns.IcnsFactory;
+
+import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.config.FilesystemConfiguration;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 public class AppFactory {
 
@@ -34,7 +40,7 @@ public class AppFactory {
 
     private final static String INFO_PLIST_TEMPLATE_NAME = "Info.plist.template";
 
-    private final static String APP_EXTENSION = ".app";
+    public  final static String APP_EXTENSION = ".app";
 
     private final static String SCRIPT_NAME = "start.sh";
 
@@ -46,11 +52,9 @@ public class AppFactory {
 
     private final static String ICON_FILE_EXTENSION = ".icns";
 
-    private final static String APPLICATIONS_FOLDER = "/Applications";
-
     public static boolean exists(final String name) {
         Assert.requireNonBlank(name, "name");
-        final Path applicationsFolder = Paths.get(APPLICATIONS_FOLDER);
+        final Path applicationsFolder = ensureUserApplicationFolder(); 
         final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
         return appPackage.exists();
     }
@@ -61,18 +65,19 @@ public class AppFactory {
 
         LOG.info("Creating app '{}'", name);
 
-        final Path applicationsFolder = Paths.get(APPLICATIONS_FOLDER);
-
+        final Path applicationsFolder = ensureUserApplicationCacheFolder();
         final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
-        if(appPackage.exists()) {
-            throw new IllegalArgumentException("App with name " + name + " already exists!");
-        }
-        if(!appPackage.mkdirs()) {
-            throw new IOException("Cannot create app directory");
+        if( !appPackage.exists() ) 
+        {
+        	if(!appPackage.mkdirs()) 
+        	{
+        		throw new IOException("Cannot create app directory");
+        	}
         }
         LOG.debug("App '{}' will be placed at '{}'", name, appPackage);
 
         final File contentsFolder = new File(appPackage, CONTENTS_FOLDER_NAME);
+        FileUtils.recursiveDelete(contentsFolder, appPackage);
         if(!contentsFolder.mkdirs()) {
             throw new IOException("Cannot create contents directory");
         }
@@ -117,6 +122,14 @@ public class AppFactory {
             throw new IOException("Cannot create script file");
         }
         LOG.debug("Script for app '{}' created", name);
+        
+        final Path linkFolder = ensureUserApplicationFolder();
+        final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
+        if ( Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS) )
+        {
+        	Files.delete(appLinkPath);
+        }
+        Files.createSymbolicLink(appLinkPath, appPackage.toPath());
     }
 
     private static InputStream getIcnsInputStream(final String... iconPaths) throws Exception {
@@ -128,4 +141,31 @@ public class AppFactory {
         return new FileInputStream(factory.createIconSet(iconFiles));
     }
 
+    private final static Path ensureUserApplicationFolder()
+    {
+    	final String userHome = JavaSystemProperties.getUserHome();
+    	final File appFolder = new File( new File(userHome), "Applications");
+    	if ( !appFolder.exists() )
+    	{
+    		appFolder.mkdir();
+    	}	
+    	return appFolder.toPath();
+    }
+    
+    private final static Path ensureUserApplicationCacheFolder()
+    {
+    	final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), "applications");
+    	if ( !Files.isDirectory(appcache) )
+    	{
+    		try
+    		{
+    			Files.createDirectories(appcache);
+    		}
+    		catch( final IOException ioExc )
+    		{
+    			throw new RuntimeException("Could not create application cache directory [" + appcache + "]", ioExc); 
+    		}
+    	}
+    	return appcache;
+    }
 }
