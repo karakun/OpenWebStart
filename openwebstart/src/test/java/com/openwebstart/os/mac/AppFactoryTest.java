@@ -36,7 +36,7 @@ public final class AppFactoryTest extends Object {
 		}
 
 		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
-		assert new File(userHome).exists() == false;
+		assertTrue(new File(userHome).exists() == false);
 
 		try {
 			System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
