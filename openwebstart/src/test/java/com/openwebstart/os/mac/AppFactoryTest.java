@@ -41,7 +41,7 @@ public final class AppFactoryTest extends Object {
 	}
 
 	@AfterAll
-	void restoreOrigins() throws Exception {
+	static void restoreOrigins() throws Exception {
 		System.setProperty(JavaSystemPropertiesConstants.USER_HOME, originUserHome);
 		assert originUserHome.equals(JavaSystemProperties.getUserHome());
 		updateCacheHome(originCacheHome);
