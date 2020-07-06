@@ -10,8 +10,9 @@ import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
-import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.os.mac.icns.IcnsFactorySample;
 
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
@@ -30,10 +31,8 @@ public final class AppFactoryTest extends Object {
 	private final static String userCache = "/tmp/dummy/.cache";
 
 	@Test
+	@EnabledOnOs(OS.MAC)
 	public void testCreateApp() throws Exception {
-		if (!OperationSystem.getLocalSystem().equals(OperationSystem.MAC64)) {
-			return;
-		}
 
 		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
 		assertTrue(new File(userHome).exists() == false);
@@ -69,11 +68,8 @@ public final class AppFactoryTest extends Object {
 	}
 
 	@Test
+	@EnabledOnOs(OS.MAC)
 	public void testDesktopLinkExists() throws Exception {
-		if (!OperationSystem.getLocalSystem().equals(OperationSystem.MAC64)) {
-			return;
-		}
-
 		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
 		assertTrue(new File(userHome).exists() == false);
 
@@ -134,11 +130,8 @@ public final class AppFactoryTest extends Object {
 	}
 
 	@Test
+	@EnabledOnOs(OS.MAC)
 	public void testCreateDesktopLink() throws Exception {
-		if (!OperationSystem.getLocalSystem().equals(OperationSystem.MAC64)) {
-			return;
-		}
-
 		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
 		assertTrue(new File(userHome).exists() == false);
 
