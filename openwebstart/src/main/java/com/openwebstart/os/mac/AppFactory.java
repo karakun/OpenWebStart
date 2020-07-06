@@ -30,7 +30,7 @@ public class AppFactory {
 
 
 
-    private final static String CONTENTS_FOLDER_NAME = "Contents";
+    public  final static String CONTENTS_FOLDER_NAME = "Contents";
 
     private final static String MAC_OS_FOLDER_NAME = "MacOS";
 
@@ -59,7 +59,29 @@ public class AppFactory {
         return appPackage.exists();
     }
 
-    public static void createApp(final String name, final String script, final String... iconPaths) throws Exception {
+    public static void createApp
+    (
+    	final String name, final String script, final String... iconPaths
+    ) 
+    	throws Exception 
+    {
+    	final File appPackage = createAppWithoutMenuEntry(name, script, iconPaths);
+    	
+        final Path linkFolder = ensureUserApplicationFolder();
+        final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
+        if ( Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS) )
+        {
+        	Files.delete(appLinkPath);
+        }
+        Files.createSymbolicLink(appLinkPath, appPackage.toPath());
+    }
+
+    final static File createAppWithoutMenuEntry
+    (
+    	final String name, final String script, final String... iconPaths
+    ) 
+    	throws Exception 
+    {
         Assert.requireNonBlank(name, "name");
         Assert.requireNonBlank(script, "script");
 
@@ -122,14 +144,7 @@ public class AppFactory {
             throw new IOException("Cannot create script file");
         }
         LOG.debug("Script for app '{}' created", name);
-        
-        final Path linkFolder = ensureUserApplicationFolder();
-        final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
-        if ( Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS) )
-        {
-        	Files.delete(appLinkPath);
-        }
-        Files.createSymbolicLink(appLinkPath, appPackage.toPath());
+        return appPackage;
     }
 
     private static InputStream getIcnsInputStream(final String... iconPaths) throws Exception {
@@ -167,5 +182,58 @@ public class AppFactory {
     		}
     	}
     	return appcache;
+    }
+    
+    final static Path getApplicationRootInCache( final String name )
+    {
+    	return Paths.get(FilesystemConfiguration.getCacheHome(), "applications", name + APP_EXTENSION );
+    }
+    
+    public final static boolean desktopLinkExists( final String appname )
+    {
+        Assert.requireNonBlank(appname, "appname");
+        final Path cache = getApplicationRootInCache(appname);
+        if ( Files.isDirectory(cache) )
+        {
+        	final Path link = getDesktopLink(appname);
+        	if ( Files.isSymbolicLink(link) )
+        	{
+        		try
+        		{
+            		final Path linkRealPath = link.toRealPath();
+            		return cache.toRealPath().equals(linkRealPath);
+        		}
+        		catch( final Exception e )
+        		{
+        			/* ignore this error */
+        		}
+        	}	
+        }
+        return false;
+    }
+
+    public final static void createDesktopLink
+    (
+       	final String appname, final String script, final String... iconPaths
+    ) 
+       	throws Exception 
+    {
+        Assert.requireNonBlank(appname, "appname");
+        if ( !desktopLinkExists(appname) )
+        {
+            final Path approot = getApplicationRootInCache(appname);
+            if ( !Files.isDirectory(approot) )
+            {
+            	createAppWithoutMenuEntry(appname, script, iconPaths);
+            }
+            final Path link = getDesktopLink(appname);
+        	Files.deleteIfExists(link);
+        	Files.createSymbolicLink(link, approot);
+        }	
+    }
+
+    private final static Path getDesktopLink(final String appname)
+    {
+    	return Paths.get(JavaSystemProperties.getUserHome(), "Desktop", appname + APP_EXTENSION );
     }
 }

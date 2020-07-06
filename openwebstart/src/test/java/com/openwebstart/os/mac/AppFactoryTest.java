@@ -75,6 +75,118 @@ public final class AppFactoryTest
 		}
 	}
 
+	@Test
+	public void testDesktopLinkExists() 
+		throws Exception
+	{
+		if ( !OperationSystem.getLocalSystem().equals(OperationSystem.MAC64) )
+		{
+			return;
+		}
+
+		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
+		assert new File(userHome).exists()==false;
+
+		final String appName = "MyFirstApp";
+		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
+		
+		try
+		{
+	    	System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
+	    	assert userHome.equals(JavaSystemProperties.getUserHome());
+	    	updateCacheHome(userCache);
+	    	assert userCache.equals(FilesystemConfiguration.getCacheHome());
+	    	
+			assert AppFactory.desktopLinkExists(appName)==false;
+			
+			final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop" );
+			Files.createDirectories(desktop);
+			assert Files.isDirectory(desktop);
+			
+			final Path link = desktop.resolve( appNameWithSuffix );
+		
+			{	// regular file 
+				assert Files.exists(link)==false;
+				Files.createFile(link);
+				assert Files.exists(link)==true;
+				assert AppFactory.desktopLinkExists(appName)==false;
+				Files.delete(link);
+			}
+			
+			{	// directory 
+				assert Files.exists(link)==false;
+				Files.createDirectories(link);
+				assert Files.isDirectory(link)==true;
+				assert AppFactory.desktopLinkExists(appName)==false;
+				Files.delete(link);
+			}
+			
+			final Path appRoot = AppFactory.createAppWithoutMenuEntry
+			(
+				appName, appNameWithSuffix, IcnsFactorySample.class.getResource("icon.png").getFile()
+			).toPath();
+
+			{	// wrong link 
+				assert Files.exists(link)==false;
+				Files.createSymbolicLink(link, appRoot.resolve(AppFactory.CONTENTS_FOLDER_NAME));
+				assert Files.isSymbolicLink(link)==true;
+				assert AppFactory.desktopLinkExists(appName)==false;
+				Files.delete(link);
+			}
+
+			{	// wrong link 
+				assert Files.exists(link)==false;
+				Files.createSymbolicLink(link, appRoot);
+				assert Files.isSymbolicLink(link)==true;
+				assert AppFactory.desktopLinkExists(appName)==true;
+				Files.delete(link);
+			}
+		}
+		finally
+		{
+			restoreOrigins();
+		}
+	}
+
+	@Test
+	public void testCreateDesktopLink() 
+		throws Exception
+	{
+		if ( !OperationSystem.getLocalSystem().equals(OperationSystem.MAC64) )
+		{
+			return;
+		}
+
+		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
+		assert new File(userHome).exists()==false;
+
+		final String appName = "MyFirstApp";
+		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
+		
+		try
+		{
+	    	System.setProperty(JavaSystemPropertiesConstants.USER_HOME, userHome);
+	    	assert userHome.equals(JavaSystemProperties.getUserHome());
+	    	updateCacheHome(userCache);
+	    	assert userCache.equals(FilesystemConfiguration.getCacheHome());
+
+			final Path desktop = Paths.get(JavaSystemProperties.getUserHome(), "Desktop" );
+			Files.createDirectories(desktop);
+			assert Files.isDirectory(desktop);		
+			
+			final Path link = desktop.resolve(appNameWithSuffix);
+			assert Files.exists(link)==false;
+			
+			AppFactory.createDesktopLink(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
+			
+			assert Files.isSymbolicLink(link);
+		}
+		finally
+		{
+			restoreOrigins();
+		}
+	}
+	
 	private final static void restoreOrigins()
 		throws Exception
 	{

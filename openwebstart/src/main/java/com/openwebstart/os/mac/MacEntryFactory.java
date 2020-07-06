@@ -25,23 +25,33 @@ import java.util.stream.Collectors;
 public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
-    public boolean supportsDesktopEntry() {
-        return false;
+    public boolean supportsDesktopEntry() 
+    {
+        return true;
     }
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file) {
-        throw new RuntimeException("Operation not supported");
+    public void updateDesktopEntry(final JNLPFile file)
+    	throws Exception 
+    {
+    	createDesktopEntry(file);    
     }
 
     @Override
-    public void createDesktopEntry(final JNLPFile file) {
-        throw new RuntimeException("Operation not supported");
+    public void createDesktopEntry(final JNLPFile file) 
+    	throws Exception
+    {
+        final String name = file.getShortcutName();
+        final String script = ScriptFactory.createStartScript(file);
+        final String[] icons = getIcons(file);
+    	
+        AppFactory.createDesktopLink(name, script, icons);
     }
 
     @Override
-    public boolean existsDesktopEntry(final JNLPFile file) {
-        return false;
+    public boolean existsDesktopEntry(final JNLPFile file) 
+    {
+        return AppFactory.desktopLinkExists(file.getShortcutName());
     }
 
     @Override
