@@ -7,6 +7,7 @@ import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,11 @@ import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
  * argument arrangement.
  */
 public class OpenWebStartLauncher {
+
+    static {
+        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePostfix("ows-stage1");
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
