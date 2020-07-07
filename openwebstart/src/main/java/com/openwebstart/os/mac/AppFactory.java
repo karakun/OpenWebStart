@@ -51,6 +51,12 @@ public class AppFactory {
     private final static String ICON_FILE_NAME = "icons";
 
     private final static String ICON_FILE_EXTENSION = ".icns";
+    
+    private final static String USER_APPLICATIONS_FOLDER = "Applications";
+
+    private final static String USER_APPLICATIONS_CACHE_FOLDER = "applications";
+    
+    private final static String USER_DESKTOP = "Desktop";
 
     public static boolean exists(final String name) {
         Assert.requireNonBlank(name, "name");
@@ -148,7 +154,7 @@ public class AppFactory {
     private final static Path ensureUserApplicationFolder()
     {
     	final String userHome = JavaSystemProperties.getUserHome();
-    	final File appFolder = new File( new File(userHome), "Applications");
+    	final File appFolder = new File( new File(userHome), USER_APPLICATIONS_FOLDER);
     	if ( !appFolder.exists() )
     	{
     		appFolder.mkdir();
@@ -157,7 +163,7 @@ public class AppFactory {
     }
     
 	private final static Path ensureUserApplicationCacheFolder() {
-		final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), "applications");
+		final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER);
 		if (!Files.isDirectory(appcache)) {
 			try {
 				Files.createDirectories(appcache);
@@ -170,7 +176,7 @@ public class AppFactory {
     
     final static Path getApplicationRootInCache( final String name )
     {
-    	return Paths.get(FilesystemConfiguration.getCacheHome(), "applications", name + APP_EXTENSION );
+    	return Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER, name + APP_EXTENSION );
     }
     
 	public final static boolean desktopLinkExists(final String appname) {
@@ -206,6 +212,6 @@ public class AppFactory {
 
     private final static Path getDesktopLink(final String appname)
     {
-    	return Paths.get(JavaSystemProperties.getUserHome(), "Desktop", appname + APP_EXTENSION );
+    	return Paths.get(JavaSystemProperties.getUserHome(), USER_DESKTOP, appname + APP_EXTENSION );
     }
 }
