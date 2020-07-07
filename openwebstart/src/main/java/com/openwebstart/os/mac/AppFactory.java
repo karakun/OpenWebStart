@@ -189,7 +189,7 @@ public class AppFactory {
 					final Path linkRealPath = link.toRealPath();
 					return cache.toRealPath().equals(linkRealPath);
 				} catch (final Exception e) {
-					/* ignore this error */
+					LOG.debug("Coluld not verify desktop link [" + link + "]", e);
 				}
 			}
 		}
