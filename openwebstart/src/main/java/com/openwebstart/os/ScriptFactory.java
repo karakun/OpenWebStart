@@ -14,6 +14,10 @@ public class ScriptFactory
     private final static String SCRIPT_START = "#!/bin/sh";
 
     private static final String JAVA_WS_NAME = "javaws";
+    
+    private static final String HTTP		 = "http";
+    private static final String HTTPS		 = "https";
+    private static final String JNLP		 = "jnlp";
 
     public static String createStartScript(final JNLPFile jnlpFile) {
         if(OperationSystem.getLocalSystem() == OperationSystem.MAC64) {
@@ -43,8 +47,8 @@ public class ScriptFactory
 		final URL srcUrl = jnlpFile.getSourceLocation();
 		final String schema = srcUrl.getProtocol();
 		final String url;
-		if ("http".equalsIgnoreCase(schema) || "https".equalsIgnoreCase(schema)) {
-			url = "jnlp" + srcUrl.toString().substring(4);
+		if (HTTP.equalsIgnoreCase(schema) || HTTPS.equalsIgnoreCase(schema)) {
+			url = JNLP + srcUrl.toString().substring(4);
 		} else {
 			url = srcUrl.toString();
 		}
