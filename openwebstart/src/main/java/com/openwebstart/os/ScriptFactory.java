@@ -30,19 +30,6 @@ public class ScriptFactory
         return executable + " " + jnlpLocation;
     }
 
-    public static String createStartScriptForMac(final JNLPFile jnlpFile) {
-        final String executable = "\"" + Install4JUtils.installationDirectory()
-                .map(d -> d + "/" + "OpenWebStart javaws.app" + "\"")
-                .orElseThrow(() -> new IllegalStateException("Can not define executable"));
-
-        //TODO: URL is not working on mac. Maybe we can add a new param to OWS that can be used to pass
-        // the jnlp url (mac open command supports --args)
-        // This one is not working: open -a "/Applications/OpenWebStart/OpenWebStart javaws.app" --args -jnlp "file:/Users/hendrikebbers/Desktop/AccessibleScrollDemo.jnlpx"
-        final String jnlpLocation = "\"" + jnlpFile.getFileLocation() + "\"";
-
-        return SCRIPT_START + System.lineSeparator() + "open -a " + executable + " " + jnlpLocation;
-    }
-
 	public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) {
 		final URL srcUrl = jnlpFile.getSourceLocation();
 		final String schema = srcUrl.getProtocol();
