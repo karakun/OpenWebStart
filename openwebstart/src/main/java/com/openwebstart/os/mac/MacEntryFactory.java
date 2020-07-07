@@ -27,7 +27,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     @Override
     public boolean supportsDesktopEntry() 
     {
-        return true;
+        return false;
     }
 
     @Override
