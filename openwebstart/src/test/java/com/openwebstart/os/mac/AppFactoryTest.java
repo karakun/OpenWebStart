@@ -46,6 +46,8 @@ public final class AppFactoryTest extends Object {
 		assert originUserHome.equals(JavaSystemProperties.getUserHome());
 		updateCacheHome(originCacheHome);
 		assert originCacheHome.equals(FilesystemConfiguration.getCacheHome());
+		
+		FileUtils.recursiveDelete(new File(userHome), new File("/tmp"));
 	}
 	
 	@Test
