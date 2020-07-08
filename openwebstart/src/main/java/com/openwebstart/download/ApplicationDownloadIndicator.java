@@ -13,12 +13,13 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
 
     @Override
     public DownloadServiceListener getListener(final String downloadName, final URL[] resources) {
-        LOG.debug("ApplicationDownloadIndicator is used");
+        LOG.debug("DownloadServiceListener will be created");
         return new ApplicationDownloadDialog(downloadName);
     }
 
     @Override
     public void disposeListener(final DownloadServiceListener listener) {
+        LOG.debug("DownloadServiceListener will be disposed");
         if (listener instanceof ApplicationDownloadDialog) {
             ApplicationDownloadDialog downloadDialog = (ApplicationDownloadDialog) listener;
             downloadDialog.close();

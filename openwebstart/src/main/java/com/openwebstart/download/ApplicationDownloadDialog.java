@@ -1,10 +1,13 @@
 package com.openwebstart.download;
 
 import com.openwebstart.controlpanel.FormPanel;
+import com.openwebstart.controlpanel.MaximumLayoutManager;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.ModalDialog;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
 
 import javax.jnlp.DownloadServiceListener;
@@ -17,8 +20,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,6 +32,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ApplicationDownloadDialog extends ModalDialog implements DownloadServiceListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationDownloadDialog.class);
 
     private final String applicationName;
 
@@ -59,16 +67,20 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         detailsList.setCellRenderer(new ApplicationDownloadDetailListRenderer());
 
         final JScrollPane scrollPane = new JScrollPane(detailsList);
-        scrollPane.setVisible(false);
+        scrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        scrollPane.setMinimumSize(new Dimension(0, 0));
+
+        final JPanel scrollPaneWrapper = new JPanel(new MaximumLayoutManager());
+        scrollPaneWrapper.setBackground(null);
 
         final Translator translator = Translator.getInstance();
         final JButton showDetails = new JButton(translator.translate("action.showDetails"));
         showDetails.addActionListener(e -> {
-            if (!scrollPane.isVisible()) {
-                scrollPane.setVisible(true);
+            if (!Arrays.asList(scrollPaneWrapper.getComponents()).contains(scrollPane)) {
+                scrollPaneWrapper.add(scrollPane);
                 showDetails.setText(translator.translate("action.hideDetails"));
             } else {
-                scrollPane.setVisible(false);
+                scrollPaneWrapper.remove(scrollPane);
                 showDetails.setText(translator.translate("action.showDetails"));
             }
             this.pack();
@@ -78,9 +90,17 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
         mainPanel.addRow(0, messageLabel);
         mainPanel.addRow(1, overallProgressBar);
-        mainPanel.addFlexibleRow(2);
-        mainPanel.addRow(3, scrollPane);
-        mainPanel.addRow(4, buttonPane);
+
+
+        GridBagConstraints c2 = new GridBagConstraints();
+        c2.gridx = 1;
+        c2.gridy = 2;
+        c2.weighty = 1;
+        c2.weightx = 1;
+        c2.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scrollPaneWrapper, c2);
+
+        mainPanel.addRow(3, buttonPane);
 
         mainPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
         setContentPane(mainPanel);
@@ -91,25 +111,25 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         try {
             if (lastOverallPercent != overallPercent) {
                 lastOverallPercent = overallPercent;
-                updateUi(lastOverallPercent);
+                SwingUtilities.invokeLater(() -> updateUi(lastOverallPercent));
             }
         } finally {
             lastOverallPercentLock.unlock();
         }
     }
 
-    private void onUpdate(final URL url, final ApplicationDownloadResourceState ressourceState) {
+    private void onUpdate(final URL url, final ApplicationDownloadResourceState resourceState) {
         resourceStatesLock.lock();
         try {
             ApplicationDownloadResourceState lastState = resourceStates.get(url);
             if (lastState == null) {
-                resourceStates.put(url, ressourceState);
-                SwingUtilities.invokeLater(() -> updateUi(url, ressourceState));
+                resourceStates.put(url, resourceState);
+                SwingUtilities.invokeLater(() -> updateUi(url, resourceState));
             } else {
-                if (!Objects.equals(ressourceState.getDownloadState(), lastState.getDownloadState())
-                        || ressourceState.getPercentage() != lastState.getPercentage()) {
-                    resourceStates.put(url, ressourceState);
-                    SwingUtilities.invokeLater(() -> updateUi(url, ressourceState));
+                if (!Objects.equals(resourceState.getDownloadState(), lastState.getDownloadState())
+                        || resourceState.getPercentage() != lastState.getPercentage()) {
+                    resourceStates.put(url, resourceState);
+                    SwingUtilities.invokeLater(() -> updateUi(url, resourceState));
                 }
             }
         } finally {
@@ -117,16 +137,22 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         }
     }
 
-    private void updateUi(final URL url, final ApplicationDownloadResourceState ressourceState) {
+    private void updateUi(final URL url, final ApplicationDownloadResourceState resourceState) {
         if (!isVisible()) {
             showAndWait();
         }
-        listModel.add(ressourceState);
+        if (resourceState.getPercentage() >= 100) {
+            listModel.remove(resourceState);
+        } else {
+            listModel.add(resourceState);
+        }
     }
 
     private void updateUi(final int overallPercent) {
         if (!isVisible()) {
-            showAndWait();
+            pack();
+            setLocationRelativeTo(null);
+            setVisible(true);
         }
         if (overallPercent > 0) {
             overallProgressBar.setIndeterminate(false);
@@ -147,14 +173,16 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void progress(final URL url, final String version, final long readSoFar, final long total, final int overallPercent) {
+        LOG.debug("Download Listener receives progress update");
+
         final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
         final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
         final String message = "Downloading '" + url + "' with version '" + version + "': " + readSoFarUnit.convertBytesToUnit(readSoFar) + " " + readSoFarUnit.getDecimalShortName() + " / " + totalUnit.convertBytesToUnit(total) + " " + totalUnit.getDecimalShortName();
-        final long percentageInLong = readSoFar / (total / 100l);
+        final long percentageInLong = total == 0 ? -1 : readSoFar / (total / 100l);
         final int percentage = percentageInLong > 100 ? 100 : (int) percentageInLong;
 
-        final ApplicationDownloadResourceState ressourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
-        onUpdate(url, ressourceState);
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
+        onUpdate(url, resourceState);
 
         onUpdate(overallPercent);
     }
@@ -172,12 +200,14 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void validating(final URL url, final String version, final long entry, final long total, final int overallPercent) {
+        LOG.debug("Download Listener receives validation update");
+
         final String message = "Validating '" + url + "' with version '" + version + "': " + entry + " / " + total;
         final long percentageInLong = entry / (total / 100l);
         final int percentage = percentageInLong > 100 ? 100 : (int) percentageInLong;
 
-        final ApplicationDownloadResourceState ressourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
-        onUpdate(url, ressourceState);
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
+        onUpdate(url, resourceState);
 
         onUpdate(overallPercent);
     }
@@ -194,6 +224,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void upgradingArchive(final URL url, final String version, final int patchPercent, final int overallPercent) {
+        LOG.debug("Download Listener receives patching update");
+
         final String message = "Patching '" + url + "' with version '" + version + "': " + patchPercent + " %";
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, patchPercent, ApplicationDownloadState.DOWNLOADING);
         onUpdate(url, resourceState);

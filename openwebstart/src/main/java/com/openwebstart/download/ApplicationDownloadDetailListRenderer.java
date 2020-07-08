@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 
 public class ApplicationDownloadDetailListRenderer extends JPanel implements ListCellRenderer<ApplicationDownloadResourceState> {
@@ -18,7 +19,7 @@ public class ApplicationDownloadDetailListRenderer extends JPanel implements Lis
     public ApplicationDownloadDetailListRenderer() {
         this.progressBar = new JProgressBar();
         this.label = new JLabel();
-        setLayout(new BorderLayout(6, 6));
+        setLayout(new BorderLayout(2, 2));
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -26,6 +27,11 @@ public class ApplicationDownloadDetailListRenderer extends JPanel implements Lis
 
     @Override
     public Component getListCellRendererComponent(final JList<? extends ApplicationDownloadResourceState> list, final ApplicationDownloadResourceState value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+        if (index % 2 == 0) {
+            setBackground(new Color(240, 240, 240));
+        } else {
+            setBackground(null);
+        }
         if (value == null) {
             progressBar.setVisible(false);
             label.setVisible(false);

@@ -34,4 +34,17 @@ public class ApplicationDownloadDetailListModel extends AbstractListModel<Applic
             fireIntervalAdded(this, data.size() - 1, data.size() - 1);
         }
     }
+
+    public void remove(final ApplicationDownloadResourceState resourceState) {
+        final ApplicationDownloadResourceState oldVersion = data.stream()
+                .filter(v -> Objects.equals(v.getUrl(), resourceState.getUrl()))
+                .filter(v -> Objects.equals(v.getVersion(), resourceState.getVersion()))
+                .findAny()
+                .orElse(null);
+        if (oldVersion != null) {
+            final int index = data.indexOf(oldVersion);
+            data.remove(oldVersion);
+            fireIntervalRemoved(this, index, index);
+        }
+    }
 }

@@ -17,16 +17,20 @@ public class FormPanel extends JPanel {
     }
 
     public void addFlexibleRow(final int row) {
-        GridBagConstraints c2 = new GridBagConstraints();
-        c2.gridx = 1;
-        c2.gridy = row;
-        c2.weighty = 1;
         final JPanel panel = new JPanel();
         panel.setBackground(null);
         panel.setPreferredSize(new Dimension(0, 0));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         panel.setMinimumSize(new Dimension(0, 0));
-        add(panel, c2);
+        addFlexibleRow(row, panel);
+    }
+
+    public void addFlexibleRow(final int row, final JComponent component) {
+        GridBagConstraints c2 = new GridBagConstraints();
+        c2.gridx = 1;
+        c2.gridy = row;
+        c2.weighty = 1;
+        add(component, c2);
     }
 
     public void addRow(final int row, final JComponent component) {
