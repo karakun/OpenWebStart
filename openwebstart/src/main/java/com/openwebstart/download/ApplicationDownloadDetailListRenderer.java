@@ -22,7 +22,7 @@ public class ApplicationDownloadDetailListRenderer extends JPanel implements Lis
         setLayout(new BorderLayout(2, 2));
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
-        setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        setBorder(BorderFactory.createEmptyBorder(8, 12, 4, 12));
     }
 
     @Override

@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -22,6 +23,8 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -34,8 +37,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ApplicationDownloadDialog extends ModalDialog implements DownloadServiceListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationDownloadDialog.class);
-
-    private final String applicationName;
 
     private final Map<URL, ApplicationDownloadResourceState> resourceStates;
 
@@ -50,8 +51,25 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     private final ApplicationDownloadDetailListModel listModel;
 
     public ApplicationDownloadDialog(final String applicationName) {
-        this.applicationName = applicationName;
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        final Translator translator = Translator.getInstance();
+
+
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                final String[] options = {"Exit OpenWebStart", "Continue"};
+                final int result = JOptionPane.showOptionDialog(ApplicationDownloadDialog.this,
+                        "Do you want to exit?", "Close?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+                        null, options, options[0]);
+                if (result == 0) {
+                    System.exit(0);
+                }
+            }
+        });
+
         setTitle("Application Download");
         setIconImages(ImageResources.INSTANCE.getApplicationImages());
         resourceStates = new HashMap<>();
@@ -73,7 +91,6 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         final JPanel scrollPaneWrapper = new JPanel(new MaximumLayoutManager());
         scrollPaneWrapper.setBackground(null);
 
-        final Translator translator = Translator.getInstance();
         final JButton showDetails = new JButton(translator.translate("action.showDetails"));
         showDetails.addActionListener(e -> {
             if (!Arrays.asList(scrollPaneWrapper.getComponents()).contains(scrollPane)) {
@@ -161,6 +178,17 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         }
     }
 
+    private int getPercentage(final long total, final long current) {
+        if (total <= 0) {
+            return -1;
+        }
+        if (current < 0) {
+            return -1;
+        }
+        final long percentageInLong = Math.min(100l, current / (total / 100l));
+        return (int) percentageInLong;
+    }
+
     /**
      * A JNLP client's DownloadService implementation should call this method several times during a download.
      * A DownloadServiceListener implementation may display a progress bar and / or update information based on the parameters.
@@ -178,8 +206,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
         final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
         final String message = "Downloading '" + url + "' with version '" + version + "': " + readSoFarUnit.convertBytesToUnit(readSoFar) + " " + readSoFarUnit.getDecimalShortName() + " / " + totalUnit.convertBytesToUnit(total) + " " + totalUnit.getDecimalShortName();
-        final long percentageInLong = total == 0 ? -1 : readSoFar / (total / 100l);
-        final int percentage = percentageInLong > 100 ? 100 : (int) percentageInLong;
+        final int percentage = getPercentage(total, readSoFar);
 
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
         onUpdate(url, resourceState);
@@ -203,8 +230,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         LOG.debug("Download Listener receives validation update");
 
         final String message = "Validating '" + url + "' with version '" + version + "': " + entry + " / " + total;
-        final long percentageInLong = entry / (total / 100l);
-        final int percentage = percentageInLong > 100 ? 100 : (int) percentageInLong;
+        final int percentage = getPercentage(total, entry);
 
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
         onUpdate(url, resourceState);
