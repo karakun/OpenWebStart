@@ -25,15 +25,12 @@ import java.util.stream.Collectors;
 public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
-    public boolean supportsDesktopEntry() 
-    {
+    public boolean supportsDesktopEntry() {
         return false;
     }
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file)
-    	throws Exception 
-    {
+    public void updateDesktopEntry(final JNLPFile file)	throws Exception {
     	createDesktopEntry(file);    
     }
 
@@ -47,15 +44,12 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 	}
 
     @Override
-    public boolean existsDesktopEntry(final JNLPFile file) 
-    {
+    public boolean existsDesktopEntry(final JNLPFile file) {
         return AppFactory.desktopLinkExists(file.getShortcutName());
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file)
-    	throws Exception
-    {
+    public void updateMenuEntry(final JNLPFile file) throws Exception {
     	this.createMenuEntry(file);
     }
 
