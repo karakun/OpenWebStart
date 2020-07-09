@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,9 +59,9 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
             @Override
             public void windowClosing(final WindowEvent e) {
-                final String[] options = {"Exit OpenWebStart", "Continue"};
+                final String[] options = {translator.translate("appDownload.exit.yes"), translator.translate("appDownload.exit.no")};
                 final int result = JOptionPane.showOptionDialog(ApplicationDownloadDialog.this,
-                        "Do you want to exit?", "Close?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+                        translator.translate("appDownload.exit.text"), translator.translate("appDownload.exit.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
                         null, options, options[0]);
                 if (result == 0) {
                     System.exit(0);
@@ -70,12 +69,12 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
             }
         });
 
-        setTitle("Application Download");
+        setTitle(translator.translate("appDownload.title"));
         setIconImages(ImageResources.INSTANCE.getApplicationImages());
         resourceStates = new HashMap<>();
 
         final FormPanel mainPanel = new FormPanel();
-        final JLabel messageLabel = new JLabel("Application Download of '" + applicationName + "' in progress");
+        final JLabel messageLabel = new JLabel(translator.translate("appDownload.message", applicationName));
         overallProgressBar = new JProgressBar();
         overallProgressBar.setIndeterminate(true);
 
@@ -205,7 +204,9 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
         final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
         final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
-        final String message = "Downloading '" + url + "' with version '" + version + "': " + readSoFarUnit.convertBytesToUnit(readSoFar) + " " + readSoFarUnit.getDecimalShortName() + " / " + totalUnit.convertBytesToUnit(total) + " " + totalUnit.getDecimalShortName();
+        final Translator translator = Translator.getInstance();
+
+        final String message = translator.translate("appDownload.state.download.message", url, version, readSoFarUnit.convertBytesToUnit(readSoFar), readSoFarUnit.getDecimalShortName(), totalUnit.convertBytesToUnit(total), totalUnit.getDecimalShortName());
         final int percentage = getPercentage(total, readSoFar);
 
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
@@ -228,8 +229,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     @Override
     public void validating(final URL url, final String version, final long entry, final long total, final int overallPercent) {
         LOG.debug("Download Listener receives validation update");
-
-        final String message = "Validating '" + url + "' with version '" + version + "': " + entry + " / " + total;
+        final Translator translator = Translator.getInstance();
+        final String message = translator.translate("appDownload.state.validation.message", url, version, entry, total);
         final int percentage = getPercentage(total, entry);
 
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
@@ -251,8 +252,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     @Override
     public void upgradingArchive(final URL url, final String version, final int patchPercent, final int overallPercent) {
         LOG.debug("Download Listener receives patching update");
-
-        final String message = "Patching '" + url + "' with version '" + version + "': " + patchPercent + " %";
+        final Translator translator = Translator.getInstance();
+        final String message = translator.translate("appDownload.state.patching.message", url, version, patchPercent);
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, patchPercent, ApplicationDownloadState.DOWNLOADING);
         onUpdate(url, resourceState);
 
@@ -270,17 +271,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     public void downloadFailed(final URL url, final String version) {
         setVisible(false);
         dispose();
-        ErrorDialog.show("Error while downloading application", new RuntimeException("Error while downloading url '" + url + "' with version '" + version + "'"));
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ApplicationDownloadDialog downloadDialog = new ApplicationDownloadDialog("My Demo App");
-            try {
-                downloadDialog.progress(new URL("http://www.google.de"), "3", 1245, 123456, 34);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        });
+        final Translator translator = Translator.getInstance();
+        ErrorDialog.show(translator.translate("appDownload.error"), new RuntimeException("Error while downloading url '" + url + "' with version '" + version + "'"));
     }
 }
