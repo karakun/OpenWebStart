@@ -1,24 +1,83 @@
-= The Defintive Guide To OpenWebStart
+= The Definitive Guide To OpenWebStart
 :imagesdir: ./images
 :Author:    The OWS Community
-:Date:      4/2020
-:Revision:  1.1.7
+:Date:      7/2020
+:Revision:  1.1.8
 :toc:
 :toclevels: 4
 
 == Introduction
 
-#<this documentation is work in progress>#
+Java Web Start (JWS) was deprecated in Java 9, and starting with Java 11, Oracle removed JWS from their JDK distributions. This means that clients that have the latest version of Java installed can no longer use JWS-based applications. And since public support of Java 8 has ended in Q2/2019, companies no longer get any updates and security fixes for Java Web Start.
+
+This is why some enthusiasts at Karakun decided to create OpenWebStart, an open source reimplementation of the Java Web Start technology. This guide describes how you can use OpenWebStart as a replacement for JWS and continue using your JNLP-based applications  with little or no change at all.
+
+We appreciate your feedback. If you feel that there's a lack of documentation in a certain area or if you find inaccuracies in the documentation, please don't hesitate to contact us at openwebstart@karakun.com or the  https://board.karakun.com/viewforum.php?f=4[support forum].
 
 === What is OpenWebStart?
 
-#<this documentation is work in progress>#
+OpenWebStart is an open source reimplementation of the Java Web Start technology, released under the GPL with Classpath Exception. It provides the most commonly used features of Java Web Start and the JNLP standard, so that your customers can continue using applications based on Java Web Start and JNLP without any change. OpenWebStart is based on Iced-Tea-Web and follows the JNLP-specification defined in JSR-56.
+
+The main focus of OpenWebStart is the execution of JNLP-based applications. Additionally, the tool contains various modules that simplify your Web Start workflows and let you configure OpenWebStart to suit your needs:
+
+App Manager:: manages the versions of any JNLP-based application that is executed by OpenWebStart.
+
+JVM Manager:: manages Java versions and Java updates on the client.
+
+Control Panel:: provides a graphical user interface to configure OpenWebStart.
+
+Updater:: downloads and installs new versions of OpenWebStart.
 
 == Installation
+OpenWebStart can be installed on Windows, MacOS and Linux operating systems and there are two different ways to install OpenWebStart:
 
-#<this documentation is work in progress>#
+* Using the *interactive installation* with auto-update functionality
+* Using the *unattended installation* for automated roll-outs
 
-=== Basic Installation
+If you use Web Start for several small customers or on your own, we recommend using the interactive installer. Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use. OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
+
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
+
+=== Interactive Installation
+
+==== Windows
+
+ 1. Open the ZIP-file.
+ 1. Run the installer.
+ 1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+ 1. Click *Next* to start the OpenWebStart installation.
+ 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
+    Windows default: `C:\Program Files\OpenWebStart`
+ 1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+ 1. Please wait for OpenWebStart to be installed on your computer.
+ 1. Click *Finish* on the completion screen to close the wizard.
+
+==== macOS
+
+1. Open the OpenWebStart disk image (DMG file) to mount it.
+1. Run the `Open Web Start Installer.app`.
+1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Click *Next* to start the OpenWebStart installation.
+1. Browse to the directory where to install OpenWebStart, and click *Next*. +
+   Default: `/Applications/Open Web Start`
+1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+1. Please wait for OpenWebStart to be installed on your computer.
+1. Click *Finish* on the completion screen to close the wizard.
+
+==== Linux
+
+1. Go to the directory where the installer (DEB file) is stored and run the file from the terminal +
+   `sudo dpkg -i OpenWebStart_linux_1_1_8.deb`
+1. Enter your root password.
+1. Choose a language and click OK to open the OpenWebStart Setup wizard.
+1. Click Next to start the OpenWebStart installation.
+1. Browse to the directory where to install OpenWebStart, and click Next. +
+   Default: `/opt/openwebstart`
+1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click Next.
+1. Please wait for OpenWebStart to be installed on your computer.
+1. Click Finish on the completion screen to close the wizard.
+
+If you need help installing OpenWebStart, also have a look at the public installation and configuration discussions at the https://board.karakun.com/viewforum.php?f=10[Support Forum].
 
 === Unattended Installation
 
