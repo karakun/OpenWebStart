@@ -38,10 +38,9 @@ public class ApplicationDownloadDetailListRenderer extends JPanel implements Lis
         } else {
             progressBar.setVisible(true);
             label.setVisible(true);
-
-            label.setText(value.getUrl() + " - " + value.getVersion());
-            progressBar.setValue(value.getPercentage());
-            progressBar.setToolTipText(value.getMessage());
+            label.setText(value.getUrl() + "");
+            final int percentage = value.getPercentage();
+            progressBar.setValue(percentage);
         }
         return this;
     }

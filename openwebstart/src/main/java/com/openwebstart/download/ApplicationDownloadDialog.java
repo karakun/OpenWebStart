@@ -61,7 +61,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
             public void windowClosing(final WindowEvent e) {
                 final String[] options = {translator.translate("appDownload.exit.yes"), translator.translate("appDownload.exit.no")};
                 final int result = JOptionPane.showOptionDialog(ApplicationDownloadDialog.this,
-                        translator.translate("appDownload.exit.text"), translator.translate("appDownload.exit.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+                        translator.translate("appDownload.exit.text", applicationName), translator.translate("appDownload.exit.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
                         null, options, options[0]);
                 if (result == 0) {
                     System.exit(0);
@@ -200,7 +200,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void progress(final URL url, final String version, final long readSoFar, final long total, final int overallPercent) {
-        LOG.debug("Download Listener receives progress update");
+        LOG.debug("Download Listener receives progress update for {} - {} / {} - {}", url.getFile(), readSoFar, total, overallPercent);
 
         final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
         final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
@@ -208,6 +208,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
         final String message = translator.translate("appDownload.state.download.message", url, version, readSoFarUnit.convertBytesToUnit(readSoFar), readSoFarUnit.getDecimalShortName(), totalUnit.convertBytesToUnit(total), totalUnit.getDecimalShortName());
         final int percentage = getPercentage(total, readSoFar);
+
 
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
         onUpdate(url, resourceState);

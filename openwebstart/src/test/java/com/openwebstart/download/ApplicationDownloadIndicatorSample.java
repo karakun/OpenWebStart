@@ -38,7 +38,6 @@ class ApplicationDownloadIndicatorSample {
         } catch (MalformedURLException e) {
             throw new RuntimeException("ERROR", e);
         }
-
     }
 
     private static class SampleApplication {

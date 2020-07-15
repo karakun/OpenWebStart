@@ -13,7 +13,7 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
 
     @Override
     public DownloadServiceListener getListener(final String downloadName, final URL[] resources) {
-        LOG.debug("DownloadServiceListener will be created");
+        LOG.debug("DownloadServiceListener for {} will be created", downloadName);
         return new ApplicationDownloadDialog(downloadName);
     }
 
