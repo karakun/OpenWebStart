@@ -171,7 +171,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
             setVisible(true);
         }
         if (overallPercent > 0) {
-            overallProgressBar.setIndeterminate(false);
+            //TODO: Need to be changed in future
+            //overallProgressBar.setIndeterminate(false);
             overallProgressBar.setValue(overallPercent);
             overallProgressBar.setToolTipText(overallPercent + " %");
         }
