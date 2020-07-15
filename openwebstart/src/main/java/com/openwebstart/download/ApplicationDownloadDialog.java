@@ -200,7 +200,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void progress(final URL url, final String version, final long readSoFar, final long total, final int overallPercent) {
-        LOG.debug("Download Listener receives progress update for {} - {} / {} - {}", url.getFile(), readSoFar, total, overallPercent);
+        //TODO: We need LOG.trace ...
+        //LOG.debug("Download Listener receives progress update for {} - {} / {} - {}", url.getFile(), readSoFar, total, overallPercent);
 
         final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
         final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
@@ -229,7 +230,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void validating(final URL url, final String version, final long entry, final long total, final int overallPercent) {
-        LOG.debug("Download Listener receives validation update");
+        //TODO: We need LOG.trace ...
+        //LOG.debug("Download Listener receives validation update");
         final Translator translator = Translator.getInstance();
         final String message = translator.translate("appDownload.state.validation.message", url, version, entry, total);
         final int percentage = getPercentage(total, entry);
@@ -252,7 +254,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
      */
     @Override
     public void upgradingArchive(final URL url, final String version, final int patchPercent, final int overallPercent) {
-        LOG.debug("Download Listener receives patching update");
+        //TODO: We need LOG.trace ...
+        //LOG.debug("Download Listener receives patching update");
         final Translator translator = Translator.getInstance();
         final String message = translator.translate("appDownload.state.patching.message", url, version, patchPercent);
         final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, patchPercent, ApplicationDownloadState.DOWNLOADING);
