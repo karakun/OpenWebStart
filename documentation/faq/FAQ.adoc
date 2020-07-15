@@ -1,41 +1,23 @@
 = Frequently Asked Questions on OpenWebStart
 :imagesdir: ./images
 :Author:    The OWS Community
-:Date:      4/2020
-:Revision:  1.1.7
+:Date:      7/2020
+:Revision:  1.1.8
 :toc:
 :toclevels: 3
 
 NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation.
 The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
 
-
-#<this documentation is work in progress>#
-
 == General
 
 ==== What is OpenWebStart?
 
-#<this documentation is work in progress>#
+OpenWebStart is an open source reimplementation of the Java Web Start technology. It provides the most commonly used features of Java Web Start and the JNLP standard, so that your customers can continue using applications based on Java Web Start and JNLP without any change. OpenWebStart is based on Iced-Tea-Web and the JNLP-specification defined in JSR-56.
 
-== Subscription and Premium Support
+==== Under which license does OpenWebStart come?
 
-==== Is there a subscription for OpenWebStart?
-Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
-With this option you may report bugs using a dedicated communication channel and your bug reports will have a higher priority.
-If you wish, we will add your company logo to our sponsor list for free.
-Plus, you'll get a 10% discount for development of individual features.
-
-==== Is there a premium support for OpenWebStart?
-With premium support provided by Karakun you may report bugs or issues using the premium communication channel.
-Your bug reports will have the highest priority.
-Karakun will guarantee reaction times depending on the severity of bugs (during business hours).
-Plus, you'll get a 25% discount for the development of individual features.
-Upon your wish, your company logo will be listed as a premium sponsor on our website.
-
-==== What are the costs for subscription and premium support?
-
-Please contact openwebstart@karakun.com to figure out which support model fits your needs best.
+OpenWebStart is released under the GPL with Classpath Exception.
 
 == Installation
 
@@ -51,7 +33,7 @@ Your JNLP applications can be run with either Java 8 and 11.
 We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.
-Currently, we provide Azul and Adopt JDKs on the default download server.
+Currently, we provide access to Azul and Adopt LTS JDKs via default download server.
 In the future we will add more vendors.
 
 If your preferred JVM is not provided by our default download server, you can either add locally installed JVMs or host your own download server for JVMs to run your JNLP applications.
@@ -236,4 +218,24 @@ public class HelloWorld11 extends Application {
     ...
 }
 ....
+
+== Subscription and Premium Support
+
+==== Is there a subscription for OpenWebStart?
+Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
+With this option you may report bugs using a dedicated communication channel (support forum) and your bug reports will have a higher priority.
+If you wish, we will add your company logo to our sponsor page for free.
+Plus, you'll get a 10% discount for development of individual features.
+
+==== Is there a premium support for OpenWebStart?
+With premium support provided by Karakun you may report bugs or issues using the premium communication channel (via support forum).
+Your bug reports will have the highest priority.
+Karakun will guarantee service levels depending on the severity of the bug (during business hours).
+After a bug is fixed, a corresponding release will be provided.
+Plus, you'll get a 25% discount for the development of individual features.
+Upon your wish, your company logo will be listed as a premium sponsor on our website.
+
+==== What are the costs for subscription and premium support?
+
+Please contact openwebstart@karakun.com to figure out which support model fits your needs best.
 
