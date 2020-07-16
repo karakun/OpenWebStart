@@ -11,6 +11,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import java.util.Arrays;
@@ -26,6 +27,11 @@ import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
  * argument arrangement.
  */
 public class PhaseTwoWebStartLauncher {
+
+    static {
+        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePostfix("ows-stage1");
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
     private static final String consoleOption = "-console";

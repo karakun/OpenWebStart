@@ -24,6 +24,7 @@ import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -175,7 +176,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("About to launch external with commands: '{}'", commands.toString());
 
         final ProcessBuilder pb = new ProcessBuilder();
-        pb.environment().put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
+        final Map<String, String> env = pb.environment();
+        env.put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
+        env.put(FileLog.LOG_PREFIX_ENV, FileLog.getLogFileNamePrefix());
+        env.put(FileLog.LOG_POSTFIX_ENV, "ows-stage2");
 
         final Process p = pb
                 .command(commands)

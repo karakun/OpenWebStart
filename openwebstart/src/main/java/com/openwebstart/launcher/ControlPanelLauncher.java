@@ -13,6 +13,7 @@ import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.EnvironmentPrinter;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
@@ -21,6 +22,11 @@ import java.util.Arrays;
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ControlPanelLauncher {
+
+    static {
+        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePostfix("ows-settings");
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(ControlPanelLauncher.class);
 
