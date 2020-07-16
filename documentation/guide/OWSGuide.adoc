@@ -34,9 +34,11 @@ OpenWebStart can be installed on Windows, MacOS and Linux operating systems and 
 * Using the *interactive installation* with auto-update functionality
 * Using the *unattended installation* for automated roll-outs
 
-If you use Web Start for several small customers or on your own, we recommend using the interactive installer. Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use. OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
+If you use Web Start for several small customers or on your own, we recommend using the interactive installer. Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use.
+OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
 
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines.
+Instead of walking through the graphical installer of OWS on every machine your IT department can pre-define the responses for the installation options in a response varfile.
 
 === Interactive Installation
 
@@ -80,11 +82,156 @@ If you or your customers are companies with IT departments of their own, we reco
 If you need help installing OpenWebStart, also have a look at the public installation and configuration discussions at the https://board.karakun.com/viewforum.php?f=10[Support Forum].
 
 === Unattended Installation
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
 
-OWS also offers an unattended installation mode which is useful when you have to install OWS on many computers.
-Instead of walking through the graphical installer of OWS on every machine you can provide the options as a response file.
+When installing OpenWebStart, several properties can be predefined in a so-called `response.varfile` file.
 
-#<add more details as on the homepage>#
+Some of the supported properties are lockable. If a property is lockable, you can define an additional property of type `PROPERTY_NAME.locked=true` to prevent users from editing the property in the user interface. For example, to define a value for the `ows.jvm.manager.server.default` property that cannot be changed in the user interface, specify the following two properties:
+
+----
+ows.jvm.manager.server.default=https://my.custom.server
+ows.jvm.manager.server.default.locked=true
+----
+
+The following table provides an overview of all properties that can be specified in the response.varfile:
+
+[cols="50,11,39"]
+|===
+|property |lockable |description
+
+|ows.jvm.manager.cache.dir
+|yes
+|Allows to specify the directory where the JVM cache is located. The follow example shows two examples for Windows: ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir or ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
+
+|ows.jvm.manager.server.default
+|yes
+|This property must contain a valid URL that defines the server that is used to download new JVMs.
+
+|ows.jvm.manager.server.allowFromJnlp
+|yes
+|Defines if a custom URL can be used to download a JVM. Such URL can be part of a JNLP file.
+
+|ows.jvm.manager.vendor
+|yes
+|Defines a specifc JVM vendor. By doing so, only JVMs from that vendor will be downloaded. You can use ‘*’ to allow any vendor.
+
+|ows.jvm.manager.vendor.allowFromJnlp
+|yes
+|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. Default is false i.e. the vendor from the settings is taken.
+
+|ows.jvm.manager.updateStrategy
+|yes
+|When starting a JNLP application, OpenWebStart can check if an updated JVM is available to run the application. This property defines how OpenWebstart behaves in the JVM check. Possible values are DO_NOTHING_ON_LOCAL_MATCH, ASK_FOR_UPDATE_ON_LOCAL_MATCH and AUTOMATICALLY_DOWNLOAD
+
+|ows.jvm.manager.versionRange
+|yes
+|Allows to limit the possible JVM versions. Must be valid version-string according to JSR-56 Appendix A.
+
+|deployment.proxy.http.host
+|yes
+|The HTTP proxy hostname.
+
+|deployment.proxy.https.host
+|yes
+|The HTTPS proxy hostname.
+
+|deployment.proxy.http.port
+|yes
+|The HTTP proxy port.
+
+|deployment.proxy.https.port
+|yes
+|The HTTPS proxy port.
+
+|deployment.proxy.bypass.local
+|yes
+|All local hosts should be bypassed. Default is false.
+
+|deployment.proxy.bypass.list
+|yes
+|A comma separated list of host names that should bypass the proxy.
+
+|deployment.proxy.type
+|yes
+|The proxy type that should be used. Possible values are 0 (no proxy), 1 (manual proxy, default), 2 (PAC based proxy), 3 (Firefox), 4 (system proxy)
+
+|deployment.proxy.auto.config.url
+|yes
+|The URL for the proxy auto-config (PAC) file that will be used.
+
+|deployment.proxy.same
+|yes
+|If true use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is false.
+
+|deployment.cache.max.size
+|yes
+|The cache maximum size. Default is -1
+
+|deployment.https.noenforce
+|yes
+|If set to true http urls are not converted to https. Default is false.
+
+|deployment.assumeFileSystemInCodebase
+|yes
+|Defines if files from the local filesystem are always handled as if they would be part of the codebase.
+
+|deployment.security.whitelist
+|no
+|A comma separated list of urls that are defined as whitelist. The whitelist is checked whenever OpenWebStart will download a resource (like a JAR file).
+
+|ows.jvm.manager.maxDaysUnusedInJvmCache
+|yes
+|Max number of days an unused JVM stays in the JVM cache. The default is 30.
+
+|deployment.log
+|no
+|If set to true debug logging is enabled. Default is false
+
+|deployment.log.file
+|no
+|If set to true log is outputted to file. Default is false
+
+|ows.update.activated
+|yes
+|Defines if OpenWebStart should automatically search for updates.
+
+|ows.checkUpdate
+|yes
+|This property has no effect and is only used to lock functionality in the user interface. If this property is locked, a user cannot manually search for OpenWebStart updates.
+
+|ows.update.strategy.settings
+|yes
+|Defines how often OpenWebStart should search for updates when opening the settings windows. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
+
+|ows.update.strategy.launch
+|yes
+|Defines how often OpenWebStart should search for updates when starting an application. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
+
+|===
+
+To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a `response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder, you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
+
+----
+sys.adminRights$Boolean=false
+sys.fileAssociation.extensions$StringArray="jnlp","jnlpx"
+sys.fileAssociation.launchers$StringArray="313","313"
+sys.installationDir=/Applications/OpenWebStart
+sys.languageId=de
+----
+
+You can easily edit this file and add additional properties based on the table in this article. Do not change the initial content of the file, and add new properties always to the end of the file. After editing, a `response.varfile` file might look like this:
+
+----
+sys.adminRights$Boolean=false
+sys.fileAssociation.extensions$StringArray="jnlp","jnlpx"
+sys.fileAssociation.launchers$StringArray="313","313"
+sys.installationDir=/Applications/OpenWebStart
+sys.languageId=de
+ows.jvm.manager.server.default=https://my.custom.server
+ows.jvm.manager.server.default.locked=true
+----
+
+If you now use such a file to install OpenWebStart, all the properties will be automatically imported and used at the first start of OpenWebStart.
 
 == Updates
 
