@@ -1,6 +1,15 @@
 package com.openwebstart.os.mac;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.openwebstart.os.mac.icns.IcnsFactorySample;
+import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
+import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
+import net.adoptopenjdk.icedteaweb.config.FilesystemConfiguration;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -9,18 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
-
-import com.openwebstart.os.mac.icns.IcnsFactorySample;
-
-import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
-import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
-import net.adoptopenjdk.icedteaweb.config.FilesystemConfiguration;
-import net.adoptopenjdk.icedteaweb.io.FileUtils;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class AppFactoryTest extends Object {
 	private final static String SCRIPT_START = "#!/bin/sh";
