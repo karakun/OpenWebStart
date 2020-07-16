@@ -365,9 +365,28 @@ Thus an application can open a connection to a server which is not in the white 
 
 It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.
 
+#<TODO: describe the wildcards supported for whitelist entries introduced with OWS 1.2.0>#
+
 === Logging
 
-#<TODO: describe OWS settings options>#
+OpenWebStart provides access to log message information to monitor application execution and analyse erroneous behavior by the Log Console GUI and log files. Both can be enabled in the "Logging" panel in OWS settings.
+
+.Logging options in OWS Settings
+image::OWS_Logging.png[width="80%", align="center"]
+
+==== Log Console
+OpenWebStart provides the possiblity to show a log console window where all log messages of OpenWebStart iteself and the launched JNLP application are displayed.
+
+Various filter options can be selected to reduce the log output. To show the log console choose "Show" in "Log Console" selection.
+
+==== Logging to Files
+Logging to files can be activated for file-based log analysis or to send the logs files to the OpenWebStart support.
+
+You have to select "Activate debug logging", "Log to file", and specify the log folder where OpenWebStart should write the log files.
+
+By default this is `<user_home>/.config/icedtea-web/log`. Ensure that your folder has write access permissions when customize this path.
+
+#<TODO: describe the log file names used for OWS logs, JNLP application logs introduced with OWS 1.2.0>#
 
 === Remote Debugging
 
