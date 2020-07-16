@@ -235,7 +235,7 @@ If you now use such a file to install OpenWebStart, all the properties will be a
 
 === JNLP File Association
 
-In order to launch your JNLP applications directly you should associate the JNLP file type (`*.jnlp`) on your computer with OpenWebStart.
+To ensure that your computer handles links, desktop shortcuts, or start menu entries to JNLP applications correctly, you should associate the JNLP file type (`*.jnlp`) on your computer with OpenWebStart.
 In case you used a Oracle JVM in the past, your JNLP file association might still be set to Oracle javaws.
 
 Note that during the installation process, OpenWebStart will not change file associations of any existing Oracle javaws executable, so you can use both.
@@ -254,6 +254,22 @@ To associate .JNLP applications in macOS Finder:
 1. Right-click the JNLP app and select *Open With > Other...*
 1. Browse to OpenWebStart at `/Applications/Open Web Start/javaws`
 1. Click *Open* to associate this JNLP file with OpenWebStart
+
+=== How to Uninstall
+
+In case you need to uninstall OpenWebStart follow the steps below:
+
+For Windows and macOS::
+
+1. Go to your OpenWebStart directory
+1. Run the Uninstaller
+1. Click *Next* in the OpenWebstart Uninstaller Wizard
+1. Wait for the Uninstaller to complete
+1. Click *Finish* on the completion screen to close the wizard.
+
+For Linux:: Use your package manager and remove the package OpenWebStart
+
+
 
 == Updates
 
