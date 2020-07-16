@@ -30,24 +30,27 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file) {
-        throw new RuntimeException("Operation not supported");
+    public void updateDesktopEntry(final JNLPFile file)	throws Exception {
+    	createDesktopEntry(file);    
     }
 
-    @Override
-    public void createDesktopEntry(final JNLPFile file) {
-        throw new RuntimeException("Operation not supported");
-    }
+	@Override
+	public void createDesktopEntry(final JNLPFile file) throws Exception {
+		final String name = file.getShortcutName();
+		final String script = ScriptFactory.createStartScript(file);
+		final String[] icons = getIcons(file);
+
+		AppFactory.createDesktopLink(name, script, icons);
+	}
 
     @Override
     public boolean existsDesktopEntry(final JNLPFile file) {
-        return false;
+        return AppFactory.desktopLinkExists(file.getShortcutName());
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file) {
-        throw new RuntimeException("not implemented yet!");
-        // not implemented
+    public void updateMenuEntry(final JNLPFile file) throws Exception {
+    	this.createMenuEntry(file);
     }
 
     @Override
