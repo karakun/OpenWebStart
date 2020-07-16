@@ -233,6 +233,28 @@ ows.jvm.manager.server.default.locked=true
 
 If you now use such a file to install OpenWebStart, all the properties will be automatically imported and used at the first start of OpenWebStart.
 
+=== JNLP File Association
+
+In order to launch your JNLP applications directly you should associate the JNLP file type (`*.jnlp`) on your computer with OpenWebStart.
+In case you used a Oracle JVM in the past, your JNLP file association might still be set to Oracle javaws.
+
+Note that during the installation process, OpenWebStart will not change file associations of any existing Oracle javaws executable, so you can use both.
+
+To associate .JNLP applications in Windows Explorer
+
+1. Right-click the JNLP app and select *Open With > Choose Another App*
+1. Click *More Apps* and scroll down
+1. Click *Look for Another App on this PC*
+1. Browse to OpenWebStart at +
+   `C:\Program Files\OpenWebStart\javaws`
+1. Click *Open* to associate this JNLP file with OpenWebStart
+
+To associate .JNLP applications in macOS Finder:
+
+1. Right-click the JNLP app and select *Open With > Other...*
+1. Browse to OpenWebStart at `/Applications/Open Web Start/javaws`
+1. Click *Open* to associate this JNLP file with OpenWebStart
+
 == Updates
 
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
