@@ -1,5 +1,6 @@
 package com.openwebstart.extensionpoint;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
@@ -9,6 +10,7 @@ import com.openwebstart.launcher.OwsJvmLauncher;
 import com.openwebstart.os.MenuAndDesktopEntryHandler;
 import com.openwebstart.proxy.WebStartProxySelector;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ControlPanelStyle;
+import net.adoptopenjdk.icedteaweb.client.parts.downloadindicator.DownloadIndicator;
 import net.adoptopenjdk.icedteaweb.extensionpoint.ExtensionPoint;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -31,6 +33,11 @@ public class OwsExtensionPoint implements ExtensionPoint {
         );
 
         return new OwsJvmLauncher(javaRuntimeProvider);
+    }
+
+    @Override
+    public DownloadIndicator createDownloadIndicator(final DeploymentConfiguration configuration) {
+        return new ApplicationDownloadIndicator();
     }
 
     @Override

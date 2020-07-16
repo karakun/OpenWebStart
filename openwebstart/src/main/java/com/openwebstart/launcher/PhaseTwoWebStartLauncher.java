@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -49,6 +50,8 @@ public class PhaseTwoWebStartLauncher {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
             JNLPRuntime.exit(-1);
         }
+
+        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
 
         try {
             new InitialConfigurationCheck(config).check();
