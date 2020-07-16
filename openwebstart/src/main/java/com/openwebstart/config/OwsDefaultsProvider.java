@@ -39,6 +39,9 @@ public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
 
+    public static final String APPLICATION_MANAGER_ACTIVE = "ows.experimental.applicationManager.active";
+
+
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
 
     @Override
@@ -46,6 +49,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
         return Arrays.asList(
                 Setting.createDefault(
                         PROXY_PAC_CACHE,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        APPLICATION_MANAGER_ACTIVE,
                         Boolean.FALSE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),

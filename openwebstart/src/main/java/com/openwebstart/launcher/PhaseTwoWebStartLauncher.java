@@ -38,7 +38,7 @@ public class PhaseTwoWebStartLauncher {
     private static final String consoleOption = "-console";
     private static final List<String> optionsToSkip = Arrays.asList(CommandLineOptions.NOFORK.getOption(), CommandLineOptions.VIEWER.getOption(), consoleOption);
 
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");

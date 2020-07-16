@@ -48,7 +48,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
 
         if (hasMenu || hasDesktop) {
-            updateEntries(factory, jnlpFile, supportsMenu && hasDesktop, supportsDesktop && hasDesktop);
+            updateEntries(factory, jnlpFile, supportsMenu && hasMenu, supportsDesktop && hasDesktop);
         } else {
             if (shortcutCreationOptions == CREATE_ALWAYS) {
                 addEntries(factory, jnlpFile, supportsMenu, supportsDesktop);
