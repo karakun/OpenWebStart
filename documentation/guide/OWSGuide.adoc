@@ -93,121 +93,7 @@ ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-The following table provides an overview of all properties that can be specified in the response.varfile:
-
-[cols="50,11,39"]
-|===
-|property |lockable |description
-
-|ows.jvm.manager.cache.dir
-|yes
-|Allows to specify the directory where the JVM cache is located. The follow example shows two examples for Windows: ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir or ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
-
-|ows.jvm.manager.server.default
-|yes
-|This property must contain a valid URL that defines the server that is used to download new JVMs.
-
-|ows.jvm.manager.server.allowFromJnlp
-|yes
-|Defines if a custom URL can be used to download a JVM. Such URL can be part of a JNLP file.
-
-|ows.jvm.manager.vendor
-|yes
-|Defines a specifc JVM vendor. By doing so, only JVMs from that vendor will be downloaded. You can use ‘*’ to allow any vendor.
-
-|ows.jvm.manager.vendor.allowFromJnlp
-|yes
-|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. Default is false i.e. the vendor from the settings is taken.
-
-|ows.jvm.manager.updateStrategy
-|yes
-|When starting a JNLP application, OpenWebStart can check if an updated JVM is available to run the application. This property defines how OpenWebstart behaves in the JVM check. Possible values are DO_NOTHING_ON_LOCAL_MATCH, ASK_FOR_UPDATE_ON_LOCAL_MATCH and AUTOMATICALLY_DOWNLOAD
-
-|ows.jvm.manager.versionRange
-|yes
-|Allows to limit the possible JVM versions. Must be valid version-string according to JSR-56 Appendix A.
-
-|deployment.proxy.http.host
-|yes
-|The HTTP proxy hostname.
-
-|deployment.proxy.https.host
-|yes
-|The HTTPS proxy hostname.
-
-|deployment.proxy.http.port
-|yes
-|The HTTP proxy port.
-
-|deployment.proxy.https.port
-|yes
-|The HTTPS proxy port.
-
-|deployment.proxy.bypass.local
-|yes
-|All local hosts should be bypassed. Default is false.
-
-|deployment.proxy.bypass.list
-|yes
-|A comma separated list of host names that should bypass the proxy.
-
-|deployment.proxy.type
-|yes
-|The proxy type that should be used. Possible values are 0 (no proxy), 1 (manual proxy, default), 2 (PAC based proxy), 3 (Firefox), 4 (system proxy)
-
-|deployment.proxy.auto.config.url
-|yes
-|The URL for the proxy auto-config (PAC) file that will be used.
-
-|deployment.proxy.same
-|yes
-|If true use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is false.
-
-|deployment.cache.max.size
-|yes
-|The cache maximum size. Default is -1
-
-|deployment.https.noenforce
-|yes
-|If set to true http urls are not converted to https. Default is false.
-
-|deployment.assumeFileSystemInCodebase
-|yes
-|Defines if files from the local filesystem are always handled as if they would be part of the codebase.
-
-|deployment.security.whitelist
-|no
-|A comma separated list of urls that are defined as whitelist. The whitelist is checked whenever OpenWebStart will download a resource (like a JAR file).
-
-|ows.jvm.manager.maxDaysUnusedInJvmCache
-|yes
-|Max number of days an unused JVM stays in the JVM cache. The default is 30.
-
-|deployment.log
-|no
-|If set to true debug logging is enabled. Default is false
-
-|deployment.log.file
-|no
-|If set to true log is outputted to file. Default is false
-
-|ows.update.activated
-|yes
-|Defines if OpenWebStart should automatically search for updates.
-
-|ows.checkUpdate
-|yes
-|This property has no effect and is only used to lock functionality in the user interface. If this property is locked, a user cannot manually search for OpenWebStart updates.
-
-|ows.update.strategy.settings
-|yes
-|Defines how often OpenWebStart should search for updates when opening the settings windows. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
-
-|ows.update.strategy.launch
-|yes
-|Defines how often OpenWebStart should search for updates when starting an application. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
-
-|===
+Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in the `response.varfile`.
 
 To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a `response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder, you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
 
@@ -269,8 +155,6 @@ For Windows and macOS::
 
 For Linux:: Use your package manager and remove the package OpenWebStart
 
-
-
 == Updates
 
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
@@ -280,22 +164,24 @@ It is possible to define an update strategy on every `start`, `daily`, `weekly`,
 
 == Configuration
 
-There is an extra application to configure OpenWebStart.
+The standard way to configure OpenWebStart is to use the OWS Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
 
-All settings are stored on the file system.
+All settings managed by this application are stored on the file system in a file called `deployment.properties`.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
 For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
+
 This file can be edited with a regular text editor.
-For some expert configurations this may be necessary but for most cases the graphical UI will be sufficient.
+For some expert configurations this may be necessary, but for most cases the graphical UI will be sufficient.
 
-Besides the per user configuration there exists also the possibility to define a system wide configuration.
-This allows setting up a common configuration for multiple users on a single computer.
-Or helps in managing a corporate infrastructure where many computers need to be configured identically.
+Besides a per-user configuration by manipulating `deployment.properties`, there exists also the possibility to define a system-wide configuration.
+This allows setting up a common configuration for multiple users on a single computer or helps in managing a corporate infrastructure where many computers need to be configured identically. For more details see <<System Configuration>>.
 
-For more details see the sections below.
+Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
 
-=== JVM Manager
+The following chapters will describe these various configuration possibilities in detail.
+
+=== JVM Management
 
 #<TODO: describe OWS settings options>#
 
@@ -330,7 +216,7 @@ cacheTimeInMillis:: The time which needs to elapse before a client is allowed to
 
 os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
-=== Cache Management
+=== Application and Cache Management
 
 #<TODO: describe OWS settings options>#
 
@@ -338,11 +224,11 @@ os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
 #<TODO: describe OWS settings options>#
 
-=== Certificates
+=== Security Settings
 
 #<TODO: describe OWS settings options>#
 
-=== Security Settings
+=== Certificates
 
 #<TODO: describe OWS settings options>#
 
@@ -450,7 +336,7 @@ Therefore the generated user configuration may not contain all the values you wi
 
 Please contact openwebstart@karakun.com if you need to know the key and valid values for a specific configuration.
 
-==== Locking a property
+==== Locking a Property
 
 One of the use cases is to enforce some configurations to all users in your corporate environment.
 This can be achieved by locking configuration on a system level.
@@ -466,3 +352,150 @@ ows.jvm.manager.server.default.locked=true
 
 TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
 The presence of the key is sufficient for locking the property.
+
+=== Configuration Properties Overview
+
+The following table provides an overview of the configuration properties of OpenWebStart.
+
+NOTE: The properties marked in the column LK are lockable. The properties marked in the column RV can be specified in the response.varfile. See <<Configuration>> and <<Unattended Installation>> for further details.
+
+[cols="45,5,5,45"]
+|===
+|Property | LK | RV | Description
+
+|ows.jvm.manager.cache.dir
+|X
+|X
+|Allows to specify the directory where the JVM cache is located. The follow example shows two examples for Windows: ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir or ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
+
+|ows.jvm.manager.server.default
+|X
+|X
+|This property must contain a valid URL that defines the server that is used to download new JVMs.
+
+|ows.jvm.manager.server.allowFromJnlp
+|X
+|X
+|Defines if a custom URL can be used to download a JVM. Such URL can be part of a JNLP file.
+
+|ows.jvm.manager.vendor
+|X
+|X
+|Defines a specifc JVM vendor. By doing so, only JVMs from that vendor will be downloaded. You can use ‘*’ to allow any vendor.
+
+|ows.jvm.manager.vendor.allowFromJnlp
+|X
+|X
+|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. Default is false i.e. the vendor from the settings is taken.
+
+|ows.jvm.manager.updateStrategy
+|X
+|X
+|When starting a JNLP application, OpenWebStart can check if an updated JVM is available to run the application. This property defines how OpenWebstart behaves in the JVM check. Possible values are DO_NOTHING_ON_LOCAL_MATCH, ASK_FOR_UPDATE_ON_LOCAL_MATCH and AUTOMATICALLY_DOWNLOAD
+
+|ows.jvm.manager.versionRange
+|X
+|X
+|Allows to limit the possible JVM versions. Must be valid version-string according to JSR-56 Appendix A.
+
+|deployment.proxy.http.host
+|X
+|X
+|The HTTP proxy hostname.
+
+|deployment.proxy.https.host
+|X
+|X
+|The HTTPS proxy hostname.
+
+|deployment.proxy.http.port
+|X
+|X
+|The HTTP proxy port.
+
+|deployment.proxy.https.port
+|X
+|X
+|The HTTPS proxy port.
+
+|deployment.proxy.bypass.local
+|X
+|X
+|All local hosts should be bypassed. Default is false.
+
+|deployment.proxy.bypass.list
+|X
+|X
+|A comma separated list of host names that should bypass the proxy.
+
+|deployment.proxy.type
+|X
+|X
+|The proxy type that should be used. Possible values are 0 (no proxy), 1 (manual proxy, default), 2 (PAC based proxy), 3 (Firefox), 4 (system proxy)
+
+|deployment.proxy.auto.config.url
+|X
+|X
+|The URL for the proxy auto-config (PAC) file that will be used.
+
+|deployment.proxy.same
+|X
+|X
+|If true use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is false.
+
+|deployment.cache.max.size
+|X
+|X
+|The cache maximum size. Default is -1
+
+|deployment.https.noenforce
+|X
+|X
+|If set to true http urls are not converted to https. Default is false.
+
+|deployment.assumeFileSystemInCodebase
+|X
+|X
+|Defines if files from the local filesystem are always handled as if they would be part of the codebase.
+
+|deployment.security.whitelist
+|-
+|X
+|A comma separated list of urls that are defined as whitelist. The whitelist is checked whenever OpenWebStart will download a resource (like a JAR file).
+
+|ows.jvm.manager.maxDaysUnusedInJvmCache
+|X
+|X
+|Max number of days an unused JVM stays in the JVM cache. The default is 30.
+
+|deployment.log
+|-
+|X
+|If set to true debug logging is enabled. Default is false
+
+|deployment.log.file
+|-
+|X
+|If set to true log is outputted to file. Default is false
+
+|ows.update.activated
+|X
+|X
+|Defines if OpenWebStart should automatically search for updates.
+
+|ows.checkUpdate
+|X
+|X
+|This property has no effect and is only used to lock functionality in the user interface. If this property is locked, a user cannot manually search for OpenWebStart updates.
+
+|ows.update.strategy.settings
+|X
+|X
+|Defines how often OpenWebStart should search for updates when opening the settings windows. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
+
+|ows.update.strategy.launch
+|X
+|X
+|Defines how often OpenWebStart should search for updates when starting an application. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
+
+|===
