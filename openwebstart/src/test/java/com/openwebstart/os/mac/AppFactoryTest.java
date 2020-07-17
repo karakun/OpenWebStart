@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class AppFactoryTest extends Object {
+
 	private final static String SCRIPT_START = "#!/bin/sh";
 	private final static String script = SCRIPT_START + System.lineSeparator() + "open -a Calculator";
 
@@ -59,18 +60,13 @@ public final class AppFactoryTest extends Object {
 
 		final String appNameWithSuffix = appName + AppFactory.APP_EXTENSION;
 
-		AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
+		AppFactory.createAppWithoutMenuEntry(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
 
 		assertTrue(Files.exists(Paths.get(userHome)));
+
 		assertTrue(Files.exists(Paths.get(userCache)));
 		assertTrue(Files.exists(Paths.get(userCache, "applications")));
 		assertTrue(Files.exists(Paths.get(userCache, "applications", appNameWithSuffix)));
-
-		assertTrue(Files.exists(Paths.get(userHome, "Applications")));
-		final Path link = Paths.get(userHome, "Applications", appNameWithSuffix);
-		assertTrue(Files.exists(link));
-		assertTrue(Files.isSymbolicLink(link));
-		assertTrue(link.toRealPath().equals(Paths.get(userCache, "applications", appNameWithSuffix).toRealPath()));
 
 		// do it again
 		AppFactory.createApp(appName, script, IcnsFactorySample.class.getResource("icon.png").getFile());
