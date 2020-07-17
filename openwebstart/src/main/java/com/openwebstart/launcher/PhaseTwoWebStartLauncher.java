@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -37,7 +38,7 @@ public class PhaseTwoWebStartLauncher {
     private static final String consoleOption = "-console";
     private static final List<String> optionsToSkip = Arrays.asList(CommandLineOptions.NOFORK.getOption(), CommandLineOptions.VIEWER.getOption(), consoleOption);
 
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");
@@ -49,6 +50,8 @@ public class PhaseTwoWebStartLauncher {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
             JNLPRuntime.exit(-1);
         }
+
+        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
 
         try {
             new InitialConfigurationCheck(config).check();

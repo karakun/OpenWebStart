@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -75,6 +76,7 @@ public class ControlPanelLauncher {
             LOG.error("Can not set look&feel", e);
         }
 
+        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
         SwingUtils.invokeLater(() -> {
             final ControlPanel editor = new ControlPanel(config);
             editor.setVisible(true);
