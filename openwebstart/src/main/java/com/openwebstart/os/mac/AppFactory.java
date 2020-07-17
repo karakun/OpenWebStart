@@ -1,21 +1,6 @@
 package com.openwebstart.os.mac;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import com.openwebstart.os.mac.icns.IcnsFactory;
-
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.config.FilesystemConfiguration;
@@ -24,23 +9,34 @@ import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 public class AppFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AppFactory.class);
 
+	public final static String CONTENTS_FOLDER_NAME = "Contents";
 
+	private final static String MAC_OS_FOLDER_NAME = "MacOS";
 
-    public  final static String CONTENTS_FOLDER_NAME = "Contents";
+	private final static String RESOURCES_FOLDER_NAME = "Resources";
 
-    private final static String MAC_OS_FOLDER_NAME = "MacOS";
+	private final static String INFO_PLIST_NAME = "Info.plist";
 
-    private final static String RESOURCES_FOLDER_NAME = "Resources";
+	private final static String INFO_PLIST_TEMPLATE_NAME = "Info.plist.template";
 
-    private final static String INFO_PLIST_NAME = "Info.plist";
-
-    private final static String INFO_PLIST_TEMPLATE_NAME = "Info.plist.template";
-
-    public  final static String APP_EXTENSION = ".app";
+	public final static String APP_EXTENSION = ".app";
 
     private final static String SCRIPT_NAME = "start.sh";
 
@@ -66,25 +62,29 @@ public class AppFactory {
     }
 
 	public static void createApp(final String name, final String script, final String... iconPaths) throws Exception {
-		final File appPackage = createAppWithoutMenuEntry(name, script, iconPaths);
 
-		final Path linkFolder = ensureUserApplicationFolder();
-		final Path appLinkPath = linkFolder.resolve(name + APP_EXTENSION);
-		if (Files.exists(appLinkPath, LinkOption.NOFOLLOW_LINKS)) {
-			Files.delete(appLinkPath);
-		}
-		Files.createSymbolicLink(appLinkPath, appPackage.toPath());
+		final Path userApplicationFolder = ensureUserApplicationFolder();
+		createNativeApp(userApplicationFolder, name, script, iconPaths);
 	}
 
 	final static File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
 			throws Exception {
+
+		final Path applicationsFolder = ensureUserApplicationCacheFolder();
+		return createNativeApp(applicationsFolder, name, script, iconPaths);
+	}
+
+	final static File createNativeApp(final Path applicationsFolder, final String name, final String script, final String... iconPaths)
+			throws Exception {
+		Assert.requireNonNull(applicationsFolder, "applicationsFolder");
 		Assert.requireNonBlank(name, "name");
 		Assert.requireNonBlank(script, "script");
 
-		LOG.info("Creating app '{}'", name);
-
-		final Path applicationsFolder = ensureUserApplicationCacheFolder();
 		final File appPackage = new File(applicationsFolder.toFile(), name + APP_EXTENSION);
+
+		LOG.info("Creating app '{}' at '{}'", name, appPackage);
+
+
 		if (!appPackage.exists()) {
 			if (!appPackage.mkdirs()) {
 				throw new IOException("Cannot create app directory");
@@ -113,7 +113,7 @@ public class AppFactory {
 
 		final File iconsFile = new File(resourcesFolder, ICON_FILE_NAME + ICON_FILE_EXTENSION);
 		try (final InputStream inputStream = getIcnsInputStream(iconPaths);
-				final FileOutputStream outputStream = new FileOutputStream(iconsFile)) {
+			 final FileOutputStream outputStream = new FileOutputStream(iconsFile)) {
 			IOUtils.copy(inputStream, outputStream);
 		}
 		LOG.debug("Iconfile for app '{}' created", name);
@@ -142,26 +142,21 @@ public class AppFactory {
 		return appPackage;
 	}
 
-    private static InputStream getIcnsInputStream(final String... iconPaths) throws Exception {
-        if(iconPaths == null || iconPaths.length == 0) {
-            return AppFactory.class.getResourceAsStream("icons.icns");
-        }
-        final IcnsFactory factory = new IcnsFactory();
-        final List<File> iconFiles = Arrays.stream(iconPaths).map(File::new).collect(Collectors.toList());
-        return new FileInputStream(factory.createIconSet(iconFiles));
-    }
+	private static InputStream getIcnsInputStream(final String... iconPaths) throws Exception {
+		final IcnsFactory factory = new IcnsFactory();
+		final List<File> iconFiles = Arrays.stream(iconPaths).map(File::new).collect(Collectors.toList());
+		return new FileInputStream(factory.createIconSet(iconFiles));
+	}
 
-    private final static Path ensureUserApplicationFolder()
-    {
-    	final String userHome = JavaSystemProperties.getUserHome();
-    	final File appFolder = new File( new File(userHome), USER_APPLICATIONS_FOLDER);
-    	if ( !appFolder.exists() )
-    	{
-    		appFolder.mkdir();
-    	}	
-    	return appFolder.toPath();
-    }
-    
+	private final static Path ensureUserApplicationFolder() {
+		final String userHome = JavaSystemProperties.getUserHome();
+		final File appFolder = new File(new File(userHome), USER_APPLICATIONS_FOLDER);
+		if (!appFolder.exists()) {
+			appFolder.mkdir();
+		}
+		return appFolder.toPath();
+	}
+
 	private final static Path ensureUserApplicationCacheFolder() {
 		final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER);
 		if (!Files.isDirectory(appcache)) {
