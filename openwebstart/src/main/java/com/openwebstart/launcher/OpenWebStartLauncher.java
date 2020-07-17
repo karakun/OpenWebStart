@@ -29,7 +29,7 @@ public class OpenWebStartLauncher {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         final List<String> verboseArgs = getVerboseArgs(args);
         if (!InstallerUtil.isMacOS()) {
             LOG.info("OWS main args {}.", verboseArgs);
