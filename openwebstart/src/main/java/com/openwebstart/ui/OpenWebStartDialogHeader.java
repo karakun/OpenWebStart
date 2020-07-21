@@ -49,11 +49,11 @@ public class OpenWebStartDialogHeader extends JPanel {
                 LOG.warn("Unable to load font", e);
             }
             webStartLabel.setForeground(Color.WHITE);
-            webStartLabel.setFont(openLabel.getFont().deriveFont(28.0f));
-            webStartLabel.setFont(openLabel.getFont().deriveFont(Font.PLAIN));
+            webStartLabel.setFont(webStartLabel.getFont().deriveFont(28.0f));
+            webStartLabel.setFont(webStartLabel.getFont().deriveFont(Font.PLAIN));
 
             add(webStartLabel);
-            webStartLabel.setLocation(82, 0);
+            webStartLabel.setLocation(74, 0);
             webStartLabel.setSize(new Dimension(webStartLabel.getPreferredSize().width + 4, webStartLabel.getPreferredSize().height + 4));
         } catch (IOException e) {
             LOG.error("Can not create dialog header", e);

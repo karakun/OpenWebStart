@@ -5,7 +5,6 @@ import com.openwebstart.controlpanel.MaximumLayoutManager;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.ModalDialog;
-import com.openwebstart.ui.OpenWebStartDialogHeader;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -121,11 +120,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
         mainPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
 
-        final JPanel contentPane = new JPanel(new BorderLayout());
-        contentPane.add(new OpenWebStartDialogHeader(), BorderLayout.NORTH);
-        contentPane.add(mainPanel, BorderLayout.CENTER);
-
-        setContentPane(contentPane);
+        setContentPane(mainPanel);
     }
 
     private void onUpdate(final int overallPercent) {
