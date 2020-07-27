@@ -28,7 +28,7 @@ public class ProxyUtlis {
 
     public static void showUnsupportedFeatureDialog(final String featureKey) {
         final String featureName = Translator.getInstance().translate(featureKey);
-        final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, featureName).showAndWait();
+        final ProxyDialogResult result = new UnsupportedFeatureDialog(ProxyProviderType.OPERATION_SYSTEM, featureName).showAndWaitForResult();
         if (result == ProxyDialogResult.EXIT) {
             LOG.info("Exit app based on missing proxy feature. Please reconfigure the proxy settings");
             JNLPRuntime.exit(-1);

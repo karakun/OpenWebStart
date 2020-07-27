@@ -25,7 +25,7 @@ public class DialogFactory {
     private static <R> R handleEdtConform(final DialogWithResult<R> dialog) {
         Assert.requireNonNull(dialog, "dialogHandler");
 
-        final Supplier<R> dialogHandler = dialog::showAndWait;
+        final Supplier<R> dialogHandler = dialog::showAndWaitForResult;
 
         if (SwingUtils.isEventDispatchThread()) {
             final R result = dialogHandler.get();
