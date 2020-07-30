@@ -5,12 +5,12 @@ import com.openwebstart.http.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.IconComponent;
+import com.openwebstart.ui.ModalDialog;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-public class RuntimeDownloadDialog extends JDialog {
+public class RuntimeDownloadDialog extends ModalDialog {
 
     public static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
         try {
@@ -94,10 +94,5 @@ public class RuntimeDownloadDialog extends JDialog {
 
         pack();
         setLocationRelativeTo(null);
-    }
-
-    private void close() {
-        setVisible(false);
-        dispose();
     }
 }

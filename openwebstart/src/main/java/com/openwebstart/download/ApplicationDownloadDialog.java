@@ -119,6 +119,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         mainPanel.addRow(3, buttonPane);
 
         mainPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
+
         setContentPane(mainPanel);
     }
 

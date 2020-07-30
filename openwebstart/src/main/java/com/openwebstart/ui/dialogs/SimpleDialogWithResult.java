@@ -58,7 +58,7 @@ public class SimpleDialogWithResult<R> extends ButtonBasedDialogWithResult<R> {
             }
             button.addActionListener(e -> {
                 final R result = b.getOnAction().get();
-                close(result);
+                closeWithResult(result);
             });
             actionWrapperPanel.add(button);
         });
