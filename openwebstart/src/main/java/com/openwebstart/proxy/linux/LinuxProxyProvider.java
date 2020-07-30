@@ -1,6 +1,7 @@
 package com.openwebstart.proxy.linux;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.direct.DirectProxyProvider;
@@ -51,7 +52,7 @@ public class LinuxProxyProvider implements ProxyProvider {
                 break;
             case MANUAL:
                 if (proxySettings.isAuthenticationEnabled()) {
-                    showUnsupportedFeatureDialog("proxy.unsupportedFeature.httpUser");
+                    showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.httpUser");
                 }
                 final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
                 if (proxySettings.isHttpEnabled()) {
