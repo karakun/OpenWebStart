@@ -1,6 +1,7 @@
 package com.openwebstart.proxy.mac;
 
 import com.openwebstart.proxy.ProxyProvider;
+import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.proxy.config.ConfigBasedProvider;
 import com.openwebstart.proxy.config.ProxyConfigurationImpl;
 import com.openwebstart.proxy.pac.PacBasedProxyProvider;
@@ -27,25 +28,25 @@ public class MacProxyProvider implements ProxyProvider {
         final MacProxySettings proxySettings = ScutilUtil.executeScutil();
 
         if (proxySettings.isAutoDiscoveryEnabled()) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.autoDiscovery");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.autoDiscovery");
         }
         if (proxySettings.isExcludeSimpleHostnames()) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.excludeSimpleHostnames");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.excludeSimpleHostnames");
         }
         if (proxySettings.isFtpPassive()) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.ftpPassive");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.ftpPassive");
         }
         if (proxySettings.getHttpUser() != null) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.httpUser");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.httpUser");
         }
         if (proxySettings.getHttpsUser() != null) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.httpsUser");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.httpsUser");
         }
         if (proxySettings.getFtpUser() != null) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.ftpUser");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.ftpUser");
         }
         if (proxySettings.getSocksUser() != null) {
-            showUnsupportedFeatureDialog("proxy.unsupportedFeature.socksUser");
+            showUnsupportedFeatureDialog(config, ProxyProviderType.OPERATION_SYSTEM, "proxy.unsupportedFeature.socksUser");
         }
 
         if (proxySettings.isAutoConfigEnabled()) {

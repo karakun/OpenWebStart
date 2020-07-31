@@ -15,12 +15,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Notification extends JWindow {
 
-    public Notification(final String message, final boolean error, final Consumer<Notification> onClose) {
+    public Notification(final String message, final NotificationType notificationType, final Consumer<Notification> onClose) {
         Assert.requireNonBlank(message, "message");
 
         setAlwaysOnTop(true);
@@ -36,7 +37,7 @@ public class Notification extends JWindow {
 
 
         final IconComponent iconComponent;
-        if (error) {
+        if (Objects.equals(notificationType, NotificationType.ERROR)) {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("error-32.png")));
         } else {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("info-32.png")));
