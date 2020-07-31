@@ -42,7 +42,7 @@ public class ProxyUtlis {
     public static void showUnsupportedFeatureDialog(final DeploymentConfiguration configuration, final ProxyProviderType proxyType, final String featureKey) {
         final String featureName = Translator.getInstance().translate(featureKey);
         final String proxyName = getTranslatedProxyName(proxyType);
- final String message = Translator.getInstance().translate(DIALOG_MESSAGE, proxyName, featureName);
+        final String message = Translator.getInstance().translate(DIALOG_MESSAGE, proxyName, featureName);
         LOG.warn(message);
         if (Boolean.parseBoolean(configuration.getProperty(SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS))) {
             Notifications.showWarning(message);
