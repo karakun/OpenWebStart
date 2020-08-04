@@ -139,11 +139,15 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         resourceStatesLock.lock();
         try {
             ApplicationDownloadResourceState lastState = resourceStates.get(url);
-            if (lastState == null
-                    || resourceState.getPercentage() != lastState.getPercentage()
-                    || !Objects.equals(resourceState.getDownloadState(), lastState.getDownloadState())) {
+            if (lastState == null) {
                 resourceStates.put(url, resourceState);
                 SwingUtilities.invokeLater(() -> updateUi(url, resourceState));
+            } else {
+                if (!Objects.equals(resourceState.getDownloadState(), lastState.getDownloadState())
+                        || resourceState.getPercentage() != lastState.getPercentage()) {
+                    resourceStates.put(url, resourceState);
+                    SwingUtilities.invokeLater(() -> updateUi(url, resourceState));
+                }
             }
         } finally {
             resourceStatesLock.unlock();
@@ -153,26 +157,25 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     private void updateUi(final URL url, final ApplicationDownloadResourceState resourceState) {
         if (!isVisible()) {
             showAndWait();
+        }
+        if (resourceState.getPercentage() >= 100) {
+            listModel.remove(resourceState);
         } else {
-            if (resourceState.getPercentage() >= 100) {
-                listModel.remove(resourceState);
-            } else {
-                listModel.add(resourceState);
-            }
+            listModel.add(resourceState);
         }
     }
 
     private void updateUi(final int overallPercent) {
         if (!isVisible()) {
-            showAndWait();
-        } else {
-            if (overallPercent > 0) {
-                overallProgressBar.setIndeterminate(false);
-                overallProgressBar.setValue(overallPercent);
-                overallProgressBar.setToolTipText(overallPercent + " %");
-            } else {
-                overallProgressBar.setIndeterminate(true);
-            }
+            pack();
+            setLocationRelativeTo(null);
+            setVisible(true);
+        }
+        if (overallPercent > 0) {
+            //TODO: Need to be changed in future
+            //overallProgressBar.setIndeterminate(false);
+            overallProgressBar.setValue(overallPercent);
+            overallProgressBar.setToolTipText(overallPercent + " %");
         }
     }
 

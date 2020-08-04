@@ -25,4 +25,14 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
             downloadDialog.close();
         }
     }
+
+    @Override
+    public int getUpdateRate() {
+        return 150;
+    }
+
+    @Override
+    public int getInitialDelay() {
+        return 300;
+    }
 }
