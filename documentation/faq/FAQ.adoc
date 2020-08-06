@@ -100,11 +100,36 @@ The different servers are listed as a comma separated string.
 Localhost is implicitly always in the white list.
 If you delete the line again then no whitelisting is applied and all servers are reachable.
 
+It is possible to specify wildcard (*) in the host and port part of the URL. Some examples:
+
+|===
+|Whitelist entry|UI Displayed|Comment
+
+|http://subdomain.domain.com:8080
+|http://subdomain.domain.com:8080
+|only the specified protocol, host port combination is whitelisted
+
+|domain.com|https://domain.com:443|since HTTPS and 443 are defaults
+|http://subdomain.domain.com|http://subdomain.domain.com:80|since HTTP is used default port is 80
+|https://subdomain.domain.com|https://subdomain.domain.com:443|since HTTPS is used default port is 443
+
+|https://subdomain.domain.com:*|https://subdomain.domain.com|any port is whitelisted
+|https://subdomain.domain.com:1*|Error: Invalid port|only a number in the range 1-65535 or * is valid for the port
+|https://*.domain.com:443|https://*.domain.com:443|any domain which ends in "domain.com" is whitelisted
+|https://*jvms.domain.com:443|Error: invalid host|for host part use either * or text but not combination
+|\*.domain.com:*|https://\*.domain.com:*|any domain which ends in ".domain.com" and any port is whitelisted
+|https://jvms.*:443|Error: invalid host|* is only allowed at position 0 of the host name
+(any part other than the first part of host cannot be a wildcard)
+|https://jvms.*.domain.com:443|Error: invalid host|* is only allowed at position 0 of the host name
+|https://*:443|https://*:443 |any host but with protocol https and port 443 is whitelisted
+|===
+
 Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running.
 Thus, an application can open a connection to a server which is not in the white list.
 
 It is also possible to specify the content of the whitelist when installing OWS (unattended installation),
 See https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
+
 
 ==== How to run OpenJFX based JavaFX applications with OpenWebStart?
 
