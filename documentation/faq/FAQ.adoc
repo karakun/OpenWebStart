@@ -106,6 +106,16 @@ Thus, an application can open a connection to a server which is not in the white
 It is also possible to specify the content of the whitelist when installing OWS (unattended installation),
 See https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
 
+
+It is possible to specify a wildcard in the host and port part of the URL. Some examples are shown below. Please see the Guide to OpenWebStart for details.
+
+|===
+|Whitelist entry|UI Displayed|Comment
+
+|https://*.domain.com|https://*.domain.com:443|any domain which ends in "domain.com" is whitelisted
+|\*.domain.com:*|https://*.domain.com|any domain which ends in ".domain.com" and any port is whitelisted
+|===
+
 ==== How to run OpenJFX based JavaFX applications with OpenWebStart?
 
 *With JDK 8*
