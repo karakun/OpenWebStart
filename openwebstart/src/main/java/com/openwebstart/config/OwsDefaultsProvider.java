@@ -26,6 +26,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER_DEFAULT_VALUE = "https://download-openwebstart.com/jvms.json";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
+    public static final String JVM_SERVER_WHITELIST = "ows.jvm.manager.server.allowFromJnlp.whitelist";
     public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";

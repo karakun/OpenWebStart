@@ -19,6 +19,7 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -116,12 +117,22 @@ public class ConfigurationDialog extends ModalDialog {
         waringLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
         waringLabel.setToolTipText(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.warning"));
         waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
-        allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
+
+        final JButton showWhitelistButton = new JButton(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.whitelist.text"));
+        showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        showWhitelistButton.addActionListener(e -> new JVMServerWhitelistDialog(deploymentConfiguration).showAndWait());
+        allowServerFromJnlpCheckBox.addActionListener(e -> {
+            waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
+            showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        });
 
         final JPanel allowServerFromJnlpContainer = new JPanel();
         allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
+        Dimension dim = new Dimension(25, -1);
+        allowServerFromJnlpContainer.add( new Box.Filler(dim, dim, dim));
+        allowServerFromJnlpContainer.add(showWhitelistButton);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
         final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
@@ -316,11 +327,11 @@ public class ConfigurationDialog extends ModalDialog {
 
     private class WarningToolTip extends JToolTip {
 
-            public WarningToolTip(JComponent component) {
-                super();
-                setComponent(component);
-                setBackground(Color.white);
-                setForeground(Color.decode("#f57c00"));
-            }
+        public WarningToolTip(JComponent component) {
+            super();
+            setComponent(component);
+            setBackground(Color.white);
+            setForeground(Color.decode("#f57c00"));
         }
+    }
 }

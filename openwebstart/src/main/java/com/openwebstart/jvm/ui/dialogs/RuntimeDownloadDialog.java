@@ -17,6 +17,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.net.MalformedURLException;
 
 public class RuntimeDownloadDialog extends ModalDialog {
 
@@ -41,7 +42,15 @@ public class RuntimeDownloadDialog extends ModalDialog {
         setTitle(translator.translate("dialog.jvmDownload.title"));
         setResizable(false);
 
-        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor()));
+        // TODO : confirm if we want to display this on label
+        String endpoint = "";
+        try {
+            endpoint = remoteRuntime.getEndpoint().toExternalForm();
+        } catch (MalformedURLException e) {
+
+        }
+
+        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message",  remoteRuntime.getVersion(), remoteRuntime.getVendor() + "from " + endpoint));
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
         if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
