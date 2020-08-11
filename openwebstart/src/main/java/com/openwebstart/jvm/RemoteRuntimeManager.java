@@ -50,10 +50,10 @@ class RemoteRuntimeManager {
         // TODO : confirm that we only check the URL in JNLP against whitelist and not the URL specified in settings
         if (RuntimeManagerConfig.isNonDefaultServerAllowed() && specificServerEndpoint != null) {
             if (!UrlWhiteListUtils.isUrlInWhitelist(specificServerEndpoint,  RuntimeManagerConfig.getJvmServerWhitelist())) {
-                LOG.warn("*************** JVM Server URL {} not in JVM Server Whitelist", specificServerEndpoint);
+                LOG.warn("JVM Server URL {} not in JVM Server Whitelist", specificServerEndpoint);
                 return Optional.empty();
             }
-            LOG.debug("************* JVM Server URL {} found in JVM Server Whitelist", specificServerEndpoint);
+            LOG.debug("JVM Server URL {} found in JVM Server Whitelist", specificServerEndpoint);
         }
         final URL endpointForRequest = getEndpointForRequest(specificServerEndpoint);
         final List<RemoteJavaRuntime> remoteRuntimes = loadListOfRemoteRuntimes(endpointForRequest);

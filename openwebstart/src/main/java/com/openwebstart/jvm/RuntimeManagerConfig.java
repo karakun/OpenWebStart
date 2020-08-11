@@ -117,7 +117,7 @@ public class RuntimeManagerConfig {
 
     public static List<WhitelistEntry> getJvmServerWhitelist() {
         if (jvmServerWhitelist == null) {
-            jvmServerWhitelist = UrlWhiteListUtils.getUrlWhiteList(JVM_SERVER_WHITELIST);
+            jvmServerWhitelist = UrlWhiteListUtils.whitelistPropertyName(JVM_SERVER_WHITELIST);
         };
         return jvmServerWhitelist;
     }
