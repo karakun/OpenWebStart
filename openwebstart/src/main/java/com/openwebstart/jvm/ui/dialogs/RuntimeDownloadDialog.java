@@ -22,7 +22,7 @@ public class RuntimeDownloadDialog extends ModalDialog {
 
     public static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
         try {
-            SwingUtilities.invokeAndWait(() -> {
+            SwingUtilities.invokeLater(() -> {
                 final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
                 downloadDialog.setVisible(true);
             });
