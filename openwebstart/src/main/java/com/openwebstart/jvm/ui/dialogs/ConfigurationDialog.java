@@ -130,7 +130,7 @@ public class ConfigurationDialog extends ModalDialog {
         allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
-        Dimension dim = new Dimension(20, -1);
+        Dimension dim = new Dimension(10, -1);
         allowServerFromJnlpContainer.add( new Box.Filler(dim, dim, dim));
         allowServerFromJnlpContainer.add(showWhitelistButton);
 

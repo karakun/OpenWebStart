@@ -19,7 +19,7 @@ public class JVMServerWhitelistDialog extends ModalDialog {
     private final Translator translator = Translator.getInstance();
 
     public JVMServerWhitelistDialog(final DeploymentConfiguration deploymentConfiguration) {
-        setTitle(translator.translate("dialog.jvmManagerConfig.title"));
+        setTitle(translator.translate("dialog.jvmManagerWhitelist.title"));
 
         JButton closeButton = new JButton(translator.translate("action.close"));
         closeButton.addActionListener(e -> close());
