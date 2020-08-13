@@ -4,16 +4,20 @@ import com.openwebstart.config.OwsDefaultsProvider;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.whitelist.UrlWhiteListUtils;
+import net.sourceforge.jnlp.util.whitelist.WhitelistEntry;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_UPDATE_STRATEGY;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
@@ -22,6 +26,8 @@ import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM
 public class RuntimeManagerConfig {
 
     private static DeploymentConfiguration deploymentConfiguration;
+    // TODO : Check if ok to have this in this class
+    private static List<WhitelistEntry> jvmServerWhitelist;
 
     private RuntimeManagerConfig() {
     }
@@ -108,4 +114,12 @@ public class RuntimeManagerConfig {
     private static DeploymentConfiguration config() {
         return deploymentConfiguration != null ? deploymentConfiguration : JNLPRuntime.getConfiguration();
     }
+
+    public static List<WhitelistEntry> getJvmServerWhitelist() {
+        if (jvmServerWhitelist == null) {
+            jvmServerWhitelist = UrlWhiteListUtils.whitelistPropertyName(JVM_SERVER_WHITELIST);
+        };
+        return jvmServerWhitelist;
+    }
+
 }

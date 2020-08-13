@@ -41,7 +41,7 @@ public class RuntimeDownloadDialog extends ModalDialog {
         setTitle(translator.translate("dialog.jvmDownload.title"));
         setResizable(false);
 
-        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor()));
+        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor(), remoteRuntime.getHref()));
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
         if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
