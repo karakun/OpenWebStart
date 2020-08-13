@@ -106,7 +106,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         final JPanel buttonPane = ButtonPanelFactory.createButtonPanel(showDetailsButton);
 
         mainPanel.addRow(0, messageLabel);
-        JPanel overallProgressBarWrapper = new JPanel(new BorderLayout());
+        final JPanel overallProgressBarWrapper = new JPanel(new BorderLayout());
         overallProgressBarWrapper.add(overallProgressBar, BorderLayout.NORTH);
         mainPanel.addRow(1, overallProgressBarWrapper);
         
