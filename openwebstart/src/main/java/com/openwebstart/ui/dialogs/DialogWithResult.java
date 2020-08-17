@@ -1,11 +1,12 @@
 package com.openwebstart.ui.dialogs;
 
-import javax.swing.JDialog;
+import com.openwebstart.ui.ModalDialog;
+
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class DialogWithResult<R> extends JDialog {
+public abstract class DialogWithResult<R> extends ModalDialog {
 
     private R result;
 
@@ -19,13 +20,12 @@ public abstract class DialogWithResult<R> extends JDialog {
 
     protected abstract JPanel createContentPane();
 
-    protected void close(final R result) {
+    protected void closeWithResult(final R result) {
         this.result = result;
-        this.setVisible(false);
-        this.dispose();
+        this.close();
     }
 
-    public R showAndWait() {
+    public R showAndWaitForResult() {
         if (SwingUtilities.isEventDispatchThread()) {
             getContentPane().removeAll();
             getContentPane().add(createContentPane());
@@ -38,7 +38,7 @@ public abstract class DialogWithResult<R> extends JDialog {
             try {
                 SwingUtilities.invokeAndWait(() -> {
                     pack();
-                    final R r = showAndWait();
+                    final R r = showAndWaitForResult();
                     result.complete(r);
                 });
                 return result.get();

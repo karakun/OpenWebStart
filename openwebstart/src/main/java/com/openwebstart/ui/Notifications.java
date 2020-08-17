@@ -1,6 +1,7 @@
 package com.openwebstart.ui;
 
 import com.openwebstart.ui.impl.Notification;
+import com.openwebstart.ui.impl.NotificationType;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
@@ -31,12 +32,17 @@ public class Notifications {
     }
 
     public static void showError(final String message) {
-        final Notification notification = new Notification(message, true, n -> hide(n));
+        final Notification notification = new Notification(message, NotificationType.ERROR, n -> hide(n));
         show(notification);
     }
 
     public static void showInfo(final String message) {
-        final Notification notification = new Notification(message, false, n -> hide(n));
+        final Notification notification = new Notification(message, NotificationType.INFO, n -> hide(n));
+        show(notification);
+    }
+
+    public static void showWarning(final String message) {
+        final Notification notification = new Notification(message, NotificationType.WARN, n -> hide(n));
         show(notification);
     }
 

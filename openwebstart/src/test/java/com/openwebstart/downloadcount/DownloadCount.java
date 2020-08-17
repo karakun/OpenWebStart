@@ -10,6 +10,7 @@ import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class DownloadCount {
@@ -42,7 +43,7 @@ public class DownloadCount {
             System.out.println("---------------------------------------------");
             System.out.println("Version '" + v.getVersion() + "' -> " + v.getDownloadCount() + " Downloads");
             System.out.println("---------------------------------------------");
-            v.getArtifacts().forEach(a -> {
+            v.getArtifacts().stream().sorted(Comparator.<DownloadCount.Artifact, String>comparing(a -> a.getOs()).reversed()).forEach(a -> {
                 System.out.println("    OS '" + a.getOs() + "' -> " + a.getDownloadCount() + " Downloads");
             });
             System.out.println("---------------------------------------------");

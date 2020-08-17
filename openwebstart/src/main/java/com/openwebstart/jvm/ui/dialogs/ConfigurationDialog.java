@@ -19,6 +19,7 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -53,6 +54,7 @@ import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorServ
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
@@ -102,7 +104,6 @@ public class ConfigurationDialog extends ModalDialog {
         defaultUpdateServerField.addFocusListener(new MyFocusAdapter());
         uiLock.update(DEFAULT_JVM_DOWNLOAD_SERVER, defaultUpdateServerField);
 
-
         final JCheckBox allowServerFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
         allowServerFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
         uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowServerFromJnlpCheckBox);
@@ -115,13 +116,24 @@ public class ConfigurationDialog extends ModalDialog {
         };
         waringLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
         waringLabel.setToolTipText(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.warning"));
-        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
-        allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
+        final boolean isNoJVMWhiteList = StringUtils.isBlank(deploymentConfiguration.getProperty(JVM_SERVER_WHITELIST));
+        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected() && isNoJVMWhiteList);
+
+        final JButton showWhitelistButton = new JButton(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.whitelist.text"));
+        showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        showWhitelistButton.addActionListener(e -> new JVMServerWhitelistDialog(deploymentConfiguration).showAndWait());
+        allowServerFromJnlpCheckBox.addActionListener(e -> {
+            waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected() && isNoJVMWhiteList);
+            showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        });
 
         final JPanel allowServerFromJnlpContainer = new JPanel();
         allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
+        Dimension dim = new Dimension(10, -1);
+        allowServerFromJnlpContainer.add( new Box.Filler(dim, dim, dim));
+        allowServerFromJnlpContainer.add(showWhitelistButton);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
         final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
@@ -316,11 +328,11 @@ public class ConfigurationDialog extends ModalDialog {
 
     private class WarningToolTip extends JToolTip {
 
-            public WarningToolTip(JComponent component) {
-                super();
-                setComponent(component);
-                setBackground(Color.white);
-                setForeground(Color.decode("#f57c00"));
-            }
+        public WarningToolTip(JComponent component) {
+            super();
+            setComponent(component);
+            setBackground(Color.white);
+            setForeground(Color.decode("#f57c00"));
         }
+    }
 }

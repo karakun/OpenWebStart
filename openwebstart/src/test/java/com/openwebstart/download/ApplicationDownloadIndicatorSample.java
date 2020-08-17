@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 class ApplicationDownloadIndicatorSample {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         final String applicationName = "Demo application";
         final URL[] resources = new URL[0];
         final ApplicationDownloadIndicator indicator = new ApplicationDownloadIndicator();

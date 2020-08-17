@@ -26,6 +26,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER_DEFAULT_VALUE = "https://download-openwebstart.com/jvms.json";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
+    public static final String JVM_SERVER_WHITELIST = "ows.jvm.manager.server.allowFromJnlp.whitelist";
     public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";
@@ -39,6 +40,8 @@ public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
 
+    public static final String SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS = "ows.jvm.proxy.unsupportedFeature.showNotification";
+
     public static final String APPLICATION_MANAGER_ACTIVE = "ows.experimental.applicationManager.active";
 
 
@@ -47,6 +50,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     @Override
     public List<Setting> getDefaults() {
         return Arrays.asList(
+                Setting.createDefault(
+                        SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS,
+                        Boolean.TRUE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
                 Setting.createDefault(
                         PROXY_PAC_CACHE,
                         Boolean.FALSE.toString(),
