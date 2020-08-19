@@ -329,7 +329,7 @@ deployment.system.config:: The URL to the system configuration.
 The name of the file can be freely chosen.
 Special characters need escaping.
 See the following examples:
-* `deployment.system.config=file\:/C\:/Window/Sun/Java/global.properties`
+* `deployment.system.config=file\:/C\:/Windows/Sun/Java/global.properties`
 * `deployment.system.config=file\:/etc/.java/deployment/base.properties`
 * `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
 
