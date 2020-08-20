@@ -216,6 +216,29 @@ cacheTimeInMillis:: The time which needs to elapse before a client is allowed to
 
 os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
+==== Allowing JVM Server in JNLP and defining a JVM Server Whitelist
+
+You can allow specification of JVM server in the JNLP file by defining the property:
+_ows.jvm.manager.server.allowFromJnlp=true_.
+In this case the JVM will be downloaded from the URL specified in the JNLP file:
+[source]
+----
+<java version="1.8*" href="http://myjvms.myserver.com/jvms.json"/>
+----
+
+When allowing JVM server download from the JNLP file, as a security measure it
+is advisable to define a whitelist for JVM server URLs that will be specified in JNLP files.
+JVMs will be allowed to be downloaded from only those server URLs that match a whitelist entry.
+
+The JVM server whitelist can be defined in the _deployment properties_ file _${userHome}/.config/icedtea-web/deployment.properties_:
+
+[source]
+----
+ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
+----
+
+It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
+
 === Application and Cache Management
 
 #<TODO: describe OWS settings options>#
@@ -232,9 +255,9 @@ os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
 #<TODO: describe OWS settings options>#
 
-=== Server Whitelists
+=== Server Whitelist
 
-The "Server Whitelists" panel in OWS settings displays the server whitelist.
+The "Server Whitelist" panel in OWS settings displays the server whitelist.
 To define a server whitelist you have to edit the `deployment.properties` file in your config directory with a text editor by adding a new line similar to the following:
 
 [source]
