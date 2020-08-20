@@ -24,8 +24,7 @@ OpenWebStart is released under the GPL with Classpath Exception.
 ==== Do I have to install a Java on my system to run OWS?
 OpenWebStart comes with a JVM Manager and a bundled Java runtime. There is no need to have any JVM installed on your system.
 
-The bundled JVM is used solely to run OWS.
-The JVMs manged by the JVM Manager are used to run the JNLP applications.
+The bundled JVM is used solely to run OWS. The JVMs manged by the JVM Manager are used to run the JNLP applications.
 
 ==== Which Java versions can be used to run my JNLP applications?
 
@@ -89,7 +88,7 @@ connected to the server as OWS will try to fetch the resources from the server a
 ==== How can I define a server whitelist for OWS?
 
 This field is currently not editable in the UI.
-Edit the deployment properties file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
+Edit the _deployment properties_ file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
 
 [source]
 ----
@@ -106,7 +105,6 @@ Thus, an application can open a connection to a server which is not in the white
 It is also possible to specify the content of the whitelist when installing OWS (unattended installation),
 See https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
 
-
 It is possible to specify a wildcard in the host and port part of the URL. Some examples are shown below. Please see the Guide to OpenWebStart for details.
 
 |===
@@ -115,6 +113,19 @@ It is possible to specify a wildcard in the host and port part of the URL. Some 
 |https://*.domain.com|https://*.domain.com:443|any domain which ends in "domain.com" is whitelisted
 |\*.domain.com:*|https://*.domain.com|any domain which ends in ".domain.com" and any port is whitelisted
 |===
+
+==== How can I define a JVM Server Whitelist?
+
+When allowing JVM server download from the JNLP file using the property _ows.jvm.manager.server.allowFromJnlp=true_,
+as a security measure it is advisable to define a whitelist for JVM server URLs that will be specified in JNLP files.
+JVMs will be allowed to be downloaded from only those server URLs that match a whitelist entry.
+
+The JVM server whitelist can be defined in the _deployment properties_ file _${userHome}/.config/icedtea-web/deployment.properties_:
+
+[source]
+----
+ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
+----
 
 ==== How to run OpenJFX based JavaFX applications with OpenWebStart?
 
