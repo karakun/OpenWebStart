@@ -20,6 +20,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_DIR;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
@@ -53,6 +54,7 @@ class InitialConfigurationCheck {
             ALLOW_DOWNLOAD_SERVER_FROM_JNLP,
             JVM_VENDOR,
             ALLOW_VENDOR_FROM_JNLP,
+            JVM_SERVER_WHITELIST,
             JVM_UPDATE_STRATEGY,
             JVM_SUPPORTED_VERSION_RANGE,
             KEY_PROXY_HTTP_HOST,
