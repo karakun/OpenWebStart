@@ -117,7 +117,11 @@ ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-If you now use such a file to install OpenWebStart, all the properties will be automatically imported and used at the first start of OpenWebStart.
+You can now use your enhanced file to install OpenWebStart on multiple machines. Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
+
+----
+<OpenWebStart_windows_Setup.exe> -q -varfile response.varfile
+----
 
 === JNLP File Association
 
@@ -424,6 +428,11 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |X
 |X
 |Defines if a custom URL can be used to download a JVM. Such URL can be part of a JNLP file.
+
+|ows.jvm.manager.server.allowFromJnlp.whitelist
+|X
+|X
+|A comma separated list of urls that are defined as whitelist. The whitelist is checked whenever OpenWebStart will download a JVM from an URL out of a JNLP file.
 
 |ows.jvm.manager.vendor
 |X
