@@ -94,17 +94,15 @@ public final class LocalRuntimeManager {
                 }
             }
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
-            if (jsonFile.exists()) {
-                if (!jsonFile.delete()) {
-                    // if the file is locked, try again after sometime
-                    LOG.debug("Could not delete {}. File maybe locked. Trying again.", RuntimeManagerConstants.JSON_STORE_FILENAME);
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                    }
-                    if (!jsonFile.delete()) {
-                        throw new IOException("Unable to delete old config file!");
-                    }
+            if (jsonFile.exists() && !jsonFile.delete()) {
+                // if the file is locked, try again after sometime
+                LOG.debug("Could not delete {}. File maybe locked. Trying again.", RuntimeManagerConstants.JSON_STORE_FILENAME);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                }
+                if (jsonFile.exists() && !jsonFile.delete()) {
+                    throw new IOException("Unable to delete old config file!");
                 }
             }
             final CacheStore cacheStore = new CacheStore(runtimes);
