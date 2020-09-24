@@ -343,8 +343,23 @@ You have to select "Activate debug logging", "Log to file", and specify the log 
 
 By default this is `<user_home>/.config/icedtea-web/log`. Ensure that your folder has write access permissions when customize this path.
 
-// TODO Andreas
-// describe the log file names used for OWS logs, JNLP application logs introduced with OWS 1.2.0>#
+When launching a JNLP application, OpenWebStart produces three log files for different stages. They all following the naming convention:
+----
+   <timestamp>-ows-stage<stage number>.log
+----
+There first file (according to creation timestamp) contains log events produced by the OpenWebStart launcher. It basically contains information on the laucher arguments and the location of the deployment.properties. It is created in stage 1.
+
+The second file (still stage 1) contains log events on the start-up of OpenWebStart itself. It provides details on version and update status, embedded JVM version, JVM arguments, keystores loaded, validation and parsing results of the JNLP file, and details on the VM required by and used to finally launch the JNLP application. It ends with all the details about the command that OpenWebStart is about to execute to launch the JNLP application.
+
+The third log file (stage 2) logs the events that happen when OpenWebStart launches the JNLP application. *This is probably the most relevant log file for OpenWebStart users.* It provides details on how the launch and execution of the JNLP application is going, such as the resources downloaded for the application. *If your application cannot start properly, this log file is the best place to look for any error messages or stack traces.*
+
+Note that log files of the OpenWebStart Settings application also goes to this log directory. They are named
+
+----
+<timestamp>-ows-settings.log
+----
+
+You will rarely need those.
 
 === Remote Debugging
 
