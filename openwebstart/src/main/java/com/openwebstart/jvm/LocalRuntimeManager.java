@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -93,8 +94,14 @@ public final class LocalRuntimeManager {
                 }
             }
             final File jsonFile = new File(cachePath, RuntimeManagerConstants.JSON_STORE_FILENAME);
-            if (jsonFile.exists()) {
-                if (!jsonFile.delete()) {
+            if (jsonFile.exists() && !jsonFile.delete()) {
+                // if the file is locked, try again after sometime
+                LOG.debug("Could not delete {}. File maybe locked. Trying again.", RuntimeManagerConstants.JSON_STORE_FILENAME);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                }
+                if (jsonFile.exists() && !jsonFile.delete()) {
                     throw new IOException("Unable to delete old config file!");
                 }
             }
