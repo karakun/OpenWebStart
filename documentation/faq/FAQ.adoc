@@ -57,6 +57,10 @@ By default this should be
 ```
 Note that logging has to be activated using the OWS Settings application by checking "Activate debug logging" and "Log to file" on the "Logging" tab.
 
+== Security
+
+<TODO: add security related questions here>
+
 == Functionality
 
 ==== Does OpenWebStart support Applets?

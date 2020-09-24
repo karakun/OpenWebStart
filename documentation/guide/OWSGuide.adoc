@@ -2,7 +2,7 @@
 :imagesdir: ./images
 :Author:    The OWS Community
 :Date:      7/2020
-:Revision:  1.1.8
+:Revision:  1.2.1
 :toc:
 :toclevels: 4
 
@@ -159,6 +159,18 @@ For Windows and macOS::
 
 For Linux:: Use your package manager and remove the package OpenWebStart
 
+=== USB Stick Installation
+
+#<TODO: describe OWS settings options>#
+// TODO Janak
+
+=== Local vs. System-Wide Installation
+
+#<TODO: describe OWS settings options>#
+// TODO Janak
+// TODO mention install it both on same machine that it can cause conflicts
+
+
 == Updates
 
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
@@ -245,19 +257,27 @@ It is possible to specify wildcards in the URLs specified in the whitelist. Plea
 
 === Application and Cache Management
 
-#<TODO: describe OWS settings options>#
+#<documentation added in the near future>#
+// TODO
+// - describe the option to turn on this experimental feature
 
 === Proxy Settings
 
-#<TODO: describe OWS settings options>#
+#<documentation added in the near future>#
+// TODO Stephan
 
 === Security Settings
 
-#<TODO: describe OWS settings options>#
+#<documentation added in the near future>#
+// TODO Janak
 
 === Certificates
 
-#<TODO: describe OWS settings options>#
+// TODO Stephan
+// mention limitation on system tab
+
+#<documentation added in the near future>#
+// TODO
 
 === Server Whitelist
 
@@ -323,11 +343,14 @@ You have to select "Activate debug logging", "Log to file", and specify the log 
 
 By default this is `<user_home>/.config/icedtea-web/log`. Ensure that your folder has write access permissions when customize this path.
 
-#<TODO: describe the log file names used for OWS logs, JNLP application logs introduced with OWS 1.2.0>#
+// TODO Andreas
+// describe the log file names used for OWS logs, JNLP application logs introduced with OWS 1.2.0>#
 
 === Remote Debugging
 
-#<TODO: describe OWS settings options>#
+#<documentation added in the near future>#
+// TODO Janak
+// have a look at the tooltips provided with the ows-settings
 
 === System Configuration
 
@@ -412,7 +435,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 
 [cols="45,5,5,45"]
 |===
-|Property | LK | RV | Description
+|Property | LK | RV | Description
 
 |ows.jvm.manager.cache.dir
 |X
