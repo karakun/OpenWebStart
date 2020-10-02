@@ -1,6 +1,6 @@
 package com.openwebstart.jvm.json;
 
-public class PersonModel {
+public class Person {
     String name;
     String age;
 
