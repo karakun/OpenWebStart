@@ -1,8 +1,8 @@
 package com.openwebstart.jvm.json;
 
 public class Person {
-    String name;
-    String age;
+    private String name;
+    private String age;
 
     public String getName() {
         return name;

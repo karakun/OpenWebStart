@@ -1,14 +1,12 @@
 package com.openwebstart.jvm.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import  com.openwebstart.jvm.json.Person;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
-import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public class JsonHandlerTest {
 
@@ -44,7 +42,7 @@ public class JsonHandlerTest {
     }
 
     @Test
-    void CheckErrorInJsonToModelConversion() {
+    void checkErrorInJsonToModelConversion() {
         //given
         String model = "{\"age1\":\"20\",\"name1\":\"mark\"}";
 
@@ -59,7 +57,23 @@ public class JsonHandlerTest {
         assertEquals("Error in JSON conversion",exception.getMessage());
     }
 
+    @Test
+    void checkModelToJsonToModel() {
 
+        //given
+        Person mark = new Person();
+        mark.setAge("20");
+        mark.setName("mark");
+
+        //when
+        String handler = JsonHandler.getInstance().toJson(mark);
+        mark =  JsonHandler.getInstance().fromJson(handler,Person.class);
+
+        //then
+        assertEquals("20",mark.getAge());
+        assertEquals("mark",mark.getName());
+
+    }
 
 
 }
