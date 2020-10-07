@@ -26,7 +26,6 @@ import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM
 public class RuntimeManagerConfig {
 
     private static DeploymentConfiguration deploymentConfiguration;
-    // TODO : Check if ok to have this in this class
     private static List<WhitelistEntry> jvmServerWhitelist;
 
     private RuntimeManagerConfig() {
@@ -121,5 +120,4 @@ public class RuntimeManagerConfig {
         };
         return jvmServerWhitelist;
     }
-
 }
