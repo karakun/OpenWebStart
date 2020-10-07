@@ -30,6 +30,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_S
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
@@ -73,6 +74,7 @@ class InitialConfigurationCheck {
             MAX_DAYS_UNUSED_IN_JVM_CACHE,
             KEY_ENABLE_LOGGING,
             KEY_ENABLE_LOGGING_TOFILE,
+            KEY_JVM_ARGS_WHITELIST,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
