@@ -159,10 +159,45 @@ For Windows and macOS::
 
 For Linux:: Use your package manager and remove the package OpenWebStart
 
-=== USB Stick Installation
+=== Running OWS from portable USB stick
 
-#<TODO: describe OWS settings options>#
-// TODO Janak
+It is possible to run OWS from a portable USB stick without actually installing OWS on your machine.
+Although this is a quick way of running OWS the downside of not using the installer is that you do not
+get the support of the underlying operating system in terms of file associations, registry entries and
+desktop intergation. So if you can (and want to) do without the file associations, desktop icon and startup menu
+you can create a portable version yourself.
+
+All files required for execution are located in the installation directory. It is therefore sufficient
+to copy this directory onto a USB stick and then to run _javaws.exe_ and _itw-settins.exe_ by mounting
+the USB stick on the target computer.
+
+If you want the settings and the cache to remain on the USB stick, the path to your two directories can
+be set with the following environment variables:
+
+```
+XDG_CACHE_HOME (default value is %USER_HOME%\.cache)
+
+XDG_CONFIG_HOME (default: %USER_HOME%\.config)
+```
+
+To run OWS from a USB stick it is recommended to create a small batch script that sets the two variables
+and then executes _javaws.exe_ and _itw-settings.exe_
+
+==== Synopsis:
+
+```
+javaws.exe [url-to-jnlp | path-to-jnlp] [options]
+```
+
+It should also be mentioned that with every new release of OWS the two things that usually change are:
+```
+\openwebstart.jar (the application must be updated)
+
+\jre\ (the bundled JRE which is used to run OpenWebStart)
+```
+
+So you might want to update these files in the USB stick if you want to keep your OWS installation
+up-to-date.
 
 === Local vs. System-Wide Installation
 
@@ -183,6 +218,9 @@ It is possible to define an update strategy on every `start`, `daily`, `weekly`,
 The standard way to configure OpenWebStart is to use the OWS Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
 
+.Configuring OWS Settings
+image::OWS_Configuration.png[width="80%", align="center"]
+
 All settings managed by this application are stored on the file system in a file called `deployment.properties`.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
 For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
@@ -190,12 +228,67 @@ For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deplo
 This file can be edited with a regular text editor.
 For some expert configurations this may be necessary, but for most cases the graphical UI will be sufficient.
 
-Besides a per-user configuration by manipulating `deployment.properties`, there exists also the possibility to define a system-wide configuration.
-This allows setting up a common configuration for multiple users on a single computer or helps in managing a corporate infrastructure where many computers need to be configured identically. For more details see <<System Configuration>>.
-
-Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
+Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching
+behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as
+proxy settings, security settings, certificates and server whitelists.
 
 The following chapters will describe these various configuration possibilities in detail.
+
+=== User level configuration
+User level configuration can be specified or customized by manipulating `deployment.properties`.
+
+=== System level configuration
+There exists also the possibility to define a system-wide configuration.
+This allows setting up a common configuration for multiple users on a single computer or helps in managing a corporate
+infrastructure where many computers need to be configured identically.
+
+In a centralized environment like the Citrix Server that Daimler has it makes sense to centralize certain things:
+
+    deployment.properties : all users must use the same deployment.properties for OWS
+    jvm_cache : all users should be using common set of jvms. Users should not be having their own jvms
+    Security (certificate stores)
+
+At the same time it does not make sense to centralize certain things becasue they are too user specific
+
+    logs - logs for the app started by each user
+    application cache and recently_used file - for the apps started by each user
+    temp dir : OWS creates temp files. If this dir is centralized then there will be a clash between users
+    icons - for the app started by user
+    user decisions  (.appletTrustSettings)
+
+At present centralized location for config and cache can be specified using XDG_CACHE_HOME and XDG_CONFIG_HOME env vars.
+
+Under XDG_CONFIG_HOME location we are storing user specific things : logs, icons, user decisions.
+
+Under XDG_CACHE_HOME location we are storing user specific things like app cache and recently_used file
+
+I discovered that jvm_cache location is already configurable.
+
+We already have a property :
+
+deployment.user.jvmcachedir=c\:/temp/JVMCache
+
+For centralized JVM Cache we can specify the above property in the centralized deployment.properties files which is pointed to by the centralized config file C:\Windows\Sun\Java\Deployment\deployment.config
+
+Note: deployment.user.jvmcachedir spec in deployment.properties takes precedence over XDG_CACHE_HOME i.e. when both deployment.user.jvmcachedir and XDG_CACHE_HOME are specified then the jvm_cache will be created under the location specified by deployment.user.jvmcachedir.
+The property is now defined as ows.jvm.manager.cache.dir
+
+On Windows it can be specified in two ways as:
+
+ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
+ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
+
+---
+
+On Windows it is possible to have a common deployment.properties.
+
+Create a deployment.config file (see attached) in C:\Windows\Sun\Java\Deployment directory. This file contains a property that points to the deployment.properties file, for example:
+
+deployment.system.config=file:///c:/OpenWebStart/my.properties
+
+2. OWS will then pick up deployment.properties from the specified file when deployment.properties is NOT present in <User Home>\.config\icedtea-web dir
+
+3. When deployment.properties IS present in <User Home>\.config\icedtea-web dir then it seems to have precedence for specified properties.
 
 === JVM Management
 
@@ -256,6 +349,17 @@ ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
 It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
 
 === Application and Cache Management
+
+OWS downloads the resources like jars and images specified in the JNLP file from the specified server(s).
+OWS stores application resources for faster execution by avoiding downloading the next time you run the application
+By default application resources are stored in _<User Home>/.cache/icedtea-web/.cache directory_. However, OWS will
+download resources for the application if it finds that a resource has been updated on the server.
+
+To find out whether a resource has been modified since the last download, OWS sends a _HTTP HEAD_ request to the server and
+expects to receive the last modified timestamp of the resource on the server.  In order to facilitate caching of resources
+by OWS it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_
+request. In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the
+last modified timestamp of the resource and will go ahead and download the resource.
 
 #<documentation added in the near future>#
 // TODO
