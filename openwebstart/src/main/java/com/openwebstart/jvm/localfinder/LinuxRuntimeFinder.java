@@ -13,13 +13,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-public class LinuxRuntimeFinder implements RuntimeFinder {
+class LinuxRuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(LinuxRuntimeFinder.class);
 
     private static final String JVM_BASEFOLDER = "/usr/lib/jvm/";
 
-    @Override
-    public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
+    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
         final Path systemPath = Paths.get(JVM_BASEFOLDER);
@@ -28,8 +27,7 @@ public class LinuxRuntimeFinder implements RuntimeFinder {
         return JdkFinder.findLocalJdks(systemPath, sdkmanPath);
     }
 
-    @Override
-    public List<OperationSystem> getSupportedOperationSystems() {
+    static List<OperationSystem> getSupportedOperationSystems() {
         return Arrays.asList(OperationSystem.LINUX32, OperationSystem.LINUX64);
     }
 }

@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-public class WindowsRuntimeFinder implements RuntimeFinder {
+class WindowsRuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(WindowsRuntimeFinder.class);
 
     private static final String PROGRAMS_32 = System.getenv("ProgramFiles(X86)") + File.separatorChar;
@@ -40,8 +40,7 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
     private static final String CYGWIN_USER_HOME = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
     private static final String SDK_MAN_FOLDER = CYGWIN_USER_HOME + File.separatorChar + ".sdkman";
 
-    @Override
-    public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
+    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
         return JdkFinder.findLocalJdks(
@@ -54,8 +53,7 @@ public class WindowsRuntimeFinder implements RuntimeFinder {
         );
     }
 
-    @Override
-    public List<OperationSystem> getSupportedOperationSystems() {
+    static List<OperationSystem> getSupportedOperationSystems() {
         return Arrays.asList(OperationSystem.WIN32, OperationSystem.WIN64);
     }
 }
