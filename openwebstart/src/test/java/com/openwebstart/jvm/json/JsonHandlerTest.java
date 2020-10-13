@@ -27,7 +27,7 @@ public class JsonHandlerTest {
         mark.setName("mark");
 
         //when
-        String handler = JsonHandler.getInstance().toJson(mark);
+        final String handler = JsonHandler.getInstance().toJson(mark);
 
         //then
         assertTrue(handler.contains("mark"));
@@ -39,89 +39,85 @@ public class JsonHandlerTest {
     @Test
     void checkJsonToModelConversion() {
         // given
-        String model = "{\"age\":\"20\",\"name\":\"mark\"}";
+        final String model = "{\"age\":\"20\",\"name\":\"mark\"}";
 
         //when
-        Person mark =  JsonHandler.getInstance().fromJson(model,Person.class);
+        final Person mark = JsonHandler.getInstance().fromJson(model, Person.class);
 
         //then
-        assertEquals("20",mark.getAge());
-        assertEquals("mark",mark.getName());
+        assertEquals("20", mark.getAge());
+        assertEquals("mark", mark.getName());
     }
 
     @Test
     void checkErrorInJsonToModelConversion() {
         //given
-        String model = "{\"age1\":\"20\",\"name1\":\"mark\"}";
+        final String model = "{\"age1\":\"20\",\"name1\":\"mark\"}";
 
         //when
-        Exception exception = assertThrows(JsonSyntaxException.class, () -> {
-            JsonHandler.getInstance().fromJson(model,String.class);
-        });
-
-        exception.getMessage();
+        Exception exception = assertThrows(JsonSyntaxException.class,
+                () -> JsonHandler.getInstance().fromJson(model, String.class)
+        );
 
         //then
-        assertEquals("Error in JSON conversion",exception.getMessage());
+        assertEquals("Error in JSON conversion", exception.getMessage());
     }
 
     @Test
     void checkModelToJsonToModel() {
 
         //given
-        Person mark = new Person();
+        final Person mark = new Person();
         mark.setAge("20");
         mark.setName("mark");
 
         //when
         String handler = JsonHandler.getInstance().toJson(mark);
-        mark =  JsonHandler.getInstance().fromJson(handler,Person.class);
+        final Person markCopy = JsonHandler.getInstance().fromJson(handler, Person.class);
 
         //then
-        assertEquals("20",mark.getAge());
-        assertEquals("mark",mark.getName());
+        assertEquals("20", markCopy.getAge());
+        assertEquals("mark", markCopy.getName());
 
     }
 
     // This will verify the LocalJavaRuntime class is getting converted to json object
     @Test
     void CheckConversion1() {
-        String version = "1.0";
-        LocalDateTime currentTime = LocalDateTime.now();
-        String ct = String.valueOf(currentTime);
-        LocalJavaRuntime runtime = new LocalJavaRuntime(version,OperationSystem.ARM32,"vendor", Paths.get("/path"), currentTime,Boolean.TRUE,Boolean.FALSE);
+        final String version = "1.0";
+        final LocalDateTime currentTime = LocalDateTime.now();
+        final LocalJavaRuntime runtime = new LocalJavaRuntime(version, OperationSystem.ARM32, "vendor", Paths.get("/path"), currentTime, Boolean.TRUE, Boolean.FALSE);
 
         //when
-        String handler = JsonHandler.getInstance().toJson(runtime);
-        LocalJavaRuntime runtimecopy =  JsonHandler.getInstance().fromJson(handler,LocalJavaRuntime.class);
+        final String handler = JsonHandler.getInstance().toJson(runtime);
+        final LocalJavaRuntime runtimecopy = JsonHandler.getInstance().fromJson(handler, LocalJavaRuntime.class);
 
         //then
-        assertEquals(runtime.getVersion(),runtimecopy.getVersion());
-        assertEquals(runtime.getLastUsage(),runtimecopy.getLastUsage());
-        assertEquals(runtime.getJavaHome(),runtimecopy.getJavaHome());
-        assertEquals(runtime.getOperationSystem(),runtimecopy.getOperationSystem());
-        assertEquals(runtime.getLastUsage(),runtimecopy.getLastUsage());
-        assertEquals(runtime.isActive(),runtimecopy.isActive());
-        assertEquals(runtime.isManaged(),runtimecopy.isManaged());
+        assertEquals(runtime.getVersion(), runtimecopy.getVersion());
+        assertEquals(runtime.getLastUsage(), runtimecopy.getLastUsage());
+        assertEquals(runtime.getJavaHome(), runtimecopy.getJavaHome());
+        assertEquals(runtime.getOperationSystem(), runtimecopy.getOperationSystem());
+        assertEquals(runtime.getLastUsage(), runtimecopy.getLastUsage());
+        assertEquals(runtime.isActive(), runtimecopy.isActive());
+        assertEquals(runtime.isManaged(), runtimecopy.isManaged());
 
     }
 
     // This will verify the RemoteJavaRuntime class is getting converted to json object
     @Test
     void CheckConversion2() {
-        String version = "1.0";
         final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
-        RemoteJavaRuntime runtime = new RemoteJavaRuntime("1.8.145", OperationSystem.ARM32, "adopt", theOneAndOnlyJdkZip);
+        final RemoteJavaRuntime runtime = new RemoteJavaRuntime("1.8.145", OperationSystem.ARM32, "adopt", theOneAndOnlyJdkZip);
 
         //when
-        String handler = JsonHandler.getInstance().toJson(runtime);
-        RemoteJavaRuntime runtimecopy =  JsonHandler.getInstance().fromJson(handler,RemoteJavaRuntime.class);
+        final String handler = JsonHandler.getInstance().toJson(runtime);
+        final RemoteJavaRuntime runtimecopy = JsonHandler.getInstance().fromJson(handler, RemoteJavaRuntime.class);
 
         //then
-        assertEquals(runtime.getVersion(),runtimecopy.getVersion());
-        assertEquals(runtime.getVendor(),runtimecopy.getVendor());
-        assertEquals(runtime.getOperationSystem(),runtimecopy.getOperationSystem());
-        assertEquals(runtime.getHref(),runtimecopy.getHref());
+        assertEquals(runtime.getVersion(), runtimecopy.getVersion());
+        assertEquals(runtime.getVendor(), runtimecopy.getVendor());
+        assertEquals(runtime.getOperationSystem(), runtimecopy.getOperationSystem());
+        assertEquals(runtime.getHref(), runtimecopy.getHref());
     }
 
     // This will verify the RemoteRuntimeList class is getting converted to json object
@@ -131,22 +127,21 @@ public class JsonHandlerTest {
         final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
         runtimes.add(new RemoteJavaRuntime("1.8.145", OperationSystem.ARM32, "adopt", theOneAndOnlyJdkZip));
 
-
-        RemoteRuntimeList runtime = new RemoteRuntimeList(runtimes, 5_000);
+        final RemoteRuntimeList runtime = new RemoteRuntimeList(runtimes, 5_000);
 
         //when
-        String handler = JsonHandler.getInstance().toJson(runtime);
-        RemoteRuntimeList runtimecopy =  JsonHandler.getInstance().fromJson(handler,RemoteRuntimeList.class);
+        final String handler = JsonHandler.getInstance().toJson(runtime);
+        final RemoteRuntimeList runtimecopy = JsonHandler.getInstance().fromJson(handler, RemoteRuntimeList.class);
 
         //then
-        RemoteJavaRuntime originalRuntime = runtime.getRuntimes().get(0);
-        RemoteJavaRuntime copyRunTime = runtimecopy.getRuntimes().get(0);
+        final RemoteJavaRuntime originalRuntime = runtime.getRuntimes().get(0);
+        final RemoteJavaRuntime copyRunTime = runtimecopy.getRuntimes().get(0);
 
-        assertEquals(originalRuntime.getVersion(),copyRunTime.getVersion());
-        assertEquals(originalRuntime.getVendor(),copyRunTime.getVendor());
-        assertEquals(originalRuntime.getOperationSystem(),copyRunTime.getOperationSystem());
-        assertEquals(originalRuntime.getHref(),copyRunTime.getHref());
-        assertEquals(runtime.getCacheTimeInMillis(),runtimecopy.getCacheTimeInMillis());
+        assertEquals(originalRuntime.getVersion(), copyRunTime.getVersion());
+        assertEquals(originalRuntime.getVendor(), copyRunTime.getVendor());
+        assertEquals(originalRuntime.getOperationSystem(), copyRunTime.getOperationSystem());
+        assertEquals(originalRuntime.getHref(), copyRunTime.getHref());
+        assertEquals(runtime.getCacheTimeInMillis(), runtimecopy.getCacheTimeInMillis());
 
     }
 
