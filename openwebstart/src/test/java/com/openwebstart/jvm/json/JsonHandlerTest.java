@@ -6,14 +6,15 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class JsonHandlerTest {
@@ -87,6 +88,8 @@ public class JsonHandlerTest {
         final String version = "1.0";
         final LocalDateTime currentTime = LocalDateTime.now();
         final LocalJavaRuntime runtime = new LocalJavaRuntime(version, OperationSystem.ARM32, "vendor", Paths.get("/path"), currentTime, Boolean.TRUE, Boolean.FALSE);
+        // JavaHome will be written to Json after converting it to URI
+        final Path expectedJavaHome = Paths.get(runtime.getJavaHome().toUri());
 
         //when
         final String handler = JsonHandler.getInstance().toJson(runtime);
@@ -95,7 +98,7 @@ public class JsonHandlerTest {
         //then
         assertEquals(runtime.getVersion(), runtimecopy.getVersion());
         assertEquals(runtime.getLastUsage(), runtimecopy.getLastUsage());
-        assertEquals(runtime.getJavaHome(), runtimecopy.getJavaHome());
+        assertEquals(expectedJavaHome, runtimecopy.getJavaHome());
         assertEquals(runtime.getOperationSystem(), runtimecopy.getOperationSystem());
         assertEquals(runtime.getLastUsage(), runtimecopy.getLastUsage());
         assertEquals(runtime.isActive(), runtimecopy.isActive());
