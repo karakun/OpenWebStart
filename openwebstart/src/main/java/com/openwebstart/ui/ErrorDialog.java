@@ -43,7 +43,7 @@ public class ErrorDialog extends DialogWithDetails {
     public static void show(final String message, final Exception error) {
         final Runnable dialogHandler = () -> new ErrorDialog(message, error).showAndWait();
 
-        if(SwingUtils.isEventDispatchThread()) {
+        if (SwingUtils.isEventDispatchThread()) {
             dialogHandler.run();
         } else {
             try {

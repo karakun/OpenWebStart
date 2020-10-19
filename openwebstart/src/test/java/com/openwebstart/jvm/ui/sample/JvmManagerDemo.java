@@ -86,8 +86,8 @@ public class JvmManagerDemo {
         runtimes.forEach(r -> {
             final JCheckBox checkBox = new JCheckBox(r.getVersion() + "-" + r.getVendor() + "-" + r.getOperationSystem().getName());
             checkBox.addItemListener(e -> {
-                if(checkBox.isSelected()) {
-                    if(!runtimes.contains(r)) {
+                if (checkBox.isSelected()) {
+                    if (!runtimes.contains(r)) {
                         runtimes.add(r);
                     }
                 } else {

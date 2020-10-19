@@ -74,7 +74,7 @@ public class LoggingPanel extends FormPanel {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final File folder = chooser.getSelectedFile();
-                if(folder.exists() && folder.isDirectory()) {
+                if (folder.exists() && folder.isDirectory()) {
                     logFolderField.setText(folder.getAbsolutePath());
                     PathsAndFiles.LOG_DIR.setValue(folder.getAbsolutePath(), config);
                 }

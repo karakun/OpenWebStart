@@ -68,8 +68,7 @@ public class ExtractUtil {
                 entry = inputStream.getNextEntry();
             }
             moveJavaHomeToTarget(tempDir.toPath(), baseDir);
-        }
-        finally {
+        } finally {
             FileUtils.deleteWithErrMesg(tempDir);
         }
     }

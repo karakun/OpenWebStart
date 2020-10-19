@@ -1,6 +1,6 @@
 package com.openwebstart.app.icon;
 
-public enum  IconDimensions {
+public enum IconDimensions {
     SIZE_512(512),
     SIZE_256(256),
     SIZE_128(128),
