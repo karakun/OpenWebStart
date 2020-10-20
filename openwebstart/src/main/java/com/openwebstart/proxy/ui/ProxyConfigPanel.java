@@ -174,7 +174,7 @@ public class ProxyConfigPanel extends FormPanel {
         bypassLocalhostCheckbox.setToolTipText(translator.translate("proxyPanel.bypassLocalhost.description"));
         final GridBagConstraints bypassLocalhostCheckboxContraints = new GridBagConstraints();
         bypassLocalhostCheckboxContraints.gridx = 0;
-        bypassLocalhostCheckboxContraints.gridwidth=4;
+        bypassLocalhostCheckboxContraints.gridwidth = 4;
         bypassLocalhostCheckboxContraints.gridy = 1;
         bypassLocalhostCheckboxContraints.weightx = 0;
         bypassLocalhostCheckboxContraints.weighty = 0;

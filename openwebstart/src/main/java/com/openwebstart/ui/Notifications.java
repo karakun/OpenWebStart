@@ -64,7 +64,7 @@ public class Notifications {
             timer.start();
         };
 
-        if(SwingUtilities.isEventDispatchThread()) {
+        if (SwingUtilities.isEventDispatchThread()) {
             uiHandler.accept(notification);
         } else {
             try {
@@ -89,7 +89,7 @@ public class Notifications {
         }
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Hallo da draußen"));
         Thread.sleep(1_000);
         SwingUtilities.invokeAndWait(() -> Notifications.showError("Dies ist ein langer Text der anzeigt das etwas passiert ist das nicht sein sollte."));

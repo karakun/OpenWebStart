@@ -132,7 +132,7 @@ public class ConfigurationDialog extends ModalDialog {
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
         Dimension dim = new Dimension(10, -1);
-        allowServerFromJnlpContainer.add( new Box.Filler(dim, dim, dim));
+        allowServerFromJnlpContainer.add(new Box.Filler(dim, dim, dim));
         allowServerFromJnlpContainer.add(showWhitelistButton);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));

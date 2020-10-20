@@ -30,18 +30,18 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
     }
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file)	throws Exception {
-    	createDesktopEntry(file);    
+    public void updateDesktopEntry(final JNLPFile file) throws Exception {
+        createDesktopEntry(file);
     }
 
-	@Override
-	public void createDesktopEntry(final JNLPFile file) throws Exception {
-		final String name = file.getShortcutName();
-		final String script = ScriptFactory.createStartScript(file);
-		final String[] icons = getIcons(file);
+    @Override
+    public void createDesktopEntry(final JNLPFile file) throws Exception {
+        final String name = file.getShortcutName();
+        final String script = ScriptFactory.createStartScript(file);
+        final String[] icons = getIcons(file);
 
-		AppFactory.createDesktopLink(name, script, icons);
-	}
+        AppFactory.createDesktopLink(name, script, icons);
+    }
 
     @Override
     public boolean existsDesktopEntry(final JNLPFile file) {
@@ -50,7 +50,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
     public void updateMenuEntry(final JNLPFile file) throws Exception {
-    	this.createMenuEntry(file);
+        this.createMenuEntry(file);
     }
 
     @Override
@@ -66,12 +66,12 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         final List<String> shortcutIconLocations = getIconLocations(file, IconKind.SHORTCUT);
         if (shortcutIconLocations.isEmpty()) {
             final List<String> defaultIconLocations = getIconLocations(file, IconKind.DEFAULT);
-            if(defaultIconLocations.isEmpty()) {
-             final FavIcon favIcon = new FavIcon(file);
-             return Optional.ofNullable(favIcon.download())
-                     .map(File::getAbsolutePath)
-                     .map(Collections::singletonList)
-                     .orElse(Collections.emptyList()).toArray(new String[0]);
+            if (defaultIconLocations.isEmpty()) {
+                final FavIcon favIcon = new FavIcon(file);
+                return Optional.ofNullable(favIcon.download())
+                        .map(File::getAbsolutePath)
+                        .map(Collections::singletonList)
+                        .orElse(Collections.emptyList()).toArray(new String[0]);
             }
             return defaultIconLocations.toArray(new String[0]);
         }

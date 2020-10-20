@@ -109,7 +109,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         final JPanel overallProgressBarWrapper = new JPanel(new BorderLayout());
         overallProgressBarWrapper.add(overallProgressBar, BorderLayout.NORTH);
         mainPanel.addRow(1, overallProgressBarWrapper);
-        
+
         GridBagConstraints c2 = new GridBagConstraints();
         c2.gridx = 1;
         c2.gridy = 2;

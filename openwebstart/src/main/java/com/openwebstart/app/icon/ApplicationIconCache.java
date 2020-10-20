@@ -52,7 +52,7 @@ public class ApplicationIconCache {
         inProgressMapLock.lock();
         try {
             final IconDescription iconDescription = new IconDescription(application.getId(), dimension);
-            if(inProgressMap.containsKey(iconDescription)) {
+            if (inProgressMap.containsKey(iconDescription)) {
                 return inProgressMap.get(iconDescription);
             } else {
                 final CompletableFuture<BufferedImage> result = new CompletableFuture<>();
