@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class OpenWebStartControlPanelStyle implements ControlPanelStyle {
 
-    private final static Set<String> UNSUPPORTED_PANEL_NAMES = new HashSet<>(Arrays.asList(
+    private static final Set<String> UNSUPPORTED_PANEL_NAMES = new HashSet<>(Arrays.asList(
             AboutPanelProvider.NAME,
             DesktopSettingsPanelProvider.NAME,
             PolicySettingsPanelProvider.NAME,

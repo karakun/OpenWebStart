@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.Optional;
 
 public class ScriptFactory {
-    private final static String SCRIPT_START = "#!/bin/sh";
+    private static final String SCRIPT_START = "#!/bin/sh";
 
     private static final String JAVA_WS_NAME = "javaws";
 

@@ -29,11 +29,11 @@ public class IcnsFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(IcnsFactory.class);
 
-    private final static String ICON_FOLDER_NAME = "icons.iconset";
+    private static final String ICON_FOLDER_NAME = "icons.iconset";
 
-    private final static String ICON_SET_NAME = "icons.icns";
+    private static final String ICON_SET_NAME = "icons.icns";
 
-    private final static String[] ICONUTIL_COMMAND = {"iconutil", "-c", "icns", ICON_FOLDER_NAME};
+    private static final String[] ICONUTIL_COMMAND = {"iconutil", "-c", "icns", ICON_FOLDER_NAME};
 
     public File createIconSet(final List<File> icons) throws Exception {
         Assert.requireNonNull(icons, "icons");

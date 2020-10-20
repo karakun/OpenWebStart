@@ -26,33 +26,33 @@ public class AppFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppFactory.class);
 
-    public final static String CONTENTS_FOLDER_NAME = "Contents";
+    public static final String CONTENTS_FOLDER_NAME = "Contents";
 
-    private final static String MAC_OS_FOLDER_NAME = "MacOS";
+    private static final String MAC_OS_FOLDER_NAME = "MacOS";
 
-    private final static String RESOURCES_FOLDER_NAME = "Resources";
+    private static final String RESOURCES_FOLDER_NAME = "Resources";
 
-    private final static String INFO_PLIST_NAME = "Info.plist";
+    private static final String INFO_PLIST_NAME = "Info.plist";
 
-    private final static String INFO_PLIST_TEMPLATE_NAME = "Info.plist.template";
+    private static final String INFO_PLIST_TEMPLATE_NAME = "Info.plist.template";
 
-    public final static String APP_EXTENSION = ".app";
+    public static final String APP_EXTENSION = ".app";
 
-    private final static String SCRIPT_NAME = "start.sh";
+    private static final String SCRIPT_NAME = "start.sh";
 
-    private final static String SCRIPT_NAME_PROPERTY = "${scriptName}";
+    private static final String SCRIPT_NAME_PROPERTY = "${scriptName}";
 
-    private final static String ICON_FILE_PROPERTY = "${iconFile}";
+    private static final String ICON_FILE_PROPERTY = "${iconFile}";
 
-    private final static String ICON_FILE_NAME = "icons";
+    private static final String ICON_FILE_NAME = "icons";
 
-    private final static String ICON_FILE_EXTENSION = ".icns";
+    private static final String ICON_FILE_EXTENSION = ".icns";
 
-    private final static String USER_APPLICATIONS_FOLDER = "Applications";
+    private static final String USER_APPLICATIONS_FOLDER = "Applications";
 
-    private final static String USER_APPLICATIONS_CACHE_FOLDER = "applications";
+    private static final String USER_APPLICATIONS_CACHE_FOLDER = "applications";
 
-    private final static String USER_DESKTOP = "Desktop";
+    private static final String USER_DESKTOP = "Desktop";
 
     public static boolean exists(final String name) {
         Assert.requireNonBlank(name, "name");
@@ -67,14 +67,14 @@ public class AppFactory {
         createNativeApp(userApplicationFolder, name, script, iconPaths);
     }
 
-    final static File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
+    static final File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
             throws Exception {
 
         final Path applicationsFolder = ensureUserApplicationCacheFolder();
         return createNativeApp(applicationsFolder, name, script, iconPaths);
     }
 
-    final static File createNativeApp(final Path applicationsFolder, final String name, final String script, final String... iconPaths)
+    static final File createNativeApp(final Path applicationsFolder, final String name, final String script, final String... iconPaths)
             throws Exception {
         Assert.requireNonNull(applicationsFolder, "applicationsFolder");
         Assert.requireNonBlank(name, "name");
@@ -148,7 +148,7 @@ public class AppFactory {
         return new FileInputStream(factory.createIconSet(iconFiles));
     }
 
-    private final static Path ensureUserApplicationFolder() {
+    private static final Path ensureUserApplicationFolder() {
         final String userHome = JavaSystemProperties.getUserHome();
         final File appFolder = new File(new File(userHome), USER_APPLICATIONS_FOLDER);
         if (!appFolder.exists()) {
@@ -157,7 +157,7 @@ public class AppFactory {
         return appFolder.toPath();
     }
 
-    private final static Path ensureUserApplicationCacheFolder() {
+    private static final Path ensureUserApplicationCacheFolder() {
         final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER);
         if (!Files.isDirectory(appcache)) {
             try {
@@ -169,11 +169,11 @@ public class AppFactory {
         return appcache;
     }
 
-    final static Path getApplicationRootInCache(final String name) {
+    static final Path getApplicationRootInCache(final String name) {
         return Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER, name + APP_EXTENSION);
     }
 
-    public final static boolean desktopLinkExists(final String appname) {
+    public static final boolean desktopLinkExists(final String appname) {
         Assert.requireNonBlank(appname, "appname");
         final Path cache = getApplicationRootInCache(appname);
         if (Files.isDirectory(cache)) {
@@ -190,7 +190,7 @@ public class AppFactory {
         return false;
     }
 
-    public final static void createDesktopLink(final String appname, final String script, final String... iconPaths)
+    public static final void createDesktopLink(final String appname, final String script, final String... iconPaths)
             throws Exception {
         Assert.requireNonBlank(appname, "appname");
         if (!desktopLinkExists(appname)) {
@@ -204,7 +204,7 @@ public class AppFactory {
         }
     }
 
-    private final static Path getDesktopLink(final String appname) {
+    private static final Path getDesktopLink(final String appname) {
         return Paths.get(JavaSystemProperties.getUserHome(), USER_DESKTOP, appname + APP_EXTENSION);
     }
 }

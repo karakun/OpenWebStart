@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class AppFactoryTest extends Object {
 
-    private final static String SCRIPT_START = "#!/bin/sh";
-    private final static String script = SCRIPT_START + System.lineSeparator() + "open -a Calculator";
+    private static final String SCRIPT_START = "#!/bin/sh";
+    private static final String script = SCRIPT_START + System.lineSeparator() + "open -a Calculator";
 
-    final static String originUserHome = JavaSystemProperties.getUserHome();
-    final static String originCacheHome = FilesystemConfiguration.getCacheHome();
+    static final String originUserHome = JavaSystemProperties.getUserHome();
+    static final String originCacheHome = FilesystemConfiguration.getCacheHome();
 
-    private final static String userHome = "/tmp/dummy";
-    private final static String userCache = "/tmp/dummy/.cache";
+    private static final String userHome = "/tmp/dummy";
+    private static final String userCache = "/tmp/dummy/.cache";
 
     @BeforeEach
     public void beforeEach() throws Exception {

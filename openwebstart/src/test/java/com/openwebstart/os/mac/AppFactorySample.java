@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class AppFactorySample {
 
-    private final static String SCRIPT_START = "#!/bin/sh";
+    private static final String SCRIPT_START = "#!/bin/sh";
 
 
     public static void main(String[] args) throws Exception {

@@ -31,7 +31,7 @@ import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorS
 
 public class ApplicationManagerPanel extends JPanel {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ApplicationManagerPanel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationManagerPanel.class);
 
     private final ListComponentModel<Application> listModel;
 
