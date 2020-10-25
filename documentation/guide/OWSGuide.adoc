@@ -81,21 +81,49 @@ Instead of walking through the graphical installer of OWS on every machine your 
 
 If you need help installing OpenWebStart, also have a look at the public installation and configuration discussions at the https://board.karakun.com/viewforum.php?f=10[Support Forum].
 
+=== Release Contents
+*<OpenWebStart Installation Dir>*
+
+*.install4J* : Contains Install4J installer files including _response.varfile_ that is used for unattended installation.
+
+*jre* : Contains the bundled JRE that starts OWS
+
+*{asterisk}.png* : Icons used by OWS
+
+*itw-settings.exe* : Application for configuring OWS
+
+*itw-settings.vmoptions* : JVM args used by bundled JRE when starting  itw-settings
+
+*javaws.exe* : OWS executable that starts a JNLP file
+
+*javaws.vmoptions* : JVM args used by bundled JRE when starting javaws
+
+*openwebstart.jar* : OWS jar
+
+*readme.txt* : Describes OWS release contents and useful links
+
+*uninstall.exe* : Uninstaller
+
 === Unattended Installation
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll
+out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
 
 When installing OpenWebStart, several properties can be predefined in a so-called `response.varfile` file.
 
-Some of the supported properties are lockable. If a property is lockable, you can define an additional property of type `PROPERTY_NAME.locked=true` to prevent users from editing the property in the user interface. For example, to define a value for the `ows.jvm.manager.server.default` property that cannot be changed in the user interface, specify the following two properties:
+Some of the supported properties are lockable. If a property is lockable, you can define an additional property of type
+`PROPERTY_NAME.locked=true` to prevent users from editing the property in the user interface. For example, to define a value for the `ows.jvm.manager.server.default` property that cannot be changed in the user interface, specify the following two properties:
 
 ----
 ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in the `response.varfile`.
+Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in
+the `response.varfile`.
 
-To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a `response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder, you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
+To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a
+`response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder,
+you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
 
 ----
 sys.adminRights$Boolean=false
@@ -117,7 +145,8 @@ ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-You can now use your enhanced file to install OpenWebStart on multiple machines. Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
+You can now use your enhanced file to install OpenWebStart on multiple machines. Simply copy the enhanced `response.varfile`
+next to the installer and execute the following command:
 
 ----
 <OpenWebStart_windows_Setup.exe> -q -varfile response.varfile
@@ -164,7 +193,7 @@ For Linux:: Use your package manager and remove the package OpenWebStart
 It is possible to run OWS from a portable USB stick without actually installing OWS on your machine.
 Although this is a quick way of running OWS the downside of not using the installer is that you do not
 get the support of the underlying operating system in terms of file associations, registry entries and
-desktop intergation. So if you can (and want to) do without the file associations, desktop icon and startup menu
+desktop integration. So if you can (and want to) do without the file associations, desktop icon and startup menu
 you can create a portable version yourself.
 
 All files required for execution are located in the installation directory. It is therefore sufficient
@@ -183,8 +212,6 @@ XDG_CONFIG_HOME (default: %USER_HOME%\.config)
 To run OWS from a USB stick it is recommended to create a small batch script that sets the two variables
 and then executes _javaws.exe_ and _itw-settings.exe_
 
-==== Synopsis:
-
 ```
 javaws.exe [url-to-jnlp | path-to-jnlp] [options]
 ```
@@ -196,21 +223,26 @@ It should also be mentioned that with every new release of OWS the two things th
 \jre\ (the bundled JRE which is used to run OpenWebStart)
 ```
 
-So you might want to update these files in the USB stick if you want to keep your OWS installation
-up-to-date.
+So you might want to update these files in the USB stick to keep your OWS installation up-to-date.
 
 === Local vs. System-Wide Installation
 
-#<TODO: describe OWS settings options>#
-// TODO Janak
-// TODO mention install it both on same machine that it can cause conflicts
+You can install OWS for the current user or for all users of the computer.
 
+Once OWS is installed on your machine it can be configured locally using
+the local `deployment.config` file or it can take its configuration from a
+centralized enterprise wide `deployment.config`. This is described in detail at <<Configuration>>.
+
+// TODO mention install it both on same machine that it can cause conflicts
 
 == Updates
 
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
 
 To do so go to the "Updates" Panel in the OWS Settings.
+
+image::OWS_Updates.png[title="OWS Update options" width="80%"]
+
 It is possible to define an update strategy on every `start`, `daily`, `weekly`, `monthly`, or `never`.
 
 == Configuration
@@ -218,8 +250,7 @@ It is possible to define an update strategy on every `start`, `daily`, `weekly`,
 The standard way to configure OpenWebStart is to use the OWS Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
 
-.Configuring OWS Settings
-image::OWS_Configuration.png[width="80%", align="center"]
+image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
 
 All settings managed by this application are stored on the file system in a file called `deployment.properties`.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
@@ -232,67 +263,93 @@ Various life-cycle aspects of your JNLP applications can be configured, such as 
 behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as
 proxy settings, security settings, certificates and server whitelists.
 
-The following chapters will describe these various configuration possibilities in detail.
+The following sections will describe these various configuration possibilities in detail.
 
 === User level configuration
-User level configuration can be specified or customized by manipulating `deployment.properties`.
+OWS can be configured locally by specifying properties in `<User Home>\.config\icedtea-web\deployment.properties` file.
 
-=== System level configuration
-There exists also the possibility to define a system-wide configuration.
-This allows setting up a common configuration for multiple users on a single computer or helps in managing a corporate
-infrastructure where many computers need to be configured identically.
+=== Enterprise wide configuration
+In an enterprise environment, for uniformity of behavior, it is preferred that all users use the same configuration for OWS.
 
-In a centralized environment like the Citrix Server that Daimler has it makes sense to centralize certain things:
+It is possible to configure OWS with a system-wide configuration. This allows setting up a common configuration for
+multiple users at a centralized location on a single computer. This helps in managing a corporate infrastructure where
+many computers need to be configured identically.
 
-    deployment.properties : all users must use the same deployment.properties for OWS
-    jvm_cache : all users should be using common set of jvms. Users should not be having their own jvms
-    Security (certificate stores)
+Centralized location for `configuration` and `cache` can be specified using `XDG_CONFIG_HOME` and
+`XDG_CACHE_HOME` environment variables.
 
-At the same time it does not make sense to centralize certain things becasue they are too user specific
+The centralized `configuration` comprises:
 
-    logs - logs for the app started by each user
-    application cache and recently_used file - for the apps started by each user
-    temp dir : OWS creates temp files. If this dir is centralized then there will be a clash between users
-    icons - for the app started by user
-    user decisions  (.appletTrustSettings)
+* deployment.properties : all users must use the same deployment.properties for OWS
+* user decisions  (.appletTrustSettings)
+* logs - logs for the app started by each user
+* security (certificate stores)
+* icons - for the app started by user
 
-At present centralized location for config and cache can be specified using XDG_CACHE_HOME and XDG_CONFIG_HOME env vars.
+The centralized `cache` comprises
 
-Under XDG_CONFIG_HOME location we are storing user specific things : logs, icons, user decisions.
+* jvm_cache : directory where common set of downloaded jvms are stored
+* cache and recently_used file : directory for caching the jnlp and resources of the applications started by users
+* temp dir : Directory created by OWS for temp files.
 
-Under XDG_CACHE_HOME location we are storing user specific things like app cache and recently_used file
+=== Configuring location of `jvm_cache`
+`jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir`  in the centralized
+`deployment.properties` file :
 
-I discovered that jvm_cache location is already configurable.
-
-We already have a property :
-
-deployment.user.jvmcachedir=c\:/temp/JVMCache
-
-For centralized JVM Cache we can specify the above property in the centralized deployment.properties files which is pointed to by the centralized config file C:\Windows\Sun\Java\Deployment\deployment.config
-
-Note: deployment.user.jvmcachedir spec in deployment.properties takes precedence over XDG_CACHE_HOME i.e. when both deployment.user.jvmcachedir and XDG_CACHE_HOME are specified then the jvm_cache will be created under the location specified by deployment.user.jvmcachedir.
-The property is now defined as ows.jvm.manager.cache.dir
-
-On Windows it can be specified in two ways as:
-
+```
 ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
-ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
+```
 
----
+NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
 
-On Windows it is possible to have a common deployment.properties.
+=== Configuring location of `deployment.properties`
 
-Create a deployment.config file (see attached) in C:\Windows\Sun\Java\Deployment directory. This file contains a property that points to the deployment.properties file, for example:
+It is possible to make OWS use `deployment.properties` from a customized location.
+
+A user-level `deployment.properties` file always exists in the `<User Home>/.config/icedtea-web` directory.
+There can also be an optional system-level `deployment.properties` file. If it exists, its location is determined by
+a System Administrator through the `deployment.config` file. The `deployment.config` file is used for specifying the
+system-level `deployment.properties` in the infrastructure. By default no `deployment.config` file exists, so no
+system-wide `deployment.properties` file exists. If the `deployment.config` file exists, it is located in one of the
+directories shown in the following table:
+
+|===
+|Operating System|Location
+|Windows|<Windows Directory>\Sun\Java\Deployment\deployment.config
+
+|Linux|/etc/.java/deployment/deployment.config
+
+|Mac|/Library/Application Support/Oracle/Java/Deployment/deployment.config
+|===
+
+The `deployment.config` file contains two properties: `deployment.system.config` and `deployment.system.config.mandatory`.
+
+The `deployment.system.config` property is the URL to the system (enterprise-wide) `deployment.properties` file.
+This property can be used by system administrators to centrally administer or "lock-down" user-specific configuration settings.
 
 deployment.system.config=file:///c:/OpenWebStart/my.properties
 
-2. OWS will then pick up deployment.properties from the specified file when deployment.properties is NOT present in <User Home>\.config\icedtea-web dir
 
-3. When deployment.properties IS present in <User Home>\.config\icedtea-web dir then it seems to have precedence for specified properties.
+The `deployment.system.config.mandatory` property is a boolean. If set to true, the `deployment.properties` file that is
+pointed to by the `deployment.system.config` property must be found and successfully loaded, otherwise, nothing is allowed
+to run. If the property is set to false, an attempt is made to find and load the `deployment.properties` file that is pointed
+to by the `deployment.system.config` property. If successful, the file is used, otherwise, the file is ignored.
+The default for the `deployment.system.config.mandatory` property is false.
+
+
+OWS will then pick up deployment.properties from the specified file when deployment.properties is NOT present in <User Home>\.config\icedtea-web dir
+
+When deployment.properties IS present in <User Home>\.config\icedtea-web dir then it seems to have precedence for specified properties.
 
 === JVM Management
 
-#<TODO: describe OWS settings options>#
+OWS provides facility to choose set of JVMs that can be used to run the applications specified in JNLP files
+
+image::OWS_JVM_Mgmt.png[title="JVM Management" width="80%"]
+
+One can choose or automatically add locally available JVMs or one can specify the server from where JVMc can be downloaded.
+
+image::OWS_JVM_Config.PNG[title="Configuring JVM Management" width="80%"]
 
 ==== JVM Download Server
 
@@ -348,7 +405,36 @@ ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
 
 It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
 
-=== Application and Cache Management
+==== Whitelist for JVM arguments
+
+OWS starts the JNLP application with the JVM that best matches JVM in the JNLP file.
+While starting the JVM, OWS passes the JVM args specified in the JNLP file:
+
+```
+<java version="1.8+"  java-vm-args=" -Xmx512m -Xms128m -XX:SurvivorRatio=6 -XX:NewSize=96m -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=30"/>
+```
+
+OWS maintains a hardcoded list of secure JVM args as specified at:
+
+* https://docs.oracle.com/javase/8/docs/technotes/guides/javaws/developersguide/syntax.html#secure-property
+* https://docs.oracle.com/javase/9/tools/java.htm#JSWOR624
+* https://news.kynosarges.org/2019/03/24/swing-high-dpi-properties/
+
+OWS allows only those JVM args that are in the above lists. However, sometimes with new versions of JREs new JVM arguments
+are introduced. Also, some of the valid arguments are not documented in the above lists. In such cases it is possible for
+the user to specify new JVM arguments in the `deployment.properties` for OWS to alow them to be passed to the JVM:
+
+```
+deployment.jvm.arguments.whitelist=-Dnew_jvm_arg1, -Dnew_jvm_arg2
+```
+
+Subsequently the JNLP file can include the above JVM args:
+
+```
+<java version="x"  java-vm-args="-Dnew_jvm_arg1=value1 -Dnew_jvm_arg2=value2"/>
+```
+
+=== Cache Management
 
 OWS downloads the resources like jars and images specified in the JNLP file from the specified server(s).
 OWS stores application resources for faster execution by avoiding downloading the next time you run the application
@@ -361,19 +447,63 @@ by OWS it is necessary that the server from where the resources are downloaded i
 request. In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the
 last modified timestamp of the resource and will go ahead and download the resource.
 
-#<documentation added in the near future>#
-// TODO
-// - describe the option to turn on this experimental feature
+The OWS cache can be configured and managed:
+
+image::OWS_Cache_Mgmt.PNG[title="Configuring Cache Management" width="80%"]
+
+
+=== Application Management
+
+An experimental feature has been provided to manage applications downloaded by OWS.
+This feature can be enabled by setting the following property in `deployment.properties`:
+
+```
+ows.experimental.applicationManager.active=true
+```
+
+image::OWS_APP_Mgmt.png[title="Application Management" width="80%"]
+
+The Application manager shows the list of downloaded applications. It allows to:
+* start the appliaction
+* create shortcut
+* delete the application from cache.
 
 === Proxy Settings
 
-#<documentation added in the near future>#
-// TODO Stephan
+It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources:
+
+image::OWS_PROXY_Mgmt.png[title="Proxy Settings" width="80%"]
 
 === Security Settings
 
-#<documentation added in the near future>#
-// TODO Janak
+Security settings for OWS can be configured in the Security panel:
+
+image::OWS_Security.png[title="Security Settings" width="80%"]
+
+==== Suppressing security checks on manifest
+
+If security related attributes (such as `Permissions` etc) are missing in the manifest of a signed jar, OWS displays a Security dialog:
+
+image::OWS_MissingPermission.PNG[title="Secuirty Dialog" width="80%"]
+
+You can choose to "Remember this option" for the site and Press the Yes button. Your decision will be stored in the file <User_HOME>/.config/icedtea-web\.appletTrustSettings. Next time when you start the jnlp you will not be shown the above dialog.
+
+Alternatively, you can suppress the checking of selected or all manifest attributes by specifying the following property in your `deployment.properties` file:
+
+```
+deployment.manifest.attributes.check=NONE
+```
+
+Default value of this property is `ALL`.
+
+Other values for this property are `PERMISSIONS`, `CODEBASE`, `TRUSTED`, `ALAC`, `ENTRYPOINT`.
+You can specify a comma separated list these Manifest attributes to be checked by OWS.
+For example if you want all except `Permissions` attribute to be checked by OWS ManifestChecker then
+you could specify:
+
+```
+deployment.manifest.attributes.check= CODEBASE,TRUSTED,ALAC,ENTRYPOINT
+```
 
 === Certificates
 
@@ -467,9 +597,9 @@ You will rarely need those.
 
 === Remote Debugging
 
-#<documentation added in the near future>#
-// TODO Janak
-// have a look at the tooltips provided with the ows-settings
+OWS allows remote debugging of the application started by OWS. You can configure the settings as follows:
+
+image::OWS_DEBUG.PNG[title="Remote Debugging" width="80%"]
 
 === System Configuration
 
