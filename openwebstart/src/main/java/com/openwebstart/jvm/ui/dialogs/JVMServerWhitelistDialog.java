@@ -3,6 +3,7 @@ package com.openwebstart.jvm.ui.dialogs;
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.ui.ModalDialog;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.panels.AbstractUrlWhitelistPanel;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -33,7 +34,7 @@ public class JVMServerWhitelistDialog extends ModalDialog {
         };
         final JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(300, 300));
-        panel.setLayout(new BorderLayout(8, 8));
+        panel.setLayout(LayoutFactory.createBorderLayout(8, 8));
         panel.add(whitelistPanel, BorderLayout.CENTER);
         panel.add(ButtonPanelFactory.createButtonPanel(closeButton), BorderLayout.SOUTH);
         add(panel);

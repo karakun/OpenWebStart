@@ -1,5 +1,7 @@
 package com.openwebstart.download;
 
+import com.openwebstart.util.LayoutFactory;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,7 +21,7 @@ public class ApplicationDownloadDetailListRenderer extends JPanel implements Lis
     public ApplicationDownloadDetailListRenderer() {
         this.progressBar = new JProgressBar();
         this.label = new JLabel();
-        setLayout(new BorderLayout(2, 2));
+        setLayout(LayoutFactory.createBorderLayout(2, 2));
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
         setBorder(BorderFactory.createEmptyBorder(8, 12, 4, 12));

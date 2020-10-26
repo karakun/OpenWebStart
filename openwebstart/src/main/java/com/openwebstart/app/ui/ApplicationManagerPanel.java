@@ -9,6 +9,7 @@ import com.openwebstart.func.Result;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.ui.Action;
 import com.openwebstart.ui.ListComponentModel;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -53,12 +54,12 @@ public class ApplicationManagerPanel extends JPanel {
         final JButton refreshButton = new JButton(translator.translate("appManager.action.refresh.text"));
         refreshButton.addActionListener(e -> refreshModel());
 
-        setLayout(new BorderLayout(12, 12));
+        setLayout(LayoutFactory.createBorderLayout(12, 12));
 
         add(new JScrollPane(appListComponent), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setLayout(LayoutFactory.createBoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(refreshButton);
 

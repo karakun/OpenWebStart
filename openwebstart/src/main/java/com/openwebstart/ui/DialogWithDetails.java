@@ -1,6 +1,7 @@
 package com.openwebstart.ui;
 
 import com.openwebstart.controlpanel.ButtonPanelFactory;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
@@ -26,12 +27,12 @@ public class DialogWithDetails extends ModalDialog {
         closeButton.addActionListener(e -> close());
 
         final JPanel messageWrapperPanel = new JPanel();
-        messageWrapperPanel.setLayout(new BorderLayout(12, 12));
+        messageWrapperPanel.setLayout(LayoutFactory.createBorderLayout(12, 12));
         messageWrapperPanel.add(downloadIcon, BorderLayout.WEST);
         messageWrapperPanel.add(messageLabel, BorderLayout.CENTER);
 
-        final JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setLayout(new BorderLayout(12, 12));
+        final JPanel mainPanel = new JPanel(LayoutFactory.createBorderLayout());
+        mainPanel.setLayout(LayoutFactory.createBorderLayout(12, 12));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         mainPanel.add(messageWrapperPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -50,7 +51,7 @@ public class DialogWithDetails extends ModalDialog {
         });
 
 
-        final JPanel contentPane = new JPanel(new BorderLayout());
+        final JPanel contentPane = new JPanel(LayoutFactory.createBorderLayout());
         contentPane.add(mainPanel, BorderLayout.CENTER);
         contentPane.add(ButtonPanelFactory.createButtonPanel(showDetails, closeButton), BorderLayout.SOUTH);
 

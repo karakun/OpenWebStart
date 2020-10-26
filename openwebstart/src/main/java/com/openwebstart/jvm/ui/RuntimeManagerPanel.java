@@ -13,6 +13,7 @@ import com.openwebstart.jvm.ui.list.RuntimeListActionSupplier;
 import com.openwebstart.jvm.ui.list.RuntimeListComponent;
 import com.openwebstart.ui.ListComponentModel;
 import com.openwebstart.ui.Notifications;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
@@ -63,12 +64,12 @@ public final class RuntimeManagerPanel extends JPanel {
         final JButton addLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.addLocal.text"));
         addLocalRuntimesButton.addActionListener(e -> onAddLocalRuntime());
 
-        setLayout(new BorderLayout(12, 12));
+        setLayout(LayoutFactory.createBorderLayout(12, 12));
 
         add(new JScrollPane(runtimeListComponent), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        buttonPanel.setLayout(LayoutFactory.createBoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(refreshButton);
         buttonPanel.add(addLocalRuntimesButton);

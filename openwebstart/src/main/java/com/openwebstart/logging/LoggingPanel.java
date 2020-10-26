@@ -1,6 +1,7 @@
 package com.openwebstart.logging;
 
 import com.openwebstart.controlpanel.FormPanel;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -80,7 +81,7 @@ public class LoggingPanel extends FormPanel {
                 }
             }
         });
-        final JPanel editorPanel = new JPanel(new BorderLayout());
+        final JPanel editorPanel = new JPanel(LayoutFactory.createBorderLayout());
         editorPanel.add(logFolderField, BorderLayout.CENTER);
         editorPanel.add(selectFolderButton, BorderLayout.EAST);
         addRow(4, logFolderLabel, editorPanel);

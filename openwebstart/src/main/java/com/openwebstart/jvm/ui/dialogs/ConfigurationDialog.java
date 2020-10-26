@@ -10,6 +10,7 @@ import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.LookAndFeel;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -128,7 +129,7 @@ public class ConfigurationDialog extends ModalDialog {
         });
 
         final JPanel allowServerFromJnlpContainer = new JPanel();
-        allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
+        allowServerFromJnlpContainer.setLayout(LayoutFactory.createBoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
         Dimension dim = new Dimension(10, -1);
@@ -144,7 +145,7 @@ public class ConfigurationDialog extends ModalDialog {
             LOG.error("Can not set default for max days unused in JVM cache!", e);
         }
         final JPanel numberOfDaysPanel = new JPanel();
-        numberOfDaysPanel.setLayout(new BorderLayout());
+        numberOfDaysPanel.setLayout(LayoutFactory.createBorderLayout());
         numberOfDaysPanel.add(maxDaysStayInJvmCacheField, BorderLayout.WEST);
         numberOfDaysPanel.add(new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.days.text")), BorderLayout.CENTER);
 
@@ -192,7 +193,7 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.addFlexibleRow(6);
 
         final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(8, 8));
+        panel.setLayout(LayoutFactory.createBorderLayout(8, 8));
         panel.add(mainPanel, BorderLayout.CENTER);
         panel.add(ButtonPanelFactory.createButtonPanel(okButton, cancelButton), BorderLayout.SOUTH);
 

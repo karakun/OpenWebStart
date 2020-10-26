@@ -6,6 +6,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ModalDialog;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
@@ -53,18 +54,18 @@ public class RuntimeDownloadDialog extends ModalDialog {
         final JLabel progressLabel = new JLabel(translator.translate("dialog.jvmDownload.progressDefault"));
 
         final JPanel progressLabelWrapper = new JPanel();
-        progressLabelWrapper.setLayout(new BorderLayout());
+        progressLabelWrapper.setLayout(LayoutFactory.createBorderLayout());
         progressLabelWrapper.add(progressLabel, BorderLayout.EAST);
 
         final JPanel innerPanel = new JPanel();
-        innerPanel.setLayout(new BorderLayout(4, 0));
+        innerPanel.setLayout(LayoutFactory.createBorderLayout(4, 0));
         innerPanel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 4));
         innerPanel.add(progressBar, BorderLayout.CENTER);
         innerPanel.add(progressLabelWrapper, BorderLayout.SOUTH);
         innerPanel.add(messageLabel, BorderLayout.NORTH);
 
         final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(0, 12));
+        panel.setLayout(LayoutFactory.createBorderLayout(0, 12));
         panel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         panel.add(downloadIcon, BorderLayout.WEST);
         panel.add(innerPanel, BorderLayout.CENTER);

@@ -1,5 +1,7 @@
 package com.openwebstart.ui;
 
+import com.openwebstart.util.LayoutFactory;
+
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -10,7 +12,6 @@ public class ModalDialog extends JDialog {
     private final JPanel dialogPanel;
 
     private Container currentContentPane;
-
     public ModalDialog() {
         setModal(true);
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -20,7 +21,7 @@ public class ModalDialog extends JDialog {
         } catch (Exception e) {
             //ignore
         }
-        dialogPanel = new JPanel(new BorderLayout());
+        dialogPanel = new JPanel(LayoutFactory.createBorderLayout());
         dialogPanel.add(new OpenWebStartDialogHeader(), BorderLayout.NORTH);
         super.setContentPane(dialogPanel);
     }

@@ -6,6 +6,7 @@ import com.openwebstart.controlpanel.MaximumLayoutManager;
 import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.ModalDialog;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -106,7 +107,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         final JPanel buttonPane = ButtonPanelFactory.createButtonPanel(showDetailsButton);
 
         mainPanel.addRow(0, messageLabel);
-        final JPanel overallProgressBarWrapper = new JPanel(new BorderLayout());
+        final JPanel overallProgressBarWrapper = new JPanel(LayoutFactory.createBorderLayout());
         overallProgressBarWrapper.add(overallProgressBar, BorderLayout.NORTH);
         mainPanel.addRow(1, overallProgressBarWrapper);
         
@@ -119,7 +120,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         mainPanel.add(scrollPaneWrapper, c2);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
 
-        final JPanel dialogPanel = new JPanel(new BorderLayout());
+        final JPanel dialogPanel = new JPanel(LayoutFactory.createBorderLayout());
         dialogPanel.add(mainPanel, BorderLayout.CENTER);
         dialogPanel.add(buttonPane, BorderLayout.SOUTH);
 
