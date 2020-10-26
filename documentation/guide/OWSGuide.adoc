@@ -507,6 +507,7 @@ deployment.manifest.attributes.check= CODEBASE,TRUSTED,ALAC,ENTRYPOINT
 
 === Certificates
 
+image::OWS_Certificates.PNG[title="Managing Certificates" width="80%"]
 // TODO Stephan
 // mention limitation on system tab
 
