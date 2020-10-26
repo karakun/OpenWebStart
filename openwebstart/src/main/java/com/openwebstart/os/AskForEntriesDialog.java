@@ -31,11 +31,11 @@ public class AskForEntriesDialog extends ModalDialog {
         int row = 0;
 
         formPanel.addEditorRow(row++, textLabel);
-        if(askForMenu) {
+        if (askForMenu) {
             formPanel.addEditorRow(row++, menuCheckBox);
             menuCheckBox.setSelected(true);
         }
-        if(askForDesktop) {
+        if (askForDesktop) {
             formPanel.addEditorRow(row++, desktopCheckBox);
             desktopCheckBox.setSelected(true);
         }

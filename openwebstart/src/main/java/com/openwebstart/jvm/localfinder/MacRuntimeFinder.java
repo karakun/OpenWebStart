@@ -13,15 +13,13 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-public class MacRuntimeFinder implements RuntimeFinder {
+class MacRuntimeFinder {
     private static final Logger LOG = LoggerFactory.getLogger(MacRuntimeFinder.class);
 
     private static final String MAC_JVM_BASEFOLDER = "/Library/Java/JavaVirtualMachines";
     private static final String MAC_HOMEBREW_JVM_BASEFOLDER = "/usr/local/Cellar/openjdk/";
 
-
-    @Override
-    public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
+    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
         LOG.debug("Searching for local runtimes");
 
         final Path systemPath = Paths.get(MAC_JVM_BASEFOLDER);
@@ -31,8 +29,7 @@ public class MacRuntimeFinder implements RuntimeFinder {
         return JdkFinder.findLocalJdks(systemPath, sdkmanPath, homebrewPath);
     }
 
-    @Override
-    public List<OperationSystem> getSupportedOperationSystems() {
+    static List<OperationSystem> getSupportedOperationSystems() {
         return Collections.singletonList(OperationSystem.MAC64);
     }
 }

@@ -70,7 +70,7 @@ public class RuntimeManagerConfig {
         config().setProperty(ALLOW_VENDOR_FROM_JNLP, Boolean.toString(vendorFromJnlpAllowed));
     }
 
-     public static int getMaxDaysUnusedInJvmCache() {
+    public static int getMaxDaysUnusedInJvmCache() {
         return Integer.parseInt(config().getProperty(MAX_DAYS_UNUSED_IN_JVM_CACHE));
     }
 
@@ -117,7 +117,7 @@ public class RuntimeManagerConfig {
     public static List<WhitelistEntry> getJvmServerWhitelist() {
         if (jvmServerWhitelist == null) {
             jvmServerWhitelist = UrlWhiteListUtils.whitelistPropertyName(JVM_SERVER_WHITELIST);
-        };
+        }
         return jvmServerWhitelist;
     }
 }

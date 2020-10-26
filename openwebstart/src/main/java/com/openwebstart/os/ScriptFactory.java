@@ -1,26 +1,24 @@
 package com.openwebstart.os;
 
+import com.openwebstart.install4j.Install4JUtils;
+import com.openwebstart.jvm.os.OperationSystem;
+import net.sourceforge.jnlp.JNLPFile;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 
-import com.openwebstart.install4j.Install4JUtils;
-import com.openwebstart.jvm.os.OperationSystem;
-
-import net.sourceforge.jnlp.JNLPFile;
-
-public class ScriptFactory 
-{
-    private final static String SCRIPT_START = "#!/bin/sh";
+public class ScriptFactory {
+    private static final String SCRIPT_START = "#!/bin/sh";
 
     private static final String JAVA_WS_NAME = "javaws";
-    
-    private static final String HTTP		 = "http";
-    private static final String HTTPS		 = "https";
-    private static final String JNLP		 = "jnlp";
+
+    private static final String HTTP = "http";
+    private static final String HTTPS = "https";
+    private static final String JNLP = "jnlp";
 
     public static String createStartScript(final JNLPFile jnlpFile) {
-        if(OperationSystem.getLocalSystem() == OperationSystem.MAC64) {
+        if (OperationSystem.getLocalSystem() == OperationSystem.MAC64) {
             return createSimpleStartScriptForMac(jnlpFile);
         }
         final String executable = Install4JUtils.installationDirectory()
@@ -30,17 +28,17 @@ public class ScriptFactory
         return executable + " " + jnlpLocation;
     }
 
-	public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) {
-		final URL srcUrl = jnlpFile.getSourceLocation();
-		final String schema = srcUrl.getProtocol();
-		final String url;
-		if (HTTP.equalsIgnoreCase(schema) || HTTPS.equalsIgnoreCase(schema)) {
-			url = JNLP + srcUrl.toString().substring(4);
-		} else {
-			url = srcUrl.toString();
-		}
-		return SCRIPT_START + System.lineSeparator() + "open \"" + url + "\"";
-	}
+    public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) {
+        final URL srcUrl = jnlpFile.getSourceLocation();
+        final String schema = srcUrl.getProtocol();
+        final String url;
+        if (HTTP.equalsIgnoreCase(schema) || HTTPS.equalsIgnoreCase(schema)) {
+            url = JNLP + srcUrl.toString().substring(4);
+        } else {
+            url = srcUrl.toString();
+        }
+        return SCRIPT_START + System.lineSeparator() + "open \"" + url + "\"";
+    }
 
     public static Process createStartProcess(final JNLPFile jnlpFile) throws IOException {
         final String executable = "\"" + Install4JUtils.installationDirectory()

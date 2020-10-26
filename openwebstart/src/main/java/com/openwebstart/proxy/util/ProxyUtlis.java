@@ -17,17 +17,17 @@ public class ProxyUtlis {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProxyUtlis.class);
 
-    private final static String DIALOG_MESSAGE = "proxy.unsupportedFeatureDialog.message";
+    private static final String DIALOG_MESSAGE = "proxy.unsupportedFeatureDialog.message";
 
-    private final static String MANUAL_PROXY_KEY = "proxy.type.manual.name";
+    private static final String MANUAL_PROXY_KEY = "proxy.type.manual.name";
 
-    private final static String PAC_PROXY_KEY = "proxy.type.pac.name";
+    private static final String PAC_PROXY_KEY = "proxy.type.pac.name";
 
-    private final static String FIREFOX_PROXY_KEY = "proxy.type.firefox.name";
+    private static final String FIREFOX_PROXY_KEY = "proxy.type.firefox.name";
 
-    private final static String SYSTEM_PROXY_KEY = "proxy.type.system.name";
+    private static final String SYSTEM_PROXY_KEY = "proxy.type.system.name";
 
-    private final static String UNKNOWN_PROXY_KEY = "proxy.type.unknown.name";
+    private static final String UNKNOWN_PROXY_KEY = "proxy.type.unknown.name";
 
     public static Optional<SocketAddress> getAddress(final String host, final int port) {
         if (host == null || host.trim().isEmpty()) {

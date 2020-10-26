@@ -25,7 +25,7 @@ public class JVMServerWhitelistDialog extends ModalDialog {
         JButton closeButton = new JButton(translator.translate("action.close"));
         closeButton.addActionListener(e -> close());
 
-        final AbstractUrlWhitelistPanel whitelistPanel= new AbstractUrlWhitelistPanel(deploymentConfiguration) {
+        final AbstractUrlWhitelistPanel whitelistPanel = new AbstractUrlWhitelistPanel(deploymentConfiguration) {
             @Override
             protected List<WhitelistEntry> getUrlWhitelist() {
                 return RuntimeManagerConfig.getJvmServerWhitelist();

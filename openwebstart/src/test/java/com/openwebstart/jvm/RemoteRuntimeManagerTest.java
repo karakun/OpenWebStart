@@ -116,7 +116,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_2()  {
+    public void testRemoteRuntime_2() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = null;
@@ -164,7 +164,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_5()  {
+    public void testRemoteRuntime_5() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
@@ -207,7 +207,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_8()  {
+    public void testRemoteRuntime_8() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;

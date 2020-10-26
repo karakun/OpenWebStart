@@ -13,9 +13,9 @@ import java.util.concurrent.Future;
 
 public class ApplicationIconHandler {
 
-    private final static Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
 
-    private final static ApplicationIconHandler INSTANCE = new ApplicationIconHandler();
+    private static final ApplicationIconHandler INSTANCE = new ApplicationIconHandler();
 
     private final ApplicationIconCache applicationIconCache;
 

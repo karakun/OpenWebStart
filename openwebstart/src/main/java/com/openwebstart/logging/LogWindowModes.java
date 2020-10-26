@@ -34,10 +34,10 @@ public enum LogWindowModes {
     }
 
     public static LogWindowModes getForConfigValue(final String configValue) {
-        if(Objects.equals(configValue, ConfigurationConstants.CONSOLE_SHOW)) {
+        if (Objects.equals(configValue, ConfigurationConstants.CONSOLE_SHOW)) {
             return CONSOLE_SHOW;
         }
-        if(Objects.equals(configValue, ConfigurationConstants.CONSOLE_HIDE)) {
+        if (Objects.equals(configValue, ConfigurationConstants.CONSOLE_HIDE)) {
             return CONSOLE_HIDE;
         }
         return CONSOLE_DISABLE;
