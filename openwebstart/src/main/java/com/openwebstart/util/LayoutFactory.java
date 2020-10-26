@@ -12,7 +12,7 @@ public class LayoutFactory {
      *
      * @return <code>BorderLayout</code>
      */
-    public static BorderLayout getBorderLayout() {
+    public static BorderLayout createBorderLayout() {
         return  new BorderLayout();
     }
 
@@ -23,7 +23,7 @@ public class LayoutFactory {
      * @param hgap the horizontal gap.
      * @return <code>BorderLayout</code> object
      */
-    public static BorderLayout getBorderLayout(int vgap,int hgap) {
+    public static BorderLayout createBorderLayout(int vgap,int hgap) {
         return  new BorderLayout(vgap,hgap);
     }
 
