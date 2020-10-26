@@ -263,12 +263,57 @@ Various life-cycle aspects of your JNLP applications can be configured, such as 
 behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as
 proxy settings, security settings, certificates and server whitelists.
 
+NOTE: Please refer to <<Configuration Properties Overview>> for details of deployment properties.
+
+When loading the configuration during the start of OpenWebStart the following steps are executed:
+
+1. Load the default values which are hardcoded in the source code.
+1. Search for a system configuration.
+1. Load the system configuration if one was found.
+1. Load the user configuration.
+
+Whenever a configuration is loaded the values which are already defined are updated.
+There is however the possibility to lock a property.
+If a property is locked then subsequent configurations may not modify the value.
+This allows enforcing certain values on a system level.
+Any changes the user makes in his personal configuration file will not have any effect on the locked property.
+
+=== Content of the System Configuration
+
+The simplest way to create a system configuration is to start the `itw-settings`.
+After saving the configuration the modified properties are written to the user configuration file.
+For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
+For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
+
+The customized user configuration can be used as a starting point for the system configuration.
+Simply copy the file and remove the properties which should not be defined on the system level.
+
+OpenWebStart does not save properties which have the default value. Therefore, the generated user configuration may not
+contain all the values you wish to enforce on the system level.
+
+=== Locking a Property
+
+One of the use cases is to enforce some configurations to all users in your corporate environment.
+This can be achieved by locking configuration on a system level.
+To lock a property you need to define a second entry with a `.locked` postfix.
+
+Here is an example:
+
+[source]
+----
+ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
+ows.jvm.manager.server.default.locked=true
+----
+
+TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
+The presence of the key is sufficient for locking the property.
+
 The following sections will describe these various configuration possibilities in detail.
 
 === User level configuration
 OWS can be configured locally by specifying properties in `<User Home>\.config\icedtea-web\deployment.properties` file.
 
-=== Enterprise wide configuration
+=== Enterprise or System wide configuration
 In an enterprise environment, for uniformity of behavior, it is preferred that all users use the same configuration for OWS.
 
 It is possible to configure OWS with a system-wide configuration. This allows setting up a common configuration for
@@ -315,31 +360,34 @@ directories shown in the following table:
 
 |===
 |Operating System|Location
-|Windows|<Windows Directory>\Sun\Java\Deployment\deployment.config
+|Windows|`<Windows Directory>\Sun\Java\Deployment\deployment.config`
 
-|Linux|/etc/.java/deployment/deployment.config
+| MacOS and Linux|`/etc/.java/deployment/deployment.config`
 
-|Mac|/Library/Application Support/Oracle/Java/Deployment/deployment.config
 |===
 
-The `deployment.config` file contains two properties: `deployment.system.config` and `deployment.system.config.mandatory`.
+deployment.system.config:: The URL to the system configuration.
+The name of the file can be freely chosen.
+Special characters need escaping.
+See the following examples:
+* `deployment.system.config=file\:/C\:/Windows/Sun/Java/global.properties`
+* `deployment.system.config=file\:/etc/.java/deployment/base.properties`
+* `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
 
-The `deployment.system.config` property is the URL to the system (enterprise-wide) `deployment.properties` file.
-This property can be used by system administrators to centrally administer or "lock-down" user-specific configuration settings.
+deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings
+This property is optional. The default value is `false`.
 
-deployment.system.config=file:///c:/OpenWebStart/my.properties
+The final file should look something like this:
 
-
-The `deployment.system.config.mandatory` property is a boolean. If set to true, the `deployment.properties` file that is
-pointed to by the `deployment.system.config` property must be found and successfully loaded, otherwise, nothing is allowed
-to run. If the property is set to false, an attempt is made to find and load the `deployment.properties` file that is pointed
-to by the `deployment.system.config` property. If successful, the file is used, otherwise, the file is ignored.
-The default for the `deployment.system.config.mandatory` property is false.
-
+[source]
+----
+deployment.system.config=https\:192.168.1.1./javaws/system.properties
+deployment.system.config.mandatory=true
+----
 
 OWS will then pick up deployment.properties from the specified file when deployment.properties is NOT present in <User Home>\.config\icedtea-web dir
 
-When deployment.properties IS present in <User Home>\.config\icedtea-web dir then it seems to have precedence for specified properties.
+When deployment.properties IS present in <User Home>\.config\icedtea-web dir then has precedence for specified properties.
 
 === JVM Management
 
@@ -601,81 +649,6 @@ You will rarely need those.
 OWS allows remote debugging of the application started by OWS. You can configure the settings as follows:
 
 image::OWS_DEBUG.PNG[title="Remote Debugging" width="80%"]
-
-=== System Configuration
-
-When loading the configuration during the start of OpenWebStart the following steps are executed:
-
-1. Load the default values which are hardcoded in the source code.
-1. Search for a system configuration.
-1. Load the system configuration if one was found.
-1. Load the user configuration.
-
-Whenever a configuration is loaded the values which are already defined are updated.
-There is however the possibility to lock a property.
-If a property is locked then subsequent configurations may not modify the value.
-This allows enforcing certain values on a system level.
-Any changes the user makes in his personal configuration file will not have any effect on the locked property.
-
-==== Defining the System Configuration
-
-The system configuration needs to be defined in the following way.
-
-*Windows:* create the file `%windir%\Sun\Java\deployment\deployment.config` and add the following properties:
-
-*MacOs and Linux:* create the file `/etc/.java/deployment/deployment.config` and add the following properties:
-
-deployment.system.config:: The URL to the system configuration.
-The name of the file can be freely chosen.
-Special characters need escaping.
-See the following examples:
-* `deployment.system.config=file\:/C\:/Windows/Sun/Java/global.properties`
-* `deployment.system.config=file\:/etc/.java/deployment/base.properties`
-* `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
-
-deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings
-This property is optional.
-The default value is `false`.
-
-The final file should look something like this:
-
-[source]
-----
-deployment.system.config=https\:192.168.1.1./javaws/system.properties
-deployment.system.config.mandatory=true
-----
-
-==== Content of the System Configuration
-
-The simplest way to create a system configuration is to start the `itw-settings`.
-After saving the configuration the modified properties are written to the user configuration file.
-For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
-
-The customized user configuration can be used as a starting point for the system configuration.
-Simply copy the file and remove the properties which should not be defined on the system level.
-
-OpenWebStart does not save properties which have the default value.
-Therefore the generated user configuration may not contain all the values you wish to enforce on the system level.
-
-Please contact openwebstart@karakun.com if you need to know the key and valid values for a specific configuration.
-
-==== Locking a Property
-
-One of the use cases is to enforce some configurations to all users in your corporate environment.
-This can be achieved by locking configuration on a system level.
-To lock a property you need to define a second entry with a `.locked` postfix.
-
-Here an example:
-
-[source]
-----
-ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
-ows.jvm.manager.server.default.locked=true
-----
-
-TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
-The presence of the key is sufficient for locking the property.
 
 === Configuration Properties Overview
 
