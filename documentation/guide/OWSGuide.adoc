@@ -253,116 +253,61 @@ It is possible to define an update strategy on every `start`, `daily`, `weekly`,
 
 == Configuration
 
-The standard way to configure OpenWebStart is to use the OWS Settings application.
+The standard way to configure OpenWebStart is to use the OpenWebStart Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
-
-image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
-
-All settings managed by this application are stored on the file system in a file called `deployment.properties`.
-For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
-
-This file can be edited with a regular text editor.
-For some expert configurations this may be necessary, but for most cases the graphical UI will be sufficient.
 
 Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching
 behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as
 proxy settings, security settings, certificates and server whitelists.
 
-NOTE: Please refer to <<Configuration Properties Overview>> for details of deployment properties.
+image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
 
+=== Configuration Lookup Lifecycle
 When loading the configuration during the start of OpenWebStart the following steps are executed:
 
 1. Load the default values which are hardcoded in the source code.
-2. Search for a system configuration.
-3. Load the system configuration if one can be found.
-4. Load the user configuration.
+1. Search for a *System Configuration*.
+1. Load the System Configuration (if one has been specified).
+1. Load the *User Configuration*.
 
-Whenever a configuration is loaded the values which are already defined are updated.
-There is however the possibility to lock a property.
+Whenever a configuration is loaded the values which are already defined in a previous lifecycle step are updated.
+There is however the possibility to lock a property on a system-level lifecycle step.
 If a property is locked then subsequent configurations may not modify the value.
 This allows enforcing certain values on a system level.
-Any changes the user makes in his personal configuration file will not have any effect on the locked property.
+Any changes a user makes in his local user configuration file will not have any effect on a locked property.
 
-=== Content of the System Configuration
-
-The simplest way to create a system configuration is to start the `itw-settings`.
-After saving the configuration the modified properties are written to the user configuration file.
+=== User Configuration
+The local user configuration properties are stored in a file called `deployment.properties`.
 For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
 For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
 
-The customized user configuration can be used as a starting point for the system configuration.
-Simply copy the file and remove the properties which should not be defined on the system level.
+This file can be edited with a regular text editor.
+For some specific configurations manually editing this file might be necessary, but for most cases the manipulation via OWS Settings application is sufficient.
 
-OpenWebStart does not save properties which have the default value. Therefore, the generated user configuration may not
-contain all the values you wish to enforce on the system level.
-
-=== Locking a Property
-
-One of the use cases is to enforce some configurations to all users in your corporate environment.
-This can be achieved by locking configuration on a system level.
-To lock a property you need to define a second entry with a `.locked` postfix.
-
-Here is an example:
-
-[source]
-----
-ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
-ows.jvm.manager.server.default.locked=true
-----
-
-TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
-The presence of the key is sufficient for locking the property.
-
-The following sections will describe these various configuration possibilities in detail.
-
-=== User Level Configuration
-OWS can be configured locally by specifying properties in `<User Home>\.config\icedtea-web\deployment.properties` file.
-
-=== Enterprise or System-wide Configuration
+=== System Configuration
 In an enterprise environment, for uniformity of behavior, it is preferred that all users use the same configuration for OWS.
 
 It is possible to configure OWS with a system-wide configuration. This allows setting up a common configuration for
 multiple users at a centralized location on a single computer. This helps in managing a corporate infrastructure where
 many computers need to be configured identically.
 
-Centralized location for `configuration` and `cache` can be specified using `XDG_CONFIG_HOME` and
-`XDG_CACHE_HOME` environment variables.
+==== Creating a System Configuration
 
-The centralized `configuration` comprises:
+The simplest way to create a system configuration is to start the `itw-settings`.
+After adjusting and saving as you prefer, the configuration the modified properties are written to the local `deployment.properties` file as described above.
+This customized user configuration can be used as a starting point for the system configuration.
+Simply copy the file and remove the properties which should not be pre-defined at system-level.
 
-* deployment.properties : all users must use the same deployment.properties for OWS
-* user decisions  (.appletTrustSettings)
-* logs - logs for the app started by each user
-* security (certificate stores)
-* icons - for the app started by user
+OpenWebStart does not save an entry for a property in the `deployment.properties` file if it is set to the default value.
+Therefore, the generated user configuration may not contain all the values you wish to enforce on the system level.
+Where appropriate you have to add additional properties manually.
 
-The centralized `cache` comprises
-
-* jvm_cache : directory where common set of downloaded JVMs are stored
-* cache and recently_used file : directory for caching the jnlp and resources of the applications started by users
-* temp dir : Directory created by OWS for temp files.
-
-=== Configuring Location of `jvm_cache`
-`jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir`  in the centralized
-`deployment.properties` file :
-
-```
-ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
-```
-
-NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
-
-=== Configuring Location of `deployment.properties`
+NOTE: Please refer to <<Configuration Properties Overview>> for a comprehensive list of deployment properties.
 
 It is possible to make OWS use `deployment.properties` from a customized location.
 
-A user-level `deployment.properties` file always exists in the `<User Home>/.config/icedtea-web` directory.
-There can also be an optional system-level `deployment.properties` file. If it exists, its location is determined by
-a System Administrator through the `deployment.config` file. The `deployment.config` file is used for specifying the
-system-level `deployment.properties` in the infrastructure. By default no `deployment.config` file exists, so no
-system-wide `deployment.properties` file exists. If the `deployment.config` file exists, it is located in one of the
-directories shown in the following table:
+The location of such an optional system-level `deployment.properties` file is determined by the System Administrator.
+As described in the lifecycle above, if the `deployment.config` file exists, it is located in one of the directories shown in the following table:
 
 |===
 |Operating System|Location
@@ -371,6 +316,8 @@ directories shown in the following table:
 | MacOS and Linux|`/etc/.java/deployment/deployment.config`
 
 |===
+
+The following system properties can be set to configure the location of the system configuration file:
 
 deployment.system.config:: The URL to the system configuration.
 The name of the file can be freely chosen.
@@ -394,6 +341,56 @@ deployment.system.config.mandatory=true
 OWS will then pick up deployment.properties from the specified file when deployment.properties is *not* present in <User Home>\.config\icedtea-web directory
 
 When deployment.properties *is* present in <User Home>\.config\icedtea-web directory then has precedence for specified properties.
+
+=== Locking a Property
+
+One of the use cases is to enforce some configurations to all users in your corporate environment.
+This can be achieved by locking configuration on a system level.
+To lock a property you need to define a second entry with a `.locked` postfix.
+
+Here is an example:
+
+[source]
+----
+ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
+ows.jvm.manager.server.default.locked=true
+----
+
+TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
+The presence of the key is sufficient for locking the property.
+
+The following sections will describe these various configuration possibilities in detail.
+
+
+=== Customize Application Cache and User Config Location
+
+Centralized location for `configuration` and `cache` can be specified using `XDG_CONFIG_HOME` and
+`XDG_CACHE_HOME` environment variables.
+
+The centralized `configuration` comprises:
+
+* deployment.properties : all users must use the same deployment.properties for OWS
+* user decisions  (.appletTrustSettings)
+* logs - logs for the app started by each user
+* security (certificate stores)
+* icons - for the app started by user
+
+The centralized `cache` comprises
+
+* jvm_cache : directory where common set of downloaded JVMs are stored
+* cache and recently_used file : directory for caching the jnlp and resources of the applications started by users
+* temp dir : Directory created by OWS for temp files.
+
+
+=== Customize JVM Cache Location
+The `jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir`  in the centralized
+`deployment.properties` file:
+
+```
+ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
+```
+
+NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
 
 === JVM Manager
 
