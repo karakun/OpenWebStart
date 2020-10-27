@@ -6,6 +6,11 @@
 :toc:
 :toclevels: 4
 
+NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation.
+The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
+
+This Guide refers to the OpenWebStart version *{project-version}* and was build at *{build-timestamp}*.
+
 == Introduction
 
 Java Web Start (JWS) was deprecated in Java 9, and starting with Java 11, Oracle removed JWS from their JDK distributions.

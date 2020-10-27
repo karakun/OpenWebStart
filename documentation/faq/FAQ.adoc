@@ -9,6 +9,8 @@
 NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation.
 The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
 
+These FAQs refer to the OpenWebStart version *{project-version}* and were build at *{build-timestamp}*.
+
 == General
 
 ==== What is OpenWebStart?
