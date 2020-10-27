@@ -3,6 +3,7 @@ package com.openwebstart.proxy.ui;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.proxy.ProxyProviderType;
 import com.openwebstart.ui.Notifications;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.AdvancedProxySettingsDialog;
@@ -106,7 +107,7 @@ public class ProxyConfigPanel extends FormPanel {
         pacUrlField.setToolTipText(translator.translate("proxyPanel.pacUrl.description"));
         pacSettingsDetailsPanel.addRow(0, pacUrlLabel, pacUrlField);
         pacSettingsDetailsPanel.setBorder(BorderFactory.createEmptyBorder(0, 64, 0, 12));
-        final JPanel pacSettingsPanel = new JPanel(new BorderLayout());
+        final JPanel pacSettingsPanel = new JPanel(LayoutFactory.createBorderLayout());
         pacSettingsPanel.add(usePacSettings, BorderLayout.NORTH);
         pacSettingsPanel.add(pacSettingsDetailsPanel, BorderLayout.CENTER);
         addRow(3, pacSettingsPanel);
@@ -182,7 +183,7 @@ public class ProxyConfigPanel extends FormPanel {
         manualSettingsDetailsPanel.add(bypassLocalhostCheckbox, bypassLocalhostCheckboxContraints);
         bindToSettings(config, bypassLocalhostCheckbox, ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL);
 
-        final JPanel manualSettingsPanel = new JPanel(new BorderLayout());
+        final JPanel manualSettingsPanel = new JPanel(LayoutFactory.createBorderLayout());
         manualSettingsPanel.add(useManualSettings, BorderLayout.NORTH);
         manualSettingsPanel.add(manualSettingsDetailsPanel, BorderLayout.CENTER);
         addRow(4, manualSettingsPanel);

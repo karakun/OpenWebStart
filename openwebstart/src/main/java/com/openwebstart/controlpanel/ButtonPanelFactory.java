@@ -1,5 +1,6 @@
 package com.openwebstart.controlpanel;
 
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -24,7 +25,7 @@ public class ButtonPanelFactory {
 
         final JPanel actionWrapperPanel = new JPanel();
         actionWrapperPanel.setBackground(Color.WHITE);
-        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
+        actionWrapperPanel.setLayout(LayoutFactory.createBoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
         actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
         actionWrapperPanel.add(Box.createHorizontalGlue());
         buttons.forEach(actionWrapperPanel::add);
@@ -35,7 +36,7 @@ public class ButtonPanelFactory {
         topBorder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         topBorder.setMinimumSize(new Dimension(1, 1));
 
-        final JPanel actionPanel = new JPanel(new BorderLayout());
+        final JPanel actionPanel = new JPanel(LayoutFactory.createBorderLayout());
         actionPanel.add(topBorder, BorderLayout.NORTH);
         actionPanel.add(actionWrapperPanel, BorderLayout.CENTER);
         return actionPanel;
