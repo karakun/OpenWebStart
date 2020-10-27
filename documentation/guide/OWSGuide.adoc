@@ -27,13 +27,13 @@ OpenWebStart is based on Iced-Tea-Web and follows the JNLP-specification defined
 The focus of OpenWebStart is the execution of JNLP-based applications.
 Additionally, the tool contains various modules that simplify your Web Start workflows and let you configure OpenWebStart to suit your needs:
 
-App Manager:: manages the versions of any JNLP-based application that is executed by OpenWebStart.
+App Manager:: Manages the versions of any JNLP-based application that is executed by OpenWebStart.
 
-JVM Manager:: manages Java versions and Java updates on the client.
+JVM Manager:: Manages Java versions and Java updates on the client.
 
-Control Panel:: provides a graphical user interface to configure OpenWebStart.
+Control Panel:: Provides a graphical user interface to configure OpenWebStart.
 
-Updater:: downloads and installs new versions of OpenWebStart.
+Updater:: Downloads and installs new versions of OpenWebStart.
 
 == Installation
 OpenWebStart can be installed on Windows, MacOS and Linux operating systems and there are two different ways to install OpenWebStart:
@@ -214,7 +214,7 @@ So if you can (and want to) do without the file associations, desktop icon and s
 All files required for execution are located in the installation directory (see <<Installation Artifacts>>.
 It is therefore sufficient to copy this directory onto a USB stick and then to run the main executable (Windows: _javaws.exe_) and settings executable (Windows: _itw-settins.exe_) by mounting the USB stick on the target computer.
 
-If you want the settings and the cache to sldo remain on the USB stick, the path to these two directories can
+If you want the settings and the cache to also remain on the USB stick, the path to these two directories can
 be set with the following environment variables:
 
 [source]
@@ -392,7 +392,7 @@ ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
 
 NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
 
-=== JVM Manager
+=== JVM Management
 
 OWS provides facility to choose set of JVMs that can be used to run the applications specified in JNLP files
 
