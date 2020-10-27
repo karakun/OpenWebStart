@@ -21,6 +21,7 @@
     <modules>
         <module>ManifestResourceTransformer</module>
         <module>openwebstart</module>
+        <module>documentation</module>
     </modules>
 
     <scm>
