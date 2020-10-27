@@ -46,7 +46,7 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>${basedir}/guide</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-docs/guide</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
                             <backend>pdf</backend>
                             <backend>html</backend>
                             <preserveDirectories>true</preserveDirectories>
@@ -65,7 +65,7 @@
                         </goals>
                         <configuration>
                             <sourceDirectory>${basedir}/faq</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-docs/faq</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
                             <backend>pdf</backend>
                             <backend>html</backend>
                             <preserveDirectories>true</preserveDirectories>
