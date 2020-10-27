@@ -8,33 +8,41 @@
 
 == Introduction
 
-Java Web Start (JWS) was deprecated in Java 9, and starting with Java 11, Oracle removed JWS from their JDK distributions. This means that clients that have the latest version of Java installed can no longer use JWS-based applications. And since public support of Java 8 has ended in Q2/2019, companies no longer get any updates and security fixes for Java Web Start.
+Java Web Start (JWS) was deprecated in Java 9, and starting with Java 11, Oracle removed JWS from their JDK distributions.
+This means that clients that have the latest version of Java installed can no longer use JWS-based applications.
+And since public support of Java 8 has ended in Q2/2019, companies no longer get any updates and security fixes for Java Web Start.
 
-This is why some enthusiasts at Karakun decided to create OpenWebStart, an open source reimplementation of the Java Web Start technology. This guide describes how you can use OpenWebStart as a replacement for JWS and continue using your JNLP-based applications  with little or no change at all.
+This is why some enthusiasts at Karakun decided to create OpenWebStart, an open source reimplementation of the Java Web Start technology.
+This guide describes how you can use OpenWebStart as a replacement for JWS and continue using your JNLP-based applications  with little or no change at all.
 
-We appreciate your feedback. If you feel that there's a lack of documentation in a certain area or if you find inaccuracies in the documentation, please don't hesitate to contact us at openwebstart@karakun.com or the  https://board.karakun.com/viewforum.php?f=4[support forum].
+We appreciate your feedback.
+If you feel that there's a lack of documentation in a certain area or if you find inaccuracies in the documentation, please don't hesitate to contact us at openwebstart@karakun.com or the  https://board.karakun.com/viewforum.php?f=4[support forum].
 
 === What is OpenWebStart?
 
-OpenWebStart is an open source reimplementation of the Java Web Start technology, released under the GPL with Classpath Exception. It provides the most commonly used features of Java Web Start and the JNLP standard, so that your customers can continue using applications based on Java Web Start and JNLP without any change. OpenWebStart is based on Iced-Tea-Web and follows the JNLP-specification defined in JSR-56.
+OpenWebStart is an open source reimplementation of the Java Web Start technology, released under the GPL with Classpath Exception.
+It provides the most commonly used features of Java Web Start and the JNLP standard, so that your customers can continue using applications based on Java Web Start and JNLP without any change.
+OpenWebStart is based on Iced-Tea-Web and follows the JNLP-specification defined in JSR-56.
 
-The main focus of OpenWebStart is the execution of JNLP-based applications. Additionally, the tool contains various modules that simplify your Web Start workflows and let you configure OpenWebStart to suit your needs:
+The focus of OpenWebStart is the execution of JNLP-based applications.
+Additionally, the tool contains various modules that simplify your Web Start workflows and let you configure OpenWebStart to suit your needs:
 
-App Manager:: manages the versions of any JNLP-based application that is executed by OpenWebStart.
+App Manager:: Manages the versions of any JNLP-based application that is executed by OpenWebStart.
 
-JVM Manager:: manages Java versions and Java updates on the client.
+JVM Manager:: Manages Java versions and Java updates on the client.
 
-Control Panel:: provides a graphical user interface to configure OpenWebStart.
+Control Panel:: Provides a graphical user interface to configure OpenWebStart.
 
-Updater:: downloads and installs new versions of OpenWebStart.
+Updater:: Downloads and installs new versions of OpenWebStart.
 
 == Installation
 OpenWebStart can be installed on Windows, MacOS and Linux operating systems and there are two different ways to install OpenWebStart:
 
 * Using the *interactive installation* with auto-update functionality
-* Using the *unattended installation* for automated roll-outs
+* Using the *unattended installation* for automated roll-outs (Windows only)
 
-If you use Web Start for several small customers or on your own, we recommend using the interactive installer. Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use.
+If you use Web Start for several small customers or on your own, we recommend using the interactive installer.
+Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use.
 OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
 
 If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines.
@@ -79,23 +87,59 @@ Instead of walking through the graphical installer of OWS on every machine your 
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click Finish on the completion screen to close the wizard.
 
-If you need help installing OpenWebStart, also have a look at the public installation and configuration discussions at the https://board.karakun.com/viewforum.php?f=10[Support Forum].
+If you need help to install OpenWebStart, also have a look at the public installation and configuration discussions at the https://board.karakun.com/viewforum.php?f=10[Support Forum].
+
+=== Installation Artifacts
+The artifacts of an installed release are the follows:
+
+OpenWebStart main executable:: Application to launch a JNLP file. +
+* _javaws.exe_ (Windows), +
+* _OpenWebStart javaws.app_ (macOS)
+
+OpenWebStart settings executable:: Application to configure your OpenWebStart installation. +
+* _itw-settings.exe_ (Windows), +
+* _OpenWebStart Settings.app_ (macOS)
+
+Uninstaller executable:: Application to uninstall OpenWebStart from your system. +
+* _uninstall.exe_ (Windows)
+* _OpenWebStart Uninstaller.app_ (macOS)
+
+jre directory (Windows):: The bundled JRE that starts OpenWebStart
+
+javaws.vmoptions:: JVM arguments used by the bundled JRE when starting OpenWebStart main executable (javaws)
+
+itw-settings.vmoptions:: JVM arguments used by the bundled JRE when starting OpenWebStart settings executable (itw-settings)
+
+ .install4J directory:: Contains install4j installer files including *_response.varfile_* used for the unattended installation.
+
+openwebstart.jar:: OpenWebStart application jar
+
+{asterisk}.png:: Some icons used by OpenWebStart
+
+readme.txt:: Describes OpenWebStart release contents and useful links
 
 === Unattended Installation
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines. In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
+Unattended installation is only available for Windows installations.
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines.
+In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
 
 When installing OpenWebStart, several properties can be predefined in a so-called `response.varfile` file.
 
-Some of the supported properties are lockable. If a property is lockable, you can define an additional property of type `PROPERTY_NAME.locked=true` to prevent users from editing the property in the user interface. For example, to define a value for the `ows.jvm.manager.server.default` property that cannot be changed in the user interface, specify the following two properties:
+Some supported properties are lockable.
+If a property is lockable, you can define an additional property of type `PROPERTY_NAME.locked=true` to prevent users from editing the property in the user interface.
+For example, to define a value for the `ows.jvm.manager.server.default` property that cannot be changed in the user interface, specify the following two properties:
 
 ----
 ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in the `response.varfile`.
+Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in
+the `response.varfile`.
 
-To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a `response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder, you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
+To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a
+`response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder,
+you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
 
 ----
 sys.adminRights$Boolean=false
@@ -105,7 +149,8 @@ sys.installationDir=/Applications/OpenWebStart
 sys.languageId=de
 ----
 
-You can easily edit this file and add additional properties based on the table in this article. Do not change the initial content of the file, and add new properties always to the end of the file. After editing, a `response.varfile` file might look like this:
+You can easily edit this file and add additional properties based on the table in this article. Do not change the initial content of the file, and add new properties always to the end of the file.
+After editing, a `response.varfile` the file might look like this:
 
 ----
 sys.adminRights$Boolean=false
@@ -117,7 +162,8 @@ ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
-You can now use your enhanced file to install OpenWebStart on multiple machines. Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
+You can now use your enhanced file to install OpenWebStart on multiple machines.
+Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
 
 ----
 <OpenWebStart_windows_Setup.exe> -q -varfile response.varfile
@@ -126,7 +172,7 @@ You can now use your enhanced file to install OpenWebStart on multiple machines.
 === JNLP File Association
 
 To ensure that your computer handles links, desktop shortcuts, or start menu entries to JNLP applications correctly, you should associate the JNLP file type (`*.jnlp`) on your computer with OpenWebStart.
-In case you used a Oracle JVM in the past, your JNLP file association might still be set to Oracle javaws.
+In case you used an Oracle JVM in the past, your JNLP file association might still be set to Oracle javaws.
 
 Note that during the installation process, OpenWebStart will not change file associations of any existing Oracle javaws executable, so you can use both.
 
@@ -159,47 +205,202 @@ For Windows and macOS::
 
 For Linux:: Use your package manager and remove the package OpenWebStart
 
-=== USB Stick Installation
+=== Running OWS from portable USB stick
 
-#<TODO: describe OWS settings options>#
-// TODO Janak
+It is possible to run OWS from a portable USB stick without actually installing OWS on your machine.
+Although this is a quick way of running OWS, the downside of not using the installer is that you do not get the support of the underlying operating system in terms of file associations, registry entries and desktop integration.
+So if you can (and want to) do without the file associations, desktop icon and startup menu you can create a portable version by yourself.
+
+All files required for execution are located in the installation directory (see <<Installation Artifacts>>.
+It is therefore sufficient to copy this directory onto a USB stick and then to run the main executable (Windows: _javaws.exe_) and settings executable (Windows: _itw-settins.exe_) by mounting the USB stick on the target computer.
+
+If you want the settings and the cache to also remain on the USB stick, the path to these two directories can
+be set with the following environment variables:
+
+[source]
+----
+XDG_CACHE_HOME (default value is %USER_HOME%\.cache)
+
+XDG_CONFIG_HOME (default: %USER_HOME%\.config)
+----
+
+To run OWS from a USB stick it is recommended to create a small batch script that sets the two variables
+and then executes the executables:
+
+[source]
+----
+javaws.exe [url-to-jnlp | path-to-jnlp] [options]
+----
+
+It should also be mentioned that with a new release of OWS the two things that usually change are:
+
+[source]
+----
+\openwebstart.jar (the application must be updated)
+
+\jre\ (the bundled JRE which is used to run OpenWebStart)
+----
+
+So you might want to update these files on the USB stick to keep your OWS installation up-to-date.
 
 === Local vs. System-Wide Installation
 
-#<TODO: describe OWS settings options>#
-// TODO Janak
-// TODO mention install it both on same machine that it can cause conflicts
+You can install OWS for the current user or for all users of the computer.
 
+Once OWS is installed on your machine it can be configured locally using the local `deployment.config` file or it can take its configuration from a centralized enterprise wide `deployment.config`.
+This is described in detail at <<Configuration>>.
+
+// TODO: mention that installing it both on the same machine might cause conflicts
 
 == Updates
 
 OpenWebStart can be configured to automatically check for new releases and perform automatic updates.
 
 To do so go to the "Updates" Panel in the OWS Settings.
+
+image::OWS_Updates.png[title="OWS Update options" width="80%"]
+
 It is possible to define an update strategy on every `start`, `daily`, `weekly`, `monthly`, or `never`.
 
 == Configuration
 
-The standard way to configure OpenWebStart is to use the OWS Settings application.
+The standard way to configure OpenWebStart is to use the OpenWebStart Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
 
-All settings managed by this application are stored on the file system in a file called `deployment.properties`.
-For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
+Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior.
+You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
+
+image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
+
+=== Configuration Lookup Lifecycle
+When loading the configuration during the start of OpenWebStart the following steps are executed:
+
+1. Load the default values which are hardcoded in the source code.
+1. Search for a *System Configuration*.
+1. Load the System Configuration (if one has been specified).
+1. Load the *User Configuration*.
+
+Whenever a configuration is loaded the values which are already defined in a previous lifecycle step are updated.
+There is however the possibility to lock a property on a system-level lifecycle step.
+If a property is locked then subsequent configurations may not modify the value.
+This allows enforcing certain values on a system level.
+Any changes a user makes in his local user configuration file will not have any effect on a locked property.
+
+=== User Configuration
+The local user configuration properties are stored in a file called `deployment.properties`.
+
+* For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
+* For MacOS and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
 
 This file can be edited with a regular text editor.
-For some expert configurations this may be necessary, but for most cases the graphical UI will be sufficient.
+For some specific configurations manually editing this file might be necessary, but for most cases the OWS Settings application is sufficient.
 
-Besides a per-user configuration by manipulating `deployment.properties`, there exists also the possibility to define a system-wide configuration.
-This allows setting up a common configuration for multiple users on a single computer or helps in managing a corporate infrastructure where many computers need to be configured identically. For more details see <<System Configuration>>.
+=== System Configuration
+In an enterprise environment, for uniformity of behavior, it is preferred that all users use the same configuration for OWS.
 
-Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior. You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
+It is possible to configure OWS with a system-wide configuration.
+This allows setting up a common configuration for multiple users at a centralized location on a single computer.
+This helps in managing a corporate infrastructure where many computers need to be configured identically.
 
-The following chapters will describe these various configuration possibilities in detail.
+==== Creating a System Configuration
+
+The simplest way to create a system configuration is to start the `itw-settings`.
+After adjusting and saving as you prefer, the configuration the modified properties are written to the local `deployment.properties` file as described above.
+This customized user configuration can be used as a starting point for the system configuration.
+Simply copy the file and remove the properties which should not be pre-defined at system-level.
+
+OpenWebStart does not save an entry for a property in the `deployment.properties` file if it is set to the default value.
+Therefore, the generated user configuration may not contain all the values you wish to enforce on the system level.
+Where appropriate you have to add additional properties manually.
+
+NOTE: Please refer to <<Configuration Properties Overview>> for a comprehensive list of deployment properties.
+
+It is possible to make OWS use `deployment.properties` from a customized location.
+
+The location of such an optional system-level `deployment.properties` file is defined in a `deployment.config` file.
+For OWS to find the `deployment.config` file it must be located in specific location:
+
+* For Windows in `<Windows Directory>\Sun\Java\Deployment\deployment.config`
+* For MacOS and Linux in `/etc/.java/deployment/deployment.config`
+
+The `deployment.config` file is a regular properties file.
+The following properties can be set to configure the location of the system configuration file:
+
+deployment.system.config:: The URL to the system configuration.
+The name of the system configuration can be freely chosen.
+Special characters need escaping.
+See the following examples:
+* `deployment.system.config=file\:/C\:/Windows/Sun/Java/global.properties`
+* `deployment.system.config=file\:/etc/.java/deployment/base.properties`
+* `deployment.system.config=https\://192.168.1.1./javaws/system.properties`
+
+deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings This property is optional.
+The default value is `false`.
+
+The final file should look something like this:
+
+[source]
+----
+deployment.system.config=https\://192.168.1.1./javaws/system.properties
+deployment.system.config.mandatory=true
+----
+
+=== Locking a Property
+
+One of the use cases is to enforce some configurations to all users in your corporate environment.
+This can be achieved by locking configuration on a system level.
+To lock a property you need to define a second entry with a `.locked` postfix.
+
+Here is an example:
+
+[source]
+----
+ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
+ows.jvm.manager.server.default.locked=true
+----
+
+TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
+The presence of the key is sufficient for locking the property.
+
+=== Customize Application Cache and User Config Location
+
+Centralized location for the _configuration_ and _cache_ can be specified using `XDG_CONFIG_HOME` and
+`XDG_CACHE_HOME` environment variables.
+
+The centralized _configuration_ comprises:
+
+* deployment.properties : all users must use the same deployment.properties for OWS
+* user decisions  (.appletTrustSettings)
+* logs - logs for the app started by each user
+* security (certificate stores)
+* icons - for the app started by user
+
+The centralized _cache_ comprises
+
+* jvm_cache : directory where common set of downloaded JVMs are stored (this can be separately configured using the `ows.jvm.manager.cache.dir` property)
+* cache and recently_used file : directory for caching the jnlp and resources of the applications started by users
+* temp dir : Directory created by OWS for temp files.
+
+
+=== Customize JVM Cache Location
+The `jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir` in the `deployment.properties` file:
+
+[source]
+----
+ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
+----
+
+NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
 
 === JVM Management
 
-#<TODO: describe OWS settings options>#
+OWS provides facility to choose set of JVMs that can be used to run the applications specified in JNLP files
+
+image::OWS_JVM_Mgmt.png[title="JVM Management" width="80%"]
+
+One can choose or automatically add locally available JVMs or one can specify the server from where JVMs can be downloaded.
+
+image::OWS_JVM_Config.png[title="Configuring JVM Management" width="80%"]
 
 ==== JVM Download Server
 
@@ -234,19 +435,18 @@ os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
 ==== Allowing JVM Server in JNLP and defining a JVM Server Whitelist
 
-You can allow specification of JVM server in the JNLP file by defining the property:
-_ows.jvm.manager.server.allowFromJnlp=true_.
+You can allow the specification of JVM server in the JNLP file by defining the property:
+`ows.jvm.manager.server.allowFromJnlp=true`.
 In this case the JVM will be downloaded from the URL specified in the JNLP file:
 [source]
 ----
 <java version="1.8*" href="http://myjvms.myserver.com/jvms.json"/>
 ----
 
-When allowing JVM server download from the JNLP file, as a security measure it
-is advisable to define a whitelist for JVM server URLs that will be specified in JNLP files.
+When allowing JVM server download from the JNLP file, as a security measure it is advisable to define a whitelist for JVM server URLs that will be specified in JNLP files.
 JVMs will be allowed to be downloaded from only those server URLs that match a whitelist entry.
 
-The JVM server whitelist can be defined in the _deployment properties_ file _${userHome}/.config/icedtea-web/deployment.properties_:
+The JVM server whitelist can be defined in the _deployment properties_ file:
 
 [source]
 ----
@@ -255,24 +455,119 @@ ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
 
 It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
 
-=== Application and Cache Management
+==== Whitelist for JVM Arguments
 
-#<documentation added in the near future>#
-// TODO
-// - describe the option to turn on this experimental feature
+OWS starts the JNLP application with the JVM that best matches JVM in the JNLP file.
+While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
+
+[source]
+----
+<java version="1.8+"  java-vm-args=" -Xmx512m -Xms128m -XX:SurvivorRatio=6 -XX:NewSize=96m -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=30"/>
+----
+
+OWS maintains a hardcoded list of secure JVM arguments as specified at:
+
+* https://docs.oracle.com/javase/8/docs/technotes/guides/javaws/developersguide/syntax.html#secure-property
+* https://docs.oracle.com/javase/9/tools/java.htm#JSWOR624
+* https://news.kynosarges.org/2019/03/24/swing-high-dpi-properties/
+
+OWS allows only those JVM args that are in the above lists.
+However, sometimes with new versions of JREs new JVM arguments are introduced.
+Also, some desired arguments are not included in the above lists.
+In such cases it is possible for the user to specify additional JVM arguments in the `deployment.properties` for OWS to allow them to be passed to the JVM:
+
+[source]
+----
+deployment.jvm.arguments.whitelist=-Dnew_jvm_arg1, -Dnew_jvm_arg2
+----
+
+Subsequently the JNLP file can include the above JVM args:
+
+[source]
+----
+<java version="x"  java-vm-args="-Dnew_jvm_arg1=value1 -Dnew_jvm_arg2=value2"/>
+----
+
+Note: The whitelist should only contain the name of the JVM argument and not the value as can be seen in the example above.
+
+=== Cache Management
+
+OWS downloads the resources like jars and images specified in the JNLP file from the specified server(s).
+OWS stores application resources for faster execution by avoiding downloading the next time you run the application.
+By default, application resources are stored in _<User Home>/.cache/icedtea-web/.cache directory_.
+However, OWS will re-download resources for the application if it finds that a resource has been updated on the server.
+
+To find out whether a resource has been modified since the last download, OWS sends an _HTTP HEAD_ request to the server and expects to receive the last modified timestamp of the resource on the server.
+In order to facilitate caching of resources by OWS it is necessary, that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_ request.
+In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the last modified timestamp of the resource and will go ahead and download the resource.
+
+The OWS cache can be configured and managed:
+
+image::OWS_Cache_Mgmt.PNG[title="Configuring Cache Management" width="80%"]
+
+
+=== Application Management
+
+An experimental feature has been provided to manage applications downloaded by OWS.
+This feature can be enabled by setting the following property in `deployment.properties`:
+
+[source]
+----
+ows.experimental.applicationManager.active=true
+----
+
+image::OWS_APP_Mgmt.png[title="Application Management" width="80%"]
+
+The Application manager shows the list of downloaded applications.
+It allows to:
+
+* start the application
+* create a shortcut
+* delete the application from cache
 
 === Proxy Settings
 
-#<documentation added in the near future>#
-// TODO Stephan
+It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources:
+
+image::OWS_PROXY_Mgmt.png[title="Proxy Settings" width="80%"]
 
 === Security Settings
 
-#<documentation added in the near future>#
-// TODO Janak
+Security settings for OWS can be configured in the Security panel:
+
+image::OWS_Security.png[title="Security Settings" width="80%"]
+
+==== Suppressing security checks on manifest
+
+If security related attributes (such as `permissions` etc) are missing in the manifest of a signed jar, OWS displays a Security dialog:
+
+image::OWS_MissingPermission.PNG[title="Secuirty Dialog" width="80%"]
+
+You can choose to "Remember this option" for the site and Press the Yes button.
+Your decision will be stored in the file <User_HOME>/.config/icedtea-web\.appletTrustSettings.
+Next time when you start the jnlp you will not be shown the above dialog.
+
+Alternatively, you can suppress the checking of selected or all manifest attributes by specifying the following property in your `deployment.properties` file:
+
+[source]
+----
+deployment.manifest.attributes.check=NONE
+----
+
+Default value of this property is `ALL`.
+
+Other values for this property are `PERMISSIONS`, `CODEBASE`, `TRUSTED`, `ALAC`, `ENTRYPOINT`.
+You can specify a comma separated list of the Manifest attributes to be checked by OWS.
+For example if you want all except the `PERMISSIONS` attribute to be checked by OWS ManifestChecker then you could specify:
+
+[source]
+----
+deployment.manifest.attributes.check= CODEBASE, TRUSTED, ALAC, ENTRYPOINT
+----
 
 === Certificates
 
+image::OWS_Certificates.PNG[title="Managing Certificates" width="80%"]
 // TODO Stephan
 // mention limitation on system tab
 
@@ -290,15 +585,16 @@ deployment.security.whitelist=10.10.10.10, google.com, some.server.net
 ----
 
 The different servers are listed as a comma separated string.
-Localhost is implicitly always in the white list.
+Localhost is implicitly always in the whitelist.
 If you delete the line again then no whitelisting is applied and all servers are reachable.
 
 Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running.
-Thus an application can open a connection to a server which is not in the white list.
+Thus an application can open a connection to a server which is not in the whitelist.
 
 It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.
 
-It is possible to specify a wildcard in the host and port part of the URL. The following table illustrates the rules for whitelist URLs with wildcard:
+It is possible to specify a wildcard in the host and port part of the URL.
+The following table illustrates the rules for whitelist URLs in regard to wildcard:
 |===
 |Whitelist entry|UI Displayed|Comment
 
@@ -315,39 +611,53 @@ It is possible to specify a wildcard in the host and port part of the URL. The f
 |https://*jvms.domain.com:443|Error: invalid host|for host part use either * or text but not combination
 |https://jvms.*.domain.com:443|Error: invalid host|* is only allowed at position 0 of the host name
 |https://subdomain.domain.com:1*|Error: Invalid port|only a number in the range 1-65535 or * is valid for the port
-|https://*.123.134.145|Error: Invalid IP Address|IP address cannot have a  wildcard
-|https://100.1*.134.145|Error: Invalid IP Address|IP address cannot have a  wildcard
+|https://*.123.134.145|Error: Invalid IP Address|IP address cannot have a wildcard
+|https://100.1*.134.145|Error: Invalid IP Address|IP address cannot have a wildcard
 |===
 
 
 === Logging
 
-OpenWebStart provides access to log message information to monitor application execution and analyse erroneous behavior by the Log Console GUI and log files. Both can be enabled in the "Logging" panel in OWS settings.
+OpenWebStart provides access to log message information to monitor application execution and analyse erroneous behavior by the Log Console GUI and log files.
+Both can be enabled in the "Logging" panel in OWS settings.
 
 .Logging options in OWS Settings
 image::OWS_Logging.png[width="80%", align="center"]
 
 ==== Log Console
-OpenWebStart provides the possiblity to show a log console window where all log messages of OpenWebStart iteself and the launched JNLP application are displayed.
+OpenWebStart provides the possibility to show a log console window where all log messages of OpenWebStart itself and the launched JNLP application are displayed.
 
-Various filter options can be selected to reduce the log output. To show the log console choose "Show" in "Log Console" selection.
+Various filter options can be selected to reduce the log output.
+To show the log console choose "Show" in "Log Console" selection.
 
 ==== Logging to Files
 Logging to files can be activated for file-based log analysis or to send the logs files to the OpenWebStart support.
 
 You have to select "Activate debug logging", "Log to file", and specify the log folder where OpenWebStart should write the log files.
 
-By default this is `<user_home>/.config/icedtea-web/log`. Ensure that your folder has write access permissions when customize this path.
+By default, this is `<user_home>/.config/icedtea-web/log`. Ensure that your folder has write access permissions when customizing this path.
 
-When launching a JNLP application, OpenWebStart produces three log files for different stages. They all following the naming convention:
+When launching a JNLP application, OpenWebStart produces three log files for different stages.
+They all following the naming convention:
+
+[source]
 ----
    <timestamp>-ows-stage<stage number>.log
 ----
-There first file (according to creation timestamp) contains log events produced by the OpenWebStart launcher. It basically contains information on the laucher arguments and the location of the deployment.properties. It is created in stage 1.
 
-The second file (still stage 1) contains log events on the start-up of OpenWebStart itself. It provides details on version and update status, embedded JVM version, JVM arguments, keystores loaded, validation and parsing results of the JNLP file, and details on the VM required by and used to finally launch the JNLP application. It ends with all the details about the command that OpenWebStart is about to execute to launch the JNLP application.
+The stage 1 file contains log events on the start-up of OpenWebStart itself.
+It provides details on version and update status, embedded JVM version, JVM arguments, keystores loaded, validation and parsing results of the JNLP file, and details on the VM required by and used to finally launch the JNLP application.
+It ends with all the details about the command that OpenWebStart is about to execute to launch the JNLP application in stage 2.
 
-The third log file (stage 2) logs the events that happen when OpenWebStart launches the JNLP application. *This is probably the most relevant log file for OpenWebStart users.* It provides details on how the launch and execution of the JNLP application is going, such as the resources downloaded for the application. *If your application cannot start properly, this log file is the best place to look for any error messages or stack traces.*
+Note:
+For MacOS there are actually two log files for stage 1.
+This is due to a technical limitation of the launcher OWS is using.
+The main log file can easely be determined by its size as it contains more log lines.
+
+The stage 2 file logs the events that happen when OpenWebStart launches the JNLP application.
+*This is probably the most relevant log file for OpenWebStart users.*
+It provides details on how the launch and execution of the JNLP application is going, such as the resources downloaded for the application.
+*If your application cannot start properly, this log file is the best place to look for any error messages or stack traces.*
 
 Note that log files of the OpenWebStart Settings application also goes to this log directory. They are named
 
@@ -359,84 +669,9 @@ You will rarely need those.
 
 === Remote Debugging
 
-#<documentation added in the near future>#
-// TODO Janak
-// have a look at the tooltips provided with the ows-settings
+OWS allows remote debugging of the application started by OWS. You can configure the settings as follows:
 
-=== System Configuration
-
-When loading the configuration during the start of OpenWebStart the following steps are executed:
-
-1. Load the default values which are hardcoded in the source code.
-1. Search for a system configuration.
-1. Load the system configuration if one was found.
-1. Load the user configuration.
-
-Whenever a configuration is loaded the values which are already defined are updated.
-There is however the possibility to lock a property.
-If a property is locked then subsequent configurations may not modify the value.
-This allows enforcing certain values on a system level.
-Any changes the user makes in his personal configuration file will not have any effect on the locked property.
-
-==== Defining the System Configuration
-
-The system configuration needs to be defined in the following way.
-
-*Windows:* create the file `%windir%\Sun\Java\deployment\deployment.config` and add the following properties:
-
-*MacOs and Linux:* create the file `/etc/.java/deployment/deployment.config` and add the following properties:
-
-deployment.system.config:: The URL to the system configuration.
-The name of the file can be freely chosen.
-Special characters need escaping.
-See the following examples:
-* `deployment.system.config=file\:/C\:/Windows/Sun/Java/global.properties`
-* `deployment.system.config=file\:/etc/.java/deployment/base.properties`
-* `deployment.system.config=https\:192.168.1.1./javaws/system.properties`
-
-deployment.system.config.mandatory:: If set to `true` then OpenWebStart will fail if it is unable to load the system settings
-This property is optional.
-The default value is `false`.
-
-The final file should look something like this:
-
-[source]
-----
-deployment.system.config=https\:192.168.1.1./javaws/system.properties
-deployment.system.config.mandatory=true
-----
-
-==== Content of the System Configuration
-
-The simplest way to create a system configuration is to start the `itw-settings`.
-After saving the configuration the modified properties are written to the user configuration file.
-For Windows the file is located at `${USER_HOME}\.config\icedtea-web\deployment.properties`.
-For Mac and Linux the file is located at `${USER_HOME}/.config/icedtea-web/deployment.properties`.
-
-The customized user configuration can be used as a starting point for the system configuration.
-Simply copy the file and remove the properties which should not be defined on the system level.
-
-OpenWebStart does not save properties which have the default value.
-Therefore the generated user configuration may not contain all the values you wish to enforce on the system level.
-
-Please contact openwebstart@karakun.com if you need to know the key and valid values for a specific configuration.
-
-==== Locking a Property
-
-One of the use cases is to enforce some configurations to all users in your corporate environment.
-This can be achieved by locking configuration on a system level.
-To lock a property you need to define a second entry with a `.locked` postfix.
-
-Here an example:
-
-[source]
-----
-ows.jvm.manager.server.default=https\://192.168.1.1/jvms.json
-ows.jvm.manager.server.default.locked=true
-----
-
-TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
-The presence of the key is sufficient for locking the property.
+image::OWS_DEBUG.PNG[title="Remote Debugging" width="80%"]
 
 === Configuration Properties Overview
 
