@@ -627,7 +627,7 @@ OpenWebStart provides access to log message information to monitor application e
 Both can be enabled in the "Logging" panel in OWS settings.
 
 .Logging options in OWS Settings
-image::OWS_logging.png[width="80%", align="center"]
+image::OWS_logging.png[width="80%"]
 
 ==== Log Console
 OpenWebStart provides the possibility to show a log console window where all log messages of OpenWebStart itself and the launched JNLP application are displayed.
