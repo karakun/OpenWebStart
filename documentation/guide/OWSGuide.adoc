@@ -263,7 +263,7 @@ OpenWebStart can be configured to automatically check for new releases and perfo
 
 To do so go to the "Updates" Panel in the OWS Settings.
 
-image::OWS_Updates.png[title="OWS Update options" width="80%"]
+image::OWS_updates.png[title="OWS Update options" width="80%"]
 
 It is possible to define an update strategy on every `start`, `daily`, `weekly`, `monthly`, or `never`.
 
@@ -275,7 +275,7 @@ The executable is located in the installation directory and is named `itw-settin
 Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior.
 You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
 
-image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
+image::OWS_configuration.png[title="Configuring OWS Settings" width="80%"]
 
 === Configuration Lookup Lifecycle
 When loading the configuration during the start of OpenWebStart the following steps are executed:
@@ -401,11 +401,11 @@ NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes
 
 OWS provides facility to choose set of JVMs that can be used to run the applications specified in JNLP files
 
-image::OWS_JVM_Mgmt.png[title="JVM Management" width="80%"]
+image::OWS_jvm_mgmt.png[title="JVM Management" width="80%"]
 
 One can choose or automatically add locally available JVMs or one can specify the server from where JVMs can be downloaded.
 
-image::OWS_JVM_Config.png[title="Configuring JVM Management" width="80%"]
+image::OWS_jvm_config.png[title="Configuring JVM Management" width="80%"]
 
 ==== JVM Download Server
 
@@ -508,7 +508,7 @@ In case the server is not configured to respond to _HTTP HEAD_ request, OWS will
 
 The OWS cache can be configured and managed:
 
-image::OWS_Cache_Mgmt.PNG[title="Configuring Cache Management" width="80%"]
+image::OWS_cache_mgmt.png[title="Configuring Cache Management" width="80%"]
 
 
 === Application Management
@@ -521,7 +521,7 @@ This feature can be enabled by setting the following property in `deployment.pro
 ows.experimental.applicationManager.active=true
 ----
 
-image::OWS_APP_Mgmt.png[title="Application Management" width="80%"]
+image::OWS_app_mgmt.png[title="Application Management" width="80%"]
 
 The Application manager shows the list of downloaded applications.
 It allows to:
@@ -534,19 +534,19 @@ It allows to:
 
 It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources:
 
-image::OWS_PROXY_Mgmt.png[title="Proxy Settings" width="80%"]
+image::OWS_proxy_mgmt.png[title="Proxy Settings" width="80%"]
 
 === Security Settings
 
 Security settings for OWS can be configured in the Security panel:
 
-image::OWS_Security.png[title="Security Settings" width="80%"]
+image::OWS_security.png[title="Security Settings" width="80%"]
 
 ==== Suppressing security checks on manifest
 
 If security related attributes (such as `permissions` etc) are missing in the manifest of a signed jar, OWS displays a Security dialog:
 
-image::OWS_MissingPermission.PNG[title="Secuirty Dialog" width="80%"]
+image::OWS_missing_permission.png[title="Secuirty Dialog" width="80%"]
 
 You can choose to "Remember this option" for the site and Press the Yes button.
 Your decision will be stored in the file <User_HOME>/.config/icedtea-web\.appletTrustSettings.
@@ -572,7 +572,7 @@ deployment.manifest.attributes.check= CODEBASE, TRUSTED, ALAC, ENTRYPOINT
 
 === Certificates
 
-image::OWS_Certificates.PNG[title="Managing Certificates" width="80%"]
+image::OWS_certificates.png[title="Managing Certificates" width="80%"]
 // TODO Stephan
 // mention limitation on system tab
 
@@ -627,7 +627,7 @@ OpenWebStart provides access to log message information to monitor application e
 Both can be enabled in the "Logging" panel in OWS settings.
 
 .Logging options in OWS Settings
-image::OWS_Logging.png[width="80%", align="center"]
+image::OWS_logging.png[width="80%", align="center"]
 
 ==== Log Console
 OpenWebStart provides the possibility to show a log console window where all log messages of OpenWebStart itself and the launched JNLP application are displayed.
@@ -676,7 +676,7 @@ You will rarely need those.
 
 OWS allows remote debugging of the application started by OWS. You can configure the settings as follows:
 
-image::OWS_DEBUG.PNG[title="Remote Debugging" width="80%"]
+image::OWS_debug.png[title="Remote Debugging" width="80%"]
 
 === Configuration Properties Overview
 
