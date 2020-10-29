@@ -573,11 +573,15 @@ deployment.manifest.attributes.check= CODEBASE, TRUSTED, ALAC, ENTRYPOINT
 === Certificates
 
 image::OWS_certificates.png[title="Managing Certificates" width="80%"]
-// TODO Stephan
-// mention limitation on system tab
 
-#<documentation added in the near future>#
-// TODO
+TIP:: The _System_ tab of the certificate view shows the certificates included in the embedded JRE.
+Since a JNLP application will not be launched in this JRE but in one which is managed by the JVM Manager the certificates available at runtime of the application may differ.
+The certificate view is also accessible from the Java console.
+If launched from the Java console the certificate view will show the certificates of the actually running JVM in the System tab.
+This can be used to check the certificates of the JVM which is executing the application.
+
+If you want to import custom certificates you should do this in the _User_ tab.
+This will ensure that the certificate is available in any JVM which is launched by OWS.
 
 === Server Whitelist
 
