@@ -57,15 +57,15 @@ Instead of walking through the graphical installer of OWS on every machine your 
 
 ==== Windows
 
- 1. Open the ZIP-file.
- 1. Run the installer.
- 1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
- 1. Click *Next* to start the OpenWebStart installation.
- 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
-    Windows default: `C:\Program Files\OpenWebStart`
- 1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
- 1. Please wait for OpenWebStart to be installed on your computer.
- 1. Click *Finish* on the completion screen to close the wizard.
+1. Open the ZIP-file.
+1. Run the installer.
+1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Click *Next* to start the OpenWebStart installation.
+1. Browse to the directory where to install OpenWebStart, and click *Next*. +
+Windows default: `C:\Program Files\OpenWebStart`
+1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+1. Please wait for OpenWebStart to be installed on your computer.
+1. Click *Finish* on the completion screen to close the wizard.
 
 ==== macOS
 
@@ -532,9 +532,20 @@ It allows to:
 
 === Proxy Settings
 
-It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources:
+It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources.
+OWS will use these settings to setup a proxy with the java.net package.
+As a consequence the proxy will also be effective for the any connection the application is creating.
 
 image::OWS_proxy_mgmt.png[title="Proxy Settings" width="80%"]
+
+The _System Proxy_ option is trying to imitate the behavior of your operation system and the proxy settings which are defined there.
+E.g. for Windows the settings are read from the registry and then converted into a java.net proxy.
+MacOs and Linux are working in a similar way.
+
+NOTE::
+It is not possible to delegate the responsibility directly to the OS.
+Therefore the behavior of OWS may diverge from the behavior of your OS if _System Proxy_ is selected.
+One known limitation is on Windows, where there is currently no support for wildcards in the list of excepted servers.
 
 === Security Settings
 
@@ -573,11 +584,15 @@ deployment.manifest.attributes.check= CODEBASE, TRUSTED, ALAC, ENTRYPOINT
 === Certificates
 
 image::OWS_certificates.png[title="Managing Certificates" width="80%"]
-// TODO Stephan
-// mention limitation on system tab
 
-#<documentation added in the near future>#
-// TODO
+TIP:: The _System_ tab of the certificate view shows the certificates included in the embedded JRE.
+Since a JNLP application will not be launched in this JRE but in one which is managed by the JVM Manager the certificates available at runtime of the application may differ.
+The certificate view is also accessible from the Java console.
+If launched from the Java console the certificate view will show the certificates of the actually running JVM in the System tab.
+This can be used to check the certificates of the JVM which is executing the application.
+
+If you want to import custom certificates you should do this in the _User_ tab.
+This will ensure that the certificate is available in any JVM which is launched by OWS.
 
 === Server Whitelist
 
