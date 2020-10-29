@@ -532,9 +532,20 @@ It allows to:
 
 === Proxy Settings
 
-It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources:
+It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources.
+OWS will use these settings to setup a proxy with the java.net package.
+As a consequence the proxy will also be effective for the any connection the application is creating.
 
 image::OWS_proxy_mgmt.png[title="Proxy Settings" width="80%"]
+
+The _System Proxy_ option is trying to imitate the behavior of your operation system and the proxy settings which are defined there.
+E.g. for Windows the settings are read from the registry and then converted into a java.net proxy.
+MacOs and Linux are working in a similar way.
+
+NOTE::
+It is not possible to delegate the responsibility directly to the OS.
+Therefore the behavior of OWS may diverge from the behavior of your OS if _System Proxy_ is selected.
+One known limitation is on Windows, where there is currently no support for wildcards in the list of excepted servers.
 
 === Security Settings
 
