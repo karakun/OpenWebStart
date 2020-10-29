@@ -27,7 +27,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
-import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
@@ -72,7 +72,7 @@ class InitialConfigurationCheck {
             KEY_ASSUME_FILE_STEM_IN_CODEBASE,
             KEY_SECURITY_SERVER_WHITELIST,
             MAX_DAYS_UNUSED_IN_JVM_CACHE,
-            KEY_ENABLE_LOGGING,
+            KEY_ENABLE_DEBUG_LOGGING,
             KEY_ENABLE_LOGGING_TOFILE,
             KEY_JVM_ARGS_WHITELIST,
 

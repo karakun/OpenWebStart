@@ -44,7 +44,7 @@ public class LoggingPanel extends FormPanel {
 
         final JCheckBox activateDebugLoggingCheckbox = new JCheckBox(translator.translate("loggingPanel.activateDebug.text"));
         activateDebugLoggingCheckbox.setToolTipText(translator.translate("loggingPanel.activateDebug.description"));
-        bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING);
+        bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING);
         addEditorRow(1, activateDebugLoggingCheckbox);
 
 
