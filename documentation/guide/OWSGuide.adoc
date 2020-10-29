@@ -57,15 +57,15 @@ Instead of walking through the graphical installer of OWS on every machine your 
 
 ==== Windows
 
- 1. Open the ZIP-file.
- 1. Run the installer.
- 1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
- 1. Click *Next* to start the OpenWebStart installation.
- 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
-    Windows default: `C:\Program Files\OpenWebStart`
- 1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
- 1. Please wait for OpenWebStart to be installed on your computer.
- 1. Click *Finish* on the completion screen to close the wizard.
+1. Open the ZIP-file.
+1. Run the installer.
+1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Click *Next* to start the OpenWebStart installation.
+1. Browse to the directory where to install OpenWebStart, and click *Next*. +
+Windows default: `C:\Program Files\OpenWebStart`
+1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+1. Please wait for OpenWebStart to be installed on your computer.
+1. Click *Finish* on the completion screen to close the wizard.
 
 ==== macOS
 
