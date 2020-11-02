@@ -534,13 +534,13 @@ It allows to:
 
 It is possible to configure proxy to be used by OWS when it downloads jnlp files and resources.
 OWS will use these settings to setup a proxy with the java.net package.
-As a consequence the proxy will also be effective for the any connection the application is creating.
+As a consequence the proxy will also be effective for any connection the application is creating.
 
 image::OWS_proxy_mgmt.png[title="Proxy Settings" width="80%"]
 
 The _System Proxy_ option is trying to imitate the behavior of your operation system and the proxy settings which are defined there.
 E.g. for Windows the settings are read from the registry and then converted into a java.net proxy.
-MacOs and Linux are working in a similar way.
+MacOS and Linux are working in a similar way.
 
 NOTE::
 It is not possible to delegate the responsibility directly to the OS.
@@ -557,10 +557,10 @@ image::OWS_security.png[title="Security Settings" width="80%"]
 
 If security related attributes (such as `permissions` etc) are missing in the manifest of a signed jar, OWS displays a Security dialog:
 
-image::OWS_missing_permission.png[title="Secuirty Dialog" width="80%"]
+image::OWS_missing_permission.png[title="Secuirty Dialog" width="50%"]
 
 You can choose to "Remember this option" for the site and Press the Yes button.
-Your decision will be stored in the file <User_HOME>/.config/icedtea-web\.appletTrustSettings.
+Your decision will be stored in the file `<User_HOME>/.config/icedtea-web\.appletTrustSettings`.
 Next time when you start the jnlp you will not be shown the above dialog.
 
 Alternatively, you can suppress the checking of selected or all manifest attributes by specifying the following property in your `deployment.properties` file:
@@ -586,13 +586,13 @@ deployment.manifest.attributes.check= CODEBASE, TRUSTED, ALAC, ENTRYPOINT
 image::OWS_certificates.png[title="Managing Certificates" width="80%"]
 
 TIP:: The _System_ tab of the certificate view shows the certificates included in the embedded JRE.
-Since a JNLP application will not be launched in this JRE but in one which is managed by the JVM Manager the certificates available at runtime of the application may differ.
+Since a JNLP application will not be launched in this JRE but in one which is managed by the JVM Manager, the certificates available at runtime of the application may differ.
 The certificate view is also accessible from the Java console.
 If launched from the Java console the certificate view will show the certificates of the actually running JVM in the System tab.
 This can be used to check the certificates of the JVM which is executing the application.
 
 If you want to import custom certificates you should do this in the _User_ tab.
-This will ensure that the certificate is available in any JVM which is launched by OWS.
+This will ensure that the certificate is available in *any* JVM which is launched by OWS.
 
 === Server Whitelist
 
