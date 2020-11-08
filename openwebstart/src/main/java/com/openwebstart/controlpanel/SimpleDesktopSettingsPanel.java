@@ -1,6 +1,8 @@
 package com.openwebstart.controlpanel;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ComboItem;
+import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
 import net.sourceforge.jnlp.config.ConfigurationConstants;
@@ -18,6 +20,7 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
      * @param config Loaded DeploymentConfiguration file.
      */
     public SimpleDesktopSettingsPanel(DeploymentConfiguration config) {
+        final UiLock uiLock = new UiLock(config);
 
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
@@ -42,6 +45,7 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
             config.setProperty(shortcutComboOptions.getActionCommand(), c.getValue());
         });
 
+        uiLock.update(OwsDefaultsProvider.REMOTE_DEBUG, shortcutComboOptions);
         addRow(0, description, shortcutComboOptions);
         addFlexibleRow(1);
     }
