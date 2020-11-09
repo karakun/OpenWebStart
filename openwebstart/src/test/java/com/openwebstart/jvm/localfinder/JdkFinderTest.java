@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * ...
  */
-class RuntimeFinderTest {
+class JdkFinderTest {
 
     @Test
     void shouldNotThrowAnException() {
-        assertNotNull(new RuntimeFinder().findLocalRuntimes(new DeploymentConfiguration()));
+        assertNotNull(JdkFinder.findLocalRuntimes(new DeploymentConfiguration()));
     }
 }

@@ -9,6 +9,7 @@ import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +17,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.openwebstart.jvm.os.OperationSystem.getOperationSystem;
 
@@ -30,17 +31,26 @@ public class JdkFinder {
 
     private static final OperationSystem LOCAL_OS = OperationSystem.getLocalSystem();
 
-    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Collection<Path> searchRoots) {
-        return searchRoots.stream()
-                .map(Path::normalize)
-                .map(Path::toAbsolutePath)
-                .map(JdkFinder::findLocalJdks)
+    private static final BaseRuntimeFinder[] FINDERS = {
+            new WindowsRuntimeFinder(),
+            new MacRuntimeFinder(),
+            new LinuxRuntimeFinder()
+    };
+
+    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes(final DeploymentConfiguration deploymentConfiguration) {
+        final OperationSystem currentOs = OperationSystem.getLocalSystem();
+
+        final List<ResultWithInput<Path, LocalJavaRuntime>> foundRuntimes = Stream.of(FINDERS)
+                .filter(finder -> finder.getSupportedOperationSystems().contains(currentOs))
+                .map(finder -> finder.findLocalRuntimes(deploymentConfiguration))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+
+        return Collections.unmodifiableList(foundRuntimes);
     }
 
-    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path searchRoot) {
-        LOG.debug("About to look for local jdks at the following location: {}", searchRoot);
+    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes(final Path searchRoot) {
+        LOG.debug("About to look for local JVMs at the following location: {}", searchRoot);
 
         if (Files.isDirectory(searchRoot)) {
             try {

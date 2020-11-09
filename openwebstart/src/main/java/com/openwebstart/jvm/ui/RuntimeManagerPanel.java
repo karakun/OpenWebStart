@@ -5,7 +5,6 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.localfinder.JdkFinder;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -42,11 +41,9 @@ public final class RuntimeManagerPanel extends JPanel {
     private final ListComponentModel<LocalJavaRuntime> listModel;
 
     private final Translator translator;
-    private final RuntimeFinder runtimeFinder;
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
-        runtimeFinder = new RuntimeFinder();
 
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes();
@@ -118,7 +115,7 @@ public final class RuntimeManagerPanel extends JPanel {
             final Path selected = fileChooser.getSelectedFile().toPath();
             getNonDaemonExecutorService().execute(() -> {
                 try {
-                    handleFoundRuntimes(JdkFinder.findLocalJdks(selected));
+                    handleFoundRuntimes(JdkFinder.findLocalRuntimes(selected));
                 } catch (final Exception ex) {
                     DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
                 }
@@ -171,7 +168,7 @@ public final class RuntimeManagerPanel extends JPanel {
         LOG.info("Starting to search for local JVMs");
         getNonDaemonExecutorService().execute(() -> {
             try {
-                handleFoundRuntimes(runtimeFinder.findLocalRuntimes(deploymentConfiguration));
+                handleFoundRuntimes(JdkFinder.findLocalRuntimes(deploymentConfiguration));
             } catch (final Exception ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
             }

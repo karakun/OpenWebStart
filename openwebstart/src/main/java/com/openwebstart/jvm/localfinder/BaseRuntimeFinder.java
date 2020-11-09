@@ -29,7 +29,16 @@ abstract class BaseRuntimeFinder {
         pathToSearchIn.addAll(defaultPaths(config));
         pathToSearchIn.addAll(customPaths(config));
 
-        return JdkFinder.findLocalJdks(pathToSearchIn);
+        return findLocalRuntimes(pathToSearchIn);
+    }
+
+    private List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes(final Collection<Path> searchRoots) {
+        return searchRoots.stream()
+                .map(Path::normalize)
+                .map(Path::toAbsolutePath)
+                .map(JdkFinder::findLocalRuntimes)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     private Collection<Path> defaultPaths(DeploymentConfiguration config) {
