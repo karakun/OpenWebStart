@@ -1,5 +1,7 @@
 package com.openwebstart.jvm;
 
+import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.func.Result;
 import com.openwebstart.http.DownloadInputStream;
 import com.openwebstart.http.HttpGetRequest;
 import com.openwebstart.http.HttpResponse;
@@ -8,6 +10,7 @@ import com.openwebstart.jvm.json.JsonHandler;
 import com.openwebstart.jvm.listener.RuntimeAddedListener;
 import com.openwebstart.jvm.listener.RuntimeRemovedListener;
 import com.openwebstart.jvm.listener.RuntimeUpdateListener;
+import com.openwebstart.jvm.localfinder.JdkFinder;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
@@ -19,12 +22,14 @@ import com.openwebstart.util.ExtractUtil;
 import com.openwebstart.util.FolderFactory;
 import com.openwebstart.util.Subscription;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.os.OsUtil;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +44,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -59,6 +65,8 @@ public final class LocalRuntimeManager {
     private final List<RuntimeUpdateListener> updatedListeners = new CopyOnWriteArrayList<>();
 
     private final Lock jsonStoreLock = new ReentrantLock();
+
+    private final AtomicBoolean firstTimeLoading = new AtomicBoolean(true);
 
     private LocalRuntimeManager() {
     }
@@ -99,7 +107,7 @@ public final class LocalRuntimeManager {
                 LOG.debug("Could not delete {}. File maybe locked. Trying again.", RuntimeManagerConstants.JSON_STORE_FILENAME);
                 try {
                     TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
                 if (jsonFile.exists() && !jsonFile.delete()) {
                     throw new IOException("Unable to delete old config file!");
@@ -114,11 +122,15 @@ public final class LocalRuntimeManager {
     }
 
     /**
-     * Load runtimes from filesystem into cache. Do some housekeeping by checking if a runtime is still present
-     * on the file system as stated in the cache json file. If not present any more, it will be removed from the
-     * json file and the cache.
+     * Load runtimes from filesystem into cache.
+     *
+     * Do some housekeeping:
+     * <ul>
+     *     <li>Remove runtime if no longer present on the file system</li>
+     *     <li>Remove runtime if it is considered as unused</li>
+     * </ul>
      */
-    void loadRuntimes() {
+    void loadRuntimes(DeploymentConfiguration configuration) {
         LOG.debug("Loading runtime cache from filesystem");
         jsonStoreLock.lock();
         final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
@@ -144,6 +156,11 @@ public final class LocalRuntimeManager {
                 }
             } else {
                 clear();
+            }
+
+            final boolean isFirstTimeLoading = firstTimeLoading.getAndSet(false);
+            if (isFirstTimeLoading) {
+                findAndAddNewLocalRuntimes(configuration);
             }
         } catch (IOException e) {
             LOG.error("Could not load file: {}", jsonFile);
@@ -218,7 +235,43 @@ public final class LocalRuntimeManager {
         }
     }
 
-    public boolean add(final LocalJavaRuntime localJavaRuntime) {
+    private void findAndAddNewLocalRuntimes(DeploymentConfiguration configuration) {
+        final String searchOnStartValue = configuration.getProperty(OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP);
+        if (Boolean.parseBoolean(searchOnStartValue)) {
+            JdkFinder.findLocalRuntimes(configuration)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .filter(Result::isSuccessful)
+                    .map(Result::getResult)
+                    .forEach(localRuntime -> addNewLocalJavaRuntime(localRuntime, s -> {}));
+        }
+    }
+
+    public boolean addNewLocalJavaRuntime(LocalJavaRuntime runtime, Consumer<String> errorMessageHandler) {
+        Assert.requireNonNull(runtime, "runtime");
+        if (supportsVersionRange(runtime)) {
+            try {
+                return add(runtime);
+            } catch (final Exception e) {
+                LOG.error("Error while adding local JDK at '" + runtime.getJavaHome() + "'", e);
+                errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
+            }
+        } else {
+            LOG.error("JVM at '" + runtime.getJavaHome() + "' has unsupported version '" + runtime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
+            errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
+        }
+        return false;
+    }
+
+    private boolean supportsVersionRange(final LocalJavaRuntime runtime) {
+        Assert.requireNonNull(runtime, "runtime");
+        final VersionId version = runtime.getVersion();
+        return Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange())
+                .map(v -> v.contains(version))
+                .orElse(true);
+    }
+
+    private boolean add(final LocalJavaRuntime localJavaRuntime) {
         LOG.debug("Adding runtime definition");
 
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
@@ -345,10 +398,10 @@ public final class LocalRuntimeManager {
 
             MimeTypeInputStream wrappedStream = new MimeTypeInputStream(inputStream);
             final MimeType mimeType = wrappedStream.getMimeType();
-            if (Objects.equals(MimeType.ZIP, mimeType)) {
+            if (MimeType.ZIP == mimeType) {
                 LOG.info("Remote runtime is distributed as ZIP. Will extract it");
                 ExtractUtil.unZip(wrappedStream, runtimePath);
-            } else if (Objects.equals(MimeType.GZIP, mimeType)) {
+            } else if (MimeType.GZIP == mimeType) {
                 LOG.info("Remote runtime is distributed as GZIP. Will extract it");
                 ExtractUtil.unTarGzip(wrappedStream, runtimePath); //We assume that GZIP is always a tar.gz
             } else {

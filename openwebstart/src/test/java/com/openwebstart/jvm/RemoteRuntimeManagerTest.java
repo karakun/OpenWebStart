@@ -7,6 +7,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +87,7 @@ public class RemoteRuntimeManagerTest {
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
 
-        LocalRuntimeManager.getInstance().loadRuntimes();
+        LocalRuntimeManager.getInstance().loadRuntimes(new DeploymentConfiguration());
     }
 
     @AfterEach
