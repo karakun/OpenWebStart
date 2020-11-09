@@ -250,12 +250,16 @@ So you might want to update these files on the USB stick to keep your OWS instal
 
 === Local vs. System-Wide Installation
 
-You can install OWS for the current user or for all users of the computer.
+You can install OWS for the _current user_ (without admin privileges) or for _all users_  (with admin privileges) of the
+computer.
 
-Once OWS is installed on your machine it can be configured locally using the local `deployment.config` file or it can take its configuration from a centralized enterprise wide `deployment.config`.
-This is described in detail at <<Configuration>>.
+NOTE:  Having more than one installation of OWS on your machine, especially when one installation is for _current user_
+(i.e. without admin privileges) and the other one is for _all users_, may result in overwriting registry entries. This can
+lead to a situation where you do not know which actual OWS is invoked to run the _jnlp_  file started for example by double-clicking.
 
-// TODO: mention that installing it both on the same machine might cause conflicts
+Once OWS is installed on your machine it can be configured locally using the local `deployment.properties` file or it can
+take its configuration from a centralized, enterprise wide `deployment.properties` file that is specified in the
+`deployment.config` file. This is described in detail in the section on <<Configuration>>.
 
 == Updates
 
