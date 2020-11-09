@@ -4,21 +4,18 @@ import com.openwebstart.jvm.os.OperationSystem;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 class LinuxRuntimeFinder extends BaseRuntimeFinder {
 
-    private static final String JVM_BASE_FOLDER = "/usr/lib/jvm/";
+    private static final String SYSTEM_VM_FOLDER = "/usr/lib/jvm/";
+    private static final String SDK_MAN_FOLDER = JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman";
 
     @Override
-    Collection<Path> getDefaultLocationsDefault() {
-        final Path systemPath = Paths.get(JVM_BASE_FOLDER);
-        final Path sdkmanPath = Paths.get(JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman");
-        return Arrays.asList(systemPath, sdkmanPath);
+    Collection<String> getDefaultLocations() {
+        return Arrays.asList(SYSTEM_VM_FOLDER, SDK_MAN_FOLDER);
     }
 
     @Override

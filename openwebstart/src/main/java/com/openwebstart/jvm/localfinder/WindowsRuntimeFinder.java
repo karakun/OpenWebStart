@@ -4,8 +4,6 @@ import com.openwebstart.jvm.os.OperationSystem;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -37,14 +35,14 @@ class WindowsRuntimeFinder extends BaseRuntimeFinder {
     private static final String SDK_MAN_FOLDER = CYGWIN_USER_HOME + File.separatorChar + ".sdkman";
 
     @Override
-    Collection<Path> getDefaultLocationsDefault() {
+    Collection<String> getDefaultLocations() {
         return Arrays.asList(
-                Paths.get(JVM_FOLDER_32), Paths.get(JVM_FOLDER_64),
-                Paths.get(CORRETTO_FOLDER_32), Paths.get(CORRETTO_FOLDER_64),
-                Paths.get(ADOPT_FOLDER_32), Paths.get(ADOPT_FOLDER_64),
-                Paths.get(ZULU_FOLDER_32), Paths.get(ZULU_FOLDER_64),
-                Paths.get(BELLSOFT_FOLDER_32), Paths.get(BELLSOFT_FOLDER_64),
-                Paths.get(SDK_MAN_FOLDER)
+                JVM_FOLDER_32, JVM_FOLDER_64,
+                CORRETTO_FOLDER_32, CORRETTO_FOLDER_64,
+                ADOPT_FOLDER_32, ADOPT_FOLDER_64,
+                ZULU_FOLDER_32, ZULU_FOLDER_64,
+                BELLSOFT_FOLDER_32, BELLSOFT_FOLDER_64,
+                SDK_MAN_FOLDER
         );
     }
 

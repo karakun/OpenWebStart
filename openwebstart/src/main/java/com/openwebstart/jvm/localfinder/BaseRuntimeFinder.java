@@ -38,29 +38,33 @@ abstract class BaseRuntimeFinder {
             return Collections.emptyList();
         }
 
-        return getDefaultLocationsDefault();
+        return pathsFromStrings(getDefaultLocations());
     }
 
     private List<Path> customPaths(DeploymentConfiguration config) {
-        final List<Path> customPaths = config.getPropertyAsList(OwsDefaultsProvider.CUSTOM_JVM_LOCATION).stream()
+        final List<String> paths = config.getPropertyAsList(OwsDefaultsProvider.CUSTOM_JVM_LOCATION);
+        return pathsFromStrings(paths);
+    }
+
+    private List<Path> pathsFromStrings(Collection<String> paths) {
+        return paths.stream()
                 .filter(s -> !StringUtils.isBlank(s))
                 .map(this::pathFromString)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        return customPaths;
     }
 
-    private Optional<Path> pathFromString(String first) {
+    private Optional<Path> pathFromString(String path) {
         try {
-            return Optional.of(Paths.get(first));
+            return Optional.of(Paths.get(path));
         } catch (Exception e) {
             LOG.warn("Invalid JVM location: {}", e.getMessage());
             return Optional.empty();
         }
     }
 
-    abstract Collection<Path> getDefaultLocationsDefault();
+    abstract Collection<String> getDefaultLocations();
 
     abstract List<OperationSystem> getSupportedOperationSystems();
 }
