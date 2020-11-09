@@ -37,6 +37,10 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE = "ows.jvm.manager.maxDaysUnusedInJvmCache";
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE = "30";
 
+    public static final String SEARCH_FOR_LOCAL_JVM_ON_STARTUP = "ows.jvm.manager.searchLocalAtStartup";
+    public static final String EXCLUDE_DEFAULT_JVM_LOCATION = "ows.jvm.manager.excludeDefaultSearchLocation";
+    public static final String CUSTOM_JVM_LOCATION = "ows.jvm.manager.customSearchLocation";
+
 
     public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
 
@@ -156,6 +160,21 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         MAX_DAYS_UNUSED_IN_JVM_CACHE,
                         MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE,
                         ValidatorFactory.createRangedIntegerValidator(0, 3_650)
+                ),
+                Setting.createDefault(
+                        SEARCH_FOR_LOCAL_JVM_ON_STARTUP,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        EXCLUDE_DEFAULT_JVM_LOCATION,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        CUSTOM_JVM_LOCATION,
+                        null,
+                        null
                 )
         );
     }

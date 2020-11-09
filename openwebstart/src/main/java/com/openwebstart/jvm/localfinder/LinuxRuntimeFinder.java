@@ -1,33 +1,28 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-class LinuxRuntimeFinder {
-    private static final Logger LOG = LoggerFactory.getLogger(LinuxRuntimeFinder.class);
+class LinuxRuntimeFinder extends BaseRuntimeFinder {
 
-    private static final String JVM_BASEFOLDER = "/usr/lib/jvm/";
+    private static final String JVM_BASE_FOLDER = "/usr/lib/jvm/";
 
-    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
-        LOG.debug("Searching for local runtimes");
-
-        final Path systemPath = Paths.get(JVM_BASEFOLDER);
+    @Override
+    Collection<Path> getDefaultLocationsDefault() {
+        final Path systemPath = Paths.get(JVM_BASE_FOLDER);
         final Path sdkmanPath = Paths.get(JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman");
-
-        return JdkFinder.findLocalJdks(systemPath, sdkmanPath);
+        return Arrays.asList(systemPath, sdkmanPath);
     }
 
-    static List<OperationSystem> getSupportedOperationSystems() {
+    @Override
+    List<OperationSystem> getSupportedOperationSystems() {
         return Arrays.asList(OperationSystem.LINUX32, OperationSystem.LINUX64);
     }
 }

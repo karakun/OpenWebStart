@@ -16,12 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.openwebstart.jvm.os.OperationSystem.getOperationSystem;
 
@@ -29,19 +28,20 @@ public class JdkFinder {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdkFinder.class);
 
-    public static final OperationSystem LOCAL_OS = OperationSystem.getLocalSystem();
+    private static final OperationSystem LOCAL_OS = OperationSystem.getLocalSystem();
 
-    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path... searchRoots) {
-        LOG.debug("About to look for local jdks at the following locations: {}",
-                Arrays.stream(searchRoots).map(path -> path.normalize().toAbsolutePath().toString()).collect(Collectors.toList()));
-
-        return Stream.of(searchRoots)
+    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Collection<Path> searchRoots) {
+        return searchRoots.stream()
+                .map(Path::normalize)
+                .map(Path::toAbsolutePath)
                 .map(JdkFinder::findLocalJdks)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    private static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path searchRoot) {
+    public static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalJdks(final Path searchRoot) {
+        LOG.debug("About to look for local jdks at the following location: {}", searchRoot);
+
         if (Files.isDirectory(searchRoot)) {
             try {
                 return Files.find(searchRoot, 5, JdkFinder::isJavaHome)

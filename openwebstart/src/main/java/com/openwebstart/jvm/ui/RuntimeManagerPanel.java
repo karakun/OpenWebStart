@@ -42,9 +42,11 @@ public final class RuntimeManagerPanel extends JPanel {
     private final ListComponentModel<LocalJavaRuntime> listModel;
 
     private final Translator translator;
+    private final RuntimeFinder runtimeFinder;
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
+        runtimeFinder = new RuntimeFinder();
 
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes();
@@ -56,7 +58,7 @@ public final class RuntimeManagerPanel extends JPanel {
         refreshButton.addActionListener(e -> onRefresh());
 
         final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
-        findLocalRuntimesButton.addActionListener(e -> onFindLocalRuntimes());
+        findLocalRuntimesButton.addActionListener(e -> onFindLocalRuntimes(deploymentConfiguration));
 
         final JButton configureButton = new JButton(translator.translate("jvmManager.action.settings.text"));
         configureButton.addActionListener(e -> new ConfigurationDialog(deploymentConfiguration).showAndWait());
@@ -165,11 +167,11 @@ public final class RuntimeManagerPanel extends JPanel {
         return false;
     }
 
-    private void onFindLocalRuntimes() {
+    private void onFindLocalRuntimes(final DeploymentConfiguration deploymentConfiguration) {
         LOG.info("Starting to search for local JVMs");
         getNonDaemonExecutorService().execute(() -> {
             try {
-                handleFoundRuntimes(RuntimeFinder.find());
+                handleFoundRuntimes(runtimeFinder.findLocalRuntimes(deploymentConfiguration));
             } catch (final Exception ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
             }

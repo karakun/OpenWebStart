@@ -3,26 +3,31 @@ package com.openwebstart.jvm.localfinder;
 import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public interface RuntimeFinder {
+public class RuntimeFinder {
 
-    static List<ResultWithInput<Path, LocalJavaRuntime>> find() {
+    private static final BaseRuntimeFinder[] FINDERS = {
+            new WindowsRuntimeFinder(),
+            new MacRuntimeFinder(),
+            new LinuxRuntimeFinder()
+    };
+
+    public List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes(final DeploymentConfiguration deploymentConfiguration) {
         final OperationSystem currentOs = OperationSystem.getLocalSystem();
 
-        final List<ResultWithInput<Path, LocalJavaRuntime>> foundRuntimes = new ArrayList<>();
+        final List<ResultWithInput<Path, LocalJavaRuntime>> foundRuntimes = Stream.of(FINDERS)
+                .filter(finder -> finder.getSupportedOperationSystems().contains(currentOs))
+                .map(finder -> finder.findLocalRuntimes(deploymentConfiguration))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
 
-        if (WindowsRuntimeFinder.getSupportedOperationSystems().contains(currentOs)) {
-            foundRuntimes.addAll(WindowsRuntimeFinder.findLocalRuntimes());
-        } else if (LinuxRuntimeFinder.getSupportedOperationSystems().contains(currentOs)) {
-            foundRuntimes.addAll(LinuxRuntimeFinder.findLocalRuntimes());
-        } else if (MacRuntimeFinder.getSupportedOperationSystems().contains(currentOs)) {
-            foundRuntimes.addAll(MacRuntimeFinder.findLocalRuntimes());
-        }
         return Collections.unmodifiableList(foundRuntimes);
     }
 }

@@ -1,20 +1,16 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-class WindowsRuntimeFinder {
-    private static final Logger LOG = LoggerFactory.getLogger(WindowsRuntimeFinder.class);
+class WindowsRuntimeFinder extends BaseRuntimeFinder {
 
     private static final String PROGRAMS_32 = System.getenv("ProgramFiles(X86)") + File.separatorChar;
     private static final String PROGRAM_64 = System.getenv("ProgramFiles") + File.separatorChar;
@@ -40,10 +36,9 @@ class WindowsRuntimeFinder {
     private static final String CYGWIN_USER_HOME = JavaSystemProperties.getUserHome().replace("Users", CYGWIN_HOME);
     private static final String SDK_MAN_FOLDER = CYGWIN_USER_HOME + File.separatorChar + ".sdkman";
 
-    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
-        LOG.debug("Searching for local runtimes");
-
-        return JdkFinder.findLocalJdks(
+    @Override
+    Collection<Path> getDefaultLocationsDefault() {
+        return Arrays.asList(
                 Paths.get(JVM_FOLDER_32), Paths.get(JVM_FOLDER_64),
                 Paths.get(CORRETTO_FOLDER_32), Paths.get(CORRETTO_FOLDER_64),
                 Paths.get(ADOPT_FOLDER_32), Paths.get(ADOPT_FOLDER_64),
@@ -53,7 +48,8 @@ class WindowsRuntimeFinder {
         );
     }
 
-    static List<OperationSystem> getSupportedOperationSystems() {
+    @Override
+    List<OperationSystem> getSupportedOperationSystems() {
         return Arrays.asList(OperationSystem.WIN32, OperationSystem.WIN64);
     }
 }
