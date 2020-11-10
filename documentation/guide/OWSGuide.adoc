@@ -390,17 +390,6 @@ The centralized _cache_ comprises
 * cache and recently_used file : directory for caching the jnlp and resources of the applications started by users
 * temp dir : Directory created by OWS for temp files.
 
-
-=== Customize JVM Cache Location
-The `jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir` in the `deployment.properties` file:
-
-[source]
-----
-ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
-----
-
-NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
-
 === JVM Management
 
 OWS provides facility to choose set of JVMs that can be used to run the applications specified in JNLP files
@@ -410,6 +399,16 @@ image::OWS_jvm_mgmt.png[title="JVM Management" width="80%"]
 One can choose or automatically add locally available JVMs or one can specify the server from where JVMs can be downloaded.
 
 image::OWS_jvm_config.png[title="Configuring JVM Management" width="80%"]
+
+==== Customize JVM Cache Location
+The `jvm_cache` location can be configured using the property `ows.jvm.manager.cache.dir` in the `deployment.properties` file:
+
+[source]
+----
+ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir
+----
+
+NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes precedence over `XDG_CACHE_HOME`.
 
 ==== JVM Download Server
 
@@ -464,7 +463,24 @@ ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
 
 It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
 
-==== Whitelist for JVM Arguments
+==== Searching for local JVM
+
+OpenWebStart can search for already installed JVMs on your local file system.
+This is done by checking in a few default locations.
+The list of default locations is by no means exhaustiv.
+Thus it is possible that OpenWebStart will not find all JVMs on the local file system.
+
+There are a few settings which can be used to configure the search for local JVMs.
+See <<Configuration Properties Overview>> for a detailed description of the properties.
+
+[source]
+----
+ows.jvm.manager.searchLocalAtStartup=true
+ows.jvm.manager.excludeDefaultSearchLocation=true
+ows.jvm.manager.customSearchLocation=c\:/path/to/jvm,c:\\path\\to\\other\\jvm
+----
+
+=== Whitelist for JVM Arguments
 
 OWS starts the JNLP application with the JVM that best matches JVM in the JNLP file.
 While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
@@ -746,6 +762,21 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |X
 |X
 |Allows to limit the possible JVM versions. Must be valid version-string according to JSR-56 Appendix A.
+
+|ows.jvm.manager.searchLocalAtStartup
+|X
+|X
+|If set to true OpenWebStart will search for new local JVMs at every start. Default is false.
+
+|ows.jvm.manager.excludeDefaultSearchLocation
+|X
+|X
+|If set to true OpenWebStart will exclude the default locations when searching for JVMs. Default is false.
+
+|ows.jvm.manager.customSearchLocation
+|X
+|X
+|Comma separated list of custom locations to search for JVMs. Default is empty.
 
 |deployment.proxy.http.host
 |X
