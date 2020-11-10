@@ -467,7 +467,7 @@ It is possible to specify wildcards in the URLs specified in the whitelist. Plea
 
 OpenWebStart can search for already installed JVMs on your local file system.
 This is done by checking in a few default locations.
-The list of default locations is by no means exhaustiv.
+The list of default locations is by no means exhaustive.
 Thus it is possible that OpenWebStart will not find all JVMs on the local file system.
 
 There are a few settings which can be used to configure the search for local JVMs.
