@@ -68,6 +68,7 @@ public class ConfigurationDialog extends ModalDialog {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
 
     private final Translator translator = Translator.getInstance();
+    private final DeploymentConfiguration configuration;
     private final JComboBox<Vendor> vendorComboBox;
     private final Color originalBackground;
     private boolean urlValidationError = false;
@@ -75,6 +76,8 @@ public class ConfigurationDialog extends ModalDialog {
 
     public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
+
+        this.configuration = deploymentConfiguration;
 
         final UiLock uiLock = new UiLock(deploymentConfiguration);
 
@@ -245,7 +248,7 @@ public class ConfigurationDialog extends ModalDialog {
     private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
-            final List<Vendor> vendors = JavaRuntimeManager.getAllVendors(specifiedServerURL);
+            final List<Vendor> vendors = JavaRuntimeManager.getAllVendors(specifiedServerURL, configuration);
             final Vendor currentVendor = Vendor.fromString(RuntimeManagerConfig.getVendor());
             if (!vendors.contains(currentVendor)) {
                 vendors.add(currentVendor);

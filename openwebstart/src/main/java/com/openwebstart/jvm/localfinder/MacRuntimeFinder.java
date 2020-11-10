@@ -1,35 +1,27 @@
 package com.openwebstart.jvm.localfinder;
 
-import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.os.OperationSystem;
-import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class MacRuntimeFinder {
-    private static final Logger LOG = LoggerFactory.getLogger(MacRuntimeFinder.class);
+class MacRuntimeFinder extends BaseRuntimeFinder {
 
-    private static final String MAC_JVM_BASEFOLDER = "/Library/Java/JavaVirtualMachines";
-    private static final String MAC_HOMEBREW_JVM_BASEFOLDER = "/usr/local/Cellar/openjdk/";
+    private static final String SYSTEM_VM_FOLDER = "/Library/Java/JavaVirtualMachines";
+    private static final String HOMEBREW_JVM_FOLDER = "/usr/local/Cellar/openjdk/";
+    private static final String SDK_MAN_FOLDER = JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman";
 
-    static List<ResultWithInput<Path, LocalJavaRuntime>> findLocalRuntimes() {
-        LOG.debug("Searching for local runtimes");
-
-        final Path systemPath = Paths.get(MAC_JVM_BASEFOLDER);
-        final Path sdkmanPath = Paths.get(JavaSystemProperties.getUserHome() + File.separatorChar + ".sdkman");
-        final Path homebrewPath = Paths.get(MAC_HOMEBREW_JVM_BASEFOLDER);
-
-        return JdkFinder.findLocalJdks(systemPath, sdkmanPath, homebrewPath);
+    @Override
+    Collection<String> getDefaultLocations() {
+        return Arrays.asList(SYSTEM_VM_FOLDER, HOMEBREW_JVM_FOLDER, SDK_MAN_FOLDER);
     }
 
-    static List<OperationSystem> getSupportedOperationSystems() {
+    @Override
+    List<OperationSystem> getSupportedOperationSystems() {
         return Collections.singletonList(OperationSystem.MAC64);
     }
 }

@@ -1,5 +1,6 @@
 package com.openwebstart.jvm.localfinder;
 
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * ...
  */
-class RuntimeFinderTest {
+class JdkFinderTest {
 
     @Test
     void shouldNotThrowAnException() {
-        assertNotNull(RuntimeFinder.find());
+        assertNotNull(JdkFinder.findLocalRuntimes(new DeploymentConfiguration()));
     }
 }

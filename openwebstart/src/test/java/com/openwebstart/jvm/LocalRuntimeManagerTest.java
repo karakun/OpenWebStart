@@ -6,6 +6,7 @@ import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ public class LocalRuntimeManagerTest {
 
 
         RuntimeManagerConfig.setCachePath(cacheFolder);
-        LocalRuntimeManager.getInstance().loadRuntimes();
+        LocalRuntimeManager.getInstance().loadRuntimes(new DeploymentConfiguration());
     }
 
     @AfterEach

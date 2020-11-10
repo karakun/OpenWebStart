@@ -5,6 +5,7 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.launcher.JavaRuntimeProvider;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,17 +23,18 @@ public class JavaRuntimeManager {
 
     public static JavaRuntimeProvider getJavaRuntimeProvider(
             final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler,
-            final Predicate<RemoteJavaRuntime> askForUpdateFunction) {
+            final Predicate<RemoteJavaRuntime> askForUpdateFunction,
+            final DeploymentConfiguration configuration) {
 
-        LocalRuntimeManager.getInstance().loadRuntimes();
+        LocalRuntimeManager.getInstance().loadRuntimes(configuration);
         return new JavaRuntimeSelector(downloadHandler, askForUpdateFunction);
     }
 
-    public static List<Vendor> getAllVendors(URL serverEndpoint) {
+    public static List<Vendor> getAllVendors(URL serverEndpoint, DeploymentConfiguration configuration) {
 
         final Set<Vendor> vendors = new HashSet<>();
 
-        LocalRuntimeManager.getInstance().loadRuntimes();
+        LocalRuntimeManager.getInstance().loadRuntimes(configuration);
         List<LocalJavaRuntime> localList = LocalRuntimeManager.getInstance().getAll();
         List<RemoteJavaRuntime> remoteList = RemoteRuntimeManager.getInstance().loadListOfRemoteRuntimes(serverEndpoint);
 
@@ -45,7 +47,7 @@ public class JavaRuntimeManager {
         return vendorList;
     }
 
-    public static void reloadLocalRuntimes() {
-        LocalRuntimeManager.getInstance().loadRuntimes();
+    public static void reloadLocalRuntimes(DeploymentConfiguration configuration) {
+        LocalRuntimeManager.getInstance().loadRuntimes(configuration);
     }
 }

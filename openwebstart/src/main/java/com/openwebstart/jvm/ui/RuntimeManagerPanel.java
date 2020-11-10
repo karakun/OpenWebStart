@@ -5,7 +5,6 @@ import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.RuntimeManagerConfig;
 import com.openwebstart.jvm.localfinder.JdkFinder;
-import com.openwebstart.jvm.localfinder.RuntimeFinder;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.ConfigurationDialog;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -16,7 +15,6 @@ import com.openwebstart.ui.Notifications;
 import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -32,7 +30,6 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
@@ -42,12 +39,14 @@ public final class RuntimeManagerPanel extends JPanel {
     private final ListComponentModel<LocalJavaRuntime> listModel;
 
     private final Translator translator;
+    private final DeploymentConfiguration configuration;
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
+        configuration = deploymentConfiguration;
 
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
-        JavaRuntimeManager.reloadLocalRuntimes();
+        JavaRuntimeManager.reloadLocalRuntimes(configuration);
         final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> getNonDaemonExecutorService().execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
@@ -56,7 +55,7 @@ public final class RuntimeManagerPanel extends JPanel {
         refreshButton.addActionListener(e -> onRefresh());
 
         final JButton findLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.findLocal.text"));
-        findLocalRuntimesButton.addActionListener(e -> onFindLocalRuntimes());
+        findLocalRuntimesButton.addActionListener(e -> onFindLocalRuntimes(deploymentConfiguration));
 
         final JButton configureButton = new JButton(translator.translate("jvmManager.action.settings.text"));
         configureButton.addActionListener(e -> new ConfigurationDialog(deploymentConfiguration).showAndWait());
@@ -97,7 +96,7 @@ public final class RuntimeManagerPanel extends JPanel {
     private void onRefresh() {
         getNonDaemonExecutorService().execute(() -> {
             try {
-                JavaRuntimeManager.reloadLocalRuntimes();
+                JavaRuntimeManager.reloadLocalRuntimes(configuration);
             } catch (Exception ex) {
                 throw new RuntimeException("Error", ex);
             }
@@ -116,7 +115,7 @@ public final class RuntimeManagerPanel extends JPanel {
             final Path selected = fileChooser.getSelectedFile().toPath();
             getNonDaemonExecutorService().execute(() -> {
                 try {
-                    handleFoundRuntimes(JdkFinder.findLocalJdks(selected));
+                    handleFoundRuntimes(JdkFinder.findLocalRuntimes(selected));
                 } catch (final Exception ex) {
                     DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntime"), ex);
                 }
@@ -151,37 +150,18 @@ public final class RuntimeManagerPanel extends JPanel {
             Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
             return false;
         }
-        if (supportsVersionRange(runtime)) {
-            try {
-                return LocalRuntimeManager.getInstance().add(runtime);
-            } catch (final Exception e) {
-                LOG.error("Error while adding local JDK at '" + path + "'", e);
-                Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
-            }
-        } else {
-            LOG.error("JVM at '" + path + "' has unsupported version '" + runtime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
-            Notifications.showError(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
-        }
-        return false;
+        return LocalRuntimeManager.getInstance().addNewLocalJavaRuntime(runtime, Notifications::showError);
     }
 
-    private void onFindLocalRuntimes() {
+    private void onFindLocalRuntimes(final DeploymentConfiguration deploymentConfiguration) {
         LOG.info("Starting to search for local JVMs");
         getNonDaemonExecutorService().execute(() -> {
             try {
-                handleFoundRuntimes(RuntimeFinder.find());
+                handleFoundRuntimes(JdkFinder.findLocalRuntimes(deploymentConfiguration));
             } catch (final Exception ex) {
                 DialogFactory.showErrorDialog(translator.translate("jvmManager.error.addRuntimes"), ex);
             }
         });
-    }
-
-    private boolean supportsVersionRange(final LocalJavaRuntime runtime) {
-        Assert.requireNonNull(runtime, "runtime");
-        final VersionId version = runtime.getVersion();
-        return Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange())
-                .map(v -> v.contains(version))
-                .orElse(true);
     }
 
 }

@@ -14,6 +14,7 @@ import net.adoptopenjdk.icedteaweb.client.parts.downloadindicator.DownloadIndica
 import net.adoptopenjdk.icedteaweb.extensionpoint.ExtensionPoint;
 import net.adoptopenjdk.icedteaweb.launch.JvmLauncher;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
 
 import java.net.ProxySelector;
@@ -29,7 +30,8 @@ public class OwsExtensionPoint implements ExtensionPoint {
     public JvmLauncher createJvmLauncher(final DeploymentConfiguration configuration) {
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,
-                DialogFactory::askForRuntimeUpdate
+                DialogFactory::askForRuntimeUpdate,
+                JNLPRuntime.getConfiguration()
         );
 
         return new OwsJvmLauncher(javaRuntimeProvider);

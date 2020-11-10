@@ -1,7 +1,6 @@
 package com.openwebstart.jvm.util;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -11,10 +10,6 @@ import java.util.stream.Collectors;
  * Algorithm to find the java executable within a java home.
  */
 public class JavaExecutableFinder {
-
-    public static String findJavaExecutable(String javaHome) {
-        return findJavaExecutable(FileSystems.getDefault().getPath(javaHome));
-    }
 
     public static String findJavaExecutable(Path javaHome) {
         try {
