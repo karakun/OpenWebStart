@@ -3,13 +3,11 @@ package com.openwebstart.download;
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.controlpanel.MaximumLayoutManager;
-import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.util.LayoutFactory;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.ImageResources;
 
 import javax.jnlp.DownloadServiceListener;
@@ -31,14 +29,16 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ApplicationDownloadDialog extends ModalDialog implements DownloadServiceListener {
+import static com.openwebstart.download.ApplicationDownloadState.DOWNLOADING;
+import static com.openwebstart.download.ApplicationDownloadState.FAILED;
+import static com.openwebstart.download.ApplicationDownloadState.PATCHING;
+import static com.openwebstart.download.ApplicationDownloadState.VALIDATING;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationDownloadDialog.class);
+public class ApplicationDownloadDialog extends ModalDialog implements DownloadServiceListener {
 
     private final Map<URL, ApplicationDownloadResourceState> resourceStates;
 
@@ -142,26 +142,27 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         }
     }
 
-    private void onUpdate(final URL url, final ApplicationDownloadResourceState resourceState) {
+    private void onUpdate(final ApplicationDownloadResourceState resourceState) {
         resourceStatesLock.lock();
+        final URL url = resourceState.getUrl();
         try {
             ApplicationDownloadResourceState lastState = resourceStates.get(url);
             if (lastState == null
                     || resourceState.getPercentage() != lastState.getPercentage()
-                    || !Objects.equals(resourceState.getDownloadState(), lastState.getDownloadState())) {
+                    || resourceState.getDownloadState() != lastState.getDownloadState()) {
                 resourceStates.put(url, resourceState);
-                SwingUtilities.invokeLater(() -> updateUi(url, resourceState));
+                SwingUtilities.invokeLater(() -> updateUi(resourceState));
             }
         } finally {
             resourceStatesLock.unlock();
         }
     }
 
-    private void updateUi(final URL url, final ApplicationDownloadResourceState resourceState) {
+    private void updateUi(final ApplicationDownloadResourceState resourceState) {
         if (!isVisible()) {
             showAndWait();
         } else {
-            if (resourceState.getPercentage() >= 100) {
+            if (resourceState.getPercentage() >= 100 || resourceState.getDownloadState() == FAILED) {
                 listModel.remove(resourceState);
             } else {
                 listModel.add(resourceState);
@@ -190,61 +191,46 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         if (current < 0) {
             return -1;
         }
-        final long percentageInLong = Math.min(100l, current / (total / 100l));
+        final long percentageInLong = Math.min(100L, current / (total / 100L));
         return (int) percentageInLong;
     }
 
     @Override
     public void progress(final URL url, final String version, final long readSoFar, final long total, final int overallPercent) {
-        //TODO: We need LOG.trace ...
-        //LOG.debug("Download Listener receives progress update for {} - {} / {} - {}", url.getFile(), readSoFar, total, overallPercent);
-
-        final ByteUnit readSoFarUnit = ByteUnit.findBestUnit(readSoFar);
-        final ByteUnit totalUnit = ByteUnit.findBestUnit(total);
-        final Translator translator = Translator.getInstance();
-
-        final String message = translator.translate("appDownload.state.download.message", url, version, readSoFarUnit.convertBytesToUnit(readSoFar), readSoFarUnit.getDecimalShortName(), totalUnit.convertBytesToUnit(total), totalUnit.getDecimalShortName());
         final int percentage = getPercentage(total, readSoFar);
 
-
-        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
-        onUpdate(url, resourceState);
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, percentage, DOWNLOADING);
+        onUpdate(resourceState);
 
         onUpdate(overallPercent);
     }
 
     @Override
     public void validating(final URL url, final String version, final long entry, final long total, final int overallPercent) {
-        //TODO: We need LOG.trace ...
-        //LOG.debug("Download Listener receives validation update");
-        final Translator translator = Translator.getInstance();
-        final String message = translator.translate("appDownload.state.validation.message", url, version, entry, total);
         final int percentage = getPercentage(total, entry);
 
-        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, percentage, ApplicationDownloadState.DOWNLOADING);
-        onUpdate(url, resourceState);
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, percentage, VALIDATING);
+        onUpdate(resourceState);
 
         onUpdate(overallPercent);
     }
 
     @Override
     public void upgradingArchive(final URL url, final String version, final int patchPercent, final int overallPercent) {
-        //TODO: We need LOG.trace ...
-        //LOG.debug("Download Listener receives patching update");
-        final Translator translator = Translator.getInstance();
-        final String message = translator.translate("appDownload.state.patching.message", url, version, patchPercent);
-        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, message, patchPercent, ApplicationDownloadState.DOWNLOADING);
-        onUpdate(url, resourceState);
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, patchPercent, PATCHING);
+        onUpdate(resourceState);
 
         onUpdate(overallPercent);
     }
 
     @Override
     public void downloadFailed(final URL url, final String version) {
-        setVisible(false);
-        dispose();
+        final ApplicationDownloadResourceState resourceState = new ApplicationDownloadResourceState(url, version, -1, FAILED);
+        onUpdate(resourceState);
+
         final Translator translator = Translator.getInstance();
-        ErrorDialog.show(translator.translate("appDownload.error"), new RuntimeException("Error while downloading url '" + url + "' with version '" + version + "'"));
+        final String versionInfo = StringUtils.isBlank(version) ? " without version" : "' with version '" + version + "'";
+        ErrorDialog.show(translator.translate("appDownload.error"), new RuntimeException("Error while downloading url '" + url + versionInfo));
     }
 
     @Override
