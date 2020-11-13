@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -50,6 +51,8 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     private final JProgressBar overallProgressBar;
 
     private final ApplicationDownloadDetailListModel listModel;
+
+    private final AtomicBoolean hasBeenClosed = new AtomicBoolean(false);
 
     public ApplicationDownloadDialog(final String applicationName) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -242,5 +245,32 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         dispose();
         final Translator translator = Translator.getInstance();
         ErrorDialog.show(translator.translate("appDownload.error"), new RuntimeException("Error while downloading url '" + url + "' with version '" + version + "'"));
+    }
+
+    @Override
+    public void close() {
+        hasBeenClosed.set(true);
+        super.close();
+    }
+
+    @Override
+    public void pack() {
+        if (!hasBeenClosed.get()) {
+            super.pack();
+        }
+    }
+
+    @Override
+    public void showAndWait() {
+        if (!hasBeenClosed.get()) {
+            super.showAndWait();
+        }
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (!b || !hasBeenClosed.get()) {
+            super.setVisible(b);
+        }
     }
 }
