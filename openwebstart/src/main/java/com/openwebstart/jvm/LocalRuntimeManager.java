@@ -48,6 +48,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -287,6 +288,7 @@ public final class LocalRuntimeManager {
         }
 
         if (!runtimes.contains(localJavaRuntime)) {
+            removeRuntimesByJavaHome(localJavaRuntime.getJavaHome());
             runtimes.add(localJavaRuntime);
             addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
             try {
@@ -297,6 +299,17 @@ public final class LocalRuntimeManager {
             }
         }
         return false;
+    }
+
+    private void removeRuntimesByJavaHome(Path javaHome) {
+        List<LocalJavaRuntime> toBeRemoved = runtimes.stream()
+                .filter(rt -> Objects.equals(rt.getJavaHome(), javaHome))
+                .collect(Collectors.toList());
+
+        toBeRemoved.forEach(rt -> {
+            removedListeners.forEach(l -> l.onRuntimeRemoved(rt));
+            runtimes.remove(rt);
+        });
     }
 
     public void delete(final LocalJavaRuntime localJavaRuntime) {
