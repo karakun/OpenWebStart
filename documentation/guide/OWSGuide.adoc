@@ -253,7 +253,7 @@ So you might want to update these files on the USB stick to keep your OWS instal
 You can install OWS for the _current user_ (without admin privileges) or for _all users_ (with admin privileges) of the computer.
 
 NOTE:  Having more than one installation of OWS on your machine,
-especially when one installation is for _current user_(i.e. without admin privileges) and the other one is for _all users,
+especially when one installation is for _current user_ (i.e. without admin privileges) and the other one is for _all users,
 may result in overwriting registry entries.
 This can lead to a situation where you do not know which actual OWS is invoked to run the _jnlp_ file started for example by double-clicking.
 
@@ -353,6 +353,14 @@ The final file should look something like this:
 deployment.system.config=https\://192.168.1.1./javaws/system.properties
 deployment.system.config.mandatory=true
 ----
+
+NOTE: OpenWebStart tries to mimic the behavior of Oracle's web start.
+But it is not exactly the same.
+On some systems OpenWebStart is used besides Oracle's web start.
+In such a constellation it is possible that the system configuration need to be different for Oracle and Open web start.
+Therefore it is possible to change the `deployment.config` to `itw-deployment.config`.
+OpenWebStart will pickup the `itw-deployment.config` while Oracle will use the original file.
+The content of the file is the same as described above.
 
 === Locking a Property
 
