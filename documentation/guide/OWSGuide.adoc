@@ -756,7 +756,13 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.updateStrategy
 |X
 |X
-|When starting a JNLP application, OpenWebStart can check if an updated JVM is available to run the application. This property defines how OpenWebstart behaves in the JVM check. Possible values are DO_NOTHING_ON_LOCAL_MATCH, ASK_FOR_UPDATE_ON_LOCAL_MATCH and AUTOMATICALLY_DOWNLOAD
+|When starting a JNLP application, OpenWebStart can check if an updated JVM is available to run the application.
+This property defines how OpenWebstart behaves in the JVM check. Possible values are
+
+NO_REMOTE (never check the update server),
+DO_NOTHING_ON_LOCAL_MATCH (do not check for updates on local match but do download if no local match found),
+ASK_FOR_UPDATE_ON_LOCAL_MATCH (check for update on local match but ask before installing new JVM) and
+AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 
 |ows.jvm.manager.versionRange
 |X
