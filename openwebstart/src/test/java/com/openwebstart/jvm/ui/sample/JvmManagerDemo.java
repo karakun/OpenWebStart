@@ -15,6 +15,7 @@ import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.launcher.JavaRuntimeProvider;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import spark.Spark;
 
@@ -86,8 +87,8 @@ public class JvmManagerDemo {
         runtimes.forEach(r -> {
             final JCheckBox checkBox = new JCheckBox(r.getVersion() + "-" + r.getVendor() + "-" + r.getOperationSystem().getName());
             checkBox.addItemListener(e -> {
-                if(checkBox.isSelected()) {
-                    if(!runtimes.contains(r)) {
+                if (checkBox.isSelected()) {
+                    if (!runtimes.contains(r)) {
                         runtimes.add(r);
                     }
                 } else {
@@ -143,7 +144,8 @@ public class JvmManagerDemo {
 
         final JavaRuntimeProvider javaRuntimeProvider = JavaRuntimeManager.getJavaRuntimeProvider(
                 RuntimeDownloadDialog::showDownloadDialog,
-                DialogFactory::askForRuntimeUpdate
+                DialogFactory::askForRuntimeUpdate,
+                new DeploymentConfiguration()
         );
 
         requestButton.addActionListener(event -> getNonDaemonExecutorService().execute(() -> {

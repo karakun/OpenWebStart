@@ -5,12 +5,13 @@ import com.openwebstart.http.DownloadType;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.IconComponent;
+import com.openwebstart.ui.ModalDialog;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -18,11 +19,11 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-public class RuntimeDownloadDialog extends JDialog {
+public class RuntimeDownloadDialog extends ModalDialog {
 
     public static void showDownloadDialog(final RemoteJavaRuntime remoteRuntime, final DownloadInputStream inputStream) {
         try {
-            SwingUtilities.invokeAndWait(() -> {
+            SwingUtilities.invokeLater(() -> {
                 final RuntimeDownloadDialog downloadDialog = new RuntimeDownloadDialog(remoteRuntime, inputStream);
                 downloadDialog.setVisible(true);
             });
@@ -41,7 +42,7 @@ public class RuntimeDownloadDialog extends JDialog {
         setTitle(translator.translate("dialog.jvmDownload.title"));
         setResizable(false);
 
-        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor()));
+        final JLabel messageLabel = new JLabel(translator.translate("dialog.jvmDownload.message", remoteRuntime.getVersion(), remoteRuntime.getVendor(), remoteRuntime.getHref()));
         final JProgressBar progressBar = new JProgressBar();
         progressBar.setPreferredSize(new Dimension(320, progressBar.getPreferredSize().height));
         if (inputStream.getDownloadType() == DownloadType.INDETERMINATE) {
@@ -53,18 +54,18 @@ public class RuntimeDownloadDialog extends JDialog {
         final JLabel progressLabel = new JLabel(translator.translate("dialog.jvmDownload.progressDefault"));
 
         final JPanel progressLabelWrapper = new JPanel();
-        progressLabelWrapper.setLayout(new BorderLayout());
+        progressLabelWrapper.setLayout(LayoutFactory.createBorderLayout());
         progressLabelWrapper.add(progressLabel, BorderLayout.EAST);
 
         final JPanel innerPanel = new JPanel();
-        innerPanel.setLayout(new BorderLayout(4, 0));
+        innerPanel.setLayout(LayoutFactory.createBorderLayout(4, 0));
         innerPanel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 4));
         innerPanel.add(progressBar, BorderLayout.CENTER);
         innerPanel.add(progressLabelWrapper, BorderLayout.SOUTH);
         innerPanel.add(messageLabel, BorderLayout.NORTH);
 
         final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(0, 12));
+        panel.setLayout(LayoutFactory.createBorderLayout(0, 12));
         panel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         panel.add(downloadIcon, BorderLayout.WEST);
         panel.add(innerPanel, BorderLayout.CENTER);
@@ -94,10 +95,5 @@ public class RuntimeDownloadDialog extends JDialog {
 
         pack();
         setLocationRelativeTo(null);
-    }
-
-    private void close() {
-        setVisible(false);
-        dispose();
     }
 }

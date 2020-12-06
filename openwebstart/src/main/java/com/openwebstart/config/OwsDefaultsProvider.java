@@ -26,6 +26,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER = "ows.jvm.manager.server.default";
     public static final String DEFAULT_JVM_DOWNLOAD_SERVER_DEFAULT_VALUE = "https://download-openwebstart.com/jvms.json";
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
+    public static final String JVM_SERVER_WHITELIST = "ows.jvm.manager.server.allowFromJnlp.whitelist";
     public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";
@@ -36,8 +37,17 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE = "ows.jvm.manager.maxDaysUnusedInJvmCache";
     public static final String MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE = "30";
 
+    public static final String SEARCH_FOR_LOCAL_JVM_ON_STARTUP = "ows.jvm.manager.searchLocalAtStartup";
+    public static final String EXCLUDE_DEFAULT_JVM_LOCATION = "ows.jvm.manager.excludeDefaultSearchLocation";
+    public static final String CUSTOM_JVM_LOCATION = "ows.jvm.manager.customSearchLocation";
+
 
     public static final String PROXY_PAC_CACHE = "deployment.proxy.pac.cache";
+
+    public static final String SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS = "ows.jvm.proxy.unsupportedFeature.showNotification";
+
+    public static final String APPLICATION_MANAGER_ACTIVE = "ows.experimental.applicationManager.active";
+
 
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
 
@@ -45,7 +55,17 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public List<Setting> getDefaults() {
         return Arrays.asList(
                 Setting.createDefault(
+                        SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS,
+                        Boolean.TRUE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
                         PROXY_PAC_CACHE,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        APPLICATION_MANAGER_ACTIVE,
                         Boolean.FALSE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
@@ -140,6 +160,21 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         MAX_DAYS_UNUSED_IN_JVM_CACHE,
                         MAX_DAYS_UNUSED_IN_JVM_CACHE_DEFAULT_VALUE,
                         ValidatorFactory.createRangedIntegerValidator(0, 3_650)
+                ),
+                Setting.createDefault(
+                        SEARCH_FOR_LOCAL_JVM_ON_STARTUP,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        EXCLUDE_DEFAULT_JVM_LOCATION,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
+                ),
+                Setting.createDefault(
+                        CUSTOM_JVM_LOCATION,
+                        null,
+                        null
                 )
         );
     }

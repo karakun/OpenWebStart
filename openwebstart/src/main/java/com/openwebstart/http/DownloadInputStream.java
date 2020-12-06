@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 public class DownloadInputStream extends InputStream {
 
-    private final static Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
 
     private final List<Consumer<Double>> downloadPercentageListeners;
 

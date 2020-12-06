@@ -1,49 +1,32 @@
 = Frequently Asked Questions on OpenWebStart
 :imagesdir: ./images
 :Author:    The OWS Community
-:Date:      4/2020
-:Revision:  1.1.7
+:Date:      7/2020
+:Revision:  1.1.8
 :toc:
 :toclevels: 3
 
 NOTE: The authors assume no responsibility or liability for any errors or omissions in the content of this documentation.
 The information contained in this documentation is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness, timeliness or of the results obtained from the use of this information.
 
-
-#<this documentation is work in progress>#
+These FAQs refer to the OpenWebStart version *{project-version}* and were build at *{build-timestamp}*.
 
 == General
 
 ==== What is OpenWebStart?
 
-#<this documentation is work in progress>#
+OpenWebStart is an open source reimplementation of the Java Web Start technology. It provides the most commonly used features of Java Web Start and the JNLP standard, so that your customers can continue using applications based on Java Web Start and JNLP without any change. OpenWebStart is based on Iced-Tea-Web and the JNLP-specification defined in JSR-56.
 
-== Subscription and Premium Support
+==== Under which license does OpenWebStart come?
 
-==== Is there a subscription for OpenWebStart?
-Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
-With this option you may report bugs using a dedicated communication channel and your bug reports will have a higher priority.
-If you wish, we will add your company logo to our sponsor list for free.
-Plus, you'll get a 10% discount for development of individual features.
-
-==== Is there a premium support for OpenWebStart?
-With premium support provided by Karakun you may report bugs or issues using the premium communication channel.
-Your bug reports will have the highest priority.
-Karakun will guarantee reaction times depending on the severity of bugs (during business hours).
-Plus, you'll get a 25% discount for the development of individual features.
-Upon your wish, your company logo will be listed as a premium sponsor on our website.
-
-==== What are the costs for subscription and premium support?
-
-Please contact openwebstart@karakun.com to figure out which support model fits your needs best.
+OpenWebStart is released under the GPL with Classpath Exception.
 
 == Installation
 
 ==== Do I have to install a Java on my system to run OWS?
 OpenWebStart comes with a JVM Manager and a bundled Java runtime. There is no need to have any JVM installed on your system.
 
-The bundled JVM is used solely to run OWS.
-The JVMs manged by the JVM Manager are used to run the JNLP applications.
+The bundled JVM is used solely to run OWS. The JVMs manged by the JVM Manager are used to run the JNLP applications.
 
 ==== Which Java versions can be used to run my JNLP applications?
 
@@ -51,7 +34,7 @@ Your JNLP applications can be run with either Java 8 and 11.
 We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.
-Currently, we provide Azul and Adopt JDKs on the default download server.
+Currently, we provide access to Azul and Adopt LTS JDKs via default download server.
 In the future we will add more vendors.
 
 If your preferred JVM is not provided by our default download server, you can either add locally installed JVMs or host your own download server for JVMs to run your JNLP applications.
@@ -75,6 +58,20 @@ By default this should be
 /home/<your-username>/          (Linux)
 ```
 Note that logging has to be activated using the OWS Settings application by checking "Activate debug logging" and "Log to file" on the "Logging" tab.
+
+== Download
+
+==== How to set up the resource server to facilitate caching by OWS
+
+To find out whether a resource has been modified since the last download, OWS sends a _HTTP HEAD_ request to the server and
+expects to receive the last modified timestamp of the resource on the server.  In order to facilitate caching of resources
+by OWS it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_
+request. In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the
+last modified timestamp of the resource and will go ahead and download the resource.
+
+== Security
+
+<TODO: add security related questions here>
 
 == Functionality
 
@@ -107,7 +104,7 @@ connected to the server as OWS will try to fetch the resources from the server a
 ==== How can I define a server whitelist for OWS?
 
 This field is currently not editable in the UI.
-Edit the deployment properties file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
+Edit the _deployment properties_ file ${userHome}/.config/icedtea-web/deployment.properties file with a text editor by adding a new line:
 
 [source]
 ----
@@ -123,6 +120,28 @@ Thus, an application can open a connection to a server which is not in the white
 
 It is also possible to specify the content of the whitelist when installing OWS (unattended installation),
 See https://openwebstart.com/installation/ and https://openwebstart.com/configuration/ for further details.
+
+It is possible to specify a wildcard in the host and port part of the URL. Some examples are shown below. Please see the Guide to OpenWebStart for details.
+
+|===
+|Whitelist entry|UI Displayed|Comment
+
+|https://*.domain.com|https://*.domain.com:443|any domain which ends in "domain.com" is whitelisted
+|\*.domain.com:*|https://*.domain.com|any domain which ends in ".domain.com" and any port is whitelisted
+|===
+
+==== How can I define a JVM Server Whitelist?
+
+When allowing JVM server download from the JNLP file using the property _ows.jvm.manager.server.allowFromJnlp=true_,
+as a security measure it is advisable to define a whitelist for JVM server URLs that will be specified in JNLP files.
+JVMs will be allowed to be downloaded from only those server URLs that match a whitelist entry.
+
+The JVM server whitelist can be defined in the _deployment properties_ file _${userHome}/.config/icedtea-web/deployment.properties_:
+
+[source]
+----
+ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
+----
 
 ==== How to run OpenJFX based JavaFX applications with OpenWebStart?
 
@@ -236,4 +255,24 @@ public class HelloWorld11 extends Application {
     ...
 }
 ....
+
+== Subscription and Premium Support
+
+==== Is there a subscription for OpenWebStart?
+Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
+With this option you may report bugs using a dedicated communication channel (support forum) and your bug reports will have a higher priority.
+If you wish, we will add your company logo to our sponsor page for free.
+Plus, you'll get a 10% discount for development of individual features.
+
+==== Is there a premium support for OpenWebStart?
+With premium support provided by Karakun you may report bugs or issues using the premium communication channel (via support forum).
+Your bug reports will have the highest priority.
+Karakun will guarantee service levels depending on the severity of the bug (during business hours).
+After a bug is fixed, a corresponding release will be provided.
+Plus, you'll get a 25% discount for the development of individual features.
+Upon your wish, your company logo will be listed as a premium sponsor on our website.
+
+==== What are the costs for subscription and premium support?
+
+Please contact openwebstart@karakun.com to figure out which support model fits your needs best.
 

@@ -2,24 +2,24 @@ package com.openwebstart.os;
 
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.os.OperationSystem;
-import net.adoptopenjdk.icedteaweb.logging.Logger;
-import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Optional;
 
 public class ScriptFactory {
-
-    private final static Logger LOG = LoggerFactory.getLogger(ScriptFactory.class);
-
-    private final static String SCRIPT_START = "#!/bin/sh";
+    private static final String SCRIPT_START = "#!/bin/sh";
 
     private static final String JAVA_WS_NAME = "javaws";
 
+    private static final String HTTP = "http";
+    private static final String HTTPS = "https";
+    private static final String JNLP = "jnlp";
+
     public static String createStartScript(final JNLPFile jnlpFile) {
-        if(OperationSystem.getLocalSystem() == OperationSystem.MAC64) {
-            return createStartScriptForMac(jnlpFile);
+        if (OperationSystem.getLocalSystem() == OperationSystem.MAC64) {
+            return createSimpleStartScriptForMac(jnlpFile);
         }
         final String executable = Install4JUtils.installationDirectory()
                 .map(d -> d + "/" + JAVA_WS_NAME)
@@ -28,17 +28,16 @@ public class ScriptFactory {
         return executable + " " + jnlpLocation;
     }
 
-    public static String createStartScriptForMac(final JNLPFile jnlpFile) {
-        final String executable = "\"" + Install4JUtils.installationDirectory()
-                .map(d -> d + "/" + "OpenWebStart javaws.app" + "\"")
-                .orElseThrow(() -> new IllegalStateException("Can not define executable"));
-
-        //TODO: URL is not working on mac. Maybe we can add a new param to OWS that can be used to pass
-        // the jnlp url (mac open command supports --args)
-        // This one is not working: open -a "/Applications/OpenWebStart/OpenWebStart javaws.app" --args -jnlp "file:/Users/hendrikebbers/Desktop/AccessibleScrollDemo.jnlpx"
-        final String jnlpLocation = "\"" + jnlpFile.getFileLocation() + "\"";
-
-        return SCRIPT_START + System.lineSeparator() + "open -a " + executable + " " + jnlpLocation;
+    public static String createSimpleStartScriptForMac(final JNLPFile jnlpFile) {
+        final URL srcUrl = jnlpFile.getSourceLocation();
+        final String schema = srcUrl.getProtocol();
+        final String url;
+        if (HTTP.equalsIgnoreCase(schema) || HTTPS.equalsIgnoreCase(schema)) {
+            url = JNLP + srcUrl.toString().substring(4);
+        } else {
+            url = srcUrl.toString();
+        }
+        return SCRIPT_START + System.lineSeparator() + "open \"" + url + "\"";
     }
 
     public static Process createStartProcess(final JNLPFile jnlpFile) throws IOException {

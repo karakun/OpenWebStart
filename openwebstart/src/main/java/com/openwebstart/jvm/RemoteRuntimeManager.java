@@ -16,6 +16,7 @@ import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.util.whitelist.UrlWhiteListUtils;
 
 import java.net.URL;
 import java.util.Collections;
@@ -44,6 +45,16 @@ class RemoteRuntimeManager {
 
         LOG.debug("Trying to find remote Java runtime. Requested version: '{}' Requested vendor: '{}' requested os: '{}'", versionString, vendor, operationSystem);
 
+        // jvm server specified in jnlp is not null and is allowed
+        // TODO : What to do if not found in Whitelist
+        // TODO : confirm that we only check the URL in JNLP against whitelist and not the URL specified in settings
+        if (RuntimeManagerConfig.isNonDefaultServerAllowed() && specificServerEndpoint != null) {
+            if (!UrlWhiteListUtils.isUrlInWhitelist(specificServerEndpoint, RuntimeManagerConfig.getJvmServerWhitelist())) {
+                LOG.warn("JVM Server URL {} not in JVM Server Whitelist", specificServerEndpoint);
+                return Optional.empty();
+            }
+            LOG.debug("JVM Server URL {} found in JVM Server Whitelist", specificServerEndpoint);
+        }
         final URL endpointForRequest = getEndpointForRequest(specificServerEndpoint);
         final List<RemoteJavaRuntime> remoteRuntimes = loadListOfRemoteRuntimes(endpointForRequest);
         return selectBestRuntime(remoteRuntimes, versionString, vendor, operationSystem);

@@ -1,6 +1,7 @@
 package com.openwebstart.ui.impl;
 
 import com.openwebstart.ui.IconComponent;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -15,12 +16,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Notification extends JWindow {
 
-    public Notification(final String message, final boolean error, final Consumer<Notification> onClose) {
+    public Notification(final String message, final NotificationType notificationType, final Consumer<Notification> onClose) {
         Assert.requireNonBlank(message, "message");
 
         setAlwaysOnTop(true);
@@ -36,13 +38,13 @@ public class Notification extends JWindow {
 
 
         final IconComponent iconComponent;
-        if (error) {
+        if (Objects.equals(notificationType, NotificationType.ERROR)) {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("error-32.png")));
         } else {
             iconComponent = new IconComponent(new ImageIcon(Notification.class.getResource("info-32.png")));
         }
         final JPanel iconPanel = new JPanel();
-        iconPanel.setLayout(new BoxLayout(iconPanel, BoxLayout.PAGE_AXIS));
+        iconPanel.setLayout(LayoutFactory.createBoxLayout(iconPanel, BoxLayout.PAGE_AXIS));
         Box iconBox = Box.createVerticalBox();
         iconBox.add(iconComponent);
         iconBox.add(Box.createVerticalGlue());
@@ -57,19 +59,19 @@ public class Notification extends JWindow {
             }
         });
         final JPanel closeIconPanel = new JPanel();
-        closeIconPanel.setLayout(new BoxLayout(closeIconPanel, BoxLayout.PAGE_AXIS));
+        closeIconPanel.setLayout(LayoutFactory.createBoxLayout(closeIconPanel, BoxLayout.PAGE_AXIS));
         Box closeIconBox = Box.createVerticalBox();
         closeIconBox.add(closeIconComponent);
         closeIconBox.add(Box.createVerticalGlue());
         closeIconPanel.add(closeIconBox);
 
-        final JPanel notificationPane = new JPanel(new BorderLayout(12, 12));
+        final JPanel notificationPane = new JPanel(LayoutFactory.createBorderLayout(12, 12));
         notificationPane.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         notificationPane.add(editorPane, BorderLayout.CENTER);
         notificationPane.add(iconPanel, BorderLayout.WEST);
         notificationPane.add(closeIconPanel, BorderLayout.EAST);
 
-        final JPanel contentPane = new JPanel(new BorderLayout());
+        final JPanel contentPane = new JPanel(LayoutFactory.createBorderLayout());
         contentPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         contentPane.add(notificationPane, BorderLayout.CENTER);
 

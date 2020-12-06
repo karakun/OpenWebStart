@@ -29,7 +29,7 @@ public class ApplicationIconDownloadUtils {
     public static BufferedImage downloadIcon(final Application application, final IconDimensions dimension) {
         Assert.requireNonNull(application, "application");
         Assert.requireNonNull(dimension, "dimension");
-        final BufferedImage loadedIcon =  downloadIcon(application.getJnlpFile(), IconKind.SHORTCUT, dimension)
+        final BufferedImage loadedIcon = downloadIcon(application.getJnlpFile(), IconKind.SHORTCUT, dimension)
                 .orElseGet(() -> downloadIcon(application.getJnlpFile(), IconKind.DEFAULT, dimension)
                         .orElseGet(() -> downloadFavIcon(application.getJnlpFile())
                                 .orElseThrow(() -> new RuntimeException("No icon found for app"))));

@@ -6,6 +6,8 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.JComponent;
 
+import static com.openwebstart.config.OwsDefaultsProvider.APPLICATION_MANAGER_ACTIVE;
+
 public class ApplicationManagerPanelProvider implements ControlPanelProvider {
 
     @Override
@@ -25,7 +27,7 @@ public class ApplicationManagerPanelProvider implements ControlPanelProvider {
 
     @Override
     public boolean isActive(final DeploymentConfiguration config) {
-        return false;
+        return Boolean.parseBoolean(config.getProperty(APPLICATION_MANAGER_ACTIVE));
     }
 
     @Override

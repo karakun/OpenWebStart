@@ -35,7 +35,7 @@ public class JavaRuntimePropertiesDetector {
 
     private static final String VERSION_ARG = "-version";
 
- public static JavaRuntimeProperties getProperties(Path javaHome) throws IllegalStateException {
+    public static JavaRuntimeProperties getProperties(Path javaHome) throws IllegalStateException {
         LOG.info("Trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
         try {

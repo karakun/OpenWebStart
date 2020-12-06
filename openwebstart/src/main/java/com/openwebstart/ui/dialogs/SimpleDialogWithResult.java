@@ -2,6 +2,7 @@ package com.openwebstart.ui.dialogs;
 
 import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.IconComponent;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.image.ImageGallery;
 
 import javax.swing.BorderFactory;
@@ -43,12 +44,12 @@ public class SimpleDialogWithResult<R> extends ButtonBasedDialogWithResult<R> {
         messageLabel.setColumns(50);
 
         final JPanel messageWrapperPanel = new JPanel();
-        messageWrapperPanel.setLayout(new BorderLayout(12, 12));
+        messageWrapperPanel.setLayout(LayoutFactory.createBorderLayout(12, 12));
         messageWrapperPanel.add(icon, BorderLayout.WEST);
         messageWrapperPanel.add(messageLabel, BorderLayout.CENTER);
 
         final JPanel actionWrapperPanel = new JPanel();
-        actionWrapperPanel.setLayout(new BoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
+        actionWrapperPanel.setLayout(LayoutFactory.createBoxLayout(actionWrapperPanel, BoxLayout.LINE_AXIS));
         actionWrapperPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         actionWrapperPanel.add(Box.createHorizontalGlue());
 
@@ -59,13 +60,13 @@ public class SimpleDialogWithResult<R> extends ButtonBasedDialogWithResult<R> {
             }
             button.addActionListener(e -> {
                 final R result = b.getOnAction().get();
-                close(result);
+                closeWithResult(result);
             });
             actionWrapperPanel.add(button);
         });
 
         final JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BorderLayout(12, 12));
+        contentPanel.setLayout(LayoutFactory.createBorderLayout(12, 12));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         contentPanel.add(messageWrapperPanel, BorderLayout.CENTER);
         contentPanel.add(actionWrapperPanel, BorderLayout.SOUTH);

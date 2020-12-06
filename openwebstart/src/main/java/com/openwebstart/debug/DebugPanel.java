@@ -162,7 +162,7 @@ public class DebugPanel extends FormPanel {
         } catch (final Exception ignore) {
             // invalid host
         }
-       updateMessageLabel();
+        updateMessageLabel();
     }
 
     private void updateControlStatus() {
@@ -214,7 +214,7 @@ public class DebugPanel extends FormPanel {
             messageLabel.setText(translator.translate("debugPanel.description.success", parameters));
         } catch (final Exception ignore) {
             final String lastValidValue = config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_PORT);
-            final String host = config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_HOST);;
+            final String host = config.getProperty(OwsDefaultsProvider.REMOTE_DEBUG_HOST);
             final int port = Integer.parseInt(lastValidValue);
             final String parameters = DebugParameterHelper.getRemoteDebugParameters(useAnyPort, startSuspended, host, port);
             messageLabel.setText(translator.translate("debugPanel.description.fail", parameters));

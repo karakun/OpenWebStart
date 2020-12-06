@@ -56,10 +56,11 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
         if (!localRuntime.isPresent()) {
             if (updateStrategy == NO_REMOTE) {
-                LOG.debug("No local runtime found and remote strategy prevents remote lookup");
+                LOG.debug("No local runtime found and '{}' strategy prevents remote lookup", NO_REMOTE);
                 return Optional.empty();
             }
             LOG.debug("No local runtime found, will try to find remote runtime");
+
             final Optional<LocalJavaRuntime> installedRuntime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, serverEndpointFromJnlp, vendor, os)
                     .map(remoteJavaRuntime -> installRemoteRuntime(remoteJavaRuntime, serverEndpointFromJnlp));
             if (!installedRuntime.isPresent()) {
@@ -67,7 +68,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
                 return askForDeactivatedRuntime(versionString, vendor, os);
             }
             return installedRuntime;
-        } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH) {
+        } else if (updateStrategy == DO_NOTHING_ON_LOCAL_MATCH || updateStrategy == NO_REMOTE) {
             LOG.debug("Local runtime {} found and will be used", localRuntime.get());
             return localRuntime;
         } else {

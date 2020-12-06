@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- this is a sample jnlp file -->
+<jnlp spec='1.0'
+    codebase='file:/path/'
+    href='jnlp.jnlp'>
+  <information>
+    <!-- this is the information section -->
+    <title>Large JNLP</title>
+    <vendor>The IcedTea Project</vendor>
+    <homepage href='http://homepage/' />
+    <description kind='one-line'>one-line</description>
+    <description kind='short'>short</description>
+    <description kind='tooltip'>tooltip</description>
+    <icon href='icon.png' />
+    <icon href='splash.png' kind='splash' />
+    <offline-allowed />
+    <shortcut online='true'>
+      <desktop/>
+      <menu submenu='submenu'/>
+    </shortcut>
+    <association extensions='*.foo' mime-type='foo/bar'>
+      <description>description of association</description>
+      <icon href='icon.png' />
+    </association>
+    <related-content href='http://related-content/'>
+      <title>related-content <!-- or something -->title</title>
+      <description>description of related-content</description>
+      <icon href='related-content-icon.png' />
+    </related-content>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <!-- the resources section describes things needed -->
+    <java version='1.3+' href='http://java-url/'
+        initial-heap-size='64m'
+        max-heap-size='128m' />
+    <jar href='eager.jar' download='eager'/>
+    <jar href='lazy.jar' download='lazy'/>
+    <nativelib href='native.jar'/>
+    <extension name='extension' version='0.1.1' href='http://extension/'/>
+    <property name='key' value='value'/>
+  </resources>
+  <application-desc main-class='MainClass'>
+    <argument>arg1</argument>
+    <argument>arg2</argument>
+  </application-desc>
+</jnlp>
+

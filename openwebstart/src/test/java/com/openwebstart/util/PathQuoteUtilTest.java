@@ -32,8 +32,7 @@ public class PathQuoteUtilTest {
         //than
         if (LauncherUtil.isWindows()) {
             Assertions.assertEquals(expectedWindows, transformed);
-        }
-        else {
+        } else {
             Assertions.assertEquals(expectedUnix, transformed);
         }
     }

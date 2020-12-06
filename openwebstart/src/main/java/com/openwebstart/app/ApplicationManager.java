@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class ApplicationManager {
 
-    private final static ApplicationManager INSTANCE = new ApplicationManager();
+    private static final ApplicationManager INSTANCE = new ApplicationManager();
 
     private ApplicationManager() {
     }

@@ -7,8 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class PacUtilsTest {
 
     @Test

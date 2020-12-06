@@ -5,6 +5,7 @@ import com.openwebstart.jvm.ui.Images;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ListHighlighter;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
@@ -64,7 +65,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
 
         cellContent = new JPanel();
-        cellContent.setLayout(new BorderLayout(12, 12));
+        cellContent.setLayout(LayoutFactory.createBorderLayout(12, 12));
         cellContent.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 8));
 
         final JPanel iconPanel = createIconPanel();
@@ -96,7 +97,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
         final JPanel firstLinePanel = new JPanel();
         firstLinePanel.setBackground(null);
-        firstLinePanel.setLayout(new BoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
+        firstLinePanel.setLayout(LayoutFactory.createBoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
         firstLinePanel.add(versionLabel);
         firstLinePanel.add(Box.createHorizontalStrut(6));
         firstLinePanel.add(vendorLabel);
@@ -104,7 +105,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
         final JPanel secondLine = new JPanel();
         secondLine.setBackground(null);
-        secondLine.setLayout(new BoxLayout(secondLine, BoxLayout.LINE_AXIS));
+        secondLine.setLayout(LayoutFactory.createBoxLayout(secondLine, BoxLayout.LINE_AXIS));
         secondLine.add(archLabel);
         secondLine.add(Box.createHorizontalStrut(6));
         secondLine.add(javaHomeLabel);
@@ -112,7 +113,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
 
         final JPanel centerPanel = new JPanel();
         centerPanel.setBackground(null);
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setLayout(LayoutFactory.createBoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.add(firstLinePanel);
         centerPanel.add(secondLine);
         centerPanel.add(Box.createVerticalGlue());

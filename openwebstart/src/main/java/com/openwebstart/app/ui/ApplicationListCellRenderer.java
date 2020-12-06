@@ -8,6 +8,7 @@ import com.openwebstart.jvm.ui.dialogs.ByteUnit;
 import com.openwebstart.ui.CenterLayout;
 import com.openwebstart.ui.IconComponent;
 import com.openwebstart.ui.ListHighlighter;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 
 import javax.swing.BorderFactory;
@@ -59,7 +60,7 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
         detailsLabel = new JLabel("ARCH");
 
         cellContent = new JPanel();
-        cellContent.setLayout(new BorderLayout(12, 12));
+        cellContent.setLayout(LayoutFactory.createBorderLayout(12, 12));
         cellContent.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 8));
 
         final JPanel iconPanel = createIconPanel();
@@ -88,19 +89,19 @@ public class ApplicationListCellRenderer implements ListCellRenderer<Application
 
         final JPanel firstLinePanel = new JPanel();
         firstLinePanel.setBackground(null);
-        firstLinePanel.setLayout(new BoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
+        firstLinePanel.setLayout(LayoutFactory.createBoxLayout(firstLinePanel, BoxLayout.LINE_AXIS));
         firstLinePanel.add(titleLabel);
         firstLinePanel.add(Box.createHorizontalGlue());
 
         final JPanel secondLine = new JPanel();
         secondLine.setBackground(null);
-        secondLine.setLayout(new BoxLayout(secondLine, BoxLayout.LINE_AXIS));
+        secondLine.setLayout(LayoutFactory.createBoxLayout(secondLine, BoxLayout.LINE_AXIS));
         secondLine.add(detailsLabel);
         secondLine.add(Box.createHorizontalGlue());
 
         final JPanel centerPanel = new JPanel();
         centerPanel.setBackground(null);
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setLayout(LayoutFactory.createBoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.add(firstLinePanel);
         centerPanel.add(secondLine);
         centerPanel.add(Box.createVerticalGlue());

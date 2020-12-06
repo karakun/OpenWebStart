@@ -7,6 +7,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +87,7 @@ public class RemoteRuntimeManagerTest {
         RuntimeManagerConfig.setDefaultVendor(null);
         RuntimeManagerConfig.setSupportedVersionRange(null);
 
-        LocalRuntimeManager.getInstance().loadRuntimes();
+        LocalRuntimeManager.getInstance().loadRuntimes(new DeploymentConfiguration());
     }
 
     @AfterEach
@@ -116,7 +117,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_2()  {
+    public void testRemoteRuntime_2() {
         //given
         final VersionString versionString = VersionString.fromString("1.8*");
         final URL specificServerEndpoint = null;
@@ -164,7 +165,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_5()  {
+    public void testRemoteRuntime_5() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;
@@ -207,7 +208,7 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testRemoteRuntime_8()  {
+    public void testRemoteRuntime_8() {
         //given
         final VersionString versionString = VersionString.fromString("1.8+");
         final URL specificServerEndpoint = null;

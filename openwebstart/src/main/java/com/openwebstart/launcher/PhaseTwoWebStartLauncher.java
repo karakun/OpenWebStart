@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -11,6 +12,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import java.util.Arrays;
@@ -27,11 +29,16 @@ import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
  */
 public class PhaseTwoWebStartLauncher {
 
+    static {
+        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePostfix("ows-stage1");
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(PhaseTwoWebStartLauncher.class);
     private static final String consoleOption = "-console";
     private static final List<String> optionsToSkip = Arrays.asList(CommandLineOptions.NOFORK.getOption(), CommandLineOptions.VIEWER.getOption(), consoleOption);
 
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart {}", v));
 
         Translator.addBundle("i18n");
@@ -43,6 +50,8 @@ public class PhaseTwoWebStartLauncher {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
             JNLPRuntime.exit(-1);
         }
+
+        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
 
         try {
             new InitialConfigurationCheck(config).check();

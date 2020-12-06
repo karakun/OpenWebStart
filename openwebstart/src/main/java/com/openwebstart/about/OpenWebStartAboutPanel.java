@@ -1,6 +1,7 @@
 package com.openwebstart.about;
 
 import com.openwebstart.install4j.Install4JUtils;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -29,7 +30,7 @@ public class OpenWebStartAboutPanel extends JPanel {
     public OpenWebStartAboutPanel(final DeploymentConfiguration deploymentConfiguration) {
         Assert.requireNonNull(deploymentConfiguration, "deploymentConfiguration");
 
-        setLayout(new BorderLayout());
+        setLayout(LayoutFactory.createBorderLayout());
 
         JEditorPane editorPane = new JEditorPane();
         editorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
@@ -66,7 +67,7 @@ public class OpenWebStartAboutPanel extends JPanel {
     }
 
     private String getHtmlContent() throws IOException {
-        try(final InputStream inputStream = OpenWebStartAboutPanel.class.getResourceAsStream("about.template.html")) {
+        try (final InputStream inputStream = OpenWebStartAboutPanel.class.getResourceAsStream("about.template.html")) {
             return IOUtils.readContentAsUtf8String(inputStream)
                     .replaceAll(Pattern.quote("${version}"), Install4JUtils.applicationVersion().orElse(""));
         }

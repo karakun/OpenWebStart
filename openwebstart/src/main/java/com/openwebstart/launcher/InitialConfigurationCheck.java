@@ -18,17 +18,22 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
+import static com.openwebstart.config.OwsDefaultsProvider.CUSTOM_JVM_LOCATION;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
+import static com.openwebstart.config.OwsDefaultsProvider.EXCLUDE_DEFAULT_JVM_LOCATION;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_DIR;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
+import static com.openwebstart.config.OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
-import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_BYPASS_LOCAL;
@@ -53,8 +58,12 @@ class InitialConfigurationCheck {
             ALLOW_DOWNLOAD_SERVER_FROM_JNLP,
             JVM_VENDOR,
             ALLOW_VENDOR_FROM_JNLP,
+            JVM_SERVER_WHITELIST,
             JVM_UPDATE_STRATEGY,
             JVM_SUPPORTED_VERSION_RANGE,
+            SEARCH_FOR_LOCAL_JVM_ON_STARTUP,
+            EXCLUDE_DEFAULT_JVM_LOCATION,
+            CUSTOM_JVM_LOCATION,
             KEY_PROXY_HTTP_HOST,
             KEY_PROXY_HTTPS_HOST,
             KEY_PROXY_HTTP_PORT,
@@ -69,8 +78,9 @@ class InitialConfigurationCheck {
             KEY_ASSUME_FILE_STEM_IN_CODEBASE,
             KEY_SECURITY_SERVER_WHITELIST,
             MAX_DAYS_UNUSED_IN_JVM_CACHE,
-            KEY_ENABLE_LOGGING,
+            KEY_ENABLE_DEBUG_LOGGING,
             KEY_ENABLE_LOGGING_TOFILE,
+            KEY_JVM_ARGS_WHITELIST,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,

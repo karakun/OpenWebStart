@@ -1,5 +1,6 @@
 package com.openwebstart.launcher;
 
+import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -13,6 +14,7 @@ import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.EnvironmentPrinter;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
+import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
@@ -21,6 +23,11 @@ import java.util.Arrays;
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
 public class ControlPanelLauncher {
+
+    static {
+        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePostfix("ows-settings");
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(ControlPanelLauncher.class);
 
@@ -69,6 +76,7 @@ public class ControlPanelLauncher {
             LOG.error("Can not set look&feel", e);
         }
 
+        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
         SwingUtils.invokeLater(() -> {
             final ControlPanel editor = new ControlPanel(config);
             editor.setVisible(true);

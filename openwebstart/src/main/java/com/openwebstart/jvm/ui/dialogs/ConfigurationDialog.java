@@ -10,6 +10,7 @@ import com.openwebstart.jvm.runtimes.Vendor;
 import com.openwebstart.jvm.ui.LookAndFeel;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -19,6 +20,7 @@ import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -53,6 +55,7 @@ import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorServ
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
@@ -65,6 +68,7 @@ public class ConfigurationDialog extends ModalDialog {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationDialog.class);
 
     private final Translator translator = Translator.getInstance();
+    private final DeploymentConfiguration configuration;
     private final JComboBox<Vendor> vendorComboBox;
     private final Color originalBackground;
     private boolean urlValidationError = false;
@@ -72,6 +76,8 @@ public class ConfigurationDialog extends ModalDialog {
 
     public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
+
+        this.configuration = deploymentConfiguration;
 
         final UiLock uiLock = new UiLock(deploymentConfiguration);
 
@@ -102,7 +108,6 @@ public class ConfigurationDialog extends ModalDialog {
         defaultUpdateServerField.addFocusListener(new MyFocusAdapter());
         uiLock.update(DEFAULT_JVM_DOWNLOAD_SERVER, defaultUpdateServerField);
 
-
         final JCheckBox allowServerFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.text"));
         allowServerFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isNonDefaultServerAllowed());
         uiLock.update(ALLOW_DOWNLOAD_SERVER_FROM_JNLP, allowServerFromJnlpCheckBox);
@@ -115,13 +120,24 @@ public class ConfigurationDialog extends ModalDialog {
         };
         waringLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
         waringLabel.setToolTipText(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.warning"));
-        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected());
-        allowServerFromJnlpCheckBox.addActionListener(e -> waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected()));
+        final boolean isNoJVMWhiteList = StringUtils.isBlank(deploymentConfiguration.getProperty(JVM_SERVER_WHITELIST));
+        waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected() && isNoJVMWhiteList);
+
+        final JButton showWhitelistButton = new JButton(translator.translate("dialog.jvmManagerConfig.allowServerInJnlp.whitelist.text"));
+        showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        showWhitelistButton.addActionListener(e -> new JVMServerWhitelistDialog(deploymentConfiguration).showAndWait());
+        allowServerFromJnlpCheckBox.addActionListener(e -> {
+            waringLabel.setVisible(allowServerFromJnlpCheckBox.isSelected() && isNoJVMWhiteList);
+            showWhitelistButton.setEnabled(allowServerFromJnlpCheckBox.isSelected());
+        });
 
         final JPanel allowServerFromJnlpContainer = new JPanel();
-        allowServerFromJnlpContainer.setLayout(new BoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
+        allowServerFromJnlpContainer.setLayout(LayoutFactory.createBoxLayout(allowServerFromJnlpContainer, BoxLayout.X_AXIS));
         allowServerFromJnlpContainer.add(allowServerFromJnlpCheckBox);
         allowServerFromJnlpContainer.add(waringLabel);
+        Dimension dim = new Dimension(10, -1);
+        allowServerFromJnlpContainer.add(new Box.Filler(dim, dim, dim));
+        allowServerFromJnlpContainer.add(showWhitelistButton);
 
         final JLabel unusedRuntimeCleanupLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.text"));
         final JFormattedTextField maxDaysStayInJvmCacheField = getMaxDaysInJvmCacheField();
@@ -132,7 +148,7 @@ public class ConfigurationDialog extends ModalDialog {
             LOG.error("Can not set default for max days unused in JVM cache!", e);
         }
         final JPanel numberOfDaysPanel = new JPanel();
-        numberOfDaysPanel.setLayout(new BorderLayout());
+        numberOfDaysPanel.setLayout(LayoutFactory.createBorderLayout());
         numberOfDaysPanel.add(maxDaysStayInJvmCacheField, BorderLayout.WEST);
         numberOfDaysPanel.add(new JLabel(translator.translate("dialog.jvmManagerConfig.unusedRuntimeCleanup.days.text")), BorderLayout.CENTER);
 
@@ -180,7 +196,7 @@ public class ConfigurationDialog extends ModalDialog {
         mainPanel.addFlexibleRow(6);
 
         final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(8, 8));
+        panel.setLayout(LayoutFactory.createBorderLayout(8, 8));
         panel.add(mainPanel, BorderLayout.CENTER);
         panel.add(ButtonPanelFactory.createButtonPanel(okButton, cancelButton), BorderLayout.SOUTH);
 
@@ -232,7 +248,7 @@ public class ConfigurationDialog extends ModalDialog {
     private void updateVendorComboBox(final URL specifiedServerURL) {
         try {
             SwingUtilities.invokeLater(() -> vendorComboBox.setCursor(getPredefinedCursor(WAIT_CURSOR)));
-            final List<Vendor> vendors = JavaRuntimeManager.getAllVendors(specifiedServerURL);
+            final List<Vendor> vendors = JavaRuntimeManager.getAllVendors(specifiedServerURL, configuration);
             final Vendor currentVendor = Vendor.fromString(RuntimeManagerConfig.getVendor());
             if (!vendors.contains(currentVendor)) {
                 vendors.add(currentVendor);
@@ -316,11 +332,11 @@ public class ConfigurationDialog extends ModalDialog {
 
     private class WarningToolTip extends JToolTip {
 
-            public WarningToolTip(JComponent component) {
-                super();
-                setComponent(component);
-                setBackground(Color.white);
-                setForeground(Color.decode("#f57c00"));
-            }
+        public WarningToolTip(JComponent component) {
+            super();
+            setComponent(component);
+            setBackground(Color.white);
+            setForeground(Color.decode("#f57c00"));
         }
+    }
 }

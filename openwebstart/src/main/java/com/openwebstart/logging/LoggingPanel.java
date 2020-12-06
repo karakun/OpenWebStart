@@ -1,6 +1,7 @@
 package com.openwebstart.logging;
 
 import com.openwebstart.controlpanel.FormPanel;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -43,7 +44,7 @@ public class LoggingPanel extends FormPanel {
 
         final JCheckBox activateDebugLoggingCheckbox = new JCheckBox(translator.translate("loggingPanel.activateDebug.text"));
         activateDebugLoggingCheckbox.setToolTipText(translator.translate("loggingPanel.activateDebug.description"));
-        bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING);
+        bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING);
         addEditorRow(1, activateDebugLoggingCheckbox);
 
 
@@ -74,13 +75,13 @@ public class LoggingPanel extends FormPanel {
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final File folder = chooser.getSelectedFile();
-                if(folder.exists() && folder.isDirectory()) {
+                if (folder.exists() && folder.isDirectory()) {
                     logFolderField.setText(folder.getAbsolutePath());
                     PathsAndFiles.LOG_DIR.setValue(folder.getAbsolutePath(), config);
                 }
             }
         });
-        final JPanel editorPanel = new JPanel(new BorderLayout());
+        final JPanel editorPanel = new JPanel(LayoutFactory.createBorderLayout());
         editorPanel.add(logFolderField, BorderLayout.CENTER);
         editorPanel.add(selectFolderButton, BorderLayout.EAST);
         addRow(4, logFolderLabel, editorPanel);

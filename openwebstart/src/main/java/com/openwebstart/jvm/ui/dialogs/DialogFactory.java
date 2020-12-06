@@ -6,6 +6,7 @@ import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.ui.ErrorDialog;
 import com.openwebstart.ui.ModalDialog;
 import com.openwebstart.ui.dialogs.DialogWithResult;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
@@ -25,7 +26,7 @@ public class DialogFactory {
     private static <R> R handleEdtConform(final DialogWithResult<R> dialog) {
         Assert.requireNonNull(dialog, "dialogHandler");
 
-        final Supplier<R> dialogHandler = dialog::showAndWait;
+        final Supplier<R> dialogHandler = dialog::showAndWaitForResult;
 
         if (SwingUtils.isEventDispatchThread()) {
             final R result = dialogHandler.get();
@@ -77,7 +78,7 @@ public class DialogFactory {
         final JButton okButton = new JButton(Translator.getInstance().translate("action.ok"));
         okButton.addActionListener(e -> dialog.close());
         final JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout(8, 8));
+        panel.setLayout(LayoutFactory.createBorderLayout(8, 8));
         panel.add(messageLabel, BorderLayout.CENTER);
         panel.add(ButtonPanelFactory.createButtonPanel(okButton), BorderLayout.SOUTH);
         dialog.setContentPane(panel);

@@ -3,6 +3,7 @@ package com.openwebstart.os;
 import com.openwebstart.controlpanel.ButtonPanelFactory;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.ui.ModalDialog;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
 import javax.swing.BorderFactory;
@@ -31,11 +32,11 @@ public class AskForEntriesDialog extends ModalDialog {
         int row = 0;
 
         formPanel.addEditorRow(row++, textLabel);
-        if(askForMenu) {
+        if (askForMenu) {
             formPanel.addEditorRow(row++, menuCheckBox);
             menuCheckBox.setSelected(true);
         }
-        if(askForDesktop) {
+        if (askForDesktop) {
             formPanel.addEditorRow(row++, desktopCheckBox);
             desktopCheckBox.setSelected(true);
         }
@@ -48,7 +49,7 @@ public class AskForEntriesDialog extends ModalDialog {
         });
         final JPanel buttonPanel = ButtonPanelFactory.createButtonPanel(okButton);
 
-        final JPanel contentPane = new JPanel(new BorderLayout());
+        final JPanel contentPane = new JPanel(LayoutFactory.createBorderLayout());
         contentPane.add(formPanel, BorderLayout.CENTER);
         contentPane.add(buttonPanel, BorderLayout.SOUTH);
         setContentPane(contentPane);
