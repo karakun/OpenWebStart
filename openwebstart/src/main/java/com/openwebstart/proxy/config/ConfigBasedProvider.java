@@ -70,6 +70,8 @@ public class ConfigBasedProvider implements ProxyProvider {
             configuration.getHttpsAddress().ifPresent(address -> proxies.add(new Proxy(Proxy.Type.HTTP, address)));
         } else if (scheme.equals(FTP_SCHEMA)) {
             configuration.getFtpAddress().ifPresent(address -> proxies.add(new Proxy(Proxy.Type.HTTP, address)));
+        } else if (scheme.equals(SOCKET_SCHEMA)) {
+            configuration.getSocksAddress().ifPresent(address -> proxies.add(new Proxy(Proxy.Type.SOCKS, address)));
         }
 
         if (proxies.isEmpty()) {
