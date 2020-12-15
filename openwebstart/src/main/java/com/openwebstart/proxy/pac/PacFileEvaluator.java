@@ -48,6 +48,7 @@ import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Scriptable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ProxySelector;
 import java.net.SocketPermission;
 import java.net.URI;
 import java.net.URL;
@@ -77,7 +78,7 @@ public class PacFileEvaluator {
     private static final Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
 
     private final String pacHelperFunctionContents;
-    private final String pacContents;
+    private String pacContents;
     private final URL pacUrl;
 
     private final PacProxyCache cache;
@@ -93,10 +94,6 @@ public class PacFileEvaluator {
         this.pacUrl = pacUrl;
         try (final InputStream inputStream = PacFileEvaluator.class.getResourceAsStream(PAC_HELPER_FUNCTIONS_FILE)) {
             this.pacHelperFunctionContents = IOUtils.readContentAsUtf8String(inputStream);
-        }
-        try (final InputStream inputStream = pacUrl.openStream()) {
-            //PAC supports ASCII and new versions support UTF-8 -> https://en.wikipedia.org/wiki/Proxy_auto-config#PAC_Character-Encoding
-            this.pacContents = IOUtils.readContentAsUtf8String(inputStream);
         }
     }
 
@@ -116,6 +113,27 @@ public class PacFileEvaluator {
         if (cachedResult != null) {
             return cachedResult;
         }
+        
+        // pacUrl.openStream() must not be called in constructor, otherwise it will initialize HttpURLConnection.userAgent
+        // before System.setProperty(HTTP_AGENT, httpAgent) is called in net.sourceforge.jnlp.JNLPFile
+        if (pacContents == null) {
+           LOG.debug("Open PAC url '{}'", pacUrl);
+           // need to temporarly deactivate ProxySelector, otherwise pacUrl.openStream() will call getProxies and throw StackOverflowError after a while
+           ProxySelector proxySelector = ProxySelector.getDefault();
+           ProxySelector.setDefault(null);
+           try (final InputStream inputStream = pacUrl.openStream()) {
+              //PAC supports ASCII and new versions support UTF-8 -> https://en.wikipedia.org/wiki/Proxy_auto-config#PAC_Character-Encoding
+              pacContents = IOUtils.readContentAsUtf8String(inputStream);
+           }
+           catch (IOException e) {
+              LOG.warn("Cannot open PAC url '{}' due to {}", pacUrl, e.getMessage());
+              return null;
+           }
+           finally {
+              ProxySelector.setDefault(proxySelector);
+           }
+        }
+        
         final String result = getProxiesWithoutCaching(uri);
         LOG.debug("PAC result for url '{}' -> '{}'", uri, result);
         cache.addToCache(uri, result);
