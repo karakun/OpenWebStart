@@ -1,9 +1,12 @@
 package com.openwebstart.update;
 
 import com.install4j.api.update.UpdateSchedule;
+import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.config.OwsMode;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public interface UpdatePanelConfigConstants {
@@ -34,6 +37,11 @@ public interface UpdatePanelConfigConstants {
 
     static boolean isAutoUpdateActivated(final DeploymentConfiguration configuration) {
         Assert.requireNonNull(configuration, "configuration");
+
+        final String mode = configuration.getProperty(OwsDefaultsProvider.OWS_MODE);
+        if (Objects.equals(OwsMode.EMBEDDED.name(), mode)) {
+            return false;
+        }
 
         return Optional.ofNullable(configuration.getProperty(UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME))
                 .map(Boolean::parseBoolean)
