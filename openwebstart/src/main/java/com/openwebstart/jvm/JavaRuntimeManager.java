@@ -12,9 +12,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+
+import static com.openwebstart.config.OwsDefaultsProvider.OWS_MODE;
+import static com.openwebstart.config.OwsMode.EMBEDDED;
 
 /**
  * Main interface to the JVM Manager functionalities.
@@ -25,6 +29,11 @@ public class JavaRuntimeManager {
             final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler,
             final Predicate<RemoteJavaRuntime> askForUpdateFunction,
             final DeploymentConfiguration configuration) {
+
+        final String owsMode = configuration.getProperty(OWS_MODE);
+        if (Objects.equals(EMBEDDED.name(), owsMode)) {
+            return new EmbeddedModeRuntimeProvider();
+        }
 
         LocalRuntimeManager.getInstance().loadRuntimes(configuration);
         return new JavaRuntimeSelector(downloadHandler, askForUpdateFunction);

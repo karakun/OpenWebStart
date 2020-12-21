@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 public class OwsDefaultsProvider implements DefaultsProvider {
 
+    public static final String OWS_MODE = "ows.mode";
+
     public static final String REMOTE_DEBUG = "ows.remote.debug.enabled";
     public static final String START_SUSPENDED = "ows.remote.debug.startSuspended";
     public static final String RANDOM_DEBUG_PORT = "ows.remote.debug.randomDebugPort";
@@ -54,6 +56,15 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     @Override
     public List<Setting> getDefaults() {
         return Arrays.asList(
+                Setting.createDefault(
+                        OWS_MODE,
+                        OwsMode.STANDALONE.name(),
+                        ValidatorFactory.createStringValidator(
+                                Stream.of(OwsMode.values())
+                                .map(Enum::name)
+                                .toArray(String[]::new)
+                        )
+                ),
                 Setting.createDefault(
                         SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS,
                         Boolean.TRUE.toString(),
