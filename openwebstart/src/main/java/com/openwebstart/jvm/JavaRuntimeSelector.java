@@ -40,6 +40,11 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     @Override
+    public void touch(LocalJavaRuntime javaRuntime) {
+        LocalRuntimeManager.touch(javaRuntime);
+    }
+
+    @Override
     public Optional<LocalJavaRuntime> getJavaRuntime(final VersionString versionString, final Vendor vendorFromJnlp, final URL serverEndpointFromJnlp) {
         Assert.requireNonNull(versionString, "versionString");
 

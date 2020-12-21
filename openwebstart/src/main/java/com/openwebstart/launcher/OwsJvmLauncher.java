@@ -128,7 +128,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
 
-        LocalRuntimeManager.touch(javaRuntime);
+        javaRuntimeProvider.touch(javaRuntime);
 
         if (JAVA_1_8.contains(version)) {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);

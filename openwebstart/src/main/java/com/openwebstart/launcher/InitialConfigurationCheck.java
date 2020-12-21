@@ -27,6 +27,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
+import static com.openwebstart.config.OwsDefaultsProvider.OWS_MODE;
 import static com.openwebstart.config.OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
@@ -53,6 +54,7 @@ class InitialConfigurationCheck {
     private static final String LAST_UPDATE_PROPERTY_NAME = "ows.install4j.propertyUpdate";
 
     private static final List<String> KEYS_OF_PROPERTIES_TO_TAKE_FROM_RESPONSE_VAR_FILE = Arrays.asList(
+            OWS_MODE,
             JVM_CACHE_DIR,
             DEFAULT_JVM_DOWNLOAD_SERVER,
             ALLOW_DOWNLOAD_SERVER_FROM_JNLP,

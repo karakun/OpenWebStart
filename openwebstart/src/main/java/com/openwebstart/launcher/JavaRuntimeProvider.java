@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface JavaRuntimeProvider {
     Optional<LocalJavaRuntime> getJavaRuntime(VersionString version, Vendor vendor, URL url);
+
+    void touch(LocalJavaRuntime javaRuntime);
 }

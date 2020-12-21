@@ -37,11 +37,19 @@ class OwsJvmLauncherTest {
                 .map(u -> toURL(u))
                 .orElse(null);
 
-        final JavaRuntimeProvider provider = (version, vendor, url) -> {
-            Assertions.assertEquals(expectedRuntimeVersion, version);
-            Assertions.assertEquals(expectedRuntimeVendor, vendor);
-            Assertions.assertEquals(expectedRuntimeUrl, url);
-            return Optional.of(runtimeDummy);
+        final JavaRuntimeProvider provider = new JavaRuntimeProvider() {
+            @Override
+            public Optional<LocalJavaRuntime> getJavaRuntime(VersionString version, Vendor vendor, URL url) {
+                Assertions.assertEquals(expectedRuntimeVersion, version);
+                Assertions.assertEquals(expectedRuntimeVendor, vendor);
+                Assertions.assertEquals(expectedRuntimeUrl, url);
+                return Optional.of(runtimeDummy);
+            }
+
+            @Override
+            public void touch(LocalJavaRuntime javaRuntime) {
+                // do nothing
+            }
         };
 
         final OwsJvmLauncher launcher = new OwsJvmLauncher(provider);
