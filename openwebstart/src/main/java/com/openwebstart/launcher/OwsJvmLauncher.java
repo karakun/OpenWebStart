@@ -182,6 +182,14 @@ public class OwsJvmLauncher implements JvmLauncher {
         commands.add(quoteIfRequired(pathToJavaBinary));
         commands.add(quoteIfRequired("-Xbootclasspath/a:" + pathToJar));
         commands.addAll(vmArgs);
+        
+        final String javaws_vm_args = System.getenv("JAVAWS_VM_ARGS");
+        if (javaws_vm_args != null) {
+        	LOG.info("Found JAVAWS_VM_ARGS to append: {}", javaws_vm_args);
+        	
+        	commands.add(javaws_vm_args.trim());
+        }
+        
         commands.addAll(getRemoteDebuggingArgs());
         commands.add(Boot.class.getName());
         commands.addAll(javawsArgs);
