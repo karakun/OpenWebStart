@@ -38,6 +38,7 @@ exception statement from your version.
 package com.openwebstart.proxy.pac;
 
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
@@ -45,10 +46,11 @@ import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Context;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.ContextFactory;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Function;
 import net.adoptopenjdk.icedteaweb.shaded.mozilla.javascript.Scriptable;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ProxySelector;
+import java.net.Proxy;
 import java.net.SocketPermission;
 import java.net.URI;
 import java.net.URL;
@@ -59,6 +61,8 @@ import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.util.Optional;
 import java.util.PropertyPermission;
+
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 
 import static com.openwebstart.proxy.pac.PacConstants.JAVASCRIPT_RUNTIME_PERMISSION_NAME;
 import static com.openwebstart.proxy.pac.PacConstants.PAC_HELPER_FUNCTIONS_FILE;
@@ -113,31 +117,29 @@ public class PacFileEvaluator {
         if (cachedResult != null) {
             return cachedResult;
         }
-        
-        // pacUrl.openStream() must not be called in constructor, otherwise it will initialize HttpURLConnection.userAgent
+        // pacUrl.openConnection() must not be called in constructor, otherwise it will initialize HttpURLConnection.userAgent
         // before System.setProperty(HTTP_AGENT, httpAgent) is called in net.sourceforge.jnlp.JNLPFile
         if (pacContents == null) {
-           LOG.debug("Open PAC url '{}'", pacUrl);
-           // need to temporarly deactivate ProxySelector, otherwise pacUrl.openStream() will call getProxies and throw StackOverflowError after a while
-           ProxySelector proxySelector = ProxySelector.getDefault();
-           ProxySelector.setDefault(null);
-           try (final InputStream inputStream = pacUrl.openStream()) {
-              //PAC supports ASCII and new versions support UTF-8 -> https://en.wikipedia.org/wiki/Proxy_auto-config#PAC_Character-Encoding
-              pacContents = IOUtils.readContentAsUtf8String(inputStream);
-           }
-           catch (IOException e) {
-              LOG.warn("Cannot open PAC url '{}' due to {}", pacUrl, e.getMessage());
-              return null;
-           }
-           finally {
-              ProxySelector.setDefault(proxySelector);
-           }
+            pacContents = loadPacContent();
         }
-        
         final String result = getProxiesWithoutCaching(uri);
         LOG.debug("PAC result for url '{}' -> '{}'", uri, result);
         cache.addToCache(uri, result);
         return result;
+    }
+
+    private String loadPacContent() {
+        LOG.debug("Open PAC url '{}'", pacUrl);
+        // need to open PAC URL without Proxy, otherwise it will call getProxies and throw StackOverflowError after a while
+        try (final InputStream inputStream = pacUrl.openConnection(Proxy.NO_PROXY).getInputStream()) {
+            //PAC supports ASCII and new versions support UTF-8 -> https://en.wikipedia.org/wiki/Proxy_auto-config#PAC_Character-Encoding
+            return IOUtils.readContentAsUtf8String(inputStream);
+        }
+        catch (IOException e) {
+            LOG.warn("Cannot open PAC url '{}' due to {}", pacUrl, e.getMessage());
+            DialogFactory.showErrorDialog(Translator.getInstance().translate("proxy.error.creationFailed"), e);
+            return JNLPRuntime.exit(-1);
+        }
     }
 
     /**
