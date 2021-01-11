@@ -71,7 +71,20 @@ last modified timestamp of the resource and will go ahead and download the resou
 
 == Security
 
-<TODO: add security related questions here>
+==== What to do when my JNLP application complains about missing certificates in the trust store?
+
+Sometimes OpenWebStart signals that the application's digital signature cannot be verified when launching an applications with signed jars.
+
+OpenWebStart does not maintain a curated collection of certificates by itself.
+Rather it relies on the JVM which brings a default set of certificates.
+
+In this context it is helpful to distinguish between the bundled JVM, used to run OpenWebStart itself, and the custom-selected JVM used to launch the JNLP applications.
+The second one is determined by the definition in the JNLP file or by the configuration via OpenWebStart JVM Manager.
+
+With its half-yearly releases (spring and fall) we update the bundled JVM and thus the certificates included in the internal JVM.
+
+During the execution of the JNLP application the certificates of the custom-selected JVM are available.
+So the control which certificates will be available depends on the definitions in the JNLP file and the configuration via OpenWebStart JVM Manager.
 
 == Functionality
 
