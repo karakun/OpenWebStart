@@ -86,6 +86,17 @@ This has an impact on the certificates included in the internal JVM.
 
 The certificates available during the execution of the JNLP application are those who come with the custom-selected JVM.
 
+It is possible to add certificates to a per-user trust store.
+OpenWebStart supports importing of PKCS12 certificates.
+Open the settings and go the tab `Certificates` then select the appropriate user store and hit "import..."
+Most likely you will want to import a certificate to the `Trusted Certificates` or the `Trusted Root CA Certificates`.
+
+image::OWS_import_certificate.png[title="Import Certificate"]
+
+Another possibility is to select the option `Always trust content from this publisher`
+
+image::OWS_trust_publisher.png[title="Always trust this publisher" width="80%"]
+
 == Functionality
 
 ==== Does OpenWebStart support Applets?
