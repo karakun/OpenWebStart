@@ -622,6 +622,25 @@ This can be used to check the certificates of the JVM which is executing the app
 If you want to import custom certificates you should do this in the _User_ tab.
 This will ensure that the certificate is available in *any* JVM which is launched by OWS.
 
+OpenWebStart supports importing of PKCS12 certificates.
+Open the settings and go the tab `Certificates` then select the appropriate user store and hit "import..."
+Most likely you will want to import a certificate to the `Trusted Certificates` or the `Trusted Root CA Certificates`.
+
+image::OWS_import_certificate.png[title="Import Certificate" width="80%"]
+
+Another possibility is to select the option `Always trust content from this publisher`
+
+image::OWS_trust_publisher.png[title="Always trust this publisher" width="50%"]
+
+
+NOTE::
+OpenWebStart does not maintain a curated collection of certificates by itself.
+Rather it relies on the JVM which brings a default set of certificates.
+In this context it is helpful to distinguish between the bundled JVM, used to run OpenWebStart itself, and the custom-selected JVM used to launch the JNLP applications.
+While the bundled JVM cannot customized or replaced by an OpenWebStart user, the JVM used to run the JNLP application is determined by the definition in the JNLP file and by the configuration of the OpenWebStart JVM Manager.
+The certificates available during the execution of the JNLP application are those who come with the custom-selected JVM.
+
+
 === Server Whitelist
 
 The "Server Whitelist" panel in OWS settings displays the server whitelist.
