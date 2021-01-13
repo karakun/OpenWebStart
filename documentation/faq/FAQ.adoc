@@ -86,6 +86,9 @@ This has an impact on the certificates included in the internal JVM.
 
 The certificates available during the execution of the JNLP application are those who come with the custom-selected JVM.
 
+
+==== How can I add certifictes to the trust store?
+
 It is possible to add certificates to a per-user trust store.
 OpenWebStart supports importing of PKCS12 certificates.
 Open the settings and go the tab `Certificates` then select the appropriate user store and hit "import..."
