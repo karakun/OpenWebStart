@@ -94,11 +94,11 @@ OpenWebStart supports importing of PKCS12 certificates.
 Open the settings and go the tab `Certificates` then select the appropriate user store and hit "import..."
 Most likely you will want to import a certificate to the `Trusted Certificates` or the `Trusted Root CA Certificates`.
 
-image::OWS_import_certificate.png[title="Import Certificate"]
+image::OWS_import_certificate.png[title="Import Certificate" width="80%"]
 
 Another possibility is to select the option `Always trust content from this publisher`
 
-image::OWS_trust_publisher.png[title="Always trust this publisher" width="80%"]
+image::OWS_trust_publisher.png[title="Always trust this publisher" width="50%"]
 
 == Functionality
 
