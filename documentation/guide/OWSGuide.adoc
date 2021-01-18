@@ -167,6 +167,29 @@ ows.jvm.manager.server.default=https://my.custom.server
 ows.jvm.manager.server.default.locked=true
 ----
 
+You can control whether you want to run the installer with admin rights and whether you
+want to install for the Current User or for All Users by specifying the following properties:
+
+Install For All Users:
+----
+userMode$Integer=1
+----
+
+Install For Current User:
+----
+userMode$Integer=0
+----
+
+Run the Installer without admin rights:
+----
+sys.adminRights$Boolean=false
+----
+
+Run the installer with admin rights:
+----
+sys.adminRights$Boolean=true
+----
+
 You can now use your enhanced file to install OpenWebStart on multiple machines.
 Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
 
