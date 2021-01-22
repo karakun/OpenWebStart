@@ -37,6 +37,7 @@ exception statement from your version.
 
 package com.openwebstart.proxy.pac;
 
+import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.io.IOUtils;
@@ -62,8 +63,6 @@ import java.security.ProtectionDomain;
 import java.util.Optional;
 import java.util.PropertyPermission;
 
-import com.openwebstart.jvm.ui.dialogs.DialogFactory;
-
 import static com.openwebstart.proxy.pac.PacConstants.JAVASCRIPT_RUNTIME_PERMISSION_NAME;
 import static com.openwebstart.proxy.pac.PacConstants.PAC_HELPER_FUNCTIONS_FILE;
 import static com.openwebstart.proxy.pac.PacConstants.PAC_HELPER_FUNCTIONS_INTERNAL_NAME;
@@ -82,10 +81,12 @@ public class PacFileEvaluator {
     private static final Logger LOG = LoggerFactory.getLogger(PacFileEvaluator.class);
 
     private final String pacHelperFunctionContents;
-    private String pacContents;
     private final URL pacUrl;
 
     private final PacProxyCache cache;
+    private final ThreadLocal<Boolean> isLoadingPacContent = new ThreadLocal<>();
+
+    private String pacContents;
 
     /**
      * Initialize a new object by using the PAC file located at the given URL.
@@ -120,7 +121,14 @@ public class PacFileEvaluator {
         // pacUrl.openConnection() must not be called in constructor, otherwise it will initialize HttpURLConnection.userAgent
         // before System.setProperty(HTTP_AGENT, httpAgent) is called in net.sourceforge.jnlp.JNLPFile
         if (pacContents == null) {
-            pacContents = loadPacContent();
+            if (isLoadingPacContent.get() != null) {
+                // this flag prevents an infinite loop where loadPacContent() triggers a getProxy()
+                // this is caused by an issue in the JDK: https://bugs.openjdk.java.net/browse/JDK-8144008
+                return null; // null -> NO_PROXY
+            } else {
+                isLoadingPacContent.set(true);
+                pacContents = loadPacContent();
+            }
         }
         final String result = getProxiesWithoutCaching(uri);
         LOG.debug("PAC result for url '{}' -> '{}'", uri, result);
@@ -182,7 +190,7 @@ public class PacFileEvaluator {
                     final Object result = ((Function) functionObj).call(cx, scope, scope, args);
                     //NULL is valid return value:
                     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_(PAC)_file
-                    return Optional.ofNullable(result).map(r -> r.toString()).orElse(null);
+                    return Optional.ofNullable(result).map(Object::toString).orElse(null);
                 } else {
                     throw new IllegalStateException("'" + PAC_METHOD + "' function not found in pac file");
                 }
