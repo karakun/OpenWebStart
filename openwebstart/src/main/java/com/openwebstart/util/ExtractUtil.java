@@ -69,7 +69,7 @@ public class ExtractUtil {
             }
             moveJavaHomeToTarget(tempDir.toPath(), baseDir);
         } finally {
-            FileUtils.deleteWithErrMesg(tempDir);
+            FileUtils.deleteWithErrMesg(tempDir,null);
         }
     }
 

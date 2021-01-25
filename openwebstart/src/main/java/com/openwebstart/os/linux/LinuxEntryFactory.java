@@ -11,6 +11,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.cache.CacheUtil;
 import net.sourceforge.jnlp.config.PathsAndFiles;
+import net.sourceforge.jnlp.util.RestrictedFileUtils;
 import net.sourceforge.jnlp.util.XDesktopEntry;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
             throw new IOException(shortcutFile.getParentFile().toString());
         }
 
-        FileUtils.createRestrictedFile(shortcutFile);
+        RestrictedFileUtils.createRestrictedFile(shortcutFile);
         FileUtils.saveFileUtf8(getContent(file, false, iconLocation), shortcutFile);
 
         final ProcessBuilder pb = new ProcessBuilder("xdg-desktop-icon", "install", "--novendor",
