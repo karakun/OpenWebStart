@@ -69,7 +69,7 @@ public class ExtractUtil {
             }
             moveJavaHomeToTarget(tempDir.toPath(), baseDir);
         } finally {
-            FileUtils.deleteWithErrMesg(tempDir,null);
+            FileUtils.deleteWithErrMesg(tempDir, null);
         }
     }
 
@@ -119,7 +119,9 @@ public class ExtractUtil {
             try (final OutputStream outputStream = Files.newOutputStream(newFile)) {
                 IOUtils.copy(inputStream, outputStream);
             }
-            newFile.toFile().setExecutable(true);
+            if (!newFile.toFile().setExecutable(true)) {
+                LOG.warn("failed to set executable flag on file {}", newFile);
+            }
         }
     }
 }
