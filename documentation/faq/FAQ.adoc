@@ -283,6 +283,22 @@ public class HelloWorld11 extends Application {
 }
 ....
 
+==== Is there a way to advice OpenWebstart to use a 32-bit JVM on a 64-bit machine?
+
+It is possible to set the `require-32bit` attribute in the JNLP file as follows:
+
+[source]
+----
+<jnlp
+  spec="1.0+" codebase="...">
+  <resources>
+    <java version="1.8*" require-32bit="true" ... />
+    <jar href="MyDemo.jar"/>
+  </resources>
+  <application-desc main-class="misc.MyDemo"/>
+</jnlp>
+----
+
 == Subscription and Premium Support
 
 ==== Is there a subscription for OpenWebStart?

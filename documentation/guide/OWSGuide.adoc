@@ -446,7 +446,7 @@ NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes
 OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application.
 The default points to `https://download-openwebstart.com/jvms.json`.
 
-==== Setup a Custom Download Server
+===== Setup a Custom Download Server
 If you want to set up your own JVM download server you must provide a json file which lists all available JVMs.
 
 This json file must contain the following data:
@@ -472,7 +472,7 @@ cacheTimeInMillis:: The time which needs to elapse before a client is allowed to
 
 os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
 
-==== Allowing JVM Server in JNLP and defining a JVM Server Whitelist
+===== Allowing JVM Server in JNLP and defining a JVM Server Whitelist
 
 You can allow the specification of JVM server in the JNLP file by defining the property:
 `ows.jvm.manager.server.allowFromJnlp=true`.
@@ -494,7 +494,7 @@ ows.jvm.manager.server.allowFromJnlp.whitelist=myjvms.myserver.com, *.jvms.com
 
 It is possible to specify wildcards in the URLs specified in the whitelist. Please see the section on "Server Whitelist" for details.
 
-==== Searching for local JVM
+===== Searching for local JVM
 
 OpenWebStart can search for already installed JVMs on your local file system.
 This is done by checking in a few default locations.
@@ -511,7 +511,7 @@ ows.jvm.manager.excludeDefaultSearchLocation=true
 ows.jvm.manager.customSearchLocation=c\:/path/to/jvm,c:\\path\\to\\other\\jvm
 ----
 
-=== Whitelist for JVM Arguments
+===== Whitelist for JVM Arguments
 
 OWS starts the JNLP application with the JVM that best matches JVM in the JNLP file.
 While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
@@ -545,6 +545,16 @@ Subsequently the JNLP file can include the above JVM args:
 ----
 
 Note: The whitelist should only contain the name of the JVM argument and not the value as can be seen in the example above.
+
+
+===== Specify 32-bit JVM in JNLP file
+
+There is the possiblity to advise OpenWebStart to use the 32-bit JVM on a 64-bit machine by specifying the `require-32bit` attribute in the JNLP file as follows:
+
+[source]
+----
+<java version="1.8*" require-32bit="true" ... />
+----
 
 === Cache Management
 
