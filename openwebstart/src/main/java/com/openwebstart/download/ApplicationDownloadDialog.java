@@ -143,8 +143,9 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     }
 
     private void onUpdate(final ApplicationDownloadResourceState resourceState) {
-        resourceStatesLock.lock();
         final URL url = resourceState.getUrl();
+
+        resourceStatesLock.lock();
         try {
             ApplicationDownloadResourceState lastState = resourceStates.get(url);
             if (lastState == null

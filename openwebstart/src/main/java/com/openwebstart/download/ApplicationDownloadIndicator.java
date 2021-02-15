@@ -11,6 +11,12 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationDownloadIndicator.class);
 
+    public static final ApplicationDownloadIndicator DOWNLOAD_INDICATOR = new ApplicationDownloadIndicator();
+
+    private ApplicationDownloadIndicator() {
+        // prevent creation of instances
+    }
+
     @Override
     public DownloadServiceListener getListener(final String downloadName, final URL[] resources) {
         LOG.debug("DownloadServiceListener for {} will be created", downloadName);

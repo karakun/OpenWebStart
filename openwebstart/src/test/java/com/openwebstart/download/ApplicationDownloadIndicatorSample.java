@@ -8,12 +8,14 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_INDICATOR;
+
 class ApplicationDownloadIndicatorSample {
 
     public static void main(String[] args) {
         final String applicationName = "Demo application";
         final URL[] resources = new URL[0];
-        final ApplicationDownloadIndicator indicator = new ApplicationDownloadIndicator();
+        final ApplicationDownloadIndicator indicator = DOWNLOAD_INDICATOR;
         final DownloadServiceListener listener = indicator.getListener(applicationName, resources);
 
         final SampleApplication application = new SampleApplication(listener);
