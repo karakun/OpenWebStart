@@ -93,17 +93,17 @@ public enum OperationSystem {
     }
 
     public static Optional<OperationSystem> getOperationSystem(String osName, String arch) {
-        if (osName.contains(WIN)) {
+        if (osName.toLowerCase().contains(WIN)) {
             if (arch.contains(ARCH_64)) {
                 return Optional.of(OperationSystem.WIN64);
             } else {
                 return Optional.of(OperationSystem.WIN32);
             }
         }
-        if (osName.contains(MAC)) {
+        if (osName.toLowerCase().contains(MAC)) {
             return Optional.of(OperationSystem.MAC64);
         }
-        if (osName.contains(LINUX)) {
+        if (osName.toLowerCase().contains(LINUX)) {
             if (arch.contains(ARCH_64)) {
                 return Optional.of(OperationSystem.LINUX64);
             } else {
