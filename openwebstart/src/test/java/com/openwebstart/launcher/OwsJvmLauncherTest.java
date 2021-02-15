@@ -37,10 +37,11 @@ class OwsJvmLauncherTest {
                 .map(u -> toURL(u))
                 .orElse(null);
 
-        final JavaRuntimeProvider provider = (version, vendor, url) -> {
+        final JavaRuntimeProvider provider = (version, vendor, url, require32bit) -> {
             Assertions.assertEquals(expectedRuntimeVersion, version);
             Assertions.assertEquals(expectedRuntimeVendor, vendor);
             Assertions.assertEquals(expectedRuntimeUrl, url);
+            Assertions.assertEquals(false, require32bit);
             return Optional.of(runtimeDummy);
         };
 

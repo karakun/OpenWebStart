@@ -40,7 +40,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
     }
 
     @Override
-    public Optional<LocalJavaRuntime> getJavaRuntime(final VersionString versionString, final Vendor vendorFromJnlp, final URL serverEndpointFromJnlp) {
+    public Optional<LocalJavaRuntime> getJavaRuntime(final VersionString versionString, final Vendor vendorFromJnlp, final URL serverEndpointFromJnlp, final boolean require32bit) {
         Assert.requireNonNull(versionString, "versionString");
 
         final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
@@ -48,7 +48,8 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
                 .filter(v -> RuntimeManagerConfig.isVendorFromJnlpAllowed())
                 .filter(v -> !Objects.equals(v, Vendor.ANY_VENDOR))
                 .orElseGet(() -> Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor()));
-        final OperationSystem os = OperationSystem.getLocalSystem();
+
+        final OperationSystem os = getOperationSystem(require32bit);
 
         LOG.debug("Trying to find Java runtime. Requested version: '{}', vendor: '{}', os: '{}', server-url: '{}'", versionString, vendor, os, serverEndpointFromJnlp);
 
@@ -84,6 +85,16 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
             LOG.debug("Newer runtime {} installed", installedRuntime.get());
             return installedRuntime;
         }
+    }
+
+    private OperationSystem getOperationSystem(boolean require32bit) {
+        final OperationSystem os = OperationSystem.getLocalSystem();
+
+        if (require32bit) {
+            return os.getVariant32bit();
+        }
+
+        return os;
     }
 
     private Optional<LocalJavaRuntime> askForDeactivatedRuntime(VersionString versionString, Vendor vendor, OperationSystem os) {
