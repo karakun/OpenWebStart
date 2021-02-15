@@ -48,13 +48,18 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
     private final Lock lastOverallPercentLock = new ReentrantLock();
 
+    private final JLabel messageLabel = new JLabel("");
+
     private final JProgressBar overallProgressBar;
 
     private final ApplicationDownloadDetailListModel listModel;
 
     private final AtomicBoolean hasBeenClosed = new AtomicBoolean(false);
 
+    private String appName;
+
     public ApplicationDownloadDialog(final String applicationName) {
+        setApplicationName(applicationName);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         final Translator translator = Translator.getInstance();
@@ -64,10 +69,22 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
             @Override
             public void windowClosing(final WindowEvent e) {
-                final String[] options = {translator.translate("appDownload.exit.yes"), translator.translate("appDownload.exit.no")};
-                final int result = JOptionPane.showOptionDialog(ApplicationDownloadDialog.this,
-                        translator.translate("appDownload.exit.text", applicationName), translator.translate("appDownload.exit.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
-                        null, options, options[0]);
+                final String appName = ApplicationDownloadDialog.this.appName;
+                final String[] options = {
+                        translator.translate("appDownload.exit.yes"),
+                        translator.translate("appDownload.exit.no")
+                };
+
+                final int result = JOptionPane.showOptionDialog(
+                        ApplicationDownloadDialog.this,
+                        translator.translate("appDownload.exit.text", appName),
+                        translator.translate("appDownload.exit.title"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
                 if (result == 0) {
                     System.exit(0);
                 }
@@ -79,7 +96,6 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         resourceStates = new HashMap<>();
 
         final FormPanel mainPanel = new FormPanel();
-        final JLabel messageLabel = new JLabel(translator.translate("appDownload.message", applicationName));
         overallProgressBar = new JProgressBar();
         overallProgressBar.setIndeterminate(true);
         overallProgressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, overallProgressBar.getPreferredSize().height));
@@ -128,6 +144,11 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
         dialogPanel.add(buttonPane, BorderLayout.SOUTH);
 
         setContentPane(dialogPanel);
+    }
+
+    void setApplicationName(String applicationName) {
+        appName = applicationName;
+        messageLabel.setText(Translator.getInstance().translate("appDownload.message", applicationName));
     }
 
     private void onUpdate(final int overallPercent) {
