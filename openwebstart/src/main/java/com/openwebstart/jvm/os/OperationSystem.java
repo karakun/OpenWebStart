@@ -23,13 +23,12 @@ import static com.openwebstart.jvm.os.Architecture.X86;
 public enum OperationSystem {
 
     ARM32("Linux ARM 32 Hard Float ABI", "arm-32", Architecture.ARM32),
-    ARM64("Linux ARM 64 Hard Float ABI", "arm-64", Architecture.ARM64),
+    ARM64("Linux ARM 64 Hard Float ABI", "arm-64", Architecture.ARM64, ARM32),
     LINUX32("Linux x86", "linux-32", X86),
-    LINUX64("Linux x64", "linux-64", X64),
+    LINUX64("Linux x64", "linux-64", X64, LINUX32),
     MAC64("Mac OS X x64", "mac-64", X64),
     WIN32("Windows x86", "win-32", X86),
-    WIN64("Windows x64", "win-64", X64),
-
+    WIN64("Windows x64", "win-64", X64, WIN32),
     ;
 
     //TODO: Should be in ITW
@@ -51,11 +50,17 @@ public enum OperationSystem {
     private final String shortName;
 
     private final Architecture architecture;
+    private final OperationSystem variant32bit;
 
     OperationSystem(final String name, final String shortName, final Architecture architecture) {
+        this(name, shortName, architecture, null);
+    }
+
+    OperationSystem(final String name, final String shortName, final Architecture architecture, final OperationSystem variant32bit) {
         this.name = name;
         this.shortName = shortName;
         this.architecture = architecture;
+        this.variant32bit = variant32bit;
     }
 
     public boolean isMac() {
@@ -84,6 +89,10 @@ public enum OperationSystem {
 
     public String getArchitectureName() {
         return architecture.getName();
+    }
+
+    public OperationSystem getVariant32bit() {
+        return variant32bit == null ? this : variant32bit;
     }
 
     public static OperationSystem getLocalSystem() {

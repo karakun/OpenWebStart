@@ -83,9 +83,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         for (JREDesc jre : jres) {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
             final Vendor vendor = Vendor.fromStringOrAny(jre.getVendor());
+            final boolean require32bit = jre.isRequire32Bit();
             LOG.debug("searching for JRE with version string '{}' and vendor '{}'", version, vendor);
             try {
-                final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, vendor, jre.getLocation());
+                final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, vendor, jre.getLocation(), require32bit);
                 if (javaRuntime.isPresent()) {
                     LOG.debug("Found JVM {}", javaRuntime.get());
                     return javaRuntime.map(r -> new RuntimeInfo(r, jre));
@@ -102,7 +103,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private JREDesc getDefaultJRE() {
         try {
-            return new JREDesc(VersionString.fromString("1.8+"), null, null, null, null, null, null);
+            return new JREDesc(VersionString.fromString("1.8+"), null, false, null, null, null, null, null);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

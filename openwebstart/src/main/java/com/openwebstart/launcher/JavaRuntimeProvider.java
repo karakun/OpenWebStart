@@ -8,5 +8,5 @@ import java.net.URL;
 import java.util.Optional;
 
 public interface JavaRuntimeProvider {
-    Optional<LocalJavaRuntime> getJavaRuntime(VersionString version, Vendor vendor, URL url);
+    Optional<LocalJavaRuntime> getJavaRuntime(VersionString version, Vendor vendor, URL url, boolean require32bit);
 }
