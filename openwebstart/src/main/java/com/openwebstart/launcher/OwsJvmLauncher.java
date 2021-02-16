@@ -10,8 +10,6 @@ import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
-import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
-import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -27,10 +25,12 @@ import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
-import net.sourceforge.jnlp.util.logging.FileLog;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +44,12 @@ import java.util.stream.Collectors;
 import static com.openwebstart.debug.DebugParameterHelper.getRemoteDebugParameters;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
+import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.JAVAWS;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.ITW_BIN_LOCATION;
+import static net.sourceforge.jnlp.util.logging.FileLog.LOG_POSTFIX_ENV;
+import static net.sourceforge.jnlp.util.logging.FileLog.LOG_PREFIX_ENV;
+import static net.sourceforge.jnlp.util.logging.FileLog.getLogFileNamePrefix;
 
 /**
  * Launches OWS with a JNLP in a matching JRE.
@@ -52,6 +57,7 @@ import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
+    private static final String INSTALL_4_J_EXE_DIR = "install4j.exeDir";
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
 
@@ -126,7 +132,9 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
 
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
-        final List<String> vmArgs = new ArrayList<>(runtimeInfo.jreDesc.getAllVmArgs());
+        final List<String> vmArgs = new ArrayList<>();
+        getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
+        vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs());
         vmArgs.addAll(extractVmArgs(jnlpFile));
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
@@ -150,10 +158,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
             final List<String> result = new ArrayList<>();
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
-            properties.keySet().forEach(property -> {
-                if (JvmUtils.isValidSecureProperty(property)) {
-                    result.add(String.format("-D%s=%s", property, properties.get(property)));
-                    LOG.debug("Set -D jvm arg for property {} from JNLP file properties map.", property);
+            properties.keySet().forEach(key -> {
+                if (JvmUtils.isValidSecureProperty(key)) {
+                    result.add(propertyString(key, properties.get(key)));
+                    LOG.debug("Set -D jvm arg for property {} from JNLP file properties map.", key);
                 }
             });
             return result;
@@ -171,7 +179,6 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         commands.add(quoteIfRequired(pathToJavaBinary));
         commands.add(quoteIfRequired("-Xbootclasspath/a:" + pathToJar));
-        vmArgs.add("-D" + JavaSystemPropertiesConstants.ITW_BIN_LOCATION+ "=" + Install4JUtils.installationDirectory().get() + File.separator + IcedTeaWebConstants.JAVAWS);
         commands.addAll(vmArgs);
         commands.addAll(getRemoteDebuggingArgs());
         commands.add(Boot.class.getName());
@@ -182,8 +189,8 @@ public class OwsJvmLauncher implements JvmLauncher {
         final ProcessBuilder pb = new ProcessBuilder();
         final Map<String, String> env = pb.environment();
         env.put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
-        env.put(FileLog.LOG_PREFIX_ENV, FileLog.getLogFileNamePrefix());
-        env.put(FileLog.LOG_POSTFIX_ENV, "ows-stage2");
+        env.put(LOG_PREFIX_ENV, getLogFileNamePrefix());
+        env.put(LOG_POSTFIX_ENV, "ows-stage2");
 
         final Process p = pb
                 .command(commands)
@@ -191,6 +198,27 @@ public class OwsJvmLauncher implements JvmLauncher {
                 .start();
 
         ProcessUtils.waitForSafely(p);
+    }
+
+    private Optional<String> getOwsExecutablePath() {
+        final String installDir = Install4JUtils.installationDirectory()
+                .orElse(System.getProperty(INSTALL_4_J_EXE_DIR));
+
+        if (installDir == null) {
+            return Optional.empty();
+        }
+
+        final Path unixPath = Paths.get(installDir, JAVAWS);
+        if (Files.isExecutable(unixPath)) {
+            return Optional.ofNullable(unixPath.toAbsolutePath().toString());
+        }
+
+        final Path windowsPath = Paths.get(installDir, JAVAWS + ".exe");
+        if (Files.isExecutable(windowsPath)) {
+            return Optional.ofNullable(windowsPath.toAbsolutePath().toString());
+        }
+
+        return Optional.empty();
     }
 
     private static File getOpenWebStartJar() {
@@ -257,6 +285,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
 
         return Collections.emptyList();
+    }
+
+    private String propertyString(String key, String value) {
+        return String.format("-D%s=%s", key, value);
     }
 
     private static class RuntimeInfo {
