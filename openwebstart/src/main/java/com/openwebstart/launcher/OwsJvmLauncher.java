@@ -1,6 +1,7 @@
 package com.openwebstart.launcher;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.LocalRuntimeManager;
 import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
@@ -9,6 +10,8 @@ import com.openwebstart.jvm.util.JavaExecutableFinder;
 import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.IcedTeaWebConstants;
+import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
@@ -168,7 +171,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         commands.add(quoteIfRequired(pathToJavaBinary));
         commands.add(quoteIfRequired("-Xbootclasspath/a:" + pathToJar));
-
+        vmArgs.add("-D" + JavaSystemPropertiesConstants.ITW_BIN_LOCATION+ "=" + Install4JUtils.installationDirectory().get() + File.separator + IcedTeaWebConstants.JAVAWS);
         commands.addAll(vmArgs);
         commands.addAll(getRemoteDebuggingArgs());
         commands.add(Boot.class.getName());
