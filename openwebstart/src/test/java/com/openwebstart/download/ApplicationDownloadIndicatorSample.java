@@ -1,5 +1,7 @@
 package com.openwebstart.download;
 
+import net.adoptopenjdk.icedteaweb.i18n.Translator;
+
 import javax.jnlp.DownloadServiceListener;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,22 +15,19 @@ import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_IN
 class ApplicationDownloadIndicatorSample {
 
     public static void main(String[] args) {
-        final String applicationName = "Demo application";
-        final URL[] resources = new URL[0];
+        Translator.addBundle("i18n");
         final ApplicationDownloadIndicator indicator = DOWNLOAD_INDICATOR;
-        final DownloadServiceListener listener = indicator.getListener(applicationName, resources);
-
-        final SampleApplication application = new SampleApplication(listener);
-        application.download();
-
-        try {
-            Thread.sleep(2_000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        indicator.disposeListener(listener);
+        downloadPart("Demo application - Part1", indicator, 20);
+        sleep(1_000);
+        downloadPart("Demo application - Part2", indicator, 10);
 
         System.out.println("DONE!");
+    }
+
+    private static void downloadPart(String applicationName, ApplicationDownloadIndicator indicator, int resourceCount) {
+        final DownloadServiceListener listener = indicator.getListener(applicationName, new URL[0]);
+        new SampleApplication(listener, resourceCount).download();
+        indicator.disposeListener(listener);
     }
 
     private static SampleResource createRandomResource(Random random, int number) {
@@ -42,17 +41,24 @@ class ApplicationDownloadIndicatorSample {
         }
     }
 
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static class SampleApplication {
 
         private final DownloadServiceListener listener;
 
         private final List<SampleResource> resources;
 
-        public SampleApplication(final DownloadServiceListener listener) {
+        public SampleApplication(final DownloadServiceListener listener, int resourceCount) {
             this.listener = listener;
 
             final Random random = new Random(System.nanoTime());
-            final int resourceCount = random.nextInt(32) + 4;
             this.resources = IntStream.range(0, resourceCount)
                     .mapToObj(i -> createRandomResource(random, i))
                     .collect(Collectors.toList());
@@ -69,13 +75,9 @@ class ApplicationDownloadIndicatorSample {
                         final int percentage = random.nextInt(4) + 1;
                         resource.increase(percentage);
                         System.out.println(resource.url + " -> " + resource.getPercentage() + "%");
-                        final int overallPercentage = resources.stream().mapToInt(r -> r.getPercentage()).sum() / resources.size();
+                        final int overallPercentage = resources.stream().mapToInt(SampleResource::getPercentage).sum() / resources.size();
                         listener.progress(resource.url, resource.version, resource.readSoFar, resource.size, overallPercentage);
-                        try {
-                            Thread.sleep(random.nextInt(50));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        sleep(random.nextInt(50));
                     }
                 }
             }
@@ -83,9 +85,7 @@ class ApplicationDownloadIndicatorSample {
         }
 
         public boolean isDownloaded() {
-            return resources.stream().map(r -> r.isDownloaded())
-                    .filter(d -> !d)
-                    .count() == 0;
+            return resources.stream().allMatch(SampleResource::isDownloaded);
         }
     }
 
@@ -119,7 +119,8 @@ class ApplicationDownloadIndicatorSample {
         }
 
         public int getPercentage() {
-            return (int) Math.min((long) Integer.MAX_VALUE, readSoFar / (size / 100));
+            final double fraction = ((double) readSoFar) / size;
+            return (int) Math.min(100, (long) (fraction * 100));
         }
 
         public boolean isDownloaded() {
