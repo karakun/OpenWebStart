@@ -12,10 +12,6 @@ public interface Images {
 
     URL JVM_64_URL = Images.class.getResource("jvm-64.png");
 
-    URL QUESTION_64_URL = Images.class.getResource("question-64.png");
-
-    URL ERROR_64_URL = Images.class.getResource("error-64.png");
-
     URL NETWORK_64_URL = Images.class.getResource("network-64.png");
 
 }

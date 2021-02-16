@@ -15,7 +15,7 @@ import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
-import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
+import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationEnvironment;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.adoptopenjdk.icedteaweb.jvm.JvmUtils;
@@ -147,7 +147,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
-        if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
+        if (jnlpFile.getSecurity().getApplicationEnvironment() == ApplicationEnvironment.ALL) {
             final List<String> result = new ArrayList<>();
             final Map<String, String> properties = jnlpFile.getResources().getPropertiesMap();
             properties.keySet().forEach(property -> {

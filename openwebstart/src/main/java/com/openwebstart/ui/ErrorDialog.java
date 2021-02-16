@@ -1,13 +1,12 @@
 package com.openwebstart.ui;
 
-import com.openwebstart.jvm.ui.Images;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
+import net.adoptopenjdk.icedteaweb.image.ImageGallery;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
 
-import javax.swing.ImageIcon;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import java.io.PrintWriter;
@@ -30,7 +29,7 @@ public class ErrorDialog extends DialogWithDetails {
     }
 
     public ErrorDialog(final String message, final Exception error) {
-        super(Translator.getInstance().translate("dialog.error.title"), new ImageIcon(Images.ERROR_64_URL), message, createStackTraceDetailsComponent(error));
+        super(Translator.getInstance().translate("dialog.error.title"), ImageGallery.ERROR.asImageIcon(), message, createStackTraceDetailsComponent(error));
     }
 
     private static String getStackTrace(final Exception exception) {
