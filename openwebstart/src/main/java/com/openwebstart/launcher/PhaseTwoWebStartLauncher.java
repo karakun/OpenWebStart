@@ -1,6 +1,5 @@
 package com.openwebstart.launcher;
 
-import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.install4j.Install4JUpdateHandler;
 import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
+import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_INDICATOR;
 import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
 
 
@@ -51,7 +51,7 @@ public class PhaseTwoWebStartLauncher {
             JNLPRuntime.exit(-1);
         }
 
-        JNLPRuntime.setDefaultDownloadIndicator(new ApplicationDownloadIndicator());
+        JNLPRuntime.setDefaultDownloadIndicator(DOWNLOAD_INDICATOR);
 
         try {
             new InitialConfigurationCheck(config).check();

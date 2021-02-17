@@ -1,7 +1,6 @@
 package com.openwebstart.extensionpoint;
 
 import com.openwebstart.controlpanel.OpenWebStartControlPanelStyle;
-import com.openwebstart.download.ApplicationDownloadIndicator;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import com.openwebstart.jvm.ui.dialogs.RuntimeDownloadDialog;
@@ -21,6 +20,8 @@ import java.net.ProxySelector;
 import java.util.Collections;
 import java.util.List;
 
+import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_INDICATOR;
+
 /**
  * Extension point providing OWS specific implementations.
  */
@@ -39,7 +40,7 @@ public class OwsExtensionPoint implements ExtensionPoint {
 
     @Override
     public DownloadIndicator createDownloadIndicator(final DeploymentConfiguration configuration) {
-        return new ApplicationDownloadIndicator();
+        return DOWNLOAD_INDICATOR;
     }
 
     @Override
