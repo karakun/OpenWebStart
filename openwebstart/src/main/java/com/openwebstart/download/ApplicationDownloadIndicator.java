@@ -13,7 +13,7 @@ import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorServ
 public class ApplicationDownloadIndicator implements DownloadIndicator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationDownloadIndicator.class);
-    private static final int GRACE_PERIOD = 3 * 1000;
+    private static final int GRACE_PERIOD = 1_500;
 
     public static final ApplicationDownloadIndicator DOWNLOAD_INDICATOR = new ApplicationDownloadIndicator();
 
