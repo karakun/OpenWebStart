@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 
 import static com.openwebstart.debug.DebugParameterHelper.getRemoteDebugParameters;
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
+import static java.util.Arrays.asList;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.ICEDTEA_WEB_SPLASH;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.JAVAWS;
 import static net.adoptopenjdk.icedteaweb.IcedTeaWebConstants.NO_SPLASH;
@@ -58,6 +59,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
 
     private static final String INSTALL_4_J_EXE_DIR = "install4j.exeDir";
+    private static final String INSTALL_4_J_APP_DIR = "install4j.appDir";
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
 
@@ -85,7 +87,7 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     Optional<RuntimeInfo> getJavaRuntime(final JNLPFile jnlpFile) {
         Assert.requireNonNull(jnlpFile, "jnlpFile");
-        final List<JREDesc> jres = new ArrayList<>(Arrays.asList(jnlpFile.getResources().getJREs()));
+        final List<JREDesc> jres = new ArrayList<>(asList(jnlpFile.getResources().getJREs()));
         if (jres.isEmpty()) {
             jres.add(getDefaultJRE());
         }
@@ -201,24 +203,35 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     private Optional<String> getOwsExecutablePath() {
-        final String installDir = Install4JUtils.installationDirectory()
-                .orElse(System.getProperty(INSTALL_4_J_EXE_DIR));
+        final List<Optional<String>> possibleExeDirs = asList(
+                Install4JUtils.installationDirectory(),
+                Optional.ofNullable(System.getProperty(INSTALL_4_J_EXE_DIR)),
+                Optional.ofNullable(System.getProperty(INSTALL_4_J_APP_DIR))
+        );
 
-        if (installDir == null) {
-            return Optional.empty();
+        return possibleExeDirs.stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(this::containsJavaws)
+                .findFirst()
+                .map(path -> Paths.get(path, JAVAWS).toAbsolutePath().toString());
+    }
+
+    private boolean containsJavaws(String dir) {
+        try {
+            final Path unixPath = Paths.get(dir, JAVAWS);
+            if (Files.isExecutable(unixPath)) {
+                return true;
+            }
+
+            final Path windowsPath = Paths.get(dir, JAVAWS + ".exe");
+            if (Files.isExecutable(windowsPath)) {
+                return true;
+            }
+        } catch (Exception ignored) {
+            // do not log this
         }
-
-        final Path unixPath = Paths.get(installDir, JAVAWS);
-        if (Files.isExecutable(unixPath)) {
-            return Optional.ofNullable(unixPath.toAbsolutePath().toString());
-        }
-
-        final Path windowsPath = Paths.get(installDir, JAVAWS + ".exe");
-        if (Files.isExecutable(windowsPath)) {
-            return Optional.ofNullable(windowsPath.toAbsolutePath().toString());
-        }
-
-        return Optional.empty();
+        return false;
     }
 
     private static File getOpenWebStartJar() {
