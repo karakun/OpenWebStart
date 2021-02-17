@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
@@ -51,6 +52,9 @@ public final class RuntimeManagerPanel extends JPanel {
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
 
+        final JButton removeAllRuntimes = new JButton(translator.translate("jvmManager.action.removeAll.text"));
+        removeAllRuntimes.addActionListener(e -> onRemoveAll());
+
         final JButton refreshButton = new JButton(translator.translate("jvmManager.action.refresh.text"));
         refreshButton.addActionListener(e -> onRefresh());
 
@@ -70,6 +74,7 @@ public final class RuntimeManagerPanel extends JPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(LayoutFactory.createBoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
+        buttonPanel.add(removeAllRuntimes);
         buttonPanel.add(refreshButton);
         buttonPanel.add(addLocalRuntimesButton);
         buttonPanel.add(findLocalRuntimesButton);
@@ -91,6 +96,25 @@ public final class RuntimeManagerPanel extends JPanel {
                 addRuntimeUpdatedListener((oldValue, newValue) -> SwingUtilities.invokeLater(() -> listModel.replaceItem(oldValue, newValue)));
 
         listModel.replaceData(LocalRuntimeManager.getInstance().getAll());
+    }
+
+    private void onRemoveAll() {
+
+        Collections.list(listModel.elements()).forEach(jvm -> {
+            getNonDaemonExecutorService().execute(() -> {
+                try {
+                    if (jvm.isManaged()) {
+                        LocalRuntimeManager.getInstance().delete(jvm);
+                    } else {
+                        LocalRuntimeManager.getInstance().remove(jvm);
+                    }
+                } catch (final Exception e) {
+                    DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.deleteFolder"), e);
+                }
+            });
+        });
+
+        listModel.removeAllElements();
     }
 
     private void onRefresh() {
