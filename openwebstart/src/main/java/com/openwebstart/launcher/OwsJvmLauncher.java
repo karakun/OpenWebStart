@@ -204,9 +204,9 @@ public class OwsJvmLauncher implements JvmLauncher {
 
     private Optional<String> getOwsExecutablePath() {
         final List<Optional<String>> possibleExeDirs = asList(
-                Install4JUtils.installationDirectory(),
                 Optional.ofNullable(System.getProperty(INSTALL_4_J_EXE_DIR)),
-                Optional.ofNullable(System.getProperty(INSTALL_4_J_APP_DIR))
+                Optional.ofNullable(System.getProperty(INSTALL_4_J_APP_DIR)),
+                Install4JUtils.installationDirectory()
         );
 
         return possibleExeDirs.stream()
