@@ -1,9 +1,9 @@
 package com.openwebstart.os.linux;
 
 import com.openwebstart.os.MenuAndDesktopEntriesFactory;
-import com.openwebstart.os.ScriptFactory;
 import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
+import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
 import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.UUID;
@@ -159,7 +160,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
         if (file.getInformation().getVendor() != null) {
             fileContents += "X-Vendor=" + sanitize(file.getInformation().getVendor()) + "\n";
         }
-        fileContents += "Exec=" + ScriptFactory.createStartScript(file) + "\n";
+        fileContents += "Exec=" + createStartScript(file) + "\n";
         return fileContents;
     }
 
@@ -206,5 +207,14 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
 
         final String targetName = UUID.randomUUID().toString();
         return new File(iconsDir, targetName);
+    }
+
+    private static String createStartScript(final JNLPFile jnlpFile) {
+        final String executable = System.getProperty(JavaSystemPropertiesConstants.ITW_BIN_LOCATION);
+        if (!Files.isExecutable(Paths.get(executable))) {
+            throw new IllegalStateException("Can not find executable");
+        }
+        final URL jnlpLocation = Optional.ofNullable(jnlpFile.getSourceLocation()).orElse(jnlpFile.getFileLocation());
+        return "\"" + executable + "\" \"" + jnlpLocation + "\"";
     }
 }
