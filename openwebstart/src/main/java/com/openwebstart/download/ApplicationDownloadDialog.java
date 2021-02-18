@@ -61,6 +61,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
     public ApplicationDownloadDialog(final String applicationName) {
         setApplicationName(applicationName);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setVisible(false);
 
         final Translator translator = Translator.getInstance();
 
