@@ -4,7 +4,6 @@ import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.InformationDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
 import net.sourceforge.jnlp.JNLPFile;
-import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
 import net.sourceforge.jnlp.util.ShortcutCreationOptions;
@@ -12,6 +11,7 @@ import net.sourceforge.jnlp.util.ShortcutCreationOptions;
 import java.util.Optional;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ALWAYS;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ALWAYS_IF_HINTED;
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ASK_USER;
@@ -26,7 +26,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
     }
 
     private void addMenuAndDesktopEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile) {
-        final String property = JNLPRuntime.getConfiguration().getProperty(ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT);
+        final String property = JNLPRuntime.getConfiguration().getProperty(KEY_CREATE_DESKTOP_SHORTCUT);
         final ShortcutCreationOptions shortcutCreationOptions = ShortcutCreationOptions.forConfigName(property).orElse(CREATE_NEVER);
 
         if (shortcutCreationOptions == CREATE_NEVER) {
