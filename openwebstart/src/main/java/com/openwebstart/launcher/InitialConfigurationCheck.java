@@ -32,6 +32,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
@@ -77,6 +78,7 @@ class InitialConfigurationCheck {
             KEY_HTTPS_DONT_ENFORCE,
             KEY_ASSUME_FILE_STEM_IN_CODEBASE,
             KEY_SECURITY_SERVER_WHITELIST,
+            KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK,
             MAX_DAYS_UNUSED_IN_JVM_CACHE,
             KEY_ENABLE_DEBUG_LOGGING,
             KEY_ENABLE_LOGGING_TOFILE,

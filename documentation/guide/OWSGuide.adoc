@@ -904,6 +904,11 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |X
 |Defines if files from the local filesystem are always handled as if they would be part of the codebase.
 
+|deployment.manifest.attributes.check
+|X
+|X
+|Defines which checks should be performed for all jars. See <<Suppressing security checks on manifest>> for details
+
 |deployment.security.whitelist
 |-
 |X
