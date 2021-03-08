@@ -55,6 +55,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public List<Setting> getDefaults() {
         return Arrays.asList(
                 Setting.createDefault(
+                        "ows.install4j.propertyUpdate",
+                        null,
+                        null
+                ),
+                Setting.createDefault(
                         SHOW_PROXY_UNSUPPORTED_NOTIFICATIONS,
                         Boolean.TRUE.toString(),
                         ValidatorFactory.createBooleanValidator()
