@@ -877,7 +877,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.proxy.type
 |X
 |X
-|The proxy type that should be used. Possible values are 0 (no proxy), 1 (manual proxy, default), 2 (PAC based proxy), 3 (Firefox), 4 (system proxy)
+|The proxy type that should be used. Possible values are 0 (no proxy), 1 (manual proxy), 2 (PAC based proxy), 3 (Firefox), 4 (system proxy). Default is 4-System
 
 |deployment.proxy.auto.config.url
 |X
