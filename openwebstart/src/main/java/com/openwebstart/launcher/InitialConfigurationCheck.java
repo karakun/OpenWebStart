@@ -30,6 +30,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM
 import static com.openwebstart.config.OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK;
@@ -83,6 +84,7 @@ class InitialConfigurationCheck {
             KEY_ENABLE_DEBUG_LOGGING,
             KEY_ENABLE_LOGGING_TOFILE,
             KEY_JVM_ARGS_WHITELIST,
+            KEY_CREATE_DESKTOP_SHORTCUT,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
