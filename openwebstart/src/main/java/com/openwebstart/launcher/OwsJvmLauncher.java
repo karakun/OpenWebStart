@@ -11,6 +11,7 @@ import com.openwebstart.jvm.util.JvmVersionUtils;
 import com.openwebstart.ui.Notifications;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.ProcessUtils;
+import net.adoptopenjdk.icedteaweb.StringUtils;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.jnlp.element.resource.JREDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.security.ApplicationPermissionLevel;
@@ -57,6 +58,8 @@ import static net.sourceforge.jnlp.util.logging.FileLog.getLogFileNamePrefix;
  */
 public class OwsJvmLauncher implements JvmLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(OwsJvmLauncher.class);
+
+    public static final String JAVAWS_VM_ARGS = "JAVAWS_VM_ARGS";
 
     private static final String INSTALL_4_J_EXE_DIR = "install4j.exeDir";
     private static final String INSTALL_4_J_APP_DIR = "install4j.appDir";
@@ -138,6 +141,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
         vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs());
         vmArgs.addAll(extractVmArgs(jnlpFile));
+        vmArgs.addAll(vmArgumentsFromEnv());
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
@@ -152,8 +156,22 @@ public class OwsJvmLauncher implements JvmLauncher {
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
+    }
 
+    private List<String> vmArgumentsFromEnv() {
+        final String args = System.getenv(JAVAWS_VM_ARGS);
+        if (StringUtils.isBlank(args)) {
+            return Collections.emptyList();
+        }
+        LOG.info("Found {} to append: {}", JAVAWS_VM_ARGS, args);
 
+        try {
+            JvmUtils.checkVMArgs(args);
+            return JvmUtils.parseArguments(args);
+        } catch (Exception e) {
+            LOG.warn("Ignoring {} due to illegal Property {}", JAVAWS_VM_ARGS, e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
