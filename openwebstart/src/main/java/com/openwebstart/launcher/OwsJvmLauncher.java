@@ -149,6 +149,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         LocalRuntimeManager.touch(javaRuntime);
 
         if (JAVA_1_8.contains(version)) {
+            checkForJava9Arg(vmArgs);
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
@@ -171,6 +172,13 @@ public class OwsJvmLauncher implements JvmLauncher {
         } catch (Exception e) {
             LOG.warn("Ignoring {} due to illegal Property {}", JAVAWS_VM_ARGS, e.getMessage());
             return Collections.emptyList();
+        }
+    }
+
+    private void checkForJava9Arg(final List<String> javawsArgs) {
+        final String result = javawsArgs.stream().filter(arg -> JvmUtils.isValidStartingJavaModulesArgument(arg)).collect(Collectors.joining(","));
+        if (result.length() > 0) {
+            throw new RuntimeException("Can not specify Java9 JVM args with JVM v1.8 : " + result);
         }
     }
 
