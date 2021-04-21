@@ -176,9 +176,11 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     private void checkForJava9Arg(final List<String> javawsArgs) {
-        final String result = javawsArgs.stream().filter(arg -> JvmUtils.isValidStartingJavaModulesArgument(arg)).collect(Collectors.joining(","));
+        final String result = javawsArgs.stream()
+                .filter(JvmUtils::isValidStartingJavaModulesArgument)
+                .collect(Collectors.joining(" "));
         if (result.length() > 0) {
-            throw new RuntimeException("Can not specify Java9 JVM args with JVM v1.8 : " + result);
+            throw new IllegalArgumentException("Can not specify Java9 JVM args with JVM v1.8 : " + result);
         }
     }
 
