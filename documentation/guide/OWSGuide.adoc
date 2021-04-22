@@ -546,6 +546,28 @@ Subsequently the JNLP file can include the above JVM args:
 
 Note: The whitelist should only contain the name of the JVM argument and not the value as can be seen in the example above.
 
+===== Specify a specific vendor in the JNLP file
+
+It is possible to specify a JVM vendor in the JNLP file:
+[source]
+----
+<java version="1.8*" vendor="AdoptOpenJDK" ... />
+----
+
+The following vendor names and alias are supported by OpenWebStart:
+
+----
+"*" (any vendor, same as if you skip the vendor attribute)
+"AdoptOpenJDK", "Adopt"
+"Amazon.com Inc.", "Amazon"
+"Azul Systems, Inc.", "Azul"
+"BellSoft"
+"Oracle Corporation", "Oracle"
+----
+This list might be subject to change in upcoming releases.
+
+By default OpenWebStart takes the vendor as specified in the OWS Settings UI. To allow to consider any vendor attribute information from the JNLP file you have to set the configuration property `ows.jvm.manager.vendor.allowFromJnlp = true`.
+Default is `false`.
 
 ===== Specify 32-bit JVM in JNLP file
 
