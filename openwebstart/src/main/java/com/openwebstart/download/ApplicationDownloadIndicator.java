@@ -5,6 +5,7 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import javax.jnlp.DownloadServiceListener;
+import javax.swing.SwingUtilities;
 import java.net.URL;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -65,15 +66,17 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
             LOG.warn("grace period for closing dialog has been interrupted. close immediately");
         }
 
-        lock.lock();
-        try {
-            if (dialog != null && counter == 0) {
-                LOG.debug("Closing DownloadServiceListener");
-                dialog.close();
-                dialog = null;
+        SwingUtilities.invokeLater(() -> {
+            lock.lock();
+            try {
+                if (dialog != null && counter == 0) {
+                    LOG.debug("Closing DownloadServiceListener");
+                    dialog.close();
+                    dialog = null;
+                }
+            } finally {
+                lock.unlock();
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 }
