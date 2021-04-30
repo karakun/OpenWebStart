@@ -77,6 +77,9 @@ public class PhaseTwoWebStartLauncher {
         JNLPRuntime.setForkingStrategy(ALWAYS);
 
         final List<String> bootArgs = skipNotRelevantArgs(args);
+
+        Install4JUpdateHandler.waitForUpdate();
+
         LOG.info("Calling ITW Boot with args {}.", bootArgs);
         Boot.main(bootArgs.toArray(new String[0]));
 

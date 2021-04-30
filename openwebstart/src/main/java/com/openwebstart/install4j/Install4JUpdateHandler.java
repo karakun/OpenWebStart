@@ -15,11 +15,12 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 public class Install4JUpdateHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(Install4JUpdateHandler.class);
-
+    public static CountDownLatch updateOver = new CountDownLatch(1);
     /**
      * This number is defined in the install4J project file that we use to build the native
      * installers / executables for OpenWebStart. In this file each process (installer, uninstaller, updater)
@@ -62,16 +63,23 @@ public class Install4JUpdateHandler {
         LOG.info("Starting update");
         ApplicationLauncher.launchApplicationInProcess(UPDATE_PROCESS_ID, null, new ApplicationLauncher.Callback() {
                     public void exited(int exitValue) {
+                        updateOver.countDown();
                         LOG.info("Installer closed");
                     }
 
                     public void prepareShutdown() {
+                        updateOver.countDown();
                         LOG.info("Will shut down for update");
                     }
                 }, ApplicationLauncher.WindowMode.FRAME, null
         );
+    }
 
-
+    public static void waitForUpdate() {
+        try {
+            updateOver.await();
+        } catch (InterruptedException e) {
+        }
     }
 
 }
