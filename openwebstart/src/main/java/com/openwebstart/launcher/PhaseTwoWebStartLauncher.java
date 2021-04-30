@@ -71,6 +71,8 @@ public class PhaseTwoWebStartLauncher {
                     LOG.error("Error in possible update process", e);
                 }
             });
+        } else {
+            Install4JUpdateHandler.resetWaitForUpdate();
         }
 
         // we MUST fork in order to start the application with the jvm from the JVM Manager
