@@ -70,7 +70,8 @@ public class Install4JUpdateHandler {
                     }
 
                     public void prepareShutdown() {
-                        resetWaitForUpdate();
+                        // it is ok if we don't release the latch here as Update App will any way shutdown
+                        // resetWaitForUpdate();
                         LOG.info("Will shut down for update");
                     }
                 }, ApplicationLauncher.WindowMode.FRAME, null
