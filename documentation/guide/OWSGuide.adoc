@@ -548,26 +548,31 @@ Note: The whitelist should only contain the name of the JVM argument and not the
 
 ===== Specify a specific vendor in the JNLP file
 
-It is possible to specify a JVM vendor in the JNLP file:
+As illustrated above in figure 4, you can specify the vendor that should be taken into consideration for selecting the JVM that launches your JNLP application.
+
+In addition to that, it is possible to specify a JVM vendor in the JNLP file itself:
 [source]
 ----
 <java version="1.8*" vendor="AdoptOpenJDK" ... />
 ----
 
-The following vendor names and alias are supported by OpenWebStart:
-
+You can use one of the following vendor names/alias as value for the vendor attribute:
 ----
-"*" (any vendor, same as if you skip the vendor attribute)
+"*"
 "AdoptOpenJDK", "Adopt"
 "Amazon.com Inc.", "Amazon"
 "Azul Systems, Inc.", "Azul"
 "BellSoft"
 "Oracle Corporation", "Oracle"
 ----
-This list might be subject to change in upcoming releases.
 
-By default OpenWebStart takes the vendor as specified in the OWS Settings UI. To allow to consider any vendor attribute information from the JNLP file you have to set the configuration property `ows.jvm.manager.vendor.allowFromJnlp = true`.
-Default is `false`.
+The asterix is the same as if you skip the vendor attribute. It means "any vendor" will be fine. This is the default.
+
+If there is no specific vendor specified in the OWS Settings UI (i.e. "Any Vendor" selected), the vendor attribute specified in the JNLP file will be considered by default.
+If no vendor hint is set in OWS Settings and the JNLP does not contain any vendor information, the first JVM is taken that is found in the `jvms.json` of the download server.
+
+Note that if there is already a specific vendor selected in the OWS Settings, the vendor information from the JNLP file will only overrule this setting when the configuration property `ows.jvm.manager.vendor.allowFromJnlp` is set to `true`.
+This policy prevents that the JNLP file vendor details get precedence over OWS Settings.
 
 ===== Specify 32-bit JVM in JNLP file
 
@@ -833,7 +838,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.vendor.allowFromJnlp
 |X
 |X
-|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. Default is false i.e. the vendor from the settings is taken.
+|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. If a specific JVM vendor is defined, this is false i.e. the vendor from the settings has precedence by default. If "Any Vendor" is selected in OWS Settings, this property is true to take the vendor hint of the JNLP file into consideration.
 
 |ows.jvm.manager.updateStrategy
 |X

@@ -73,6 +73,7 @@ public class ConfigurationDialog extends ModalDialog {
     private final Color originalBackground;
     private boolean urlValidationError = false;
     private final JButton okButton;
+    private final JCheckBox allowVendorFromJnlpCheckBox;
 
     public ConfigurationDialog(final DeploymentConfiguration deploymentConfiguration) {
         setTitle(translator.translate("dialog.jvmManagerConfig.title"));
@@ -93,8 +94,9 @@ public class ConfigurationDialog extends ModalDialog {
         getDaemonExecutorService().execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         uiLock.update(JVM_VENDOR, vendorComboBox);
 
-        final JCheckBox allowVendorFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowVendorFromJnlp.text"));
+        allowVendorFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowVendorFromJnlp.text"));
         allowVendorFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isVendorFromJnlpAllowed());
+        allowVendorFromJnlpCheckBox.setEnabled(!Objects.equals(Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor()), Vendor.ANY_VENDOR));
         uiLock.update(ALLOW_VENDOR_FROM_JNLP, allowVendorFromJnlpCheckBox);
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
@@ -256,6 +258,13 @@ public class ConfigurationDialog extends ModalDialog {
             SwingUtilities.invokeLater(() -> {
                 vendorComboBox.setModel(new DefaultComboBoxModel<>(vendors.toArray(new Vendor[0])));
                 vendorComboBox.setSelectedItem(currentVendor);
+            });
+            SwingUtilities.invokeLater(() -> {
+                vendorComboBox.addActionListener(e -> {
+                    boolean isAnyVendor = Objects.equals(vendorComboBox.getSelectedItem(), Vendor.ANY_VENDOR);
+                    allowVendorFromJnlpCheckBox.setSelected(isAnyVendor);
+                    allowVendorFromJnlpCheckBox.setEnabled(!isAnyVendor);
+                });
             });
         } catch (final Exception ex) {
             DialogFactory.showErrorDialog(translator.translate("jvmManager.error.updateVendorNames"), ex);
