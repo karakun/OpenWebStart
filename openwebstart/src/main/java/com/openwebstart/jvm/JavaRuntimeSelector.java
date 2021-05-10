@@ -45,8 +45,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
         final RuntimeUpdateStrategy updateStrategy = RuntimeManagerConfig.getStrategy();
         final Vendor vendor = Optional.ofNullable(vendorFromJnlp)
-                .filter(v -> RuntimeManagerConfig.isVendorFromJnlpAllowed())
-                .filter(v -> !Objects.equals(v, Vendor.ANY_VENDOR))
+                .filter(v -> isVendorFromJnlpAllowed())
                 .orElseGet(() -> Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor()));
 
         final OperationSystem os = getOperationSystem(require32bit);
@@ -85,6 +84,14 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
             LOG.debug("Newer runtime {} installed", installedRuntime.get());
             return installedRuntime;
         }
+    }
+
+    private boolean isVendorFromJnlpAllowed() {
+        if (RuntimeManagerConfig.isVendorFromJnlpAllowed()) {
+            return true;
+        }
+        final Vendor vendor = Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor());
+        return Vendor.ANY_VENDOR.equals(vendor);
     }
 
     private OperationSystem getOperationSystem(boolean require32bit) {

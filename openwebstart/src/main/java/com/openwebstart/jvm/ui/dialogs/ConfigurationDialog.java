@@ -94,9 +94,10 @@ public class ConfigurationDialog extends ModalDialog {
         getDaemonExecutorService().execute(() -> updateVendorComboBox(RuntimeManagerConfig.getDefaultRemoteEndpoint()));
         uiLock.update(JVM_VENDOR, vendorComboBox);
 
+        final boolean isAnyVendor = Objects.equals(Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor()), Vendor.ANY_VENDOR);
         allowVendorFromJnlpCheckBox = new JCheckBox(translator.translate("dialog.jvmManagerConfig.allowVendorFromJnlp.text"));
-        allowVendorFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isVendorFromJnlpAllowed());
-        allowVendorFromJnlpCheckBox.setEnabled(!Objects.equals(Vendor.fromStringOrAny(RuntimeManagerConfig.getVendor()), Vendor.ANY_VENDOR));
+        allowVendorFromJnlpCheckBox.setSelected(RuntimeManagerConfig.isVendorFromJnlpAllowed() || isAnyVendor);
+        allowVendorFromJnlpCheckBox.setEnabled(!isAnyVendor);
         uiLock.update(ALLOW_VENDOR_FROM_JNLP, allowVendorFromJnlpCheckBox);
 
         final JLabel defaultUpdateServerLabel = new JLabel(translator.translate("dialog.jvmManagerConfig.defaultServerUrl.text"));
