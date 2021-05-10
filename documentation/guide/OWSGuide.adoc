@@ -571,6 +571,11 @@ The asterix is the same as if you skip the vendor attribute. It means "any vendo
 If there is no specific vendor specified in the OWS Settings UI (i.e. "Any Vendor" selected), the vendor attribute specified in the JNLP file will be considered by default.
 If no vendor hint is set in OWS Settings and the JNLP does not contain any vendor information, the first JVM is taken that is found in the `jvms.json` of the download server.
 
+If there is no specific vendor specified in the OWS Settings UI (i.e. "Any Vendor" selected) and if a specific vendor
+is specified in the JNLP (i.e. vendor="SomeVendor") and if that vendor's JVM is not available on the JVM download server
+then OWS will throw "No suitable JVM was found" error.
+
+
 Note that if there is already a specific vendor selected in the OWS Settings, the vendor information from the JNLP file will only overrule this setting when the configuration property `ows.jvm.manager.vendor.allowFromJnlp` is set to `true`.
 This policy prevents that the JNLP file vendor details get precedence over OWS Settings.
 
