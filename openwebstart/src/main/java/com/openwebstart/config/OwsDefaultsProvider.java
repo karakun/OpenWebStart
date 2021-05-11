@@ -121,7 +121,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         ALLOW_VENDOR_FROM_JNLP,
-                        Boolean.TRUE.toString(),
+                        Boolean.FALSE.toString(),
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
