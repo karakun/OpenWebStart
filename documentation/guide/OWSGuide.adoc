@@ -560,7 +560,7 @@ You can use one of the following vendor names/alias as value for the vendor attr
 ----
 "*"
 "AdoptOpenJDK", "Adopt"
-"Amazon.com Inc.", "Amazon"
+"Amazon.com Inc.", "Amazon Inc.", "Amazon"
 "Azul Systems, Inc.", "Azul"
 "BellSoft"
 "Oracle Corporation", "Oracle"
