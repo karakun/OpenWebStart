@@ -50,7 +50,7 @@ If you use Web Start for several small customers or on your own, we recommend us
 Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use.
 OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
 
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines with similar installations.
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines with similar configuration.
 Instead of walking through the graphical installer of OWS on every machine your IT department can pre-define the responses for the installation options in a response varfile.
 
 === Interactive Installation
