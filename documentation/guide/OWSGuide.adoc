@@ -44,13 +44,13 @@ Updater:: Downloads and installs new versions of OpenWebStart.
 OpenWebStart can be installed on Windows, MacOS and Linux operating systems and there are two different ways to install OpenWebStart:
 
 * Using the *interactive installation* with auto-update functionality
-* Using the *unattended installation* for automated roll-outs (Windows only)
+* Using the *unattended installation* for automated roll-outs
 
 If you use Web Start for several small customers or on your own, we recommend using the interactive installer.
 Our native installer will set up everything on your Windows, Mac, or Linux system so that OpenWebStart is immediately ready to use.
 OpenWebStart checks for updates automatically, and the Updater component keeps the tool current without the need for any user interaction.
 
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines.
+If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines with similar configuration.
 Instead of walking through the graphical installer of OWS on every machine your IT department can pre-define the responses for the installation options in a response varfile.
 
 === Interactive Installation
@@ -124,8 +124,7 @@ openwebstart.jar:: OpenWebStart application jar
 readme.txt:: Describes OpenWebStart release contents and useful links
 
 === Unattended Installation
-Unattended installation is only available for Windows installations.
-If you or your customers are companies with IT departments of their own, we recommend an unattended installation to roll out OpenWebStart on multiple client machines.
+An unattended installation allows for a silent installation and does not prompt you for any input. Use a silent installation when there are similar installations to be performed on more than one computer.
 In this scenario, the auto-update functionality is inactive; your IT department is free to plan and handle rollouts of new versions based on your internal workflows.
 
 When installing OpenWebStart, several properties can be predefined in a so-called `response.varfile` file.
@@ -142,9 +141,11 @@ ows.jvm.manager.server.default.locked=true
 Have a look at the <<Configuration Properties Overview>> to get an overview of all properties that can be specified in
 the `response.varfile`.
 
-To create a `response.varfile` file, run the installation of OpenWebStart at least once manually. By doing so a
-`response.varfile` file is created in OpenWebStart installation folder in your system. In the installation folder,
-you find a `.install4j` folder that contains the basic `response.varfile` file. The content of such a file looks like this:
+To create a `response.varfile` file, run the installation of OpenWebStart at least once manually.
+By doing so a `response.varfile` file is created in OpenWebStart installation folder in your system.
+In the installation folder, you find a `.install4j` folder that contains the basic `response.varfile` file.
+Store this file in a location where you can retrieve it later.
+The content of such a file looks like this:
 
 ----
 sys.adminRights$Boolean=false
@@ -154,7 +155,8 @@ sys.installationDir=/Applications/OpenWebStart
 sys.languageId=de
 ----
 
-You can easily edit this file and add additional properties based on the table in this article. Do not change the initial content of the file, and add new properties always to the end of the file.
+You can easily edit this file and add additional properties based on the table in this article.
+Do not remove the initial content of the file, change the values as necessary, and add new properties always to the end of the file.
 After editing, a `response.varfile` the file might look like this:
 
 ----
@@ -193,8 +195,16 @@ sys.adminRights$Boolean=true
 You can now use your enhanced file to install OpenWebStart on multiple machines.
 Simply copy the enhanced `response.varfile` next to the installer and execute the following command:
 
+Windows::
 ----
-<OpenWebStart_windows_Setup.exe> -q -varfile response.varfile
+<OpenWebStart_windows_1.x.x.exe> -q -varfile response.varfile
+----
+
+MacOS::
+----
+hdiutil attach OpenWebStart_macos_1_x_x.dmg
+/Volumes/OpenWebStart/OpenwebStart\ Installer.app/Contents/MacOS/JavaApplicationStub -q -varfile response.varfile
+hdiutil detach /Volumes/OpenWebStart
 ----
 
 === JNLP File Association
