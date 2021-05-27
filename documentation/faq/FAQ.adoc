@@ -52,22 +52,25 @@ The log files of OWS are located in a hidden directory below your user home dire
 
 where `<user-home>` depends on your operating system.
 By default this should be
+
 ```
 <root>\Users\<your-username>    (Windows 10)
 /Users/<your-username>          (MacOS)
 /home/<your-username>/          (Linux)
 ```
+
 Note that logging has to be activated using the OWS Settings application by checking "Activate debug logging" and "Log to file" on the "Logging" tab.
+
+NOTE: The `.config` folder in the user home can be hidden in file explorers in your operation system.
+Information how to view hidden folder and files can be found at https://www.howtogeek.com/194671/how-to-hide-files-and-folders-on-every-operating-system/[this external link].
 
 == Download
 
 ==== How to set up the resource server to facilitate caching by OWS
 
-To find out whether a resource has been modified since the last download, OWS sends a _HTTP HEAD_ request to the server and
-expects to receive the last modified timestamp of the resource on the server.  In order to facilitate caching of resources
-by OWS it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_
-request. In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the
-last modified timestamp of the resource and will go ahead and download the resource.
+To find out whether a resource has been modified since the last download, OWS sends a _HTTP HEAD_ request to the server and expects to receive the last modified timestamp of the resource on the server.
+In order to facilitate caching of resources by OWS it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_ request.
+In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the last modified timestamp of the resource and will go ahead and download the resource.
 
 == Security
 
