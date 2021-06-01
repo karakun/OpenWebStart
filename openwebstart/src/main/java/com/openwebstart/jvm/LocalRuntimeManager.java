@@ -30,6 +30,7 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.os.OsUtil;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_READ_ONLY;
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -92,6 +94,11 @@ public final class LocalRuntimeManager {
     }
 
     private void saveRuntimes() throws IOException {
+        String jvmCacheReadOnly = JNLPRuntime.getConfiguration().getProperty(JVM_CACHE_READ_ONLY);
+        if (Boolean.parseBoolean(jvmCacheReadOnly)) {
+            LOG.debug("Runtime cache is currently read only, not saving.");
+            return;
+        }
         jsonStoreLock.lock();
         try {
             LOG.debug("Saving runtime cache to filesystem");

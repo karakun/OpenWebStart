@@ -28,6 +28,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final String ALLOW_DOWNLOAD_SERVER_FROM_JNLP = "ows.jvm.manager.server.allowFromJnlp";
     public static final String JVM_SERVER_WHITELIST = "ows.jvm.manager.server.allowFromJnlp.whitelist";
     public static final String JVM_CACHE_DIR = "ows.jvm.manager.cache.dir";
+    public static final String JVM_CACHE_READ_ONLY = "ows.jvm.manager.cache.readonly";
     public static final String JVM_VENDOR = "ows.jvm.manager.vendor";
     public static final String ALLOW_VENDOR_FROM_JNLP = "ows.jvm.manager.vendor.allowFromJnlp";
     public static final String JVM_UPDATE_STRATEGY = "ows.jvm.manager.updateStrategy";
@@ -103,6 +104,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         JVM_CACHE_DIR,
                         PathAndFiles.JVM_CACHE_DIR.getDefaultFullPath(),
                         ValidatorFactory.createFilePathValidator()
+                ),
+                Setting.createDefault(
+                        JVM_CACHE_READ_ONLY,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
                         DEFAULT_JVM_DOWNLOAD_SERVER,
