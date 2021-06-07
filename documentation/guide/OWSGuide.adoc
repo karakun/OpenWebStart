@@ -513,13 +513,19 @@ ows.jvm.manager.customSearchLocation=c\:/path/to/jvm,c:\\path\\to\\other\\jvm
 
 ===== Whitelist for JVM Arguments
 
-OWS starts the JNLP application with the JVM that best matches JVM in the JNLP file.
+OWS starts the JNLP application with the JVM that best matches the JVM in the JNLP file.
 While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
 
 [source]
 ----
 <java version="1.8+"  java-vm-args=" -Xmx512m -Xms128m -XX:SurvivorRatio=6 -XX:NewSize=96m -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=30"/>
 ----
+
+The version number specified can either end with a number, and asterisk or a plus sign.
+
+    1.8 would mean the version must be 1.8.
+    1.7* means anything at or higher than 1.7 but less than 1.8 (like 1.7.1).
+    1.7+ means anything 1.7 or higher (including 1.8, 9 or 11).
 
 OWS maintains a hardcoded list of secure JVM arguments as specified at:
 
