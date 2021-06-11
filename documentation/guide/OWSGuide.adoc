@@ -997,4 +997,14 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |X
 |Defines how often OpenWebStart should search for updates when starting an application. Allowed values are ON_EVERY_START, DAILY, WEEKLY, MONTHLY, and NEVER.
 
+|deployment.connection.connectTimeout
+|
+|X
+|HTTP request connect timeout in milliseconds. Default is 10000 ms i.e. 10 s. 0 means infinite wait.
+
+|deployment.connection.readTimeout
+|
+|X
+|HTTP request read timeout in milliseconds. Default is 10000 ms i.e. 10 s. 0 means infinite wait.
+
 |===
