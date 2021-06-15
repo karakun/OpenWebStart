@@ -34,6 +34,8 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESK
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_CONNECT_TIMEOUT;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_READ_TIMEOUT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
@@ -85,6 +87,8 @@ class InitialConfigurationCheck {
             KEY_ENABLE_LOGGING_TOFILE,
             KEY_JVM_ARGS_WHITELIST,
             KEY_CREATE_DESKTOP_SHORTCUT,
+            KEY_HTTPCONNECTION_CONNECT_TIMEOUT,
+            KEY_HTTPCONNECTION_READ_TIMEOUT,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
