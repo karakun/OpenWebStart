@@ -824,8 +824,17 @@ image::OWS_debug.png[title="Remote Debugging" width="80%"]
 === OWS Command Line Arguments
 
 OWS can be started from command line as follows:
+
+Windows:
+[source]
 ----
-javaws <path or url of jnlp file>
+ javaws <path or url of jnlp file>
+----
+
+Mac:
+[source]
+----
+ open ./OpenWebStart\ javaws.app <path or url of jnlp file>
 ----
 
 Some of the command line arguments are described below:
@@ -836,9 +845,16 @@ The Offline mode means that OWS will not access a server to fetch resources spec
 
 You can start a previously cached Jnlp application in Offline mode using the following command:
 
+Windows:
 [source]
 ----
 javaws -Xoffline myapp.jnlp
+----
+
+Mac:
+[source]
+----
+ open ./OpenWebStart\ javaws.app myapp.jnlp --args -Xoffline
 ----
 
 In the above example myapp.jnlp is a previously downloaded and cached Jnlp file. OWS expects that
@@ -853,6 +869,8 @@ Note that you will get `java.net.ConnectException` if you run _javaws_ *without*
 connected to the server as OWS will try to fetch the resources from the server and fail.
 
 ==== -arg : Passing arguments to the application
+
+Windows:
 [source]
 ----
 javaws -arg arg1=value1 arg2=value2 -jnlp <path to jnlp file>
