@@ -834,7 +834,7 @@ Windows:
 Mac:
 [source]
 ----
- open ./OpenWebStart\ javaws.app <path or url of jnlp file>
+ open -a "OpenWebStart javaws" <path or url of jnlp file>
 ----
 
 Some of the command line arguments are described below:
@@ -854,7 +854,7 @@ javaws -Xoffline myapp.jnlp
 Mac:
 [source]
 ----
- open ./OpenWebStart\ javaws.app myapp.jnlp --args -Xoffline
+ open -a "OpenWebStart javaws" myapp.jnlp --args -Xoffline
 ----
 
 In the above example myapp.jnlp is a previously downloaded and cached Jnlp file. OWS expects that
