@@ -2,9 +2,9 @@ package com.openwebstart.app;
 
 import com.openwebstart.os.linux.FavIcon;
 import net.adoptopenjdk.icedteaweb.Assert;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.CacheFileInfo;
+import net.adoptopenjdk.icedteaweb.client.controlpanel.CacheIdInfo;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
-import net.adoptopenjdk.icedteaweb.resources.cache.CacheFile;
-import net.adoptopenjdk.icedteaweb.resources.cache.CacheId;
 import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.JNLPFileFactory;
@@ -26,7 +26,7 @@ import static com.openwebstart.concurrent.ThreadPoolHolder.getDaemonExecutorServ
  */
 public class Application {
 
-    private final CacheId cacheId;
+    private final CacheIdInfo cacheId;
 
     private final long size;
 
@@ -37,9 +37,9 @@ public class Application {
      *
      * @param cacheId the cache object from IcedTeaWeb
      */
-    public Application(final CacheId cacheId) throws IOException, ParseException {
+    public Application(final CacheIdInfo cacheId) throws IOException, ParseException {
         this.cacheId = Assert.requireNonNull(cacheId, "cacheId");
-        this.size = cacheId.getFiles().stream().mapToLong(CacheFile::getSize).sum();
+        this.size = cacheId.getFileInfos().stream().mapToLong(CacheFileInfo::getSize).sum();
         jnlpFile = new JNLPFileFactory().create(Paths.get(cacheId.getId()).toUri().toURL());
     }
 
