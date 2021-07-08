@@ -824,8 +824,17 @@ image::OWS_debug.png[title="Remote Debugging" width="80%"]
 === OWS Command Line Arguments
 
 OWS can be started from command line as follows:
+
+Windows ::
+[source]
 ----
-javaws <path or url of jnlp file>
+ javaws <path or url of jnlp file>
+----
+
+Mac ::
+[source]
+----
+ open -a "OpenWebStart javaws" <path or url of jnlp file>
 ----
 
 Some of the command line arguments are described below:
@@ -836,9 +845,16 @@ The Offline mode means that OWS will not access a server to fetch resources spec
 
 You can start a previously cached Jnlp application in Offline mode using the following command:
 
+Windows ::
 [source]
 ----
-javaws -Xoffline myapp.jnlp
+javaws -Xoffline myApp.jnlp
+----
+
+Mac ::
+[source]
+----
+ open -a "OpenWebStart javaws" myApp.jnlp --args -Xoffline
 ----
 
 In the above example myapp.jnlp is a previously downloaded and cached Jnlp file. OWS expects that
@@ -846,16 +862,41 @@ the jars files for the app are available in the cache. For example:
 
 [source]
 ----
-<User Home>/.cache/icedtea-web/cache/0/0/myapp.jar
+<User Home>/.cache/icedtea-web/cache/0/0/myApp.jar
 ----
 
 Note that you will get `java.net.ConnectException` if you run _javaws_ *without* the _-Xoffline_ parameter when NOT
 connected to the server as OWS will try to fetch the resources from the server and fail.
 
 ==== -arg : Passing arguments to the application
+
+Windows ::
 [source]
 ----
 javaws -arg arg1=value1 arg2=value2 -jnlp <path to jnlp file>
+----
+
+Mac ::
+
+Since the JNLP file or URL comes at the end of that invocation on Mac this requires some argument wrangling. You can passing arguments to the application using the following shell script:
+
+[source]
+----
+#!/bin/bash
+# A wrapper for OpenWebStart that behaves like 'javaws' on MacOS.
+
+if [ "$#" -lt 1 ]; then
+    echo "Must provide at least a JNLP file or URL"
+    exit 1
+fi
+
+# The JNLP file or URL which much be at the end of the argument list.
+jnlp=${!#}
+
+# The rest of the arguments, if there are any.
+argarray=("${@:1:$#-1}")
+
+open -a "OpenWebStart javaws" "$jnlp" --args "${argarray[@]}"
 ----
 
 The specified arguments will be passed to the application's __ main__ method.
