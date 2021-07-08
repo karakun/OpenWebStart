@@ -860,6 +860,12 @@ javaws -arg arg1=value1 arg2=value2 -jnlp <path to jnlp file>
 
 The specified arguments will be passed to the application's __ main__ method.
 
+==== -allowredirect : Enable OWS to follow HTTP redirects.
+[source]
+----
+javaws -allowredirect http://jogamp.org/deployment/archive/rc/v2.3.2/jogl-demos/Gears.jnlp
+----
+
 === Configuration Properties Overview
 
 The following table provides an overview of the configuration properties of OpenWebStart.
