@@ -129,7 +129,7 @@ public final class LocalRuntimeManager {
 
     /**
      * Load runtimes from filesystem into cache.
-     *
+     * <p>
      * Do some housekeeping:
      * <ul>
      *     <li>Remove runtime if no longer present on the file system</li>
@@ -147,11 +147,8 @@ public final class LocalRuntimeManager {
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 final List<LocalJavaRuntime> runtimesFromFile = cacheStore.getRuntimes();
 
-                runtimesFromFile.stream()
-                        .filter(this::isJvmPresent)
-                        .forEach(this::add);
-
-                cleanupUnusedJvms(runtimesFromFile);
+                runtimesFromFile.forEach(this::addInMemory);
+                cleanupJvmCacheFile(runtimesFromFile);
             }
 
             final boolean isFirstTimeLoading = firstTimeLoading.getAndSet(false);
@@ -166,18 +163,20 @@ public final class LocalRuntimeManager {
         }
     }
 
-    private void cleanupUnusedJvms(List<LocalJavaRuntime> runtimes) {
+    private void cleanupJvmCacheFile(List<LocalJavaRuntime> cacheFileContent) {
         final boolean jvmCleanupDisabled = !parseBoolean(getConfiguration().getProperty(JVM_CACHE_CLEANUP_ENABLED));
         if (jvmCleanupDisabled) {
             return;
         }
 
-        runtimes.stream()
+        cacheFileContent.stream()
                 .filter(LocalJavaRuntime::isManaged)
                 .filter(this::isUnused)
-                .forEach(this::delete);
+                .forEach(this::removeInMemory);
 
-        saveRuntimes();
+        if (!Objects.equals(cacheFileContent, runtimes)) {
+            saveRuntimes();
+        }
     }
 
     private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
@@ -192,17 +191,15 @@ public final class LocalRuntimeManager {
         return false;
     }
 
-    private boolean isJvmPresent(final LocalJavaRuntime localJavaRuntime) {
+    private boolean isJvmMissing(final LocalJavaRuntime localJavaRuntime) {
         final Path javaHome = localJavaRuntime.getJavaHome();
         final Path javaRuntimePath = Paths.get(javaHome.toString(), "bin", OsUtil.isWindows() ? "java.exe" : "java");
 
-        return Files.exists(javaHome) && Files.isDirectory(javaHome) && Files.exists(javaRuntimePath);
+        return !Files.exists(javaHome) || !Files.isDirectory(javaHome) || !Files.exists(javaRuntimePath);
     }
 
-    private void add(final LocalJavaRuntime localJavaRuntime) {
-        Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
-
-        if (runtimes.contains(localJavaRuntime)) {
+    private void addInMemory(final LocalJavaRuntime localJavaRuntime) {
+        if (localJavaRuntime == null || runtimes.contains(localJavaRuntime) || isJvmMissing(localJavaRuntime)) {
             return;
         }
 
@@ -247,29 +244,37 @@ public final class LocalRuntimeManager {
     private void findAndAddNewLocalRuntimes(DeploymentConfiguration configuration) {
         final String searchOnStartValue = configuration.getProperty(OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP);
         if (parseBoolean(searchOnStartValue)) {
-            JdkFinder.findLocalRuntimes(configuration)
+            final List<LocalJavaRuntime> found = JdkFinder.findLocalRuntimes(configuration)
                     .stream()
                     .filter(Objects::nonNull)
                     .filter(Result::isSuccessful)
                     .map(Result::getResult)
-                    .forEach(localRuntime -> addNewLocalJavaRuntime(localRuntime, s -> {}));
+                    .collect(Collectors.toList());
+
+            addNewLocalJavaRuntime(found, s -> {});
         }
     }
 
-    public boolean addNewLocalJavaRuntime(LocalJavaRuntime newRuntime, Consumer<String> errorMessageHandler) {
-        Assert.requireNonNull(newRuntime, "runtime");
-        if (supportsVersionRange(newRuntime)) {
-            try {
-                return addNewRuntime(newRuntime);
-            } catch (final Exception e) {
-                LOG.error("Error while adding local JDK at '" + newRuntime.getJavaHome() + "'", e);
-                errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
+    public int addNewLocalJavaRuntime(List<LocalJavaRuntime> newRuntimes, Consumer<String> errorMessageHandler) {
+        Assert.requireNonNull(newRuntimes, "runtimes");
+        int count = 0;
+
+        for (LocalJavaRuntime newRuntime : newRuntimes) {
+            if (supportsVersionRange(newRuntime)) {
+                try {
+                    if (addNewRuntimeInMemory(newRuntime)) {
+                        count++;
+                    }
+                } catch (final Exception e) {
+                    LOG.error("Error while adding local JDK at '" + newRuntime.getJavaHome() + "'", e);
+                    errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
+                }
+            } else {
+                LOG.error("JVM at '" + newRuntime.getJavaHome() + "' has unsupported version '" + newRuntime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
+                errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
             }
-        } else {
-            LOG.error("JVM at '" + newRuntime.getJavaHome() + "' has unsupported version '" + newRuntime.getVersion() + "'. Allowed Range: '" + RuntimeManagerConfig.getSupportedVersionRange() + "'");
-            errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
         }
-        return false;
+        return count;
     }
 
     private boolean supportsVersionRange(final LocalJavaRuntime runtime) {
@@ -280,14 +285,13 @@ public final class LocalRuntimeManager {
                 .orElse(true);
     }
 
-    private boolean addNewRuntime(final LocalJavaRuntime localJavaRuntime) {
+    private boolean addNewRuntimeInMemory(final LocalJavaRuntime localJavaRuntime) {
         LOG.debug("Adding runtime definition");
 
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
 
-        final Path runtimePath = localJavaRuntime.getJavaHome();
-        if (!runtimePath.toFile().exists()) {
-            throw new IllegalArgumentException("Cannot add runtime with nonexisting JAVAHOME=" + runtimePath);
+        if (isJvmMissing(localJavaRuntime)) {
+            throw new IllegalArgumentException("Cannot add invalid runtime with JAVAHOME=" + localJavaRuntime.getJavaHome());
         }
 
         if (!runtimes.contains(localJavaRuntime)) {
@@ -295,7 +299,6 @@ public final class LocalRuntimeManager {
             runtimes.add(localJavaRuntime);
             addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
 
-            saveRuntimes();
             return true;
         }
         return false;
@@ -312,41 +315,45 @@ public final class LocalRuntimeManager {
         });
     }
 
-    public void delete(final LocalJavaRuntime localJavaRuntime) {
-        Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
-
-        LOG.debug("Deleting runtime '{}'", localJavaRuntime.getJavaHome());
-
-        if (!localJavaRuntime.isManaged()) {
-            throw new IllegalArgumentException("Cannot delete runtime that is not managed");
-        }
-
-        if (runtimes.remove(localJavaRuntime)) {
-            final Path runtimeDir = localJavaRuntime.getJavaHome();
-            try {
-                FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
-            saveRuntimes();
-        }
-    }
-
     public void remove(final LocalJavaRuntime localJavaRuntime) {
         Assert.requireNonNull(localJavaRuntime, "localJavaRuntime");
 
         LOG.debug("Removing runtime definition");
 
-        if (localJavaRuntime.isManaged()) {
-            throw new IllegalArgumentException("Cannot remove runtime that is managed");
-        }
-
-        if (runtimes.remove(localJavaRuntime)) {
-            removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
+        if (removeInMemory(localJavaRuntime)) {
             saveRuntimes();
         }
+    }
+
+    public void removeAll(final List<LocalJavaRuntime> localJavaRuntimes) {
+        Assert.requireNonNull(localJavaRuntimes, "localJavaRuntimes");
+
+        LOG.debug("Removing all runtime definition");
+
+        final long numRemoved = localJavaRuntimes.stream()
+                .filter(this::removeInMemory)
+                .count();
+
+        if (numRemoved > 0) {
+            saveRuntimes();
+        }
+    }
+
+    private boolean removeInMemory(final LocalJavaRuntime localJavaRuntime) {
+        if (runtimes.remove(localJavaRuntime)) {
+            if (localJavaRuntime.isManaged()) {
+                final Path runtimeDir = localJavaRuntime.getJavaHome();
+                try {
+                    FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
+            return true;
+        }
+        return false;
     }
 
     public static void touch(final LocalJavaRuntime currentRuntime) {
@@ -421,8 +428,24 @@ public final class LocalRuntimeManager {
         LOG.info("Remote runtime {} successfully installed in {}", remoteRuntime, runtimePath);
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
 
-        addNewRuntime(newRuntime);
-        return newRuntime;
+        if (addNewRuntimeInMemory(newRuntime)) {
+            saveRuntimes();
+            return newRuntime;
+        } else {
+            return getInMemoryEquivalent(newRuntime)
+                    .orElseThrow(() -> new RuntimeException("Cannot add local runtime but cannot find it in memory either. Please restart OpenWebStart"));
+        }
+    }
+
+    private Optional<LocalJavaRuntime> getInMemoryEquivalent(final LocalJavaRuntime runtime) {
+        final int index = runtimes.indexOf(runtime);
+        if (index >= 0) {
+            final LocalJavaRuntime existing = runtimes.get(index);
+            if (Objects.equals(existing, runtime)) {
+                return Optional.of(existing);
+            }
+        }
+        return Optional.empty();
     }
 
     Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
