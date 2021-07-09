@@ -131,6 +131,14 @@ the jars files for the app are available in the cache. For example:
 Note that you will get `java.net.ConnectException` if you run _javaws_ *without* the _-Xoffline_ parameter when NOT
 connected to the server as OWS will try to fetch the resources from the server and fail.
 
+==== How to pass arguments to the application started by Jnlp
+[source]
+----
+javaws -arg arg1=value1 arg2=value2 -jnlp <path to jnlp file>
+----
+
+The specified arguments will be passed to the application's main method.
+
 ==== How can I define a server whitelist for OWS?
 
 This field is currently not editable in the UI.
