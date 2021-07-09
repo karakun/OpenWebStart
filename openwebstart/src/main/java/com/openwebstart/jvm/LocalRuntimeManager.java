@@ -94,7 +94,7 @@ public final class LocalRuntimeManager {
         return () -> updatedListeners.remove(listener);
     }
 
-    private void saveRuntimes() throws IOException {
+    private void saveRuntimes() {
         jsonStoreLock.lock();
         try {
             LOG.debug("Saving runtime cache to filesystem");
@@ -120,6 +120,8 @@ public final class LocalRuntimeManager {
             final CacheStore cacheStore = new CacheStore(runtimes);
             final String jsonString = JsonHandler.getInstance().toJson(cacheStore);
             FileUtils.saveFileUtf8(jsonString, jsonFile);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error while saving JVM cache.", e);
         } finally {
             jsonStoreLock.unlock();
         }
@@ -174,11 +176,8 @@ public final class LocalRuntimeManager {
                 .filter(LocalJavaRuntime::isManaged)
                 .filter(this::isUnused)
                 .forEach(this::delete);
-        try {
-            saveRuntimes();
-        } catch (final Exception e) {
-            throw new RuntimeException("Error while saving JVM cache.", e);
-        }
+
+        saveRuntimes();
     }
 
     private boolean isUnused(final LocalJavaRuntime localJavaRuntime) {
@@ -241,11 +240,8 @@ public final class LocalRuntimeManager {
         runtimes.remove(index);
         runtimes.add(index, newRuntime);
         updatedListeners.forEach(l -> l.onRuntimeUpdated(oldRuntime, newRuntime));
-        try {
-            saveRuntimes();
-        } catch (final Exception e) {
-            throw new RuntimeException("Error while saving JVM cache.", e);
-        }
+
+        saveRuntimes();
     }
 
     private void findAndAddNewLocalRuntimes(DeploymentConfiguration configuration) {
@@ -298,12 +294,9 @@ public final class LocalRuntimeManager {
             removeRuntimesByJavaHome(localJavaRuntime.getJavaHome());
             runtimes.add(localJavaRuntime);
             addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
-            try {
-                saveRuntimes();
-                return true;
-            } catch (final Exception e) {
-                throw new RuntimeException("Error while saving JVM cache.", e);
-            }
+
+            saveRuntimes();
+            return true;
         }
         return false;
     }
@@ -328,25 +321,16 @@ public final class LocalRuntimeManager {
             throw new IllegalArgumentException("Cannot delete runtime that is not managed");
         }
 
-        if (runtimes.contains(localJavaRuntime)) {
-            final boolean removed = runtimes.remove(localJavaRuntime);
-
-            if (removed && localJavaRuntime.isManaged()) {
-                final Path runtimeDir = localJavaRuntime.getJavaHome();
-                try {
-                    FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (removed) {
-                removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
-            }
+        if (runtimes.remove(localJavaRuntime)) {
+            final Path runtimeDir = localJavaRuntime.getJavaHome();
             try {
-                saveRuntimes();
-            } catch (final Exception e) {
-                throw new RuntimeException("Error while saving JVM cache.", e);
+                FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+
+            removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
+            saveRuntimes();
         }
     }
 
@@ -359,17 +343,9 @@ public final class LocalRuntimeManager {
             throw new IllegalArgumentException("Cannot remove runtime that is managed");
         }
 
-        if (runtimes.contains(localJavaRuntime)) {
-            final boolean removed = runtimes.remove(localJavaRuntime);
-
-            if (removed) {
-                removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
-            }
-            try {
-                saveRuntimes();
-            } catch (final Exception e) {
-                throw new RuntimeException("Error while saving JVM cache.", e);
-            }
+        if (runtimes.remove(localJavaRuntime)) {
+            removedListeners.forEach(l -> l.onRuntimeRemoved(localJavaRuntime));
+            saveRuntimes();
         }
     }
 
