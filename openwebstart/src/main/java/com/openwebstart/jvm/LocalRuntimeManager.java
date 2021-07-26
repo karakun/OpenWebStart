@@ -257,13 +257,13 @@ public final class LocalRuntimeManager {
 
     public int addNewLocalJavaRuntime(List<LocalJavaRuntime> newRuntimes, Consumer<String> errorMessageHandler) {
         Assert.requireNonNull(newRuntimes, "runtimes");
-        int count = 0;
+        int numAdded = 0;
 
         for (LocalJavaRuntime newRuntime : newRuntimes) {
             if (supportsVersionRange(newRuntime)) {
                 try {
                     if (addNewRuntimeInMemory(newRuntime)) {
-                        count++;
+                        numAdded++;
                     }
                 } catch (final Exception e) {
                     LOG.error("Error while adding local JDK at '" + newRuntime.getJavaHome() + "'", e);
@@ -274,7 +274,10 @@ public final class LocalRuntimeManager {
                 errorMessageHandler.accept(Translator.getInstance().translate("jvmManager.error.versionOutOfRange"));
             }
         }
-        return count;
+        if (numAdded > 0) {
+            saveRuntimes();
+        }
+        return numAdded;
     }
 
     private boolean supportsVersionRange(final LocalJavaRuntime runtime) {
