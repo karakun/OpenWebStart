@@ -308,14 +308,13 @@ public final class LocalRuntimeManager {
     }
 
     private void removeRuntimesByJavaHome(Path javaHome) {
-        List<LocalJavaRuntime> toBeRemoved = runtimes.stream()
-                .filter(rt -> Objects.equals(rt.getJavaHome(), javaHome))
-                .collect(Collectors.toList());
 
-        toBeRemoved.forEach(rt -> {
-            removedListeners.forEach(l -> l.onRuntimeRemoved(rt));
-            runtimes.remove(rt);
-        });
+        runtimes.stream()
+                .filter(rt -> Objects.equals(rt.getJavaHome(), javaHome))
+                .forEach(rt -> {
+                    runtimes.remove(rt);
+                    removedListeners.forEach(l -> l.onRuntimeRemoved(rt));
+                });
     }
 
     public void remove(final LocalJavaRuntime localJavaRuntime) {
