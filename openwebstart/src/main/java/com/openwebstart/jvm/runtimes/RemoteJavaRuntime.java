@@ -12,7 +12,7 @@ public class RemoteJavaRuntime extends JavaRuntime {
 
     public RemoteJavaRuntime(final String version, final OperationSystem operationSystem, final String vendor, final String href) {
         super(version, operationSystem, vendor);
-        this.href = Assert.requireNonNull(href, "endpoint");
+        this.href = Assert.requireNonNull(href, "href");
     }
 
     public String getHref() {

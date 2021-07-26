@@ -147,7 +147,7 @@ public final class LocalRuntimeManager {
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
                 final List<LocalJavaRuntime> runtimesFromFile = cacheStore.getRuntimes();
 
-                runtimesFromFile.forEach(this::addInMemory);
+                runtimesFromFile.forEach(this::loadIntoMemory);
                 cleanupJvmCacheFile(runtimesFromFile);
             }
 
@@ -198,7 +198,7 @@ public final class LocalRuntimeManager {
         return !Files.exists(javaHome) || !Files.isDirectory(javaHome) || !Files.exists(javaRuntimePath);
     }
 
-    private void addInMemory(final LocalJavaRuntime localJavaRuntime) {
+    private void loadIntoMemory(final LocalJavaRuntime localJavaRuntime) {
         if (localJavaRuntime == null || runtimes.contains(localJavaRuntime) || isJvmMissing(localJavaRuntime)) {
             return;
         }
@@ -297,14 +297,16 @@ public final class LocalRuntimeManager {
             throw new IllegalArgumentException("Cannot add invalid runtime with JAVAHOME=" + localJavaRuntime.getJavaHome());
         }
 
-        if (!runtimes.contains(localJavaRuntime)) {
-            removeRuntimesByJavaHome(localJavaRuntime.getJavaHome());
-            runtimes.add(localJavaRuntime);
-            addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
-
-            return true;
+        if (runtimes.contains(localJavaRuntime)) {
+            LOG.debug("Runtime already known - will not add");
+            return false;
         }
-        return false;
+
+        removeRuntimesByJavaHome(localJavaRuntime.getJavaHome());
+        runtimes.add(localJavaRuntime);
+        addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
+
+        return true;
     }
 
     private void removeRuntimesByJavaHome(Path javaHome) {
@@ -434,20 +436,11 @@ public final class LocalRuntimeManager {
             saveRuntimes();
             return newRuntime;
         } else {
-            return getInMemoryEquivalent(newRuntime)
+            return runtimes.stream()
+                    .filter(rt -> Objects.equals(rt, newRuntime))
+                    .findFirst()
                     .orElseThrow(() -> new RuntimeException("Cannot add local runtime but cannot find it in memory either. Please restart OpenWebStart"));
         }
-    }
-
-    private Optional<LocalJavaRuntime> getInMemoryEquivalent(final LocalJavaRuntime runtime) {
-        final int index = runtimes.indexOf(runtime);
-        if (index >= 0) {
-            final LocalJavaRuntime existing = runtimes.get(index);
-            if (Objects.equals(existing, runtime)) {
-                return Optional.of(existing);
-            }
-        }
-        return Optional.empty();
     }
 
     Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
