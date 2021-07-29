@@ -43,6 +43,15 @@ If your preferred JVM is not provided by our default download server, you can ei
 Currently, we do not provide an MSI installer.
 More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98.
 
+==== Can I install Oracle Java Web Start and OpenWebStart in parallel?
+This is possible but might lead to potential conflicts you have to take into consideration.
+When JWS is installed, the `.jnlp` MIME type might be associated already, so that OWS could not associated when installed at a later point in time.
+In this case the `.jnlp` mime type is reserved by JWS and OWS offers you the possibility to use `*.jnlpx*` as an alternative to associate your applications directly with OWS.
+
+Please be aware that `.jnlpx` files in some browsers, such as Chrome, opens as text instead of getting saved after download.
+The reason is that Content-Type returned by server is text/Plain.
+You can solve this by configuring the Web server so that all files with the .jnlpx file extension are set to a `application/x-java-jnlpx-file` MIME type.
+
 == Debugging and Error Reporting
 
 ==== Does OWS write log files and where do I find them?
