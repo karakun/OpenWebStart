@@ -52,6 +52,10 @@ Please be aware that `.jnlpx` files in some browsers, such as Chrome, opens as t
 The reason is that Content-Type returned by server is text/Plain.
 You can solve this by configuring the Web server so that all files with the .jnlpx file extension are set to a `application/x-java-jnlpx-file` MIME type.
 
+It is possible to specify separate `System Configuration` for JWS and OWS.
+Please see the section `OWS specific System Configuration` in
+the OWS Guide.
+
 == Debugging and Error Reporting
 
 ==== Does OWS write log files and where do I find them?

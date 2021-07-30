@@ -387,13 +387,14 @@ deployment.system.config=https\://192.168.1.1./javaws/system.properties
 deployment.system.config.mandatory=true
 ----
 
-NOTE: OpenWebStart tries to mimic the behavior of Oracle's web start.
-But it is not exactly the same.
+==== OWS specific System Configuration
+OpenWebStart tries to mimic the behavior of Oracle's web start (JWS) but it is not exactly the same.
 On some systems OpenWebStart is used besides Oracle's web start.
-In such a constellation it is possible that the system configuration need to be different for Oracle and Open web start.
-Therefore it is possible to change the `deployment.config` to `itw-deployment.config`.
-OpenWebStart will pickup the `itw-deployment.config` while Oracle will use the original file.
-The content of the file is the same as described above.
+In such a constellation it is possible that the system configuration needs to be different for Oracle JWS and OWS.
+Therefore, OWS allows the user to specify OWS specific  `deployment.config` called `itw-deployment.config`.
+The content of the file is the same as described above. OpenWebStart will pickup
+`itw-deployment.config` while Oracle will use the original `deployment.config` file.
+In the absence of `itw-deployment.config` OWS uses the original `deployment.config`.
 
 === Locking a Property
 
