@@ -24,8 +24,8 @@ public class JavaRuntimeManager {
     public static JavaRuntimeProvider getJavaRuntimeProvider(
             final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler,
             final Predicate<RemoteJavaRuntime> askForUpdateFunction,
-            final DeploymentConfiguration configuration) {
-
+            final DeploymentConfiguration configuration
+    ) {
         LocalRuntimeManager.getInstance().loadRuntimes(configuration);
         return new JavaRuntimeSelector(downloadHandler, askForUpdateFunction);
     }

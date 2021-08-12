@@ -18,7 +18,7 @@ public class DeleteRuntimeAction extends BasicAction<LocalJavaRuntime> {
     public void call(final LocalJavaRuntime item) {
         getNonDaemonExecutorService().execute(() -> {
             try {
-                LocalRuntimeManager.getInstance().delete(item);
+                LocalRuntimeManager.getInstance().remove(item);
             } catch (final Exception e) {
                 DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.deleteFolder"), e);
             }

@@ -923,6 +923,11 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |X
 |Allows to specify the directory where the JVM cache is located. The follow example shows two examples for Windows: ows.jvm.manager.cache.dir=c:\\temp\\JVMCacheDir or ows.jvm.manager.cache.dir=c\:/temp/JVMCacheDir
 
+|ows.jvm.manager.cache.cleanup
+|X
+|X
+|Allows to disable the cleanup of the local JVMs. Default is true. The benefit of disabling this is to avoid race conditions if two instances of OWS are launched at exactly the same time.
+
 |ows.jvm.manager.server.default
 |X
 |X

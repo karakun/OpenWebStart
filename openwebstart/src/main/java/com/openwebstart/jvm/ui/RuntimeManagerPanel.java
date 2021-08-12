@@ -1,5 +1,6 @@
 package com.openwebstart.jvm.ui;
 
+import com.openwebstart.func.Result;
 import com.openwebstart.func.ResultWithInput;
 import com.openwebstart.jvm.JavaRuntimeManager;
 import com.openwebstart.jvm.LocalRuntimeManager;
@@ -31,6 +32,7 @@ import java.awt.BorderLayout;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 
@@ -41,14 +43,16 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private final Translator translator;
     private final DeploymentConfiguration configuration;
+    private final LocalRuntimeManager localRuntimeManager;
 
     public RuntimeManagerPanel(final DeploymentConfiguration deploymentConfiguration) {
         translator = Translator.getInstance();
         configuration = deploymentConfiguration;
+        localRuntimeManager = LocalRuntimeManager.getInstance();
 
         RuntimeManagerConfig.setConfiguration(deploymentConfiguration);
         JavaRuntimeManager.reloadLocalRuntimes(configuration);
-        final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> getNonDaemonExecutorService().execute(() -> LocalRuntimeManager.getInstance().replace(oldValue, newValue)));
+        final RuntimeListActionSupplier supplier = new RuntimeListActionSupplier((oldValue, newValue) -> getNonDaemonExecutorService().execute(() -> localRuntimeManager.replace(oldValue, newValue)));
         final RuntimeListComponent runtimeListComponent = new RuntimeListComponent(supplier);
         listModel = runtimeListComponent.getModel();
 
@@ -86,35 +90,25 @@ public final class RuntimeManagerPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
 
         //TODO: Register on show and hide on close
-        LocalRuntimeManager.getInstance().
-                addRuntimeAddedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.addElement(runtime)));
+        localRuntimeManager.addRuntimeAddedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.addElement(runtime)));
+        localRuntimeManager.addRuntimeRemovedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.removeElement(runtime)));
+        localRuntimeManager.addRuntimeUpdatedListener((oldValue, newValue) -> SwingUtilities.invokeLater(() -> listModel.replaceItem(oldValue, newValue)));
 
-        LocalRuntimeManager.getInstance().
-                addRuntimeRemovedListener(runtime -> SwingUtilities.invokeLater(() -> listModel.removeElement(runtime)));
-
-        LocalRuntimeManager.getInstance().
-                addRuntimeUpdatedListener((oldValue, newValue) -> SwingUtilities.invokeLater(() -> listModel.replaceItem(oldValue, newValue)));
-
-        listModel.replaceData(LocalRuntimeManager.getInstance().getAll());
+        listModel.replaceData(localRuntimeManager.getAll());
     }
 
     private void onRemoveAll() {
+        final List<LocalJavaRuntime> runtimes = Collections.list(listModel.elements());
 
-        Collections.list(listModel.elements()).forEach(jvm -> {
-            getNonDaemonExecutorService().execute(() -> {
-                try {
-                    if (jvm.isManaged()) {
-                        LocalRuntimeManager.getInstance().delete(jvm);
-                    } else {
-                        LocalRuntimeManager.getInstance().remove(jvm);
-                    }
-                } catch (final Exception e) {
-                    DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.deleteFolder"), e);
-                }
-            });
+        getNonDaemonExecutorService().execute(() -> {
+            try {
+                localRuntimeManager.removeAll(runtimes);
+                SwingUtilities.invokeLater(() -> listModel.removeAllElements());
+            } catch (final Exception e) {
+                onRefresh();
+                DialogFactory.showErrorDialog(Translator.getInstance().translate("jvmManager.error.deleteFolder"), e);
+            }
         });
-
-        listModel.removeAllElements();
     }
 
     private void onRefresh() {
@@ -149,16 +143,8 @@ public final class RuntimeManagerPanel extends JPanel {
 
     private void handleFoundRuntimes(final List<ResultWithInput<Path, LocalJavaRuntime>> results) {
         Assert.requireNonNull(results, "results");
-        final long added = results.stream()
-                .filter(result -> {
-                    if (result.isSuccessful()) {
-                        return handleSuccessfulFoundRuntime(result.getInput(), result.getResult());
-                    } else {
-                        LOG.error("Error while adding local JDK at '" + result.getInput() + "'", result.getException());
-                        Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
-                        return false;
-                    }
-                }).count();
+        final List<LocalJavaRuntime> successful = extractSuccessfulFoundRuntimes(results);
+        final long added = localRuntimeManager.addNewLocalJavaRuntime(successful, Notifications::showError);
         if (added > 0) {
             LOG.info("Added {} local JVMs to the JVM Manager", added);
             Notifications.showInfo(Translator.getInstance().translate("jvmManager.info.jvmsAdded", added));
@@ -168,13 +154,25 @@ public final class RuntimeManagerPanel extends JPanel {
         }
     }
 
-    private boolean handleSuccessfulFoundRuntime(final Path path, final LocalJavaRuntime runtime) {
-        if (runtime == null) {
-            LOG.error("Error while adding local JDK at '" + path + "'", new NullPointerException("runtime == null"));
-            Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
-            return false;
-        }
-        return LocalRuntimeManager.getInstance().addNewLocalJavaRuntime(runtime, Notifications::showError);
+    private List<LocalJavaRuntime> extractSuccessfulFoundRuntimes(List<ResultWithInput<Path, LocalJavaRuntime>> results) {
+        final List<LocalJavaRuntime> successful = results.stream()
+                .map(result -> {
+                    if (result.isSuccessful() && result.getResult() == null) {
+                        return Result.<Path, LocalJavaRuntime>fail(result.getInput(), new NullPointerException("runtime == null"));
+                    }
+                    return result;
+                })
+                .filter(result -> {
+                    if (result.isFailed()) {
+                        LOG.error("Error while adding local JDK at '" + result.getInput() + "'", result.getException());
+                        Notifications.showError(Translator.getInstance().translate("jvmManager.error.jvmNotAdded"));
+                        return false;
+                    }
+                    return true;
+                })
+                .map(Result::getResult)
+                .collect(Collectors.toList());
+        return successful;
     }
 
     private void onFindLocalRuntimes(final DeploymentConfiguration deploymentConfiguration) {
