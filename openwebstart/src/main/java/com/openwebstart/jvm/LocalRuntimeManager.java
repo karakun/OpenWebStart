@@ -141,7 +141,7 @@ public final class LocalRuntimeManager {
         jsonStoreLock.lock();
         final File jsonFile = new File(cacheBaseDir(), RuntimeManagerConstants.JSON_STORE_FILENAME);
         try {
-            clear();
+            clearInMemory();
             if (jsonFile.exists()) {
                 final String content = FileUtils.loadFileAsUtf8String(jsonFile);
                 final CacheStore cacheStore = JsonHandler.getInstance().fromJson(content, CacheStore.class);
@@ -207,7 +207,7 @@ public final class LocalRuntimeManager {
         addedListeners.forEach(l -> l.onRuntimeAdded(localJavaRuntime));
     }
 
-    private void clear() {
+    private void clearInMemory() {
         LOG.debug("Clearing runtime cache");
         runtimes.forEach(r -> {
             if (runtimes.remove(r)) {

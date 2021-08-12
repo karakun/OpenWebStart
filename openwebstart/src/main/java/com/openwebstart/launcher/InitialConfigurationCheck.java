@@ -21,6 +21,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP
 import static com.openwebstart.config.OwsDefaultsProvider.CUSTOM_JVM_LOCATION;
 import static com.openwebstart.config.OwsDefaultsProvider.DEFAULT_JVM_DOWNLOAD_SERVER;
 import static com.openwebstart.config.OwsDefaultsProvider.EXCLUDE_DEFAULT_JVM_LOCATION;
+import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_CLEANUP_ENABLED;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_CACHE_DIR;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SERVER_WHITELIST;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_SUPPORTED_VERSION_RANGE;
@@ -67,6 +68,7 @@ class InitialConfigurationCheck {
             JVM_SUPPORTED_VERSION_RANGE,
             SEARCH_FOR_LOCAL_JVM_ON_STARTUP,
             EXCLUDE_DEFAULT_JVM_LOCATION,
+            JVM_CACHE_CLEANUP_ENABLED,
             CUSTOM_JVM_LOCATION,
             KEY_PROXY_HTTP_HOST,
             KEY_PROXY_HTTPS_HOST,
