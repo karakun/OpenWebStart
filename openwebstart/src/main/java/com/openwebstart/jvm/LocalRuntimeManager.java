@@ -439,7 +439,7 @@ public final class LocalRuntimeManager {
             return runtimes.stream()
                     .filter(rt -> Objects.equals(rt, newRuntime))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Cannot add local runtime but cannot find it in memory either. Please restart OpenWebStart"));
+                    .orElseThrow(() -> new RuntimeException("Cannot add local runtime and cannot find it in memory either. Please restart OpenWebStart"));
         }
     }
 
