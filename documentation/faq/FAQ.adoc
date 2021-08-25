@@ -249,7 +249,7 @@ application.
 
 Create a JavaFX project which should have https://openjfx.io/openjfx-docs/#install-java[OpenJFX] libraries on its path
 for compilation. Required OpenJFX version can be obtained from:
-https://gluonhq.com/products/javafx/[OpneJFX Download].
+https://gluonhq.com/products/javafx/[OpenJFX Download].
 
 In order to deploy a JavaFX application using OWS:
 
