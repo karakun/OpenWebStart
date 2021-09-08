@@ -3,11 +3,17 @@ package com.openwebstart.launcher;
 import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.install4j.Install4JUtils;
+import com.openwebstart.proxy.windows.WindowsProxyUtils;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.logging.FileLog;
 
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +33,23 @@ public class OpenWebStartLauncher {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
+
+    static {
+        System.setProperty("java.net.useSystemProxies", "true");
+        WindowsProxyUtils.proxySelector = ProxySelector.getDefault();
+        final List<Proxy> select;
+        try {
+            select = WindowsProxyUtils.proxySelector.select(new URI("http://www.google.com"));
+            SocketAddress address = select.get(0).address();
+            if (address == null) {
+                LOG.debug("**** java.net.useSystemProxies NOT effective");
+            } else {
+                LOG.debug("**** java.net.useSystemProxies effective : {}", address);
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String... args) {
         final List<String> arguments = new ArrayList<>(Arrays.asList(args));
