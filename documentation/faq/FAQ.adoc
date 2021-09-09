@@ -34,10 +34,11 @@ Your JNLP applications can be run with either Java 8 and 11.
 We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.
-Currently, we provide access to Azul and Adopt LTS JDKs via default download server.
-In the future we will add more vendors.
+Currently, we provide access to long-term support (LTS) versions of JDKs from various vendors by our default download server.
+Have a look at the https://openwebstart.com/docs/OWSGuide.html#_specify_a_specific_vendor_in_the_jnlp_file[OWS user guide] for a list of all JDK vendors that currently are available on this server.
+Note that this list might be subject of change in the future.
 
-If your preferred JVM is not provided by our default download server, you can either add locally installed JVMs or host your own download server for JVMs to run your JNLP applications.
+If your preferred JVM is not provided by the default download server, you can either add locally installed JVMs to your JVM manager's list or https://openwebstart.com/docs/OWSGuide.html#_setup_a_custom_download_server[setup a custom download server].
 
 ==== Is there an MSI installer for OpenWebStart?
 Currently, we do not provide an MSI installer.
