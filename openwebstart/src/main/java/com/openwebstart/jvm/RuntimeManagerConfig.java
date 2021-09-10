@@ -1,12 +1,16 @@
 package com.openwebstart.jvm;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.util.whitelist.UrlWhiteListUtils;
 import net.sourceforge.jnlp.util.whitelist.WhitelistEntry;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -24,6 +28,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 
 public class RuntimeManagerConfig {
+    private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerConfig.class);
 
     private static DeploymentConfiguration deploymentConfiguration;
     private static List<WhitelistEntry> jvmServerWhitelist;
@@ -59,7 +64,23 @@ public class RuntimeManagerConfig {
     }
 
     public static String getVendor() {
+        try {
+            migrateVendorIfRequired();
+        } catch (IOException exception) {
+            LOG.error("Failed to migration of outdated vendor.");
+        }
         return config().getProperty(JVM_VENDOR);
+    }
+
+    private static void migrateVendorIfRequired() throws IOException {
+        Vendor currentVendor = Vendor.fromStringOrAny(config().getProperty(JVM_VENDOR));
+
+        if (currentVendor.equals(Vendor.ADOPT)) {
+            LOG.info("Outdated vendor setting detected. Silently migrate vendor " + Vendor.ADOPT + "to " + Vendor.ECLIPSE);
+            currentVendor = Vendor.ECLIPSE;
+            deploymentConfiguration.setProperty(JVM_VENDOR, currentVendor.toString());
+            deploymentConfiguration.save();
+        }
     }
 
     public static boolean isVendorFromJnlpAllowed() {
