@@ -64,13 +64,13 @@ public class WindowsProxyUtils {
         if (proxySelector != null) {
             try {
                 final List<Proxy> select = proxySelector.select(new URI("http://www.google.com"));
-                SocketAddress address = select.get(0).address();
+                final SocketAddress address = select.get(0) != null ? select.get(0).address() : null;
                 if (address == null) {
                     LOG.debug("No proxy server defined by java.net.useSystemProxies. Will use direct proxy.");
                     return DirectProxyProvider.getInstance();
                 } else {
                     final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(address.toString(), null);
-                    LOG.debug("Proxy server(s) defined by java.net.useSystemProxies {}.", address);
+                    LOG.debug("Proxy server(s) defined by java.net.useSystemProxies = {}.", address);
                     return new ConfigBasedProvider(proxyConfiguration);
                 }
             } catch ( Exception e) {
@@ -80,11 +80,9 @@ public class WindowsProxyUtils {
         return DirectProxyProvider.getInstance();
     }
 
-   // private static ProxyConfigurationImpl getProxyConfiguration(final RegistryQueryResult queryResult) {
     private static ProxyConfigurationImpl getProxyConfiguration(final String proxyServer, final String overrideHostsValue) {
         final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
 
-       // final String proxyServer = queryResult.getValue(PROXY_SERVER_REGISTRY_VAL);
         final List<String> hosts = Optional.ofNullable(proxyServer)
                 .map(v -> v.split(Pattern.quote(";")))
                 .map(Arrays::asList)
@@ -125,7 +123,7 @@ public class WindowsProxyUtils {
                 proxyConfiguration.setSocksPort(port);
             });
         }
-        //final String overrideHostsValue = queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL);
+
         if (overrideHostsValue != null) {
             Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
         }

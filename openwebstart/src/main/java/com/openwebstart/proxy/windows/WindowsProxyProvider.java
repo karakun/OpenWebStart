@@ -18,18 +18,14 @@ public class WindowsProxyProvider implements ProxyProvider {
     private final ProxyProvider internalProvider;
 
     public WindowsProxyProvider(final DeploymentConfiguration config) throws Exception {
-        ProxyProvider temp = null;
-        Exception ex = null;
+        RegistryQueryResult queryResult = null;
         try {
-            final RegistryQueryResult queryResult = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
-            temp = WindowsProxyUtils.createInternalProxy(config, queryResult);
-            LOG.debug("**** Registry Query Successful");
-        } catch (Exception e) {
-            ex = e;
-            LOG.debug("**** Registry Query Failed. Using proxy from java.net.useSystemProxies");
-            temp = WindowsProxyUtils.createInternalProxy();
+            queryResult = RegistryQuery.getAllValuesForKey(PROXY_REGISTRY_KEY);
+            LOG.debug("Registry Query Successful");
+        } catch (Exception regException) {
+            LOG.debug("Will use java.net.useSystemProxies as Registry Query Failed : {}", regException.getMessage());
         }
-        internalProvider = temp;
+        internalProvider = queryResult != null ? WindowsProxyUtils.createInternalProxy(config, queryResult) : WindowsProxyUtils.createInternalProxy();
     }
 
     @Override
