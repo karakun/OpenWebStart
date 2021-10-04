@@ -34,7 +34,7 @@ public class OpenWebStartLauncher {
         if (InstallerUtil.isWindows()) {
             // Use system proxy in case access to windows registry is blocked
             System.setProperty("java.net.useSystemProxies", "true");
-            WindowsProxyUtils.proxySelector = ProxySelector.getDefault();
+            WindowsProxyUtils.windowsDefaultProxySelector = ProxySelector.getDefault();
         }
     }
 

@@ -12,10 +12,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.IOException;
-import java.net.Proxy;
 import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,22 +57,9 @@ public class WindowsProxyUtils {
         }
     }
 
-    public static ProxyProvider createInternalProxy() {
-        if (proxySelector != null) {
-            try {
-                final List<Proxy> select = proxySelector.select(new URI("http://www.google.com"));
-                final SocketAddress address = select.get(0) != null ? select.get(0).address() : null;
-                if (address == null) {
-                    LOG.debug("No proxy server defined by java.net.useSystemProxies. Will use direct proxy.");
-                    return DirectProxyProvider.getInstance();
-                } else {
-                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(address.toString(), null);
-                    LOG.debug("Proxy server(s) defined by java.net.useSystemProxies = {}.", address);
-                    return new ConfigBasedProvider(proxyConfiguration);
-                }
-            } catch ( Exception e) {
-                return DirectProxyProvider.getInstance();
-            }
+    static ProxyProvider createSystemProxy() {
+        if (windowsDefaultProxySelector != null) {
+            return uri -> windowsDefaultProxySelector.select(uri);
         }
         return DirectProxyProvider.getInstance();
     }
@@ -125,7 +109,7 @@ public class WindowsProxyUtils {
         }
 
         if (overrideHostsValue != null) {
-            Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
+            Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(proxyConfiguration::addToBypassList);
         }
         proxyConfiguration.setBypassLocal(proxyConfiguration.getBypassList().contains(EXCLUDE_LOCALHOST_MAGIC_VALUE));
         return proxyConfiguration;
@@ -152,5 +136,5 @@ public class WindowsProxyUtils {
         }
     }
 
-    public static ProxySelector proxySelector = null;
+    public static ProxySelector windowsDefaultProxySelector = null;
 }
