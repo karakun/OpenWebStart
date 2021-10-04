@@ -12,6 +12,10 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.IOException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +31,7 @@ import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_ENABLED
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_OVERRIDE_VAL;
 import static com.openwebstart.proxy.windows.WindowsProxyConstants.PROXY_SERVER_REGISTRY_VAL;
 
-class WindowsProxyUtils {
+public class WindowsProxyUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(WindowsProxyUtils.class);
 
@@ -42,7 +46,7 @@ class WindowsProxyUtils {
                 final String proxyServerValue = queryResult.getValue(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
                     LOG.debug("Proxy server(s) defined ( registry value '" + PROXY_SERVER_REGISTRY_VAL + "'). Will use configured proxy.");
-                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(queryResult);
+                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(queryResult.getValue(PROXY_SERVER_REGISTRY_VAL), queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL));
                     return new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
@@ -56,10 +60,30 @@ class WindowsProxyUtils {
         }
     }
 
-    private static ProxyConfigurationImpl getProxyConfiguration(final RegistryQueryResult queryResult) {
+    public static ProxyProvider createInternalProxy() {
+        if (proxySelector != null) {
+            try {
+                final List<Proxy> select = proxySelector.select(new URI("http://www.google.com"));
+                final SocketAddress address = select.get(0) != null ? select.get(0).address() : null;
+                if (address == null) {
+                    LOG.debug("No proxy server defined by java.net.useSystemProxies. Will use direct proxy.");
+                    return DirectProxyProvider.getInstance();
+                } else {
+                    final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(address.toString(), null);
+                    LOG.debug("Proxy server(s) defined by java.net.useSystemProxies = {}.", address);
+                    return new ConfigBasedProvider(proxyConfiguration);
+                }
+            } catch ( Exception e) {
+                return DirectProxyProvider.getInstance();
+            }
+        }
+        return DirectProxyProvider.getInstance();
+    }
+
+    private static ProxyConfigurationImpl getProxyConfiguration(final String proxyServer, final String overrideHostsValue) {
         final ProxyConfigurationImpl proxyConfiguration = new ProxyConfigurationImpl();
 
-        final List<String> hosts = Optional.ofNullable(queryResult.getValue(PROXY_SERVER_REGISTRY_VAL))
+        final List<String> hosts = Optional.ofNullable(proxyServer)
                 .map(v -> v.split(Pattern.quote(";")))
                 .map(Arrays::asList)
                 .orElse(Collections.emptyList());
@@ -99,7 +123,7 @@ class WindowsProxyUtils {
                 proxyConfiguration.setSocksPort(port);
             });
         }
-        final String overrideHostsValue = queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL);
+
         if (overrideHostsValue != null) {
             Arrays.asList(overrideHostsValue.split(Pattern.quote(";"))).forEach(p -> proxyConfiguration.addToBypassList(p));
         }
@@ -127,4 +151,6 @@ class WindowsProxyUtils {
             //TODO: LOG
         }
     }
+
+    public static ProxySelector proxySelector = null;
 }

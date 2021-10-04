@@ -3,11 +3,13 @@ package com.openwebstart.launcher;
 import com.install4j.api.launcher.StartupNotification;
 import com.install4j.runtime.installer.helper.InstallerUtil;
 import com.openwebstart.install4j.Install4JUtils;
+import com.openwebstart.proxy.windows.WindowsProxyUtils;
 import net.adoptopenjdk.icedteaweb.JavaSystemProperties;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.util.logging.FileLog;
 
+import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +29,14 @@ public class OpenWebStartLauncher {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);
+
+    static {
+        if (InstallerUtil.isWindows()) {
+            // Use system proxy in case access to windows registry is blocked
+            System.setProperty("java.net.useSystemProxies", "true");
+            WindowsProxyUtils.proxySelector = ProxySelector.getDefault();
+        }
+    }
 
     public static void main(String... args) {
         final List<String> arguments = new ArrayList<>(Arrays.asList(args));
