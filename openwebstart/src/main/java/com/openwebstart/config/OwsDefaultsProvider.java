@@ -121,6 +121,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         ValidatorFactory.createBooleanValidator()
                 ),
                 Setting.createDefault(
+                        JVM_SERVER_WHITELIST,
+                        null,
+                        null
+                ),
+                Setting.createDefault(
                         JVM_VENDOR,
                         Vendor.ANY_VENDOR.getName(),
                         null
