@@ -78,7 +78,7 @@ class RemoteRuntimeManager {
                     final HttpGetRequest request = new HttpGetRequest(endpointForRequest);
                     try (final HttpResponse response = request.handle()) {
                         final String jsonContent = IOUtils.readContentAsUtf8String(response.getContentStream());
-                        final RemoteRuntimeList receivedList = JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
+                        final RemoteRuntimeList receivedList = parseRemoteRuntimeJson(jsonContent);
                         cache.set(new RemoteRuntimeManagerCache(endpointForRequest, receivedList));
                         return receivedList;
                     }
@@ -92,6 +92,10 @@ class RemoteRuntimeManager {
             return Collections.emptyList();
         }
 
+    }
+
+    RemoteRuntimeList parseRemoteRuntimeJson(final String jsonContent) {
+        return JsonHandler.getInstance().fromJson(jsonContent, RemoteRuntimeList.class);
     }
 
     private Optional<RemoteJavaRuntime> selectBestRuntime(List<RemoteJavaRuntime> remoteRuntimes, VersionString versionString, Vendor vendor, OperationSystem operationSystem) {

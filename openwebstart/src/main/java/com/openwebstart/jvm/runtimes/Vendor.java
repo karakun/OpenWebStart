@@ -26,7 +26,6 @@ public class Vendor {
     public static final Vendor ORACLE = new Vendor("Oracle Corporation", "Oracle");
     public static final Vendor AMAZON = new Vendor("Amazon.com Inc.", "Amazon");
     public static final Vendor BELLSOFT = new Vendor("BellSoft");
-    public static final Vendor ADOPT = new Vendor("AdoptOpenJDK", "Adopt");
     public static final Vendor AZUL = new Vendor("Azul Systems, Inc.", "Azul");
     public static final Vendor ECLIPSE = new Vendor("Eclipse Adoptium", "Adoptium");
 

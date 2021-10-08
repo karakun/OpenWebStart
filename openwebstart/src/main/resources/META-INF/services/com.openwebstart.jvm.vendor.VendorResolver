@@ -1,5 +1,5 @@
 com.openwebstart.jvm.vendor.BellsoftResolver
-com.openwebstart.jvm.vendor.AdoptResolver
+com.openwebstart.jvm.vendor.EclipseResolver
 com.openwebstart.jvm.vendor.AmazonResolver
 com.openwebstart.jvm.vendor.OracleResolver
 com.openwebstart.jvm.vendor.AzulResolver

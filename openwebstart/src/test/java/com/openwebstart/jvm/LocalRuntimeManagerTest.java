@@ -21,8 +21,8 @@ import java.util.Optional;
 
 import static com.openwebstart.jvm.os.OperationSystem.ARM32;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
-import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -77,7 +77,7 @@ public class LocalRuntimeManagerTest {
         //than
         assertTrue(runtime.isPresent());
         assertEquals(VERSION_1_8_220, runtime.get().getVersion());
-        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(ECLIPSE, runtime.get().getVendor());
         assertEquals(MAC64, runtime.get().getOperationSystem());
         assertTrue(runtime.get().isManaged());
         assertTrue(runtime.get().isActive());
@@ -94,7 +94,7 @@ public class LocalRuntimeManagerTest {
         //than
         assertTrue(runtime.isPresent());
         assertEquals(VERSION_11_0_1, runtime.get().getVersion());
-        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(ECLIPSE, runtime.get().getVendor());
         assertEquals(MAC64, runtime.get().getOperationSystem());
         assertTrue(runtime.get().isManaged());
         assertTrue(runtime.get().isActive());
@@ -152,7 +152,7 @@ public class LocalRuntimeManagerTest {
         //than
         assertTrue(runtime.isPresent());
         assertEquals(VERSION_1_8_220, runtime.get().getVersion());
-        assertEquals(ADOPT, runtime.get().getVendor());
+        assertEquals(ECLIPSE, runtime.get().getVendor());
         assertEquals(MAC64, runtime.get().getOperationSystem());
         assertTrue(runtime.get().isManaged());
         assertTrue(runtime.get().isActive());

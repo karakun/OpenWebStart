@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
@@ -73,11 +74,11 @@ public class RuntimeManagerConfig {
     }
 
     private static void migrateVendorIfRequired() throws IOException {
-        Vendor currentVendor = Vendor.fromStringOrAny(config().getProperty(JVM_VENDOR));
+        String vendorFromDeplyomentConfiguration = config().getProperty(JVM_VENDOR);
+        Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeplyomentConfiguration);
 
-        if (currentVendor.equals(Vendor.ADOPT)) {
-            LOG.info("Outdated vendor setting detected. Silently migrate vendor " + Vendor.ADOPT + "to " + Vendor.ECLIPSE);
-            currentVendor = Vendor.ECLIPSE;
+        if (!Objects.equals(currentVendor.toString(), vendorFromDeplyomentConfiguration)) {
+            LOG.info("Outdated vendor setting detected. Silently migrate vendor '" + vendorFromDeplyomentConfiguration + "' to '" + currentVendor + "'");
             deploymentConfiguration.setProperty(JVM_VENDOR, currentVendor.toString());
             deploymentConfiguration.save();
         }

@@ -15,9 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import spark.Spark;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,9 +30,11 @@ import static com.openwebstart.jvm.os.OperationSystem.ARM32;
 import static com.openwebstart.jvm.os.OperationSystem.LINUX64;
 import static com.openwebstart.jvm.os.OperationSystem.MAC64;
 import static com.openwebstart.jvm.os.OperationSystem.WIN64;
-import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
+import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class RemoteRuntimeManagerTest {
 
@@ -54,15 +60,15 @@ public class RemoteRuntimeManagerTest {
         final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
-            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "adopt", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "adopt", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "adopt", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "Temurin", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "Temurin", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "Temurin", theOneAndOnlyJdkZip));
 
             runtimes.add(new RemoteJavaRuntime("1.8.146", os, "oracle", theOneAndOnlyJdkZip));
             runtimes.add(new RemoteJavaRuntime("1.8.221", os, "oracle", theOneAndOnlyJdkZip));
             runtimes.add(new RemoteJavaRuntime("1.8.225", os, "oracle", theOneAndOnlyJdkZip));
 
-            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "adopt", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "Temurin", theOneAndOnlyJdkZip));
 
             runtimes.add(new RemoteJavaRuntime("11.0.2", os, "oracle", theOneAndOnlyJdkZip));
         }
@@ -111,9 +117,9 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
+        assertEquals(VERSION_1_8_225, runtime.getVersion());
+        assertEquals(ORACLE, runtime.getVendor());
+        assertEquals(MAC64, runtime.getOperationSystem());
     }
 
     @Test
@@ -127,9 +133,9 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(WIN64, runtime.getOperationSystem());
+        assertEquals(VERSION_1_8_225, runtime.getVersion());
+        assertEquals(ORACLE, runtime.getVendor());
+        assertEquals(WIN64, runtime.getOperationSystem());
     }
 
     @Test
@@ -139,13 +145,13 @@ public class RemoteRuntimeManagerTest {
         final URL specificServerEndpoint = null;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ADOPT, MAC64).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ECLIPSE, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_224, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
+        assertEquals(VERSION_1_8_224, runtime.getVersion());
+        assertEquals(ECLIPSE, runtime.getVendor());
+        assertEquals(MAC64, runtime.getOperationSystem());
     }
 
     @Test
@@ -159,9 +165,9 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_11_0_2, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
+        assertEquals(VERSION_11_0_2, runtime.getVersion());
+        assertEquals(ORACLE, runtime.getVendor());
+        assertEquals(MAC64, runtime.getOperationSystem());
     }
 
     @Test
@@ -171,13 +177,13 @@ public class RemoteRuntimeManagerTest {
         final URL specificServerEndpoint = null;
 
         //when
-        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ADOPT, MAC64).orElse(null);
+        final RemoteJavaRuntime runtime = RemoteRuntimeManager.getInstance().getBestRuntime(versionString, specificServerEndpoint, ECLIPSE, MAC64).orElse(null);
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_11_0_1, runtime.getVersion());
-        Assertions.assertEquals(ADOPT, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
+        assertEquals(VERSION_11_0_1, runtime.getVersion());
+        assertEquals(ECLIPSE, runtime.getVendor());
+        assertEquals(MAC64, runtime.getOperationSystem());
     }
 
     @Test
@@ -245,8 +251,23 @@ public class RemoteRuntimeManagerTest {
 
         //than
         Assertions.assertNotNull(runtime);
-        Assertions.assertEquals(VERSION_1_8_225, runtime.getVersion());
-        Assertions.assertEquals(ORACLE, runtime.getVendor());
-        Assertions.assertEquals(MAC64, runtime.getOperationSystem());
+        assertEquals(VERSION_1_8_225, runtime.getVersion());
+        assertEquals(ORACLE, runtime.getVendor());
+        assertEquals(MAC64, runtime.getOperationSystem());
+    }
+
+    @Test
+    public void testParseRemoteRuntimeJson() throws IOException, URISyntaxException {
+        // given
+        URL url = getClass().getResource("jvms.json");
+        Path resPath = Paths.get(url.toURI());
+        String json = new String(Files.readAllBytes(resPath), "UTF8");
+
+        // when
+        RemoteRuntimeList remoteRuntimeList = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
+
+        // then
+        assertFalse(remoteRuntimeList.getRuntimes().isEmpty());
+        assertEquals(36, remoteRuntimeList.getRuntimes().size());
     }
 }
