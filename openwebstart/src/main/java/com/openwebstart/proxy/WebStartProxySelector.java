@@ -62,7 +62,7 @@ public class WebStartProxySelector extends ProxySelector {
                 .map(this::addressString)
                 .collect(Collectors.toList());
 
-        LOG.debug("Connection failed for proxy {} out of  {}", currentProxyAddress, proxyAddresses);
+        LOG.debug("Connection failed for proxy {} out of {}", currentProxyAddress, proxyAddresses);
 
         // if the failed proxy is the last in the list that means all proxies in the list have failed
         if (proxyAddresses.get(proxyAddresses.size() - 1).equals(currentProxyAddress)) {
