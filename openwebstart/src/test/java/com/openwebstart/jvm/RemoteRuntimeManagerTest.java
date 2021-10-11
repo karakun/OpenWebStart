@@ -5,6 +5,7 @@ import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
+import net.adoptopenjdk.icedteaweb.io.IOUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -16,12 +17,10 @@ import org.junit.jupiter.api.io.TempDir;
 import spark.Spark;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,7 +33,7 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RemoteRuntimeManagerTest {
 
@@ -42,6 +41,8 @@ public class RemoteRuntimeManagerTest {
     private static final VersionId VERSION_1_8_225 = VersionId.fromString("1.8.225");
     private static final VersionId VERSION_11_0_1 = VersionId.fromString("11.0.1");
     private static final VersionId VERSION_11_0_2 = VersionId.fromString("11.0.2");
+
+    private static final String THE_ONE_AND_ONLY_JDK_ZIP = "http://localhost:8090/jvms/jdk.zip";
 
     private static int getFreePort() {
         final int freePort;
@@ -57,20 +58,19 @@ public class RemoteRuntimeManagerTest {
     @BeforeEach
     public void init(@TempDir Path cacheFolder) throws Exception {
         final List<RemoteJavaRuntime> runtimes = new CopyOnWriteArrayList<>();
-        final String theOneAndOnlyJdkZip = "http://localhost:8090/jvms/jdk.zip";
 
         for (OperationSystem os : Arrays.asList(MAC64, WIN64, LINUX64)) {
-            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "Temurin", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "Temurin", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "Temurin", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.145", os, "Temurin", THE_ONE_AND_ONLY_JDK_ZIP));
+            runtimes.add(new RemoteJavaRuntime("1.8.220", os, "Temurin", THE_ONE_AND_ONLY_JDK_ZIP));
+            runtimes.add(new RemoteJavaRuntime("1.8.224", os, "Temurin", THE_ONE_AND_ONLY_JDK_ZIP));
 
-            runtimes.add(new RemoteJavaRuntime("1.8.146", os, "oracle", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.221", os, "oracle", theOneAndOnlyJdkZip));
-            runtimes.add(new RemoteJavaRuntime("1.8.225", os, "oracle", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("1.8.146", os, "oracle", THE_ONE_AND_ONLY_JDK_ZIP));
+            runtimes.add(new RemoteJavaRuntime("1.8.221", os, "oracle", THE_ONE_AND_ONLY_JDK_ZIP));
+            runtimes.add(new RemoteJavaRuntime("1.8.225", os, "oracle", THE_ONE_AND_ONLY_JDK_ZIP));
 
-            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "Temurin", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("11.0.1", os, "Temurin", THE_ONE_AND_ONLY_JDK_ZIP));
 
-            runtimes.add(new RemoteJavaRuntime("11.0.2", os, "oracle", theOneAndOnlyJdkZip));
+            runtimes.add(new RemoteJavaRuntime("11.0.2", os, "oracle", THE_ONE_AND_ONLY_JDK_ZIP));
         }
 
         final int port = getFreePort();
@@ -257,17 +257,41 @@ public class RemoteRuntimeManagerTest {
     }
 
     @Test
-    public void testParseRemoteRuntimeJson() throws IOException, URISyntaxException {
+    public void testParseRemoteRuntimeJson() throws IOException {
         // given
-        URL url = getClass().getResource("jvms.json");
-        Path resPath = Paths.get(url.toURI());
-        String json = new String(Files.readAllBytes(resPath), "UTF8");
+        final InputStream in = getClass().getResourceAsStream("jvms.json");
+        assertNotNull(in);
+        final String json = IOUtils.readContentAsUtf8String(in);
 
         // when
-        RemoteRuntimeList remoteRuntimeList = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
+        RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
 
         // then
-        assertFalse(remoteRuntimeList.getRuntimes().isEmpty());
-        assertEquals(36, remoteRuntimeList.getRuntimes().size());
+        assertEquals(36, result.getRuntimes().size());
+    }
+
+    @Test
+    public void testParseRemoteRuntimeJson_AdoptIsConvertedToEclipse() {
+        // given
+        final String json = "{\n" +
+                "  \"cacheTimeInMillis\":5000,\n" +
+                "  \"runtimes\":\n" +
+                "  [\n" +
+                "    {\n" +
+                "      \"version\":\"8.0.282\",\n" +
+                "      \"vendor\":\"AdoptOpenJDK\",\n" +
+                "      \"os\":\"LINUX64\",\n" +
+                "      \"href\":\"" + THE_ONE_AND_ONLY_JDK_ZIP + "\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n" +
+                "\n";
+
+        // when
+        RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
+
+        // then
+        assertEquals(1, result.getRuntimes().size());
+        assertEquals(result.getRuntimes().get(0).getVendor(), ECLIPSE);
     }
 }
