@@ -74,8 +74,8 @@ public class RuntimeManagerConfig {
     }
 
     private static void migrateVendorIfRequired() throws IOException {
-        String vendorFromDeploymentConfiguration = config().getProperty(JVM_VENDOR);
-        Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeploymentConfiguration);
+        final String vendorFromDeploymentConfiguration = config().getProperty(JVM_VENDOR);
+        final Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeploymentConfiguration);
 
         if (!Objects.equals(currentVendor.toString(), vendorFromDeploymentConfiguration)) {
             if (config().isLocked(JVM_VENDOR)) {
