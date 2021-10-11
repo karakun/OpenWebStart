@@ -5,7 +5,7 @@ import com.openwebstart.jvm.json.RemoteRuntimeList;
 import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 import com.openwebstart.jvm.runtimes.Vendor;
-import net.adoptopenjdk.icedteaweb.io.IOUtils;
+import net.adoptopenjdk.icedteaweb.io.FileUtils;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionId;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import spark.Spark;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Path;
@@ -33,7 +33,7 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RemoteRuntimeManagerTest {
 
@@ -259,15 +259,25 @@ public class RemoteRuntimeManagerTest {
     @Test
     public void testParseRemoteRuntimeJson() throws IOException {
         // given
-        final InputStream in = getClass().getResourceAsStream("jvms.json");
-        assertNotNull(in);
-        final String json = IOUtils.readContentAsUtf8String(in);
+        final String json = getJvmJsonContent();
 
         // when
         RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
 
         // then
         assertEquals(36, result.getRuntimes().size());
+    }
+
+    private String getJvmJsonContent() throws IOException {
+        final String workingDir = System.getProperty("user.dir");
+        final String relativeJvmJsonPath = "download-server/resources/jvms.json";
+        final File file = new File(workingDir, relativeJvmJsonPath);
+
+        if (file.exists()) {
+            return FileUtils.loadFileAsUtf8String(file);
+        }
+
+        return FileUtils.loadFileAsUtf8String(new File(workingDir, "../" + relativeJvmJsonPath));
     }
 
     @Test
