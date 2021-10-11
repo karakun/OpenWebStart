@@ -74,14 +74,14 @@ public class RuntimeManagerConfig {
     }
 
     private static void migrateVendorIfRequired() throws IOException {
-        String vendorFromDeplyomentConfiguration = config().getProperty(JVM_VENDOR);
-        Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeplyomentConfiguration);
+        String vendorFromDeploymentConfiguration = config().getProperty(JVM_VENDOR);
+        Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeploymentConfiguration);
 
-        if (!Objects.equals(currentVendor.toString(), vendorFromDeplyomentConfiguration)) {
+        if (!Objects.equals(currentVendor.toString(), vendorFromDeploymentConfiguration)) {
             if (config().isLocked(JVM_VENDOR)) {
-                LOG.warn("Found outdated JVM vendor in system config '{}'. Please contact the administrators to migrate this to '{}'", vendorFromDeplyomentConfiguration, currentVendor);
+                LOG.warn("Found outdated JVM vendor in system config '{}'. Please contact the administrators to migrate this to '{}'", vendorFromDeploymentConfiguration, currentVendor);
             } else {
-                LOG.info("Outdated JVM vendor setting detected. Silently migrate the JVM vendor from '{}' to '{}'", vendorFromDeplyomentConfiguration, currentVendor);
+                LOG.info("Outdated JVM vendor setting detected. Silently migrate the JVM vendor from '{}' to '{}'", vendorFromDeploymentConfiguration, currentVendor);
                 LOG.info("If you are using unattended installation to the push config to the clients please consider updating your central configuration.");
                 deploymentConfiguration.setProperty(JVM_VENDOR, currentVendor.toString());
                 deploymentConfiguration.save();
