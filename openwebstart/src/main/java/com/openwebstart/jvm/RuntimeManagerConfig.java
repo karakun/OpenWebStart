@@ -1,17 +1,22 @@
 package com.openwebstart.jvm;
 
 import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.jvm.runtimes.Vendor;
 import net.adoptopenjdk.icedteaweb.jnlp.version.VersionString;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.util.whitelist.UrlWhiteListUtils;
 import net.sourceforge.jnlp.util.whitelist.WhitelistEntry;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_DOWNLOAD_SERVER_FROM_JNLP;
 import static com.openwebstart.config.OwsDefaultsProvider.ALLOW_VENDOR_FROM_JNLP;
@@ -24,6 +29,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 
 public class RuntimeManagerConfig {
+    private static final Logger LOG = LoggerFactory.getLogger(RuntimeManagerConfig.class);
 
     private static DeploymentConfiguration deploymentConfiguration;
     private static List<WhitelistEntry> jvmServerWhitelist;
@@ -59,7 +65,28 @@ public class RuntimeManagerConfig {
     }
 
     public static String getVendor() {
+        try {
+            migrateVendorIfRequired();
+        } catch (IOException exception) {
+            LOG.error("Failed to migration of outdated vendor.");
+        }
         return config().getProperty(JVM_VENDOR);
+    }
+
+    private static void migrateVendorIfRequired() throws IOException {
+        final String vendorFromDeploymentConfiguration = config().getProperty(JVM_VENDOR);
+        final Vendor currentVendor = Vendor.fromStringOrAny(vendorFromDeploymentConfiguration);
+
+        if (!Objects.equals(currentVendor.toString(), vendorFromDeploymentConfiguration)) {
+            if (config().isLocked(JVM_VENDOR)) {
+                LOG.warn("Found outdated JVM vendor in system config '{}'. Please contact the administrators to migrate this to '{}'", vendorFromDeploymentConfiguration, currentVendor);
+            } else {
+                LOG.info("Outdated JVM vendor setting detected. Silently migrate the JVM vendor from '{}' to '{}'", vendorFromDeploymentConfiguration, currentVendor);
+                LOG.info("If you are using unattended installation to the push config to the clients please consider updating your central configuration.");
+                deploymentConfiguration.setProperty(JVM_VENDOR, currentVendor.toString());
+                deploymentConfiguration.save();
+            }
+        }
     }
 
     public static boolean isVendorFromJnlpAllowed() {

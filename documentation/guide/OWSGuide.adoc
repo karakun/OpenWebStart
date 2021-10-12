@@ -580,6 +580,7 @@ You can use one of the following vendor names/alias as value for the vendor attr
 "Amazon.com Inc.", "Amazon Inc.", "Amazon"
 "Azul Systems, Inc.", "Azul"
 "BellSoft"
+"Eclipse Adoptium", "Adoptium"
 "Oracle Corporation", "Oracle"
 ----
 

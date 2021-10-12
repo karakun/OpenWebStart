@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.function.BiConsumer;
 
-import static com.openwebstart.jvm.runtimes.Vendor.ADOPT;
 import static com.openwebstart.jvm.runtimes.Vendor.AMAZON;
 import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.BELLSOFT;
+import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 
 public class VendorManagerTest {
@@ -25,7 +25,7 @@ public class VendorManagerTest {
 
         checkCall.accept(ORACLE, "oracle");
         checkCall.accept(ORACLE, "Oracle");
-        checkCall.accept(ADOPT, "adopt");
+        checkCall.accept(ECLIPSE, "Temurin");
         checkCall.accept(AMAZON, "amazon");
         checkCall.accept(AMAZON, "amazon inc.");
         checkCall.accept(AMAZON, "Amazon Inc.");
@@ -36,7 +36,7 @@ public class VendorManagerTest {
 
         checkCall.accept(ORACLE, "oracle ");
         checkCall.accept(ORACLE, "     Oracle");
-        checkCall.accept(ADOPT, "adopt     ");
+        checkCall.accept(ECLIPSE, "Temurin     ");
         checkCall.accept(AMAZON, "       amazon             ");
         checkCall.accept(AMAZON, "    amazon inc.     ");
         checkCall.accept(AMAZON, "   Amazon Inc.    ");
@@ -58,7 +58,7 @@ public class VendorManagerTest {
         checkCall.accept(ANY_VENDOR, null);
         checkCall.accept(ORACLE, "oracle");
         checkCall.accept(ORACLE, "Oracle");
-        checkCall.accept(ADOPT, "adopt");
+        checkCall.accept(ECLIPSE, "Temurin");
         checkCall.accept(AMAZON, "amazon");
         checkCall.accept(AMAZON, "amazon inc.");
         checkCall.accept(AMAZON, "Amazon Inc.");
@@ -69,7 +69,7 @@ public class VendorManagerTest {
 
         checkCall.accept(ORACLE, "oracle ");
         checkCall.accept(ORACLE, "     Oracle");
-        checkCall.accept(ADOPT, "adopt     ");
+        checkCall.accept(ECLIPSE, "Temurin     ");
         checkCall.accept(AMAZON, "       amazon             ");
         checkCall.accept(AMAZON, "    amazon inc.     ");
         checkCall.accept(AMAZON, "   Amazon Inc.    ");
