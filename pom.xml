@@ -22,7 +22,6 @@
         <module>ManifestResourceTransformer</module>
         <module>openwebstart</module>
         <module>documentation</module>
-        <module>download-server</module>
     </modules>
 
     <scm>
