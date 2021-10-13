@@ -19,8 +19,8 @@ class WindowsRuntimeFinder extends BaseRuntimeFinder {
     private static final String CORRETTO_FOLDER_32 = PROGRAMS_32 + "Amazon Corretto";
     private static final String CORRETTO_FOLDER_64 = PROGRAM_64 + "Amazon Corretto";
 
-    private static final String ADOPT_FOLDER_32 = PROGRAMS_32 + "AdoptOpenJDK";
-    private static final String ADOPT_FOLDER_64 = PROGRAM_64 + "AdoptOpenJDK";
+    private static final String ECLIPSE_FOLDER_32 = PROGRAMS_32 + "Eclipse Foundation";
+    private static final String ECLIPSE_FOLDER_64 = PROGRAM_64 + "Eclipse Foundation";
 
     private static final String ZULU_FOLDER_32 = PROGRAMS_32 + "Zulu";
     private static final String ZULU_FOLDER_64 = PROGRAM_64 + "Zulu";
@@ -39,7 +39,7 @@ class WindowsRuntimeFinder extends BaseRuntimeFinder {
         return Arrays.asList(
                 JVM_FOLDER_32, JVM_FOLDER_64,
                 CORRETTO_FOLDER_32, CORRETTO_FOLDER_64,
-                ADOPT_FOLDER_32, ADOPT_FOLDER_64,
+                ECLIPSE_FOLDER_32, ECLIPSE_FOLDER_64,
                 ZULU_FOLDER_32, ZULU_FOLDER_64,
                 BELLSOFT_FOLDER_32, BELLSOFT_FOLDER_64,
                 SDK_MAN_FOLDER
