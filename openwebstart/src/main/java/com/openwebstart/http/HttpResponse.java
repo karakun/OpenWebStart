@@ -7,6 +7,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,10 @@ public class HttpResponse implements Closeable {
 
     public long getContentSize() {
         return connection.getContentLengthLong();
+    }
+
+    public URL getConnectionUrl() {
+        return connection.getURL();
     }
 
     public InputStream getContentStream() throws IOException {

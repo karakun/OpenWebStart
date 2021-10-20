@@ -7,6 +7,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -23,8 +24,6 @@ public class DownloadInputStream extends InputStream {
 
     private final List<Consumer<Double>> downloadPercentageListeners;
 
-    private final List<Consumer<Long>> downloadStartListeners;
-
     private final List<Consumer<Long>> downloadDoneListeners;
 
     private final List<Consumer<Exception>> onErrorListeners;
@@ -32,6 +31,7 @@ public class DownloadInputStream extends InputStream {
     private final DigestInputStream wrappedStream;
 
     private final long dataSize;
+    private final URL connectionUrl;
 
     private final AtomicLong updateChunkSize;
 
@@ -44,11 +44,12 @@ public class DownloadInputStream extends InputStream {
     private final DownloadType downloadType;
 
     public DownloadInputStream(HttpResponse response) throws IOException {
-        this(response.getContentStream(), response.getContentSize());
+        this(response.getContentStream(), response.getContentSize(), response.getConnectionUrl());
     }
 
-    public DownloadInputStream(final InputStream inputStream, final long dataSize) {
+    public DownloadInputStream(final InputStream inputStream, final long dataSize, URL connectionUrl) {
         this.dataSize = dataSize > 0 ? dataSize : -1;
+        this.connectionUrl = connectionUrl;
         if (dataSize > 0) {
             downloadType = DownloadType.NORMAL;
         } else {
@@ -58,7 +59,6 @@ public class DownloadInputStream extends InputStream {
         this.lastUpdateSize = new AtomicLong(0);
         this.firstRead = new AtomicBoolean(true);
         this.downloadPercentageListeners = new CopyOnWriteArrayList<>();
-        this.downloadStartListeners = new CopyOnWriteArrayList<>();
         this.downloadDoneListeners = new CopyOnWriteArrayList<>();
         this.onErrorListeners = new CopyOnWriteArrayList<>();
         this.updateChunkSize = new AtomicLong(1000);
@@ -158,12 +158,6 @@ public class DownloadInputStream extends InputStream {
         }
     }
 
-    public Subscription addDownloadStartListener(final Consumer<Long> listener) {
-        Assert.requireNonNull(listener, "listener");
-        downloadStartListeners.add(listener);
-        return () -> downloadStartListeners.remove(listener);
-    }
-
     public Subscription addDownloadPercentageListener(final Consumer<Double> listener) {
         Assert.requireNonNull(listener, "listener");
         downloadPercentageListeners.add(listener);
@@ -188,12 +182,11 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onStart() {
-        LOG.debug("Downloaded of size {} started", dataSize);
-        downloadStartListeners.forEach(l -> l.accept(dataSize));
+        LOG.debug("Download of size {} from {} started", dataSize, connectionUrl);
     }
 
     private void onError(final Exception e) {
-        LOG.debug("Downloaded of size {} started", dataSize);
+        LOG.error("Error while downloading URL {}", connectionUrl);
         onErrorListeners.forEach(l -> l.accept(e));
     }
 
