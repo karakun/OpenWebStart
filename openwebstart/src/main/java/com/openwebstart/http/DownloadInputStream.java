@@ -100,6 +100,7 @@ public class DownloadInputStream extends InputStream {
             return count;
         } catch (final Exception e) {
             try {
+                LOG.debug("Error while reading.");
                 onError(e);
             } finally {
                 throw e;
@@ -113,6 +114,7 @@ public class DownloadInputStream extends InputStream {
             super.close();
         } catch (final Exception e) {
             try {
+                LOG.debug("Error while close.");
                 onError(e);
             } finally {
                 throw e;
@@ -134,6 +136,7 @@ public class DownloadInputStream extends InputStream {
             return value;
         } catch (final Exception e) {
             try {
+                LOG.debug("Error while reading.");
                 onError(e);
             } finally {
                 throw e;
@@ -151,6 +154,7 @@ public class DownloadInputStream extends InputStream {
             return available;
         } catch (final Exception e) {
             try {
+                LOG.debug("Error while available.");
                 onError(e);
             } finally {
                 throw e;
@@ -177,7 +181,7 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onDone() {
-        LOG.debug("Download of size {} done", dataSize);
+        LOG.debug("Download of size {} done", downloaded.get());
         downloadDoneListeners.forEach(l -> l.accept(dataSize));
     }
 
@@ -186,7 +190,8 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onError(final Exception e) {
-        LOG.error("Error while downloading URL {}", connectionUrl);
+        LOG.error("Error {} while downloading URL {} Downloaded {}", e.getMessage(), connectionUrl, downloaded.get());
+        LOG.error("Exception {}", e);
         onErrorListeners.forEach(l -> l.accept(e));
     }
 
