@@ -16,15 +16,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.UUID;
 
-import static java.util.Collections.emptyList;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 public class ExtractUtil {
 
@@ -69,7 +72,7 @@ public class ExtractUtil {
             }
             moveJavaHomeToTarget(tempDir.toPath(), baseDir);
         } finally {
-            FileUtils.deleteWithErrMesg(tempDir, null);
+            FileUtils.recursiveDelete(tempDir, tempDir);
         }
     }
 
@@ -80,30 +83,41 @@ public class ExtractUtil {
     static void moveJavaHomeToTarget(final Path searchRoot, final Path targetDir) {
         if (Files.isDirectory(searchRoot)) {
             try {
-                Files.find(searchRoot, 5, JdkFinder::isJavaHome)
+                final Path javaHome = Files.find(searchRoot, 5, JdkFinder::isJavaHome)
                         .map(Path::toAbsolutePath)
                         .map(Path::normalize)
                         .min(Comparator.comparingInt(Path::getNameCount))
-                        .map(ExtractUtil::listFiles)
-                        .ifPresent(javaHomeContent -> javaHomeContent.forEach(file -> moveToDirAndReplace(targetDir, file)));
+                        .orElseThrow(() -> new IllegalStateException("Java not found in " + searchRoot));
+
+                moveFiles(targetDir, javaHome);
             } catch (final IOException e) {
                 throw new RuntimeException("Error while searching for local JVMs at '" + searchRoot + "'", e);
             }
         }
     }
 
-    private static List<File> listFiles(Path baseDir) {
-        final File[] files = baseDir.toFile().listFiles();
-        return files != null ? Arrays.asList(files) : emptyList();
-    }
+    private static void moveFiles(final Path targetDir, final Path javaHome) throws IOException {
+        Files.walkFileTree(javaHome, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+                new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        final Path currentTargetDir = targetDir.resolve(javaHome.relativize(dir));
+                        try {
+                            Files.copy(dir, currentTargetDir);
+                        } catch (FileAlreadyExistsException e) {
+                            if (!Files.isDirectory(currentTargetDir)) {
+                                throw e;
+                            }
+                        }
+                        return CONTINUE;
+                    }
 
-    private static void moveToDirAndReplace(final Path targetDir, final File toMove) {
-        try {
-            final Path p = toMove.toPath();
-            Files.move(p, targetDir.resolve(p.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Error in moving file " + toMove + " to " + targetDir, e);
-        }
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.move(file, targetDir.resolve(javaHome.relativize(file)));
+                        return CONTINUE;
+                    }
+                });
     }
 
     private static void storeFileOnDisc(final InputStream inputStream, final Path baseDir, final ArchiveEntry entry) throws IOException {

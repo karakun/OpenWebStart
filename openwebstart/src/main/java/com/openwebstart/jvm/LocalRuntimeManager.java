@@ -422,6 +422,7 @@ public final class LocalRuntimeManager {
                 throw new IllegalStateException("The remote runtime is distributed in an unknown mimetype.");
             }
         } catch (final Exception e) {
+            LOG.error("Error in runtime download: {}", e.getMessage());
             try {
                 FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
             } catch (IOException ex) {
