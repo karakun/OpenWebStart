@@ -26,9 +26,16 @@ public class ConnectionUtils {
         return printHexBinary(bytes);
     }
 
-    public static DigestInputStream createMD5HashStream(final InputStream inputStream) throws NoSuchAlgorithmException {
+    /**
+     * Create a Hash stream based on the specified algorithm such as MD5, SHA-256
+     * @param inputStream Stream to be hashed
+     * @param algorithm hashing algorithm
+     * @return hash stream
+     * @throws NoSuchAlgorithmException
+     */
+    public static DigestInputStream createHashStream(final InputStream inputStream, final String algorithm) throws NoSuchAlgorithmException {
         Assert.requireNonNull(inputStream, "inputStream");
-        final MessageDigest digest = MessageDigest.getInstance("MD5");
+        final MessageDigest digest = MessageDigest.getInstance(algorithm);
         return new DigestInputStream(inputStream, digest);
     }
 

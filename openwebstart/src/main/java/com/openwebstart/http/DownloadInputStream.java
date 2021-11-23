@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 public class DownloadInputStream extends InputStream {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
+    public static final String SHA_256 = "SHA-256";
 
     private final List<Consumer<Double>> downloadPercentageListeners;
 
@@ -67,7 +68,7 @@ public class DownloadInputStream extends InputStream {
         }
 
         try {
-            this.wrappedStream = ConnectionUtils.createMD5HashStream(inputStream);
+            this.wrappedStream = ConnectionUtils.createHashStream(inputStream, SHA_256);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No HASH_ALGORITHM support");
         }
@@ -82,7 +83,15 @@ public class DownloadInputStream extends InputStream {
 
     public CompletableFuture<String> getHash() {
         final CompletableFuture<String> future = new CompletableFuture<>();
-        addDownloadDoneListener(size -> future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest())));
+        addDownloadDoneListener(size ->
+        {
+            future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest()));
+            try {
+                LOG.debug("Done Download checksum {} from {}", future.get(), connectionUrl);
+            } catch (Exception e) {
+                LOG.debug("Could not get Download checksum {}", e.getMessage());
+            }
+        });
         return future;
     }
 
@@ -177,11 +186,12 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onDone() {
-        LOG.debug("Download of size {} done from {}", downloaded.get(), connectionUrl);
+        LOG.debug("Done Download of size {} from {}", downloaded.get(), connectionUrl);
         downloadDoneListeners.forEach(l -> l.accept(dataSize));
     }
 
     private void onStart() {
+        getHash();
         LOG.debug("Download of size {} started from {}", dataSize, connectionUrl);
     }
 
