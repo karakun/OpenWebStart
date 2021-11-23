@@ -28,14 +28,15 @@ public class ConnectionUtils {
 
     /**
      * Create a Hash stream based on the specified algorithm such as MD5, SHA-256
+     *
      * @param inputStream Stream to be hashed
-     * @param algorithm hashing algorithm
+     * @param algorithm   hashing algorithm
      * @return hash stream
      * @throws NoSuchAlgorithmException
      */
-    public static DigestInputStream createHashStream(final InputStream inputStream, final String algorithm) throws NoSuchAlgorithmException {
+    public static DigestInputStream createHashStream(final InputStream inputStream, final HashAlgorithm algorithm) throws NoSuchAlgorithmException {
         Assert.requireNonNull(inputStream, "inputStream");
-        final MessageDigest digest = MessageDigest.getInstance(algorithm);
+        final MessageDigest digest = MessageDigest.getInstance(algorithm.name);
         return new DigestInputStream(inputStream, digest);
     }
 
@@ -46,6 +47,18 @@ public class ConnectionUtils {
             return connection.getInputStream();
         } else {
             return errorstream;
+        }
+    }
+
+    public enum HashAlgorithm {
+        SHA_256("SHA-256")
+
+        ;
+
+        private final String name;
+
+        HashAlgorithm(String name) {
+            this.name = name;
         }
     }
 }

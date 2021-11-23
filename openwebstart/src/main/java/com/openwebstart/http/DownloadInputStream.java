@@ -18,10 +18,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
+import static com.openwebstart.http.ConnectionUtils.HashAlgorithm.SHA_256;
+
 public class DownloadInputStream extends InputStream {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadInputStream.class);
-    public static final String SHA_256 = "SHA-256";
 
     private final List<Consumer<Double>> downloadPercentageListeners;
 
@@ -31,7 +32,10 @@ public class DownloadInputStream extends InputStream {
 
     private final DigestInputStream wrappedStream;
 
+    private final CompletableFuture<byte[]> hash;
+
     private final long dataSize;
+
     private final URL connectionUrl;
 
     private final AtomicLong updateChunkSize;
@@ -67,8 +71,10 @@ public class DownloadInputStream extends InputStream {
             this.updateChunkSize.set(dataSize / 1000);
         }
 
+        hash = new CompletableFuture<>();
         try {
             this.wrappedStream = ConnectionUtils.createHashStream(inputStream, SHA_256);
+            this.downloadDoneListeners.add(size -> hash.complete(wrappedStream.getMessageDigest().digest()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No HASH_ALGORITHM support");
         }
@@ -82,9 +88,7 @@ public class DownloadInputStream extends InputStream {
     }
 
     public CompletableFuture<String> getHash() {
-        final CompletableFuture<String> future = new CompletableFuture<>();
-        addDownloadDoneListener(size -> future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest())));
-        return future;
+        return hash.thenApply(ConnectionUtils::toHex);
     }
 
     public DownloadType getDownloadType() {
@@ -178,13 +182,16 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onDone() {
-        final CompletableFuture<String> hash = getHash();
         LOG.debug("Done Download of size {} from {}", downloaded.get(), connectionUrl);
+        logHash();
         downloadDoneListeners.forEach(l -> l.accept(dataSize));
+    }
+
+    private void logHash() {
         try {
-            LOG.debug("Done Download SHA-256 checksum {} from {}", hash.get(), connectionUrl);
+            LOG.debug("Done Download SHA-256 checksum {} from {}", getHash().get(), connectionUrl);
         } catch (Exception e) {
-            LOG.debug("Could not get Download checksum {}", e.getMessage());
+            LOG.warn("Could not get Download checksum {}", e.getMessage());
         }
     }
 
