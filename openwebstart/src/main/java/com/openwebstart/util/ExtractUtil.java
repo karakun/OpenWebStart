@@ -71,6 +71,7 @@ public class ExtractUtil {
                 entry = inputStream.getNextEntry();
             }
             moveJavaHomeToTarget(tempDir.toPath(), baseDir);
+            LOG.debug("Done moving from {} to {}", tempDir.toPath(), baseDir);
         } finally {
             FileUtils.recursiveDelete(tempDir, tempDir);
         }
