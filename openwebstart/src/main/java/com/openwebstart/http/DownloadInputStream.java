@@ -83,15 +83,7 @@ public class DownloadInputStream extends InputStream {
 
     public CompletableFuture<String> getHash() {
         final CompletableFuture<String> future = new CompletableFuture<>();
-        addDownloadDoneListener(size ->
-        {
-            future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest()));
-            try {
-                LOG.debug("Done Download checksum {} from {}", future.get(), connectionUrl);
-            } catch (Exception e) {
-                LOG.debug("Could not get Download checksum {}", e.getMessage());
-            }
-        });
+        addDownloadDoneListener(size -> future.complete(ConnectionUtils.toHex(wrappedStream.getMessageDigest().digest())));
         return future;
     }
 
@@ -186,12 +178,17 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onDone() {
+        final CompletableFuture<String> hash = getHash();
         LOG.debug("Done Download of size {} from {}", downloaded.get(), connectionUrl);
         downloadDoneListeners.forEach(l -> l.accept(dataSize));
+        try {
+            LOG.debug("Done Download SHA-256 checksum {} from {}", hash.get(), connectionUrl);
+        } catch (Exception e) {
+            LOG.debug("Could not get Download checksum {}", e.getMessage());
+        }
     }
 
     private void onStart() {
-        getHash();
         LOG.debug("Download of size {} started from {}", dataSize, connectionUrl);
     }
 
