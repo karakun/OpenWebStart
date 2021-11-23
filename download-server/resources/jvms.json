@@ -3,220 +3,172 @@
   "runtimes":
   [
     {
-      "version":"8.0.302",
+      "version":"8.0.312",
       "vendor":"Eclipse Temurin",
       "os":"LINUX64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u302b08.tar.gz"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_linux_hotspot_8u312b07.tar.gz"
     },
     {
-      "version":"8.0.302",
+      "version":"8.0.312",
       "vendor":"Eclipse Temurin",
       "os":"MAC64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u302b08.tar.gz"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_mac_hotspot_8u312b07.tar.gz"
     },
     {
-      "version":"8.0.302",
+      "version":"8.0.312",
       "vendor":"Eclipse Temurin",
       "os":"WIN64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u302b08.zip"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_windows_hotspot_8u312b07.zip"
     },
     {
-      "version":"8.0.302",
+      "version":"8.0.312",
       "vendor":"Eclipse Temurin",
       "os":"WIN32",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x86-32_windows_hotspot_8u302b08.zip"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x86-32_windows_hotspot_8u312b07.zip"
     },
     {
-      "version":"11.0.12",
+      "version":"11.0.13",
       "vendor":"Eclipse Temurin",
       "os":"LINUX64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.12_7.tar.gz"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/OpenJDK11U-jdk_x64_linux_hotspot_11.0.13_8.tar.gz"
     },
     {
-      "version":"11.0.12",
+      "version":"11.0.13",
       "vendor":"Eclipse Temurin",
       "os":"MAC64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_mac_hotspot_11.0.12_7.tar.gz"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/OpenJDK11U-jdk_x64_mac_hotspot_11.0.13_8.tar.gz"
     },
     {
-      "version":"11.0.12",
+      "version":"11.0.13",
       "vendor":"Eclipse Temurin",
       "os":"WIN64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_windows_hotspot_11.0.12_7.zip"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/OpenJDK11U-jdk_x64_windows_hotspot_11.0.13_8.zip"
     },
     {
-      "version":"11.0.12",
+      "version":"11.0.13",
       "vendor":"Eclipse Temurin",
       "os":"WIN32",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.12_7.zip"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.13_8.zip"
     },
     {
-      "version":"8.0.282",
-      "vendor":"AdoptOpenJDK",
-      "os":"LINUX64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u282b08.tar.gz"
-    },
-    {
-      "version":"8.0.282",
-      "vendor":"AdoptOpenJDK",
-      "os":"MAC64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u282b08.tar.gz"
-    },
-    {
-      "version":"8.0.282",
-      "vendor":"AdoptOpenJDK",
-      "os":"WIN64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u282b08.zip"
-    },
-    {
-      "version":"8.0.282",
-      "vendor":"AdoptOpenJDK",
-      "os":"WIN32",
-      "href":"https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x86-32_windows_hotspot_8u282b08.zip"
-    },
-    {
-      "version":"11.0.10",
-      "vendor":"AdoptOpenJDK",
-      "os":"LINUX64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.10_9.tar.gz"
-    },
-    {
-      "version":"11.0.10",
-      "vendor":"AdoptOpenJDK",
-      "os":"MAC64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_x64_mac_hotspot_11.0.10_9.tar.gz"
-    },
-    {
-      "version":"11.0.10",
-      "vendor":"AdoptOpenJDK",
-      "os":"WIN64",
-      "href":"https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_x64_windows_hotspot_11.0.10_9.zip"
-    },
-    {
-      "version":"11.0.10",
-      "vendor":"AdoptOpenJDK",
-      "os":"WIN32",
-      "href":"https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.10_9.zip"
-    },
-    {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"Zulu Community Edition",
       "os":"MAC64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.52.0.23-ca-fx-jdk8.0.282-macosx_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-macosx_x64.zip"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"Zulu Community Edition",
       "os":"LINUX64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.52.0.23-ca-fx-jdk8.0.282-linux_x64.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-linux_x64.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"Zulu Community Edition",
       "os":"LINUX32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.52.0.23-ca-fx-jdk8.0.282-linux_i686.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-linux_i686.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"Zulu Community Edition",
       "os":"WIN64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.52.0.23-ca-fx-jdk8.0.282-win_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-win_x64.zip"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"Zulu Community Edition",
       "os":"WIN32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.52.0.23-ca-jdk8.0.282-win_i686.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-win_i686.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"Zulu Community Edition",
       "os":"MAC64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-fx-jdk11.0.10-macosx_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jdk11.0.13-macosx_x64.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"Zulu Community Edition",
       "os":"WIN64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-fx-jdk11.0.10-win_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jdk11.0.13-win_x64.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"Zulu Community Edition",
       "os":"WIN32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-fx-jdk11.0.10-win_i686.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jdk11.0.13-win_i686.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"Zulu Community Edition",
       "os":"LINUX64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-fx-jdk11.0.10-linux_x64.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jdk11.0.13-linux_x64.tar.gz"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"Zulu Community Edition",
       "os":"LINUX32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-jdk11.0.10-linux_i686.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jdk11.0.13-linux_i686.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"BellSoft Liberica",
       "os":"MAC64",
-      "href":"https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-macos-amd64.zip"
+      "href":"https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-macos-amd64-full.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"BellSoft Liberica",
       "os":"LINUX64",
-      "href":"https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-linux-amd64.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-linux-amd64-full.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"BellSoft Liberica",
       "os":"LINUX32",
-      "href":"https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-linux-i586.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-linux-i586-full.tar.gz"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"BellSoft Liberica",
       "os":"WIN64",
-      "href":"https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-windows-amd64.zip"
+      "href":"https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-windows-amd64-full.zip"
     },
     {
-      "version":"8.0.282",
+      "version":"8.0.312",
       "vendor":"BellSoft Liberica",
       "os":"WIN32",
-      "href":"https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-windows-i586.zip"
+      "href":"https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-windows-i586-full.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"BellSoft Liberica",
       "os":"MAC64",
-      "href":"https://download.bell-sw.com/java/11.0.10+9/bellsoft-jdk11.0.10+9-macos-amd64.zip"
+      "href":"https://download.bell-sw.com/java/11.0.13+8/bellsoft-jdk11.0.13+8-macos-amd64-full.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"BellSoft Liberica",
       "os":"WIN64",
-      "href":"https://download.bell-sw.com/java/11.0.10+9/bellsoft-jdk11.0.10+9-windows-amd64.zip"
+      "href":"https://download.bell-sw.com/java/11.0.13+8/bellsoft-jdk11.0.13+8-windows-amd64-full.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"BellSoft Liberica",
       "os":"WIN32",
-      "href":"https://download.bell-sw.com/java/11.0.10+9/bellsoft-jdk11.0.10+9-windows-i586.zip"
+      "href":"https://download.bell-sw.com/java/11.0.13+8/bellsoft-jdk11.0.13+8-windows-i586-full.zip"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"BellSoft Liberica",
       "os":"LINUX64",
-      "href":"https://download.bell-sw.com/java/11.0.10+9/bellsoft-jdk11.0.10+9-linux-amd64.tar.gz"
+      "href":"https://download.bell-sw.com/java/11.0.13+8/bellsoft-jdk11.0.13+8-linux-amd64-full.tar.gz"
     },
     {
-      "version":"11.0.10",
+      "version":"11.0.13",
       "vendor":"BellSoft Liberica",
       "os":"LINUX32",
-      "href":"https://download.bell-sw.com/java/11.0.10+9/bellsoft-jdk11.0.10+9-linux-i586.tar.gz"
+      "href":"https://download.bell-sw.com/java/11.0.13+8/bellsoft-jre11.0.13+8-linux-i586.tar.gz"
     }
   ]
 }
