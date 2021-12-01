@@ -33,7 +33,6 @@ import static com.openwebstart.jvm.runtimes.Vendor.ANY_VENDOR;
 import static com.openwebstart.jvm.runtimes.Vendor.ECLIPSE;
 import static com.openwebstart.jvm.runtimes.Vendor.ORACLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RemoteRuntimeManagerTest {
 
@@ -265,7 +264,7 @@ public class RemoteRuntimeManagerTest {
         RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
 
         // then
-        assertEquals(36, result.getRuntimes().size());
+        assertEquals(28, result.getRuntimes().size());
     }
 
     private String getJvmJsonContent() throws IOException {
