@@ -38,7 +38,9 @@ public class LoggingPanel extends FormPanel {
         uiLock.update(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, showLogWindowCombobox);
         showLogWindowCombobox.addActionListener(e -> {
             final LogWindowModes selectedItem = (LogWindowModes) showLogWindowCombobox.getSelectedItem();
-            config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, selectedItem.getPropertyValue());
+            if (selectedItem != null) {
+                config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, selectedItem.getPropertyValue());
+            }
         });
         showLogWindowCombobox.setSelectedItem(LogWindowModes.getForConfigValue(config.getProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE)));
         addRow(row++, showLogWindowLabel, showLogWindowCombobox);
