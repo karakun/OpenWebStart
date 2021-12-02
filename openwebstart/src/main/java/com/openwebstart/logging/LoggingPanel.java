@@ -29,6 +29,8 @@ public class LoggingPanel extends FormPanel {
         final Translator translator = Translator.getInstance();
         final UiLock uiLock = new UiLock(config);
 
+        int row = 0;
+
 
         final JLabel showLogWindowLabel = new JLabel(translator.translate("loggingPanel.showLogWindow.text") + ":");
         final JComboBox<LogWindowModes> showLogWindowCombobox = new JComboBox<>(new Vector<>(Arrays.asList(LogWindowModes.values())));
@@ -39,25 +41,31 @@ public class LoggingPanel extends FormPanel {
             config.setProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE, selectedItem.getPropertyValue());
         });
         showLogWindowCombobox.setSelectedItem(LogWindowModes.getForConfigValue(config.getProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE)));
-        addRow(0, showLogWindowLabel, showLogWindowCombobox);
+        addRow(row++, showLogWindowLabel, showLogWindowCombobox);
 
 
         final JCheckBox activateDebugLoggingCheckbox = new JCheckBox(translator.translate("loggingPanel.activateDebug.text"));
         activateDebugLoggingCheckbox.setToolTipText(translator.translate("loggingPanel.activateDebug.description"));
         bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING);
-        addEditorRow(1, activateDebugLoggingCheckbox);
+        addEditorRow(row++, activateDebugLoggingCheckbox);
+
+
+        final JCheckBox logJnlpContentCheckbox = new JCheckBox(translator.translate("loggingPanel.logJnlpContent.text"));
+        logJnlpContentCheckbox.setToolTipText(translator.translate("loggingPanel.logJnlpContent.description"));
+        bindToSettings(config, logJnlpContentCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT);
+        addEditorRow(row++, logJnlpContentCheckbox);
 
 
         final JCheckBox logToStandardOutCheckbox = new JCheckBox(translator.translate("loggingPanel.logToStandardOut.text"));
         logToStandardOutCheckbox.setToolTipText(translator.translate("loggingPanel.logToStandardOut.description"));
         bindToSettings(config, logToStandardOutCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_TOSTREAMS);
-        addEditorRow(2, logToStandardOutCheckbox);
+        addEditorRow(row++, logToStandardOutCheckbox);
 
 
         final JCheckBox logInFileCheckbox = new JCheckBox(translator.translate("loggingPanel.logInFile.text"));
         logInFileCheckbox.setToolTipText(translator.translate("loggingPanel.logInFile.description"));
         bindToSettings(config, logInFileCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE);
-        addEditorRow(3, logInFileCheckbox);
+        addEditorRow(row++, logInFileCheckbox);
 
 
         final JLabel logFolderLabel = new JLabel(translator.translate("loggingPanel.logFolder.text") + ":");
@@ -84,9 +92,9 @@ public class LoggingPanel extends FormPanel {
         final JPanel editorPanel = new JPanel(LayoutFactory.createBorderLayout());
         editorPanel.add(logFolderField, BorderLayout.CENTER);
         editorPanel.add(selectFolderButton, BorderLayout.EAST);
-        addRow(4, logFolderLabel, editorPanel);
+        addRow(row++, logFolderLabel, editorPanel);
 
-        addFlexibleRow(5);
+        addFlexibleRow(row);
     }
 
     private void bindToSettings(final DeploymentConfiguration config, final JCheckBox checkbox, final String propertyName) {
