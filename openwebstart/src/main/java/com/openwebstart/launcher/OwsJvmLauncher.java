@@ -62,7 +62,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     public static final String JAVAWS_VM_ARGS = "JAVAWS_VM_ARGS";
 
     private static final String INSTALL_4_J_EXE_DIR = "install4j.exeDir";
-    private static final String INSTALL_4_J_APP_DIR = "install4j.appDir";
+    public static final String INSTALL_4_J_APP_DIR = "install4j.appDir";
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
 
