@@ -22,7 +22,7 @@
         <module>ManifestResourceTransformer</module>
         <module>openwebstart</module>
         <module>documentation</module>
-        <module>SystemPropertiesPrinter</module>
+        <module>system-properties-printer</module>
     </modules>
 
     <scm>
