@@ -1,6 +1,5 @@
 package com.openwebstart.jvm.util;
 
-import com.openwebstart.install4j.Install4JUtils;
 import com.openwebstart.launcher.OwsJvmLauncher;
 import com.openwebstart.util.ProcessResult;
 import com.openwebstart.util.ProcessUtil;
@@ -8,16 +7,12 @@ import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,17 +26,18 @@ import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_NAME;
 /**
  * Algorithm to extract the Java Runtime Properties by executing "java -XshowSettings:properties -version"
  */
+@SuppressWarnings("UseOfProcessBuilder")
 public final class JavaRuntimePropertiesDetector {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimePropertiesDetector.class);
 
-    private static final Set<String> REQUIRED_PROPS = unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
+    private static final Set<String> REQUIRED_PROPS =
+            unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
 
     private static final String SHOW_SETTINGS_ARG = "-XshowSettings:properties";
     private static final String VERSION_ARG = "-version";
-    private static final String JAR_ARG = "-jar";
-
-    private static final String SPP_JAR_NAME = "SystemPropertiesPrinter.jar";
+    private static final String CP_ARG = "-cp";
+    private static final String SPP_CLASSNAME = "com.openwebstart.jvm.util.SystemPropertiesPrinter";
 
     private JavaRuntimePropertiesDetector() {
         // Utility class, do not instantiate.
@@ -58,7 +54,7 @@ public final class JavaRuntimePropertiesDetector {
             }
             LOG.debug("The java process printed the following content to 'error out': {}", errorOut);
             LOG.warn("Failed to execute java binary");
-            final ProcessResult processResultFromExec = propertiesFromExec(java);
+            final ProcessResult processResultFromExec = propertiesFromSystemPropertiesPrinter(java);
             errorOut = processResultFromExec.getErrorOut();
             if (processResultFromExec.wasSuccessful()) {
                 return extractProperties(processResultFromExec.getStandardOut(), errorOut);
@@ -79,32 +75,10 @@ public final class JavaRuntimePropertiesDetector {
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
-    private static ProcessResult propertiesFromExec(final String java) throws Exception {
-        final ProcessBuilder processBuilder = new ProcessBuilder(java, JAR_ARG, sppJarPath());
+    private static ProcessResult propertiesFromSystemPropertiesPrinter(final String java) throws Exception {
+        final ProcessBuilder processBuilder = new ProcessBuilder(java,
+                CP_ARG, OwsJvmLauncher.getOpenWebStartJar().getAbsolutePath(), SPP_CLASSNAME);
         return ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
-    }
-
-    /**
-     * @return Path of the SystemPropertiesPrinter.jar located within OWS install dir.
-     * @throws FileNotFoundException Thrown when either the install directory or the jar within is not found.
-     */
-    private static String sppJarPath() throws FileNotFoundException {
-        String installDir = System.getProperty(OwsJvmLauncher.INSTALL_4_J_APP_DIR);
-        if (installDir == null || installDir.isEmpty()) {
-            Optional<String> oInstallDir = Install4JUtils.installationDirectory();
-            if (oInstallDir.isPresent()) {
-                installDir = oInstallDir.get();
-            }
-        }
-        if (installDir == null || installDir.isEmpty()) {
-            throw new FileNotFoundException("OpenWebStart install directory not found.");
-        }
-        Path jarPath = Paths.get(installDir, SPP_JAR_NAME).toAbsolutePath();
-        String sJarPath = jarPath.toString();
-        if (!Files.isRegularFile(jarPath)) {
-            throw new FileNotFoundException(sJarPath + " not found.");
-        }
-        return sJarPath;
     }
 
     private static JavaRuntimeProperties extractProperties(String stdOut, String stdErr) throws IOException {
