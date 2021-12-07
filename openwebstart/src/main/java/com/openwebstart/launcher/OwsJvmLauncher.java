@@ -262,7 +262,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         return false;
     }
 
-    private static File getOpenWebStartJar() {
+    public static File getOpenWebStartJar() {
         final String classPath = System.getProperty("java.class.path");
         final String pathSeparator = System.getProperty("path.separator");
         final String javaHome = System.getProperty("java.home");
