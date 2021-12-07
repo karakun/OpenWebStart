@@ -20,9 +20,9 @@
 
     <modules>
         <module>ManifestResourceTransformer</module>
+        <module>system-properties-printer</module>
         <module>openwebstart</module>
         <module>documentation</module>
-        <module>system-properties-printer</module>
     </modules>
 
     <scm>

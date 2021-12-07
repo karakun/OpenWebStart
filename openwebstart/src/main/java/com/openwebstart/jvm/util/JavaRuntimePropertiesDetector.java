@@ -1,23 +1,25 @@
 package com.openwebstart.jvm.util;
 
+import com.openwebstart.func.Result;
 import com.openwebstart.launcher.OwsJvmLauncher;
 import com.openwebstart.util.ProcessResult;
-import com.openwebstart.util.ProcessUtil;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.openwebstart.util.ProcessUtil.runProcess;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.joining;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VENDOR;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.JAVA_VERSION;
 import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_ARCH;
@@ -26,18 +28,20 @@ import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_NAME;
 /**
  * Algorithm to extract the Java Runtime Properties by executing "java -XshowSettings:properties -version"
  */
-@SuppressWarnings("UseOfProcessBuilder")
 public final class JavaRuntimePropertiesDetector {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimePropertiesDetector.class);
 
-    private static final Set<String> REQUIRED_PROPS =
-            unmodifiableSet(new HashSet<>(asList(JAVA_VENDOR, JAVA_VERSION, OS_NAME, OS_ARCH)));
+    private static final Set<String> REQUIRED_PROPS = unmodifiableSet(new HashSet<>(asList(
+            JAVA_VENDOR,
+            JAVA_VERSION,
+            OS_NAME,
+            OS_ARCH
+    )));
 
     private static final String SHOW_SETTINGS_ARG = "-XshowSettings:properties";
     private static final String VERSION_ARG = "-version";
     private static final String CP_ARG = "-cp";
-    private static final String SPP_CLASSNAME = "com.openwebstart.jvm.util.SystemPropertiesPrinter";
 
     private JavaRuntimePropertiesDetector() {
         // Utility class, do not instantiate.
@@ -46,72 +50,70 @@ public final class JavaRuntimePropertiesDetector {
     public static JavaRuntimeProperties getProperties(Path javaHome) throws IllegalStateException {
         LOG.info("Trying to get definition of local JVM at '{}'", javaHome);
         final String java = JavaExecutableFinder.findJavaExecutable(javaHome);
+
+        final Result<JavaRuntimeProperties> fromShowSettings = fetchRuntimeProperties(java, JavaRuntimePropertiesDetector::showSettings);
+        if (fromShowSettings.isSuccessful()) {
+            return fromShowSettings.getResult();
+        }
+
+        final Result<JavaRuntimeProperties> fromPropertiesPrinter = fetchRuntimeProperties(java, JavaRuntimePropertiesDetector::showSystemProperties);
+        if (fromPropertiesPrinter.isSuccessful()) {
+            return fromPropertiesPrinter.getResult();
+        }
+
+        final String message = String.format("Can not get properties for JVM in path '%s'.", java);
+        LOG.error(message, fromShowSettings.getException());
+        throw new IllegalStateException(message, fromShowSettings.getException());
+    }
+
+    private static Result<JavaRuntimeProperties> fetchRuntimeProperties(String java, Function<String, ProcessBuilder> fetchPropsCommand) {
         try {
-            final ProcessResult processResultShowSettings = propertiesFromShowSettings(java);
+            final ProcessResult processResultShowSettings = runProcess(fetchPropsCommand.apply(java), 5, SECONDS);
             String errorOut = processResultShowSettings.getErrorOut();
             if (processResultShowSettings.wasSuccessful()) {
-                return extractProperties(processResultShowSettings.getStandardOut(), errorOut);
+                final String standardOut = processResultShowSettings.getStandardOut();
+                final JavaRuntimeProperties props = extractProperties(standardOut, errorOut);
+                return Result.success(props);
             }
-            LOG.debug("The java process printed the following content to 'error out': {}", errorOut);
-            LOG.warn("Failed to execute java binary");
-            final ProcessResult processResultFromExec = propertiesFromSystemPropertiesPrinter(java);
-            errorOut = processResultFromExec.getErrorOut();
-            if (processResultFromExec.wasSuccessful()) {
-                return extractProperties(processResultFromExec.getStandardOut(), errorOut);
-            }
-            LOG.debug("The java process printed the following content to 'error out': {}", errorOut);
-            throw new RuntimeException("Failed to execute SystemPropertiesPrinter to determine properties");
-        } catch (final Exception ex) {
-            final String message = String.format("Can not get properties for JVM in path '%s'.", java);
-            LOG.error(message, ex);
-            throw new IllegalStateException(message, ex);
+            final String command = fetchPropsCommand.apply(java).command().stream().collect(joining(" ", "'", "'"));
+            LOG.debug("The command {} printed the following content to 'error out': {}", command, errorOut);
+            throw new RuntimeException("Failed to execute command " + command);
+        } catch (Exception e) {
+            return Result.fail(e);
         }
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    private static ProcessResult propertiesFromShowSettings(final String java) throws Exception {
-        final ProcessBuilder processBuilder = new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG);
-        return ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+    private static ProcessBuilder showSettings(String java) {
+        return new ProcessBuilder(java, SHOW_SETTINGS_ARG, VERSION_ARG);
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    private static ProcessResult propertiesFromSystemPropertiesPrinter(final String java) throws Exception {
-        final ProcessBuilder processBuilder = new ProcessBuilder(java,
-                CP_ARG, OwsJvmLauncher.getOpenWebStartJar().getAbsolutePath(), SPP_CLASSNAME);
-        return ProcessUtil.runProcess(processBuilder, 5, TimeUnit.SECONDS);
+    private static ProcessBuilder showSystemProperties(String java) {
+        final String openWebStartJar = OwsJvmLauncher.getOpenWebStartJar().getAbsolutePath();
+        final String mainClass = SystemPropertiesPrinter.class.getName();
+        return new ProcessBuilder(java, CP_ARG, openWebStartJar, mainClass);
     }
 
-    private static JavaRuntimeProperties extractProperties(String stdOut, String stdErr) throws IOException {
+    private static JavaRuntimeProperties extractProperties(final String stdOut, final String stdErr) {
         final Map<String, String> props = new HashMap<>();
-        props.putAll(extractProps(stdErr));
-        props.putAll(extractProps(stdOut));
+        props.putAll(extractRequiredProperties(stdErr));
+        props.putAll(extractRequiredProperties(stdOut));
+
         if (props.size() != REQUIRED_PROPS.size()) {
-            throw new RuntimeException(String.format("Could not find all required properties %s, Only found %s.",
-                    REQUIRED_PROPS, props));
+            final String missing = REQUIRED_PROPS.stream().filter(prop -> !props.containsKey(prop)).collect(joining());
+            final String msg = String.format("Could not find required properties %s.", missing);
+            throw new RuntimeException(msg);
         }
-        return new JavaRuntimeProperties(
-                props.get(JAVA_VENDOR),
-                props.get(JAVA_VERSION),
-                props.get(OS_NAME),
-                props.get(OS_ARCH)
-        );
+
+        return new JavaRuntimeProperties(props);
     }
 
-    private static Map<String, String> extractProps(String content) throws IOException {
-        try (final BufferedReader reader = new BufferedReader(new StringReader(content))) {
-            final Map<String, String> props = new HashMap<>();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("=")) {
-                    final String[] parts = line.split("=", 2);
-                    final String key = parts[0].trim().toLowerCase();
-                    if (REQUIRED_PROPS.contains(key)) {
-                        props.put(key, parts[1].trim());
-                    }
-                }
-            }
-            return props;
-        }
+    private static Map<String, String> extractRequiredProperties(final String content) {
+        return Stream.of(content.split("\\R"))
+                .filter(line -> line.contains("="))
+                .map(line -> line.split("=", 2))
+                .map(parts -> new String[] {parts[0].trim(), parts[1].trim()})
+                .filter(parts -> REQUIRED_PROPS.contains(parts[0]))
+                .collect(Collectors.toMap(parts -> parts[0], parts -> parts[1]));
     }
 
     public static final class JavaRuntimeProperties {
@@ -121,11 +123,11 @@ public final class JavaRuntimePropertiesDetector {
         private final String osName;
         private final String osArch;
 
-        private JavaRuntimeProperties(String vendor, String version, String osName, String osArch) {
-            this.version = version;
-            this.vendor = vendor;
-            this.osName = osName;
-            this.osArch = osArch;
+        private JavaRuntimeProperties(Map<String, String> properties) {
+            this.version = properties.get(JAVA_VERSION);
+            this.vendor = properties.get(JAVA_VENDOR);
+            this.osName = properties.get(OS_NAME);
+            this.osArch = properties.get(OS_ARCH);
         }
 
         public String getVendor() {

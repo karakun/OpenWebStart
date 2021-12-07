@@ -21,10 +21,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.openwebstart</groupId>
+            <artifactId>system-properties-printer</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>net.adoptopenjdk</groupId>
             <artifactId>icedtea-web-all-dependencies</artifactId>
             <version>${icedtea-web.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.install4j</groupId>
             <artifactId>install4j-runtime</artifactId>
@@ -37,16 +43,11 @@
             <artifactId>gson</artifactId>
             <version>2.8.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.21</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.openwebstart</groupId>
-            <artifactId>system-properties-printer</artifactId>
-            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <!-- testing dependencies -->
