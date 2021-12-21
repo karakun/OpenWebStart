@@ -15,7 +15,6 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -125,7 +124,7 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
     private LocalJavaRuntime installRemoteRuntime(RemoteJavaRuntime remoteJavaRuntime, URL serverEndpoint) {
         try {
-            LOG.debug("Remote Runtime found. Will install it to local cache");
+            LOG.debug("Remote Runtime {} found. Will install it to local cache", remoteJavaRuntime.getHref());
             final Consumer<DownloadInputStream> consumer;
             if (downloadHandler != null) {
                 consumer = t -> downloadHandler.accept(remoteJavaRuntime, t);

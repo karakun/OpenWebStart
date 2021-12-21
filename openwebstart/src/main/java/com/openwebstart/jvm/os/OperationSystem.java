@@ -75,6 +75,10 @@ public enum OperationSystem {
         return this == LINUX64 || this == LINUX32;
     }
 
+    public boolean is64Bit() { return this == LINUX64 || this == WIN64 || this == MAC64; }
+
+    public boolean is32Bit() { return this == LINUX32 || this == WIN32; }
+
     public String getName() {
         return name;
     }
