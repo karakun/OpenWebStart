@@ -58,6 +58,7 @@ import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
 
 public final class LocalRuntimeManager {
 
+    public static final String JVM_FOLDER_SUFFIX = "_x32";
     private static final Logger LOG = LoggerFactory.getLogger(LocalRuntimeManager.class);
 
     private static final LocalRuntimeManager INSTANCE = new LocalRuntimeManager();
@@ -395,8 +396,7 @@ public final class LocalRuntimeManager {
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);
-        final boolean is32BitJVM = remoteRuntime.getOperationSystem().is32Bit() || OperationSystem.getLocalSystem().is32Bit();
-        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor().getShortName() + "_" + remoteRuntime.getVersion() + (is32BitJVM ? "_x32" : "" ));
+        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor().getShortName() + "_" + remoteRuntime.getVersion() + (remoteRuntime.getOperationSystem().is32Bit() ? JVM_FOLDER_SUFFIX : "" ));
 
         LOG.info("Runtime {} will be installed in {}", remoteRuntime.getHref(), runtimePath);
 
@@ -445,18 +445,18 @@ public final class LocalRuntimeManager {
     }
 
     private boolean canInstallJVMOnOS(RemoteJavaRuntime remoteRuntime) {
-        if (remoteRuntime.getOperationSystem().isWindows() && OperationSystem.getLocalSystem().isWindows() && canInstall32BitJVM(remoteRuntime)) {
+        if (OperationSystem.getLocalSystem().isWindows() && remoteRuntime.getOperationSystem().isWindows() &&  isArchitectureCompatible(remoteRuntime)) {
             return true;
-        } else if (remoteRuntime.getOperationSystem().isLinux() && OperationSystem.getLocalSystem().isLinux() && canInstall32BitJVM(remoteRuntime)) {
+        } else if (OperationSystem.getLocalSystem().isLinux() && remoteRuntime.getOperationSystem().isLinux() &&  isArchitectureCompatible(remoteRuntime)) {
             return true;
         } else {
-            return remoteRuntime.getOperationSystem() == OperationSystem.getLocalSystem();
+            return OperationSystem.getLocalSystem() == remoteRuntime.getOperationSystem();
         }
     }
 
-    private boolean canInstall32BitJVM(final RemoteJavaRuntime remoteRuntime) {
-        return OperationSystem.getLocalSystem().is64Bit() ||
-               OperationSystem.getLocalSystem().is32Bit() && remoteRuntime.getOperationSystem().is32Bit();
+    private boolean isArchitectureCompatible(final RemoteJavaRuntime remoteRuntime) {
+        return (OperationSystem.getLocalSystem().is64Bit()) ||
+                (OperationSystem.getLocalSystem().is32Bit() && remoteRuntime.getOperationSystem().is32Bit());
     }
 
     Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
