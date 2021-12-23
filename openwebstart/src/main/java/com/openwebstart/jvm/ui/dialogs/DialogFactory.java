@@ -55,7 +55,7 @@ public class DialogFactory {
         final Translator translator = Translator.getInstance();
 
         final String title = translator.translate("dialog.versionCheck.title");
-        final String message = translator.translate("dialog.versionCheck.text", runtime.getVersion().toString());
+        final String message = translator.translate("dialog.versionCheck.text", runtime.getVersion().toString(), runtime.getOperationSystem());
 
         return handleYesNoDialogEdtConform(title, message);
     }
