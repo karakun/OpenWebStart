@@ -50,6 +50,7 @@ public enum OperationSystem {
     private final String shortName;
 
     private final Architecture architecture;
+
     private final OperationSystem variant32bit;
 
     OperationSystem(final String name, final String shortName, final Architecture architecture) {
@@ -60,7 +61,7 @@ public enum OperationSystem {
         this.name = name;
         this.shortName = shortName;
         this.architecture = architecture;
-        this.variant32bit = variant32bit;
+        this.variant32bit = variant32bit == null ? this : variant32bit;
     }
 
     public boolean isMac() {
@@ -74,10 +75,6 @@ public enum OperationSystem {
     public boolean isLinux() {
         return this == LINUX64 || this == LINUX32;
     }
-
-    public boolean is64Bit() { return this == LINUX64 || this == WIN64 || this == MAC64; }
-
-    public boolean is32Bit() { return this == LINUX32 || this == WIN32; }
 
     public String getName() {
         return name;
@@ -96,7 +93,7 @@ public enum OperationSystem {
     }
 
     public OperationSystem getVariant32bit() {
-        return variant32bit == null ? this : variant32bit;
+        return variant32bit;
     }
 
     public static OperationSystem getLocalSystem() {

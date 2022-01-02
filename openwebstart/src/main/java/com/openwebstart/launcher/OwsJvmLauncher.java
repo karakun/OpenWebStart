@@ -98,7 +98,6 @@ public class OwsJvmLauncher implements JvmLauncher {
             final VersionString version = JvmVersionUtils.fromJnlp(jre.getVersion());
             final Vendor vendor = Vendor.fromStringOrAny(jre.getVendor());
             final boolean require32bit = jre.isRequire32Bit();
-            LOG.debug("searching for JRE with version string '{}' and vendor '{}' 32 bit = {}", version, vendor, require32bit);
             try {
                 final Optional<LocalJavaRuntime> javaRuntime = javaRuntimeProvider.getJavaRuntime(version, vendor, jre.getLocation(), require32bit);
                 if (javaRuntime.isPresent()) {

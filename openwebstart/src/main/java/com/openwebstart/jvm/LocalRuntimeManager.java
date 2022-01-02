@@ -58,7 +58,6 @@ import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
 
 public final class LocalRuntimeManager {
 
-    public static final String JVM_FOLDER_SUFFIX = "_x32";
     private static final Logger LOG = LoggerFactory.getLogger(LocalRuntimeManager.class);
 
     private static final LocalRuntimeManager INSTANCE = new LocalRuntimeManager();
@@ -391,12 +390,16 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Installing remote runtime {} on local cache", remoteRuntime);
 
-        if (canInstallJVMOnOS(remoteRuntime) == false) {
-            throw new IllegalArgumentException("Cannot install JVM for another os than " + OperationSystem.getLocalSystem().getName());
+        if (cannotInstallJvmOnLocalSystem(remoteRuntime)) {
+            throw new IllegalArgumentException("Cannot install JVM for " + remoteRuntime.getOperationSystem().getName()
+                    + " on " + OperationSystem.getLocalSystem().getName());
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);
-        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor().getShortName() + "_" + remoteRuntime.getVersion() + (remoteRuntime.getOperationSystem().is32Bit() ? JVM_FOLDER_SUFFIX : "" ));
+        final String vendorName = remoteRuntime.getVendor().getShortName();
+        final VersionId version = remoteRuntime.getVersion();
+        final String architecture = remoteRuntime.getOperationSystem().getArchitectureName();
+        final Path runtimePath = folderFactory.createSubFolder(vendorName + "_" + version + "_" + architecture);
 
         LOG.info("Runtime {} will be installed in {}", remoteRuntime.getHref(), runtimePath);
 
@@ -444,19 +447,16 @@ public final class LocalRuntimeManager {
         }
     }
 
-    private boolean canInstallJVMOnOS(RemoteJavaRuntime remoteRuntime) {
-        if (OperationSystem.getLocalSystem().isWindows() && remoteRuntime.getOperationSystem().isWindows() &&  isArchitectureCompatible(remoteRuntime)) {
-            return true;
-        } else if (OperationSystem.getLocalSystem().isLinux() && remoteRuntime.getOperationSystem().isLinux() &&  isArchitectureCompatible(remoteRuntime)) {
-            return true;
-        } else {
-            return OperationSystem.getLocalSystem() == remoteRuntime.getOperationSystem();
-        }
+    private boolean cannotInstallJvmOnLocalSystem(RemoteJavaRuntime remoteRuntime) {
+        return !canInstallJvmOnOS(remoteRuntime);
     }
 
-    private boolean isArchitectureCompatible(final RemoteJavaRuntime remoteRuntime) {
-        return (OperationSystem.getLocalSystem().is64Bit()) ||
-                (OperationSystem.getLocalSystem().is32Bit() && remoteRuntime.getOperationSystem().is32Bit());
+    private boolean canInstallJvmOnOS(RemoteJavaRuntime remoteRuntime) {
+        if (OperationSystem.getLocalSystem() == remoteRuntime.getOperationSystem()) {
+            return true;
+        }
+
+        return OperationSystem.getLocalSystem().getVariant32bit() == remoteRuntime.getOperationSystem();
     }
 
     Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
@@ -489,7 +489,7 @@ public final class LocalRuntimeManager {
                 .filter(LocalJavaRuntime::isManaged)
                 .filter(l -> Objects.equals(l.getVersion(), versionId))
                 .filter(l -> Objects.equals(l.getVendor(), vendor))
-                .anyMatch(l -> Objects.equals(l.getOperationSystem(), os));
+                .anyMatch(l -> l.getOperationSystem() == os);
     }
 
     private File cacheBaseDir() {
