@@ -105,7 +105,7 @@ class RemoteRuntimeManager {
                 .filter(r -> Objects.equals(vendor, ANY_VENDOR) || Objects.equals(vendor, r.getVendor()))
                 .filter(r -> versionString.contains(r.getVersion()))
                 .filter(r -> Optional.ofNullable(RuntimeManagerConfig.getSupportedVersionRange()).map(v -> v.contains(r.getVersion())).orElse(true))
-                .filter(r -> !localRuntimeManager.hasManagedRuntime(r.getVersion(), r.getVendor()))
+                .filter(r -> !localRuntimeManager.hasManagedRuntime(r.getVersion(), r.getVendor(), r.getOperationSystem()))
                 .max(new RuntimeVersionComparator(versionString));
     }
 

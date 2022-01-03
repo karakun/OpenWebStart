@@ -390,15 +390,18 @@ public final class LocalRuntimeManager {
 
         LOG.debug("Installing remote runtime {} on local cache", remoteRuntime);
 
-
-        if (remoteRuntime.getOperationSystem() != OperationSystem.getLocalSystem()) {
-            throw new IllegalArgumentException("Cannot install JVM for another os than " + OperationSystem.getLocalSystem().getName());
+        if (cannotInstallJvmOnLocalSystem(remoteRuntime)) {
+            throw new IllegalArgumentException("Cannot install JVM for " + remoteRuntime.getOperationSystem().getName()
+                    + " on " + OperationSystem.getLocalSystem().getName());
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);
-        final Path runtimePath = folderFactory.createSubFolder(remoteRuntime.getVendor().getShortName() + "_" + remoteRuntime.getVersion());
+        final String vendorName = remoteRuntime.getVendor().getShortName();
+        final VersionId version = remoteRuntime.getVersion();
+        final String architecture = remoteRuntime.getOperationSystem().getArchitectureName();
+        final Path runtimePath = folderFactory.createSubFolder(vendorName + "_" + version + "_" + architecture);
 
-        LOG.info("Runtime will be installed in {}", runtimePath);
+        LOG.info("Runtime {} will be installed in {}", remoteRuntime.getHref(), runtimePath);
 
         final URL downloadRequest = remoteRuntime.getEndpoint();
         final HttpGetRequest request = new HttpGetRequest(downloadRequest);
@@ -408,7 +411,7 @@ public final class LocalRuntimeManager {
             if (downloadConsumer != null) {
                 downloadConsumer.accept(inputStream);
             }
-            LOG.info("Trying to download and extract runtime {}", remoteRuntime);
+            LOG.info("Trying to download and extract runtime {}", remoteRuntime.getHref());
 
             MimeTypeInputStream wrappedStream = new MimeTypeInputStream(inputStream);
             final MimeType mimeType = wrappedStream.getMimeType();
@@ -422,7 +425,7 @@ public final class LocalRuntimeManager {
                 throw new IllegalStateException("The remote runtime is distributed in an unknown mimetype.");
             }
         } catch (final Exception e) {
-            LOG.error("Error in runtime download: {}", e.getMessage());
+            LOG.error("Error in runtime {} download: {}", remoteRuntime.getHref(), e.getMessage());
             try {
                 FileUtils.recursiveDelete(runtimePath.toFile(), cacheBaseDir());
             } catch (IOException ex) {
@@ -430,7 +433,7 @@ public final class LocalRuntimeManager {
             }
             throw new IOException("Error in runtime download", e);
         }
-        LOG.info("Remote runtime {} successfully installed in {}", remoteRuntime, runtimePath);
+        LOG.info("Remote runtime {} successfully installed in {}", remoteRuntime.getHref(), runtimePath);
         final LocalJavaRuntime newRuntime = LocalJavaRuntime.createManaged(remoteRuntime, runtimePath);
 
         if (addNewRuntimeInMemory(newRuntime)) {
@@ -442,6 +445,18 @@ public final class LocalRuntimeManager {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Cannot add local runtime and cannot find it in memory either. Please restart OpenWebStart"));
         }
+    }
+
+    private boolean cannotInstallJvmOnLocalSystem(RemoteJavaRuntime remoteRuntime) {
+        return !canInstallJvmOnOS(remoteRuntime);
+    }
+
+    private boolean canInstallJvmOnOS(RemoteJavaRuntime remoteRuntime) {
+        if (OperationSystem.getLocalSystem() == remoteRuntime.getOperationSystem()) {
+            return true;
+        }
+
+        return OperationSystem.getLocalSystem().getVariant32bit() == remoteRuntime.getOperationSystem();
     }
 
     Optional<LocalJavaRuntime> getBestActiveRuntime(final VersionString versionString, final Vendor vendor, final OperationSystem operationSystem) {
@@ -469,11 +484,12 @@ public final class LocalRuntimeManager {
                 .max(new RuntimeVersionComparator(versionString));
     }
 
-    boolean hasManagedRuntime(final VersionId versionId, final Vendor vendor) {
+    boolean hasManagedRuntime(final VersionId versionId, final Vendor vendor, final OperationSystem os) {
         return LocalRuntimeManager.getInstance().getAll().stream()
                 .filter(LocalJavaRuntime::isManaged)
                 .filter(l -> Objects.equals(l.getVersion(), versionId))
-                .anyMatch(l -> Objects.equals(l.getVendor(), vendor));
+                .filter(l -> Objects.equals(l.getVendor(), vendor))
+                .anyMatch(l -> l.getOperationSystem() == os);
     }
 
     private File cacheBaseDir() {
