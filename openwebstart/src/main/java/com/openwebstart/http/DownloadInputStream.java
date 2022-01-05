@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import static com.openwebstart.http.ConnectionUtils.HashAlgorithm.SHA_256;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DownloadInputStream extends InputStream {
 
@@ -74,7 +75,6 @@ public class DownloadInputStream extends InputStream {
         hash = new CompletableFuture<>();
         try {
             this.wrappedStream = ConnectionUtils.createHashStream(inputStream, SHA_256);
-            this.downloadDoneListeners.add(size -> hash.complete(wrappedStream.getMessageDigest().digest()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("No HASH_ALGORITHM support");
         }
@@ -182,14 +182,17 @@ public class DownloadInputStream extends InputStream {
     }
 
     private void onDone() {
-        LOG.debug("Done Download of size {} from {}", downloaded.get(), connectionUrl);
-        logHash();
-        downloadDoneListeners.forEach(l -> l.accept(dataSize));
+        if (!hash.isDone()) {
+            LOG.debug("Done Download of size {} from {}", downloaded.get(), connectionUrl);
+            hash.complete(wrappedStream.getMessageDigest().digest());
+            logHash();
+            downloadDoneListeners.forEach(l -> l.accept(dataSize));
+        }
     }
 
     private void logHash() {
         try {
-            LOG.debug("Done Download SHA-256 checksum {} from {}", getHash().get(), connectionUrl);
+            LOG.debug("Done Download SHA-256 checksum {} from {}", getHash().get(5, SECONDS), connectionUrl);
         } catch (Exception e) {
             LOG.warn("Could not get Download checksum {}", e.getMessage());
         }
