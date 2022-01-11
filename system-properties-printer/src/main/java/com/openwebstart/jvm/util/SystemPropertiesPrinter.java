@@ -14,11 +14,10 @@ import static java.util.Collections.unmodifiableSet;
  * Emulates the -XshowSettings:properties nonstandard option on non-Oracle and pre-1.8 JVM versions. The main
  * difference is that we only print a small subset of the system properties required by OWS
  * JavaRuntimePropertiesDetector. This class should be compiled using pre-1.8 source and target settings.
- * Currently, it is written to conform the 1.6 language level.
+ * Currently, it is set to conform the 1.6 language level.
  * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html#BABHDABI">
  *     Oracle Java SE 8 Tools Reference java Nonstandard Options</a>
  */
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public final class SystemPropertiesPrinter {
 
     /**
