@@ -32,15 +32,15 @@ public final class SystemPropertiesPrinter {
     }
 
     public static void main(String[] args) {
-        Properties systemProperties = System.getProperties();
+        final Properties systemProperties = System.getProperties();
         System.err.println("Property settings:");
         List<String> propertyNames = new ArrayList<String>(systemProperties.stringPropertyNames());
         Collections.sort(propertyNames);
-        for (String propertyName : propertyNames) {
-            if (REQUIRED_PROPS.contains(propertyName)) {
-                System.err.print("    " + propertyName + " = " + systemProperties.getProperty(propertyName));
+        for (String prop : REQUIRED_PROPS) {
+            if (systemProperties.containsKey(prop)) {
+                System.err.println(prop + " = " + systemProperties.get(prop));
             }
-        }
+        };
         System.err.println();
     }
 }
