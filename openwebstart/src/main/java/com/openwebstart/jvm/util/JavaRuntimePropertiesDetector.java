@@ -99,7 +99,7 @@ public final class JavaRuntimePropertiesDetector {
         props.putAll(extractRequiredProperties(stdOut));
 
         if (props.size() != REQUIRED_PROPS.size()) {
-            final String missing = REQUIRED_PROPS.stream().filter(prop -> !props.containsKey(prop)).collect(joining());
+            final String missing = REQUIRED_PROPS.stream().filter(prop -> !props.containsKey(prop)).collect(joining(","));
             final String msg = String.format("Could not find required properties %s.", missing);
             throw new RuntimeException(msg);
         }
