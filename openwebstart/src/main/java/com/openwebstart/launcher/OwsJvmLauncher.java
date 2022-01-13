@@ -213,7 +213,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         commands.add(Boot.class.getName());
         commands.addAll(javawsArgs);
 
-        LOG.info("About to launch external with commands: '{}'", commands.toString());
+        LOG.info("About to launch process with command:\n{}", String.join(" ", commands));
 
         final ProcessBuilder pb = new ProcessBuilder();
         final Map<String, String> env = pb.environment();
