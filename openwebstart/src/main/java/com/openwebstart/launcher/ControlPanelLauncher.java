@@ -33,6 +33,10 @@ public class ControlPanelLauncher {
 
 
     public static void main(final String[] args) {
+        // to allow install4j update behind proxy with auth
+        // https://stackoverflow.com/questions/41806422/java-web-start-unable-to-tunnel-through-proxy-since-java-8-update-111
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+
         EnvironmentPrinter.logEnvironment(args);
         if (Arrays.asList(args).contains(CommandLineOptions.VERBOSE.getOption())) {
             JNLPRuntime.setDebug(true);
