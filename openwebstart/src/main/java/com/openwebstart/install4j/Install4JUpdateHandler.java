@@ -56,7 +56,7 @@ public class Install4JUpdateHandler {
         final String serverUrl = Install4JUtils.updatesUrl();
         LOG.info("Checking for update on server {}", serverUrl);
         final UpdateCheckRequest request = new UpdateCheckRequest(serverUrl);
-        request.applicationDisplayMode(ApplicationDisplayMode.UNATTENDED);
+        request.applicationDisplayMode(ApplicationDisplayMode.GUI);
         final UpdateDescriptor updateDescriptor = UpdateChecker.getUpdateDescriptor(request);
         return Optional.ofNullable(updateDescriptor.getPossibleUpdateEntry());
     }
