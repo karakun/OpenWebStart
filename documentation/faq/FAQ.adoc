@@ -24,14 +24,25 @@ OpenWebStart is released under the GPL with Classpath Exception.
 == Installation
 
 ==== Do I have to install a Java on my system to run OWS?
-OpenWebStart comes with a JVM Manager and a bundled Java runtime. There is no need to have any JVM installed on your system.
+There is no need to have any JVM installed on your system to run OWS. OWS bundles its own JVM.
+OWS has a JVM Manager which can find local JREs or download JREs (from the Internet) to run your Jnlp application..
 
-The bundled JVM is used solely to run OWS. The JVMs manged by the JVM Manager are used to run the JNLP applications.
+Don't worry if no JVMs are shown in JVM Manager after installation of OWS.
+If you wish you can use _Find local_ or _Add local..._ to detect and add an existing Java instance on your client device to the JVM Manager or simply start the JNLP file and the JVM Manager will download an appropriate JRE for your application.
+
+The downloaded JREs are stored in %userhome%/.cache/icedtea-web/
+
+==== I saw there is a bundled JRE installed together with OWS, can I use it?
+There is a bundled JRE installed together with OpenWebStart (OWS).
+This JRE is used solely to run OWS.
+Only the JVMs managed by the JVM Manager can be used to run JNLP applications.
+
+This is a precautionary measure as we regularly update this bundled JRE, and we do not want to break any working application.
 
 ==== Which Java versions can be used to run my JNLP applications?
 
 Your JNLP applications can be run with either Java 8 and 11.
-We have not run any tests with Java 12 or 13 yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
+We have not run any tests with higher versions of Java yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.
 Currently, we provide access to long-term support (LTS) versions of JDKs from various vendors by our default download server.
