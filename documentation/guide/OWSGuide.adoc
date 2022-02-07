@@ -429,6 +429,28 @@ ows.jvm.manager.server.default.locked=true
 TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
 The presence of the key is sufficient for locking the property.
 
+=== System-wide trust store for trusted certificates
+
+OWS has a property `deployment.system.security.trusted.certs`
+to point to a _trust store_ where OWS will look for trusted certificates.
+
+Suppose your trusted certificates are stored in a trust store called  `trusted.certs`. You can copy this file to a central location.
+
+The property `deployment.system.security.trusted.certs` can be specified in a system level deployment properties
+file, e.g. `itw.properties` :
+----
+deployment.system.security.trusted.certs=<Central Directory>\\trusted.certs
+deployment.system.security.trusted.certs.locked
+----
+
+Specify the system level deployment properties file in the System-wide config file `C:\Windows\Sun\Java\Deployment\itw-deployment.config`:
+----
+deployment.system.config=file:///<Central Directory>/itw.properties
+deployment.system.config.mandatory=true
+----
+
+To verify certificates, OWS will now use the central trust store that is specified in the system level deployment properties file.
+
 === Customize Application Cache and User Config Location
 
 Centralized location for the _configuration_ and _cache_ can be specified using `XDG_CONFIG_HOME` and
