@@ -1,5 +1,8 @@
 package com.openwebstart.controlpanel;
 
+import com.openwebstart.config.OwsDefaultsProvider;
+import com.openwebstart.os.ShortcutUpdateStrategy;
+import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ComboItem;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -44,8 +47,20 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
             config.setProperty(shortcutComboOptions.getActionCommand(), c.getValue());
         });
 
+        JLabel shortcutOverwriteDescription = new JLabel(Translator.getInstance().translate("desktop.integration.updateStrategy.name"));
+        JComboBox<ShortcutUpdateStrategy> shortcutOverwriteComboOptions = new JComboBox<>(ShortcutUpdateStrategy.values());
+        shortcutOverwriteComboOptions.setRenderer(new TranslatableEnumComboboxRenderer<>());
+        shortcutOverwriteComboOptions.setActionCommand(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY); // The configuration property this combobox affects.
+        shortcutOverwriteComboOptions.setSelectedItem(ShortcutUpdateStrategy.get(config.getProperty(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY)));
+        shortcutOverwriteComboOptions.addItemListener(e -> {
+            ShortcutUpdateStrategy c = (ShortcutUpdateStrategy) e.getItem();
+            config.setProperty(shortcutOverwriteComboOptions.getActionCommand(), c.name());
+        });
+
         uiLock.update(ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT, shortcutComboOptions);
+        uiLock.update(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY, shortcutOverwriteComboOptions);
         addRow(0, description, shortcutComboOptions);
+        addRow(1, shortcutOverwriteDescription, shortcutOverwriteComboOptions);
         addFlexibleRow(1);
     }
 

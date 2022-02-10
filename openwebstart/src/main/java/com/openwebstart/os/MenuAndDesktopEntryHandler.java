@@ -1,5 +1,6 @@
 package com.openwebstart.os;
 
+import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.InformationDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
@@ -38,9 +39,6 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
         final boolean hasMenu = factory.existsMenuEntry(jnlpFile);
         final boolean hasDesktop = factory.existsDesktopEntry(jnlpFile);
 
-        final boolean supportsMenu = factory.supportsMenuEntry();
-        final boolean supportsDesktop = factory.supportsDesktopEntry();
-
         final Optional<ShortcutDesc> shortcutDesc = Optional.ofNullable(jnlpFile.getInformation()).map(InformationDesc::getShortcut);
 
         final boolean jnlpWantsMenu = shortcutDesc.map(ShortcutDesc::toMenu).orElse(false);
@@ -48,18 +46,21 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
 
         if (hasMenu || hasDesktop) {
-            updateEntries(factory, jnlpFile, supportsMenu && hasMenu, supportsDesktop && hasDesktop);
+            ShortcutUpdateStrategy strategy = ShortcutUpdateStrategy.get(JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY));
+            if (strategy == ShortcutUpdateStrategy.OVERWRITE) {
+                updateEntries(factory, jnlpFile, hasMenu, hasDesktop);
+            }
         } else {
             if (shortcutCreationOptions == CREATE_ALWAYS) {
-                addEntries(factory, jnlpFile, supportsMenu, supportsDesktop);
+                addEntries(factory, jnlpFile, true, true);
             } else if (shortcutCreationOptions == CREATE_ALWAYS_IF_HINTED) {
-                addEntries(factory, jnlpFile, supportsMenu && jnlpWantsMenu, supportsDesktop && jnlpWantsDesktop);
+                addEntries(factory, jnlpFile, jnlpWantsMenu, jnlpWantsDesktop);
             } else if (shortcutCreationOptions == CREATE_ASK_USER) {
-                final AskForEntriesDialog dialog = new AskForEntriesDialog(appName, supportsMenu, supportsDesktop);
+                final AskForEntriesDialog dialog = new AskForEntriesDialog(appName, true, true);
                 final AskForEntriesDialogResult result = dialog.showAndWaitForResult();
                 addEntries(factory, jnlpFile, result.isMenuSelected(), result.isDesktopSelected());
             } else if (shortcutCreationOptions == CREATE_ASK_USER_IF_HINTED && (jnlpWantsDesktop || jnlpWantsMenu)) {
-                final AskForEntriesDialog dialog = new AskForEntriesDialog(appName, supportsMenu && jnlpWantsMenu, supportsDesktop && jnlpWantsDesktop);
+                final AskForEntriesDialog dialog = new AskForEntriesDialog(appName, jnlpWantsMenu, jnlpWantsDesktop);
                 final AskForEntriesDialogResult result = dialog.showAndWaitForResult();
                 addEntries(factory, jnlpFile, result.isMenuSelected(), result.isDesktopSelected());
             }

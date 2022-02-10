@@ -26,11 +26,6 @@ import static com.openwebstart.os.mac.ScriptFactory.createSimpleStartScriptForMa
 public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
     @Override
-    public boolean supportsDesktopEntry() {
-        return true;
-    }
-
-    @Override
     public void updateDesktopEntry(final JNLPFile file) throws Exception {
         createDesktopEntry(file);
     }

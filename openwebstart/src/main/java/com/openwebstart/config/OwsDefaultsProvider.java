@@ -4,6 +4,7 @@ import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.jvm.PathAndFiles;
 import com.openwebstart.jvm.RuntimeUpdateStrategy;
 import com.openwebstart.jvm.runtimes.Vendor;
+import com.openwebstart.os.ShortcutUpdateStrategy;
 import com.openwebstart.update.UpdatePanelConfigConstants;
 import net.adoptopenjdk.icedteaweb.config.ValidatorFactory;
 import net.sourceforge.jnlp.config.DefaultsProvider;
@@ -49,8 +50,10 @@ public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String APPLICATION_MANAGER_ACTIVE = "ows.experimental.applicationManager.active";
 
-
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
+
+    public static final String SHORTCUT_UPDATE_STRATEGY = "ows.shortcut.update.strategy";
+    public static final ShortcutUpdateStrategy SHORTCUT_UPDATE_STRATEGY_DEFAULT_VALUE = ShortcutUpdateStrategy.OVERWRITE;
 
     @Override
     public List<Setting> getDefaults() {
@@ -191,6 +194,15 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                         CUSTOM_JVM_LOCATION,
                         null,
                         null
+                ),
+                Setting.createDefault(
+                        SHORTCUT_UPDATE_STRATEGY,
+                        SHORTCUT_UPDATE_STRATEGY_DEFAULT_VALUE.name(),
+                        ValidatorFactory.createStringValidator(
+                                Stream.of(ShortcutUpdateStrategy.values())
+                                        .map(Enum::name)
+                                        .toArray(String[]::new)
+                        )
                 )
         );
     }
