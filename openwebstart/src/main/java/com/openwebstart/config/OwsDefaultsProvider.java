@@ -53,7 +53,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
     public static final RuntimeUpdateStrategy DEFAULT_UPDATE_STRATEGY = RuntimeUpdateStrategy.ASK_FOR_UPDATE_ON_LOCAL_MATCH;
 
     public static final String SHORTCUT_UPDATE_STRATEGY = "ows.shortcut.update.strategy";
-    public static final ShortcutUpdateStrategy SHORTCUT_UPDATE_STRATEGY_DEFAULT_VALUE = ShortcutUpdateStrategy.OVERWRITE;
+    public static final ShortcutUpdateStrategy DEFAULT_SHORTCUT_UPDATE_STRATEGY = ShortcutUpdateStrategy.OVERWRITE;
 
     @Override
     public List<Setting> getDefaults() {
@@ -197,7 +197,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                 ),
                 Setting.createDefault(
                         SHORTCUT_UPDATE_STRATEGY,
-                        SHORTCUT_UPDATE_STRATEGY_DEFAULT_VALUE.name(),
+                        DEFAULT_SHORTCUT_UPDATE_STRATEGY.name(),
                         ValidatorFactory.createStringValidator(
                                 Stream.of(ShortcutUpdateStrategy.values())
                                         .map(Enum::name)
