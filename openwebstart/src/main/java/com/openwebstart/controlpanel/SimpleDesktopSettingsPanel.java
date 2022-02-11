@@ -62,7 +62,7 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
         uiLock.update(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY, shortcutOverwriteComboOptions);
         addRow(0, description, shortcutComboOptions);
         addRow(1, shortcutOverwriteDescription, shortcutOverwriteComboOptions);
-        addFlexibleRow(1);
+        addFlexibleRow(2);
     }
 
     private static ComboItem deploymentJavawsShortcutToComboItem(String i) {
