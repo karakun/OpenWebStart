@@ -34,13 +34,13 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
     private static final Logger LOG = LoggerFactory.getLogger(LinuxEntryFactory.class);
 
     @Override
-    public void updateDesktopEntry(final JNLPFile file) {
-
+    public void updateDesktopEntry(final JNLPFile file) throws Exception {
+        createDesktopEntry(file);
     }
 
     @Override
-    public void updateMenuEntry(final JNLPFile file) {
-
+    public void updateMenuEntry(final JNLPFile file) throws IOException {
+        createMenuEntry(file);
     }
 
     @Override
