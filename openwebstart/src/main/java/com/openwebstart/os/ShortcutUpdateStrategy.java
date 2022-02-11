@@ -13,7 +13,7 @@ public enum ShortcutUpdateStrategy implements Translatable {
     /**
      * Keep the existing shortcuts as they are.
      */
-    KEEP ("desktop.integration.shortcutUpdateStrategy.keep"),
+    KEEP ("desktop.integration.shortcutUpdateStrategy.preserve"),
 
     /**
      * Create the shortcut with unique name
