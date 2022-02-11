@@ -457,7 +457,7 @@ NOTE: `ows.jvm.manager.cache.dir` specification in `deployment.properties` takes
 OpenWebStart can fetch JVMs and JVM updates from a download server that is specified in the JVM Manager Configuration of the OWS Settings application.
 The default points to `https://download-openwebstart.com/jvms.json`.
 
-===== Setup a Custom Download Server
+===== Set up a Custom Download Server
 If you want to set up your own JVM download server you must provide a json file which lists all available JVMs.
 
 This json file must contain the following data:
@@ -739,7 +739,7 @@ Localhost is implicitly always in the whitelist.
 If you delete the line again then no whitelisting is applied and all servers are reachable.
 
 Note that whitelisting only applies while downloading resources (jars and jnlps) and not while an application is running.
-Thus an application can open a connection to a server which is not in the whitelist.
+Thus, an application can open a connection to a server which is not in the whitelist.
 
 It is also possible to specify the content of the whitelist in the response file of an unattended OWS installation.
 
@@ -821,7 +821,29 @@ You will rarely need those.
 
 OWS allows remote debugging of the application started by OWS. You can configure the settings as follows:
 
-image::OWS_debug.png[title="Remote Debugging" width="80%"]
+image::OWS_debug.png[title="Remote Debugging" width="70%"]
+
+=== Desktop Integration
+
+OWS allows to specify when and how desktop and start menu shortcuts are created.
+
+image::OWS_shortcut.png[title="Desktop Integration" width="70%"]
+
+The options for when a shortcut is created are:
+
+* _Never create_: Never create a shortcut
+* _Always allow_: Always create a shortcut
+* _Ask user_: Shows a dialog to ask user
+* _Ask if hinted_: Ask user if hinted in jnlp file
+* _Always if hinted_: Always create when hinted in jnlp file
+
+The names of the shortcuts depend on the title or the name of the jnlp file.
+This may lead to overwriting of shortcut of one application by the shortcut of another application with the same title or jnlp file name.
+OWS provides the following strategies for how shortcuts are created:
+
+* _Overwrite_: Always overwrite existing shortcuts in case of name clash
+* _Preserve_: Keep the existing shortcuts in case of name clash
+* _Unique Name_: Create unique names for shortcuts to prevent name clash.
 
 === OWS Command Line Arguments
 
