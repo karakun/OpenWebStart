@@ -843,7 +843,7 @@ OWS provides the following strategies for how shortcuts are created:
 
 * _Overwrite_: Always overwrite existing shortcuts in case of name clash
 * _Preserve_: Keep the existing shortcuts in case of name clash
-* _Unique Name_: Create unique names for shortcuts to prevent name clash.
+* _Unique Name_: Create unique names for shortcuts by appending a hash suffix to prevent name clash.
 
 === OWS Command Line Arguments
 
