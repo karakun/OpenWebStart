@@ -22,14 +22,6 @@ public interface MenuAndDesktopEntriesFactory {
 
     boolean existsMenuEntry(final JNLPFile file);
 
-    default boolean supportsDesktopEntry() {
-        return true;
-    }
-
-    default boolean supportsMenuEntry() {
-        return true;
-    }
-
     static Optional<MenuAndDesktopEntriesFactory> forCurrentOs() {
         final OperationSystem localSystem = OperationSystem.getLocalSystem();
         if (OperationSystem.MAC64 == localSystem) {

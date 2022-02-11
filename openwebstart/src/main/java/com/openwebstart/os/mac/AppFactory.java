@@ -67,14 +67,14 @@ public class AppFactory {
         createNativeApp(userApplicationFolder, name, script, iconPaths);
     }
 
-    static final File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
+    static File createAppWithoutMenuEntry(final String name, final String script, final String... iconPaths)
             throws Exception {
 
         final Path applicationsFolder = ensureUserApplicationCacheFolder();
         return createNativeApp(applicationsFolder, name, script, iconPaths);
     }
 
-    static final File createNativeApp(final Path applicationsFolder, final String name, final String script, final String... iconPaths)
+    static File createNativeApp(final Path applicationsFolder, final String name, final String script, final String... iconPaths)
             throws Exception {
         Assert.requireNonNull(applicationsFolder, "applicationsFolder");
         Assert.requireNonBlank(name, "name");
@@ -148,7 +148,7 @@ public class AppFactory {
         return new FileInputStream(factory.createIconSet(iconFiles));
     }
 
-    private static final Path ensureUserApplicationFolder() {
+    private static Path ensureUserApplicationFolder() {
         final String userHome = JavaSystemProperties.getUserHome();
         final File appFolder = new File(new File(userHome), USER_APPLICATIONS_FOLDER);
         if (!appFolder.exists()) {
@@ -157,7 +157,7 @@ public class AppFactory {
         return appFolder.toPath();
     }
 
-    private static final Path ensureUserApplicationCacheFolder() {
+    private static Path ensureUserApplicationCacheFolder() {
         final Path appcache = Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER);
         if (!Files.isDirectory(appcache)) {
             try {
@@ -169,11 +169,11 @@ public class AppFactory {
         return appcache;
     }
 
-    static final Path getApplicationRootInCache(final String name) {
+    static Path getApplicationRootInCache(final String name) {
         return Paths.get(FilesystemConfiguration.getCacheHome(), USER_APPLICATIONS_CACHE_FOLDER, name + APP_EXTENSION);
     }
 
-    public static final boolean desktopLinkExists(final String appname) {
+    public static boolean desktopLinkExists(final String appname) {
         Assert.requireNonBlank(appname, "appname");
         final Path cache = getApplicationRootInCache(appname);
         if (Files.isDirectory(cache)) {
@@ -190,7 +190,7 @@ public class AppFactory {
         return false;
     }
 
-    public static final void createDesktopLink(final String appname, final String script, final String... iconPaths)
+    public static void createDesktopLink(final String appname, final String script, final String... iconPaths)
             throws Exception {
         Assert.requireNonBlank(appname, "appname");
         if (!desktopLinkExists(appname)) {
@@ -204,7 +204,7 @@ public class AppFactory {
         }
     }
 
-    private static final Path getDesktopLink(final String appname) {
+    private static Path getDesktopLink(final String appname) {
         return Paths.get(JavaSystemProperties.getUserHome(), USER_DESKTOP, appname + APP_EXTENSION);
     }
 }
