@@ -64,16 +64,16 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
             config.setProperty(shortcutOverwriteComboOptions.getActionCommand(), c.name());
         });
 
-        final JLabel warningLabel = new JLabel();
-        warningLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
-        warningLabel.setToolTipText(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.tooltip"));
+        final JLabel infoLabel = new JLabel();
+        infoLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/ui/impl/info-16.png")));
+        infoLabel.setToolTipText(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.tooltip"));
 
         final JPanel panel = new JPanel();
         panel.setLayout(LayoutFactory.createBoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(shortcutOverwriteComboOptions);
         Dimension dim = new Dimension(10, -1);
         panel.add(new Box.Filler(dim, dim, dim));
-        panel.add(warningLabel);
+        panel.add(infoLabel);
 
         uiLock.update(ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT, shortcutComboOptions);
         uiLock.update(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY, shortcutOverwriteComboOptions);
