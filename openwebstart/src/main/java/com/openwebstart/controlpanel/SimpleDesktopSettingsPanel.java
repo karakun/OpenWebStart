@@ -47,7 +47,7 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
             config.setProperty(shortcutComboOptions.getActionCommand(), c.getValue());
         });
 
-        JLabel shortcutOverwriteDescription = new JLabel(Translator.getInstance().translate("desktop.integration.updateStrategy.name"));
+        JLabel shortcutOverwriteDescription = new JLabel(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.name"));
         JComboBox<ShortcutUpdateStrategy> shortcutOverwriteComboOptions = new JComboBox<>(ShortcutUpdateStrategy.values());
         shortcutOverwriteComboOptions.setRenderer(new TranslatableEnumComboboxRenderer<>());
         shortcutOverwriteComboOptions.setActionCommand(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY); // The configuration property this combobox affects.
