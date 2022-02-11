@@ -3,6 +3,7 @@ package com.openwebstart.controlpanel;
 import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.os.ShortcutUpdateStrategy;
 import com.openwebstart.ui.TranslatableEnumComboboxRenderer;
+import com.openwebstart.util.LayoutFactory;
 import net.adoptopenjdk.icedteaweb.client.controlpanel.ComboItem;
 import net.adoptopenjdk.icedteaweb.client.util.UiLock;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
@@ -11,8 +12,14 @@ import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Dimension;
+
 
 public class SimpleDesktopSettingsPanel extends FormPanel {
 
@@ -49,7 +56,6 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
 
         JLabel shortcutOverwriteDescription = new JLabel(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.name"));
         JComboBox<ShortcutUpdateStrategy> shortcutOverwriteComboOptions = new JComboBox<>(ShortcutUpdateStrategy.values());
-        shortcutOverwriteComboOptions.setToolTipText(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.tooltip"));
         shortcutOverwriteComboOptions.setRenderer(new TranslatableEnumComboboxRenderer<>());
         shortcutOverwriteComboOptions.setActionCommand(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY); // The configuration property this combobox affects.
         shortcutOverwriteComboOptions.setSelectedItem(ShortcutUpdateStrategy.get(config.getProperty(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY)));
@@ -58,10 +64,21 @@ public class SimpleDesktopSettingsPanel extends FormPanel {
             config.setProperty(shortcutOverwriteComboOptions.getActionCommand(), c.name());
         });
 
+        final JLabel warningLabel = new JLabel();
+        warningLabel.setIcon(new ImageIcon(this.getClass().getResource("/com/openwebstart/jvm/ui/dialogs/warn16.png")));
+        warningLabel.setToolTipText(Translator.getInstance().translate("desktop.integration.shortcutUpdateStrategy.tooltip"));
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(LayoutFactory.createBoxLayout(panel, BoxLayout.X_AXIS));
+        panel.add(shortcutOverwriteComboOptions);
+        Dimension dim = new Dimension(10, -1);
+        panel.add(new Box.Filler(dim, dim, dim));
+        panel.add(warningLabel);
+
         uiLock.update(ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT, shortcutComboOptions);
         uiLock.update(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY, shortcutOverwriteComboOptions);
         addRow(0, description, shortcutComboOptions);
-        addRow(1, shortcutOverwriteDescription, shortcutOverwriteComboOptions);
+        addRow(1, shortcutOverwriteDescription, panel);
         addFlexibleRow(2);
     }
 
