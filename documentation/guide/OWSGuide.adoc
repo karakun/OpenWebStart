@@ -207,6 +207,22 @@ hdiutil attach OpenWebStart_macos_1_x_x.dmg
 hdiutil detach /Volumes/OpenWebStart
 ----
 
+===== Installation Directory for Unattended Installer
+
+For the unattended installation, you may specify the installation directory in `response.varfile` as follows:
+
+If you specify absolute path, e.g. `sys.installationDir=c:\test`, then OWS will be installed there.
+
+If you specify relative path, e.g. `sys.installationDir=test`, then OWS will be installed in the specified directory relative to the directory where the unattended installer command is executed.
+
+If you remove the property `sys.installationDir`, then for `Current User (userMode$Integer=0)`, OWS will be installed in `<User Home>\AppData\Local\Programs` directory
+and for `All Users (userMode$Integer=1)` OWS will be installed in `C:\Program Files\OpenWebStart` directory.
+
+If you would like to install OWS relative to User's Home directory, you can override `sys.installationDir` in `response.varfile` by specifying `-dir` command line argument as follows:
+----
+OpenWebStart_windows-x64_x_x_x.exe -q -varfile response.varfile -dir %USERPROFILE%\<the dir where you want to install ows>
+----
+
 === JNLP File Association
 
 To ensure that your computer handles links, desktop shortcuts, or start menu entries to JNLP applications correctly, you should associate the JNLP file type (`*.jnlp`) on your computer with OpenWebStart.
@@ -412,6 +428,28 @@ ows.jvm.manager.server.default.locked=true
 
 TIP: the value of `ows.jvm.manager.server.default.locked` is ignored.
 The presence of the key is sufficient for locking the property.
+
+=== System-wide trust store for trusted certificates
+
+OWS has a property `deployment.system.security.trusted.certs`
+to point to a _trust store_ where OWS will look for trusted certificates.
+
+Suppose your trusted certificates are stored in a trust store called  `trusted.certs`. You can copy this file to a central location.
+
+The property `deployment.system.security.trusted.certs` can be specified in a system level deployment properties
+file, e.g. `itw.properties` :
+----
+deployment.system.security.trusted.certs=<Central Directory>\\trusted.certs
+deployment.system.security.trusted.certs.locked
+----
+
+Specify the system level deployment properties file in the System-wide config file `C:\Windows\Sun\Java\Deployment\itw-deployment.config`:
+----
+deployment.system.config=file:///<Central Directory>/itw.properties
+deployment.system.config.mandatory=true
+----
+
+To verify certificates, OWS will now use the central trust store that is specified in the system level deployment properties file.
 
 === Customize Application Cache and User Config Location
 
