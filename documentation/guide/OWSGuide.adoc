@@ -848,6 +848,10 @@ OWS provides the following strategies for how shortcuts are created:
 You may also specify `ows.shortcut.update.strategy` property in the `deployment.properties` file with values `OVERWRITE` (default),
 `PRESERVE` or `UNIQUE_NAME`.
 
+TIP: On MacOS, application shortcuts are also added to the Launchpad.
+If you want to remove some or all of these shortcuts you have to delete the corresponding files in the
+`<User Home>/Applications` directory.
+
 === OWS Command Line Arguments
 
 OWS can be started from command line as follows:
