@@ -845,6 +845,9 @@ OWS provides the following strategies for how shortcuts are created:
 * _Preserve_: Keep the existing shortcuts in case of name clash
 * _Unique Name_: Create unique names for shortcuts by appending a hash suffix to prevent name clash.
 
+You may also specify `ows.shortcut.update.strategy` property in the `deployment.properties` file with values `OVERWRITE` (default),
+`PRESERVE` or `UNIQUE_NAME`.
+
 === OWS Command Line Arguments
 
 OWS can be started from command line as follows:
