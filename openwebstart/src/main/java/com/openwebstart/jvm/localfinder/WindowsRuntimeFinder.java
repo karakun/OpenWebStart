@@ -16,6 +16,9 @@ class WindowsRuntimeFinder extends BaseRuntimeFinder {
     private static final String JVM_FOLDER_32 = PROGRAMS_32 + "java";
     private static final String JVM_FOLDER_64 = PROGRAM_64 + "java";
 
+    private static final String OPEN_JDK_32 = PROGRAMS_32 + "OpenJDK";
+    private static final String OPEN_JDK_64 = PROGRAM_64 + "OpenJDK";
+
     private static final String CORRETTO_FOLDER_32 = PROGRAMS_32 + "Amazon Corretto";
     private static final String CORRETTO_FOLDER_64 = PROGRAM_64 + "Amazon Corretto";
 
@@ -44,6 +47,7 @@ class WindowsRuntimeFinder extends BaseRuntimeFinder {
     Collection<String> getDefaultLocations() {
         return Arrays.asList(
                 JVM_FOLDER_32, JVM_FOLDER_64,
+                OPEN_JDK_32, OPEN_JDK_64,
                 CORRETTO_FOLDER_32, CORRETTO_FOLDER_64,
                 ECLIPSE_FOLDER_32, ECLIPSE_FOLDER_64,
                 ECLIPSE_ADOPTIUM_FOLDER_32, ECLIPSE_ADOPTIUM_FOLDER_64,
