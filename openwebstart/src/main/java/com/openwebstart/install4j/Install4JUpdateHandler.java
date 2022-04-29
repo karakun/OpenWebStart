@@ -1,5 +1,6 @@
 package com.openwebstart.install4j;
 
+import com.install4j.api.beans.ErrorHandlingMode;
 import com.install4j.api.context.UserCanceledException;
 import com.install4j.api.launcher.ApplicationLauncher;
 import com.install4j.api.update.ApplicationDisplayMode;
@@ -57,6 +58,11 @@ public class Install4JUpdateHandler {
         LOG.info("Checking for update on server {}", serverUrl);
         final UpdateCheckRequest request = new UpdateCheckRequest(serverUrl);
         request.applicationDisplayMode(ApplicationDisplayMode.GUI);
+        request.errorHandlingCallback(e -> {
+            LOG.debug("Error while connecting: {}", e.getMessage());
+            return ErrorHandlingMode.CANCEL;
+        });
+
         final UpdateDescriptor updateDescriptor = UpdateChecker.getUpdateDescriptor(request);
         return Optional.ofNullable(updateDescriptor.getPossibleUpdateEntry());
     }

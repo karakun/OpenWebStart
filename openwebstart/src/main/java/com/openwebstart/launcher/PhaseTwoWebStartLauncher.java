@@ -73,6 +73,7 @@ public class PhaseTwoWebStartLauncher {
                     new Install4JUpdateHandler(UpdatePanelConfigConstants.getUpdateScheduleForLauncher(config)).triggerPossibleUpdate();
                 } catch (Exception e) {
                     LOG.error("Error in possible update process", e);
+                    Install4JUpdateHandler.resetWaitForUpdate();
                 }
             });
         } else {
