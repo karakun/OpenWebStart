@@ -12,6 +12,7 @@ import net.sourceforge.jnlp.util.logging.FileLog;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
@@ -24,8 +25,9 @@ import static com.openwebstart.util.PathQuoteUtil.quoteIfRequired;
 public class OpenWebStartLauncher {
 
     static {
-        // this is placed here above the any thing else to ensure no logger has been created prior to this line
-        FileLog.setLogFileNamePostfix("ows-stage1");
+        // this is placed here above the anything else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePrefix(FileLog.FILE_LOG_NAME_FORMATTER.format(new Date()));
+        FileLog.setLogFileNamePostfix("ows-init");
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWebStartLauncher.class);

@@ -15,6 +15,7 @@ import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,8 @@ import static net.sourceforge.jnlp.runtime.ForkingStrategy.ALWAYS;
 public class PhaseTwoWebStartLauncher {
 
     static {
-        // this is placed here above the any thing else to ensure no logger has been created prior to this line
+        // this is placed here above the anything else to ensure no logger has been created prior to this line
+        FileLog.setLogFileNamePrefix(FileLog.FILE_LOG_NAME_FORMATTER.format(new Date()));
         FileLog.setLogFileNamePostfix("ows-stage1");
     }
 
