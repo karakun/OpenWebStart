@@ -85,7 +85,7 @@ public class JvmManagerDemo {
         serverRuntimePanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         runtimes.forEach(r -> {
-            final JCheckBox checkBox = new JCheckBox(r.getVersion() + "-" + r.getVendor() + "-" + r.getOperationSystem().getName());
+            final JCheckBox checkBox = new JCheckBox(r.getVersion() + "-" + r.getVendor() + "-" + r.getOperationSystem().getDescription());
             checkBox.addItemListener(e -> {
                 if (checkBox.isSelected()) {
                     if (!runtimes.contains(r)) {
@@ -158,7 +158,7 @@ public class JvmManagerDemo {
                 SwingUtilities.invokeLater(() -> {
                     responseVersionLabel.setText(runtime.getVersion().toString());
                     responseVendorLabel.setText(runtime.getVendor().getName());
-                    responseOsLabel.setText(runtime.getOperationSystem().getName());
+                    responseOsLabel.setText(runtime.getOperationSystem().getDescription());
                     responsePathLabel.setText(runtime.getJavaHome().toString());
                     responseActiveLabel.setText(runtime.isActive() + "");
                     responseManagedLabel.setText(runtime.isManaged() + "");

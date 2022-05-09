@@ -391,8 +391,8 @@ public final class LocalRuntimeManager {
         LOG.debug("Installing remote runtime {} on local cache", remoteRuntime);
 
         if (cannotInstallJvmOnLocalSystem(remoteRuntime)) {
-            throw new IllegalArgumentException("Cannot install JVM for " + remoteRuntime.getOperationSystem().getName()
-                    + " on " + OperationSystem.getLocalSystem().getName());
+            throw new IllegalArgumentException("Cannot install JVM for " + remoteRuntime.getOperationSystem().getDescription()
+                    + " on " + OperationSystem.getLocalSystem().getDescription());
         }
 
         final FolderFactory folderFactory = new FolderFactory(cacheBasePath(), true);

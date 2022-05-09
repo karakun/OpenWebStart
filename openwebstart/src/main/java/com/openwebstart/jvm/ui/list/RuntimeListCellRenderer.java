@@ -146,7 +146,7 @@ class RuntimeListCellRenderer implements ListCellRenderer<LocalJavaRuntime> {
         final Translator translator = Translator.getInstance();
         versionLabel.setText(Optional.ofNullable(value).map(v -> v.getVersion().toString()).orElse(translator.translate("jvmManager.unknownVersion")));
         vendorLabel.setText(Optional.ofNullable(value).map(v -> v.getVendor().getName()).orElse(translator.translate("jvmManager.unknownVendor")));
-        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getName()).orElse(translator.translate("jvmManager.unknownOs")));
+        archLabel.setText(Optional.ofNullable(value).map(v -> v.getOperationSystem().getDescription()).orElse(translator.translate("jvmManager.unknownOs")));
         javaHomeLabel.setText(Optional.ofNullable(value).map(this::getJavaHome).orElse(translator.translate("jvmManager.unknownLocation")));
 
         if (this.listHighlighter.getHoverIndex() == index) {
