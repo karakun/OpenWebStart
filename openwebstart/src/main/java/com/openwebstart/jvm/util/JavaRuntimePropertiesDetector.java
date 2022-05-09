@@ -15,6 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.openwebstart.jvm.os.OperationSystem.OS_BITNESS;
 import static com.openwebstart.util.ProcessUtil.runProcess;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
@@ -36,7 +37,8 @@ public final class JavaRuntimePropertiesDetector {
             JAVA_VENDOR,
             JAVA_VERSION,
             OS_NAME,
-            OS_ARCH
+            OS_ARCH,
+            OS_BITNESS
     )));
 
     private static final String SHOW_SETTINGS_ARG = "-XshowSettings:properties";
@@ -122,12 +124,14 @@ public final class JavaRuntimePropertiesDetector {
         private final String version;
         private final String osName;
         private final String osArch;
+        private final String bitness;
 
         private JavaRuntimeProperties(Map<String, String> properties) {
             this.version = properties.get(JAVA_VERSION);
             this.vendor = properties.get(JAVA_VENDOR);
             this.osName = properties.get(OS_NAME);
             this.osArch = properties.get(OS_ARCH);
+            this.bitness = properties.get(OS_BITNESS);
         }
 
         public String getVendor() {
@@ -144,6 +148,10 @@ public final class JavaRuntimePropertiesDetector {
 
         public String getOsArch() {
             return osArch;
+        }
+
+        public String getBitness() {
+            return bitness;
         }
     }
 }

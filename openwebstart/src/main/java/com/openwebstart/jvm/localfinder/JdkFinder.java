@@ -89,7 +89,7 @@ public class JdkFinder {
             final JavaRuntimePropertiesDetector.JavaRuntimeProperties jreProps = JavaRuntimePropertiesDetector.getProperties(javaHome);
             final String version = jreProps.getVersion();
             final String vendor = jreProps.getVendor();
-            final OperationSystem os = getOperationSystem(jreProps.getOsName(), jreProps.getOsArch()).orElse(LOCAL_OS);
+            final OperationSystem os = getOperationSystem(jreProps.getOsName(), jreProps.getOsArch(), jreProps.getBitness()).orElse(LOCAL_OS);
             return LocalJavaRuntime.createPreInstalled(version, os, vendor, javaHome);
         } catch (final Exception e) {
             throw new IllegalStateException("Error while reading properties from JVM at '" + javaHome + "'", e);

@@ -15,8 +15,11 @@
  */
 package com.openwebstart.jvm.os;
 
+import net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants;
+
 import java.util.Optional;
 
+import static com.openwebstart.jvm.os.Architecture.AARCH64;
 import static com.openwebstart.jvm.os.Architecture.X64;
 import static com.openwebstart.jvm.os.Architecture.X86;
 
@@ -27,15 +30,15 @@ public enum OperationSystem {
     LINUX32("Linux x86", "linux-32", X86),
     LINUX64("Linux x64", "linux-64", X64, LINUX32),
     MAC64("Mac OS X x64", "mac-64", X64),
+    MACARM64("Mac OS X aarch64", "mac-arm-64", AARCH64),
     WIN32("Windows x86", "win-32", X86),
     WIN64("Windows x64", "win-64", X64, WIN32),
     ;
 
-    //TODO: Should be in ITW
-    private static final String OS_SYSTEM_PROPERTY = "os.name";
-
-    //TODO: Should be in ITW
-    private static final String OS_ARCH_SYSTEM_PROPERTY = "sun.arch.data.model";
+    /**
+     * System property that contains "32" or "64" to indicate a 32-bit or 64-bit JVM.
+     */
+    public static final String OS_BITNESS = "sun.arch.data.model";
 
     private static final String WIN = "win";
 
@@ -65,7 +68,7 @@ public enum OperationSystem {
     }
 
     public boolean isMac() {
-        return this == MAC64;
+        return this == MAC64 || this == MACARM64;
     }
 
     public boolean isWindows() {
@@ -97,27 +100,31 @@ public enum OperationSystem {
     }
 
     public static OperationSystem getLocalSystem() {
-        final String osName = System.getProperty(OS_SYSTEM_PROPERTY).toLowerCase();
-        final String arch = System.getProperty(OS_ARCH_SYSTEM_PROPERTY).toLowerCase();
-        return getOperationSystem(osName, arch).orElseThrow(() -> new IllegalStateException("Cannot specify OS"));
+        final String osName = System.getProperty(JavaSystemPropertiesConstants.OS_NAME).toLowerCase();
+        final String arch = System.getProperty(JavaSystemPropertiesConstants.OS_ARCH).toLowerCase();
+        final String bitness = System.getProperty(OS_BITNESS).toLowerCase();
+        return getOperationSystem(osName, arch, bitness).orElseThrow(() -> new IllegalStateException("Cannot specify OS"));
     }
 
-    public static Optional<OperationSystem> getOperationSystem(String osName, String arch) {
+    public static Optional<OperationSystem> getOperationSystem(String osName, String arch, String bitness) {
         if (osName.toLowerCase().contains(WIN)) {
-            if (arch.contains(ARCH_64)) {
-                return Optional.of(OperationSystem.WIN64);
+            if (bitness.contains(ARCH_64)) {
+                return Optional.of(WIN64);
             } else {
-                return Optional.of(OperationSystem.WIN32);
+                return Optional.of(WIN32);
             }
         }
         if (osName.toLowerCase().contains(MAC)) {
-            return Optional.of(OperationSystem.MAC64);
+            if (arch.toLowerCase().contains(AARCH64.getName())) {
+                return Optional.of(MACARM64);
+            }
+            return Optional.of(MAC64);
         }
         if (osName.toLowerCase().contains(LINUX)) {
-            if (arch.contains(ARCH_64)) {
-                return Optional.of(OperationSystem.LINUX64);
+            if (bitness.contains(ARCH_64)) {
+                return Optional.of(LINUX64);
             } else {
-                return Optional.of(OperationSystem.LINUX32);
+                return Optional.of(LINUX32);
             }
         }
         return Optional.empty();
