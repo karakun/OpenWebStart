@@ -19,7 +19,7 @@ public class DirectProxyProvider implements ProxyProvider {
 
     @Override
     public List<Proxy> select(final URI uri) {
-        LOG.debug("Using NO_PROXY");
+        LOG.debug("Using NO_PROXY for {}", uri);
         return Collections.singletonList(Proxy.NO_PROXY);
     }
 
