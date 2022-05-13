@@ -975,6 +975,12 @@ The specified arguments will be passed to the application's __ main__ method.
 javaws -allowredirect http://jogamp.org/deployment/archive/rc/v2.3.2/jogl-demos/Gears.jnlp
 ----
 
+==== -Xclearcache : Clear the Jnlp applications from the cache.
+[source]
+----
+javaws -Xclearcache
+----
+
 === Configuration Properties Overview
 
 The following table provides an overview of the configuration properties of OpenWebStart.
