@@ -17,25 +17,28 @@ package com.openwebstart.jvm.os;
 
 import java.util.Optional;
 
+import static com.openwebstart.jvm.os.Architecture.AARCH64;
 import static com.openwebstart.jvm.os.Architecture.X64;
 import static com.openwebstart.jvm.os.Architecture.X86;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_ARCH;
+import static net.adoptopenjdk.icedteaweb.JavaSystemPropertiesConstants.OS_NAME;
 
 public enum OperationSystem {
 
-    ARM32("Linux ARM 32 Hard Float ABI", "arm-32", Architecture.ARM32),
-    ARM64("Linux ARM 64 Hard Float ABI", "arm-64", Architecture.ARM64, ARM32),
-    LINUX32("Linux x86", "linux-32", X86),
-    LINUX64("Linux x64", "linux-64", X64, LINUX32),
-    MAC64("Mac OS X x64", "mac-64", X64),
-    WIN32("Windows x86", "win-32", X86),
-    WIN64("Windows x64", "win-64", X64, WIN32),
+    ARM32("Linux ARM 32 Hard Float ABI", Architecture.ARM32),
+    ARM64("Linux ARM 64 Hard Float ABI", Architecture.ARM64, ARM32),
+    LINUX32("Linux x86", X86),
+    LINUX64("Linux x64", X64, LINUX32),
+    MAC64("Mac OS X x64", X64),
+    MACARM64("Mac OS X aarch64", AARCH64),
+    WIN32("Windows x86", X86),
+    WIN64("Windows x64", X64, WIN32),
     ;
 
-    //TODO: Should be in ITW
-    private static final String OS_SYSTEM_PROPERTY = "os.name";
-
-    //TODO: Should be in ITW
-    private static final String OS_ARCH_SYSTEM_PROPERTY = "sun.arch.data.model";
+    /**
+     * System property that contains "32" or "64" to indicate a 32-bit or 64-bit JVM.
+     */
+    public static final String OS_BITNESS = "sun.arch.data.model";
 
     private static final String WIN = "win";
 
@@ -45,27 +48,24 @@ public enum OperationSystem {
 
     private static final String ARCH_64 = "64";
 
-    private final String name;
-
-    private final String shortName;
+    private final String description;
 
     private final Architecture architecture;
 
     private final OperationSystem variant32bit;
 
-    OperationSystem(final String name, final String shortName, final Architecture architecture) {
-        this(name, shortName, architecture, null);
+    OperationSystem(final String description, final Architecture architecture) {
+        this(description, architecture, null);
     }
 
-    OperationSystem(final String name, final String shortName, final Architecture architecture, final OperationSystem variant32bit) {
-        this.name = name;
-        this.shortName = shortName;
+    OperationSystem(final String description, final Architecture architecture, final OperationSystem variant32bit) {
+        this.description = description;
         this.architecture = architecture;
         this.variant32bit = variant32bit == null ? this : variant32bit;
     }
 
     public boolean isMac() {
-        return this == MAC64;
+        return this == MAC64 || this == MACARM64;
     }
 
     public boolean isWindows() {
@@ -76,16 +76,8 @@ public enum OperationSystem {
         return this == LINUX64 || this == LINUX32;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public Architecture getArchitecture() {
-        return architecture;
+    public String getDescription() {
+        return description;
     }
 
     public String getArchitectureName() {
@@ -97,27 +89,31 @@ public enum OperationSystem {
     }
 
     public static OperationSystem getLocalSystem() {
-        final String osName = System.getProperty(OS_SYSTEM_PROPERTY).toLowerCase();
-        final String arch = System.getProperty(OS_ARCH_SYSTEM_PROPERTY).toLowerCase();
-        return getOperationSystem(osName, arch).orElseThrow(() -> new IllegalStateException("Cannot specify OS"));
+        final String osName = System.getProperty(OS_NAME).toLowerCase();
+        final String arch = System.getProperty(OS_ARCH).toLowerCase();
+        final String bitness = System.getProperty(OS_BITNESS).toLowerCase();
+        return getOperationSystem(osName, arch, bitness).orElseThrow(() -> new IllegalStateException("Cannot specify OS"));
     }
 
-    public static Optional<OperationSystem> getOperationSystem(String osName, String arch) {
+    public static Optional<OperationSystem> getOperationSystem(String osName, String arch, String bitness) {
         if (osName.toLowerCase().contains(WIN)) {
-            if (arch.contains(ARCH_64)) {
-                return Optional.of(OperationSystem.WIN64);
+            if (bitness.contains(ARCH_64)) {
+                return Optional.of(WIN64);
             } else {
-                return Optional.of(OperationSystem.WIN32);
+                return Optional.of(WIN32);
             }
         }
         if (osName.toLowerCase().contains(MAC)) {
-            return Optional.of(OperationSystem.MAC64);
+            if (arch.toLowerCase().contains(AARCH64.getName())) {
+                return Optional.of(MACARM64);
+            }
+            return Optional.of(MAC64);
         }
         if (osName.toLowerCase().contains(LINUX)) {
-            if (arch.contains(ARCH_64)) {
-                return Optional.of(OperationSystem.LINUX64);
+            if (bitness.contains(ARCH_64)) {
+                return Optional.of(LINUX64);
             } else {
-                return Optional.of(OperationSystem.LINUX32);
+                return Optional.of(LINUX32);
             }
         }
         return Optional.empty();

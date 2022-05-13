@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
+import static com.openwebstart.jvm.os.OperationSystem.OS_BITNESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -23,5 +24,6 @@ class JavaRuntimePropertiesDetectorTest {
         assertEquals(JavaSystemProperties.getJavaVersion(), result.getVersion());
         assertEquals(JavaSystemProperties.getOsName(), result.getOsName());
         assertEquals(JavaSystemProperties.getOsArch(), result.getOsArch());
+        assertEquals(System.getProperty(OS_BITNESS), result.getBitness());
     }
 }
