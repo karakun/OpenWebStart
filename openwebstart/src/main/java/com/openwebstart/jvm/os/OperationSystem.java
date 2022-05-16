@@ -33,6 +33,8 @@ public enum OperationSystem {
     MACARM64("Mac OS X aarch64", AARCH64),
     WIN32("Windows x86", X86),
     WIN64("Windows x64", X64, WIN32),
+
+    UNKNOWN("Unknown", null)
     ;
 
     /**
@@ -117,5 +119,13 @@ public enum OperationSystem {
             }
         }
         return Optional.empty();
+    }
+
+    public static OperationSystem parse(String os) {
+        try {
+            return valueOf(os);
+        } catch (Exception e) {
+            return UNKNOWN;
+        }
     }
 }

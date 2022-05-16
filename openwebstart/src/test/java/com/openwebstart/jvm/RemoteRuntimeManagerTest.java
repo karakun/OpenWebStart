@@ -303,4 +303,61 @@ public class RemoteRuntimeManagerTest {
         assertEquals(1, result.getRuntimes().size());
         assertEquals(result.getRuntimes().get(0).getVendor(), ECLIPSE);
     }
+
+    @Test
+    public void testParseRemoteRuntimeJson_BrokenVendor() {
+        // given
+        final String json = "{\n" +
+                "  \"cacheTimeInMillis\":5000,\n" +
+                "  \"runtimes\":\n" +
+                "  [\n" +
+                "    {\n" +
+                "      \"version\":\"8.0.282\",\n" +
+                "      \"vendor\":\"AdoptOpenJDK\",\n" +
+                "      \"os\":\"BROKEN\",\n" +
+                "      \"href\":\"" + THE_ONE_AND_ONLY_JDK_ZIP + "\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n" +
+                "\n";
+
+        // when
+        RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
+
+        // then
+        assertEquals(0, result.getRuntimes().size());
+    }
+
+    @Test
+    public void testParseRemoteRuntimeJson_1_6() {
+        // given
+        final String json = "{\n" +
+                "  \"cacheTimeInMillis\":5000,\n" +
+                "  \"runtimes\":\n" +
+                "  [\n" +
+                "    {\n" +
+                "      \"version\":\"8.0.282\",\n" +
+                "      \"vendor\":\"AdoptOpenJDK\",\n" +
+                "      \"os\":\"WIN64\",\n" +
+                "      \"href\":\"" + THE_ONE_AND_ONLY_JDK_ZIP + "\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"runtimes_1.6\":\n" +
+                "  [\n" +
+                "    {\n" +
+                "      \"version\":\"8.0.282\",\n" +
+                "      \"vendor\":\"AdoptOpenJDK\",\n" +
+                "      \"os\":\"MACARM64\",\n" +
+                "      \"href\":\"" + THE_ONE_AND_ONLY_JDK_ZIP + "\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n" +
+                "\n";
+
+        // when
+        RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
+
+        // then
+        assertEquals(2, result.getRuntimes().size());
+    }
 }

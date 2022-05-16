@@ -16,11 +16,11 @@ interface JsonConstants {
 
     String HREF_PROPERTY = "href";
 
-    String HASH_PROPERTY = "hash";
-
     String LAST_USAGE_PROPERTY = "lastUsage";
 
     String RUNTIMES_PROPERTY = "runtimes";
+
+    String RUNTIMES_1_6_PROPERTY = "runtimes_1.6";
 
     String CACHE_TIME_PROPERTY = "cacheTimeInMillis";
 }

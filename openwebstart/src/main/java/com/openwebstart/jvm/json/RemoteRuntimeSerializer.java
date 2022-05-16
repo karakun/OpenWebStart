@@ -34,7 +34,7 @@ public class RemoteRuntimeSerializer implements JsonSerializer<RemoteJavaRuntime
 
             final String version = jsonObject.get(JsonConstants.VERSION_PROPERTY).getAsString();
             final String vendor = jsonObject.get(JsonConstants.VENDOR_PROPERTY).getAsString();
-            final OperationSystem os = OperationSystem.valueOf(jsonObject.get(JsonConstants.OS_PROPERTY).getAsString());
+            final OperationSystem os = OperationSystem.parse(jsonObject.get(JsonConstants.OS_PROPERTY).getAsString());
             final String href = jsonObject.get(JsonConstants.HREF_PROPERTY).getAsString();
 
 

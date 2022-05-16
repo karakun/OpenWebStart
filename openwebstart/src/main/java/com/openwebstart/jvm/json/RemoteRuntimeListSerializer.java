@@ -8,11 +8,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.openwebstart.jvm.os.OperationSystem;
 import com.openwebstart.jvm.runtimes.RemoteJavaRuntime;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RemoteRuntimeListSerializer implements JsonSerializer<RemoteRuntimeList>, JsonDeserializer<RemoteRuntimeList> {
 
@@ -37,9 +39,22 @@ public class RemoteRuntimeListSerializer implements JsonSerializer<RemoteRuntime
         final long cacheTime = jsonObject.getAsJsonPrimitive(JsonConstants.CACHE_TIME_PROPERTY).getAsLong();
 
         final JsonArray jsonArray = jsonObject.getAsJsonArray(JsonConstants.RUNTIMES_PROPERTY);
+        final JsonArray jsonArray_1_6 = jsonObject.getAsJsonArray(JsonConstants.RUNTIMES_1_6_PROPERTY);
 
         final List<RemoteJavaRuntime> runtimes = new ArrayList<>();
-        jsonArray.forEach(e -> runtimes.add(jsonDeserializationContext.deserialize(e, RemoteJavaRuntime.class)));
+        Optional.ofNullable(jsonArray).ifPresent(a -> a.forEach(e -> {
+            final RemoteJavaRuntime deserialize = jsonDeserializationContext.deserialize(e, RemoteJavaRuntime.class);
+            if (deserialize.getOperationSystem() != OperationSystem.UNKNOWN) {
+                runtimes.add(deserialize);
+            }
+        }));
+
+        Optional.ofNullable(jsonArray_1_6).ifPresent(a -> a.forEach(e -> {
+            final RemoteJavaRuntime deserialize = jsonDeserializationContext.deserialize(e, RemoteJavaRuntime.class);
+            if (deserialize.getOperationSystem() != OperationSystem.UNKNOWN) {
+                runtimes.add(deserialize);
+            }
+        }));
 
         return new RemoteRuntimeList(runtimes, cacheTime);
     }
