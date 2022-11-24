@@ -1172,4 +1172,9 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |X
 |HTTP request read timeout in milliseconds. Default is 10000 ms i.e. 10 s. 0 means infinite wait.
 
+|deployment.javaws.shortcut , ows.shortcut.update.strategy
+|
+|X
+|Please see <<Desktop Integration>>
+
 |===
