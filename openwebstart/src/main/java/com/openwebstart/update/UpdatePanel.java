@@ -1,6 +1,5 @@
 package com.openwebstart.update;
 
-import com.install4j.api.update.UpdateDescriptorEntry;
 import com.install4j.api.update.UpdateSchedule;
 import com.openwebstart.controlpanel.FormPanel;
 import com.openwebstart.install4j.Install4JUpdateHandler;
@@ -87,18 +86,6 @@ public class UpdatePanel extends FormPanel {
                 }
             });
         });
-        if (checkForUpdateButton.isEnabled()) {
-            getNonDaemonExecutorService().execute(() -> {
-                try {
-                    Install4JUpdateHandler.getUpdate()
-                            .map(UpdateDescriptorEntry::getNewVersion)
-                            .map(v -> translator.translate("updatesPanel.installConcreteVersion", v))
-                            .ifPresent(s -> SwingUtils.invokeLater(() -> checkForUpdateButton.setText(s)));
-                } catch (final Exception ex) {
-                    LOG.error("Error while trying to find an OpenWebStart update", ex);
-                }
-            });
-        }
 
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         addEditorRow(0, checkForUpdatesCheckbox);

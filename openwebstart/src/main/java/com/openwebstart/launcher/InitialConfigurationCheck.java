@@ -29,6 +29,7 @@ import static com.openwebstart.config.OwsDefaultsProvider.JVM_UPDATE_STRATEGY;
 import static com.openwebstart.config.OwsDefaultsProvider.JVM_VENDOR;
 import static com.openwebstart.config.OwsDefaultsProvider.MAX_DAYS_UNUSED_IN_JVM_CACHE;
 import static com.openwebstart.config.OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_ON_STARTUP;
+import static com.openwebstart.config.OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT;
@@ -91,6 +92,7 @@ class InitialConfigurationCheck {
             KEY_CREATE_DESKTOP_SHORTCUT,
             KEY_HTTPCONNECTION_CONNECT_TIMEOUT,
             KEY_HTTPCONNECTION_READ_TIMEOUT,
+            SHORTCUT_UPDATE_STRATEGY,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,

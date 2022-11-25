@@ -65,6 +65,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final String INSTALL_4_J_APP_DIR = "install4j.appDir";
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
+    private static final VersionString JAVA_18_OR_GREATER = VersionString.fromString("18+");
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
@@ -152,6 +153,9 @@ public class OwsJvmLauncher implements JvmLauncher {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
+            if (JAVA_18_OR_GREATER.contains(version)) {
+                mergedVMArgs.add("-Djava.security.manager=allow");
+            }
             launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
