@@ -3,205 +3,307 @@
   "runtimes":
   [
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Eclipse Temurin",
       "os":"LINUX64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u332b09.tar.gz"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u352b08.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Eclipse Temurin",
       "os":"MAC64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_x64_mac_hotspot_8u332b09.tar.gz"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-jdk_x64_mac_hotspot_8u352b08.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Eclipse Temurin",
       "os":"WIN64",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_x64_windows_hotspot_8u332b09.zip"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u352b08.zip"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Eclipse Temurin",
       "os":"WIN32",
-      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_x86-32_windows_hotspot_8u332b09.zip"
+      "href":"https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-jdk_x86-32_windows_hotspot_8u352b08.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Eclipse Temurin",
       "os":"LINUX64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x64_linux_hotspot_11.0.17_8.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Eclipse Temurin",
       "os":"MAC64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_mac_hotspot_11.0.15_10.tar.gz"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x64_mac_hotspot_11.0.17_8.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Eclipse Temurin",
       "os":"WIN64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_windows_hotspot_11.0.15_10.zip"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x64_windows_hotspot_11.0.17_8.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Eclipse Temurin",
       "os":"WIN32",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.15_10.zip"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_x86-32_windows_hotspot_11.0.17_8.zip"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"Eclipse Temurin",
+      "os":"LINUX64",
+      "href":"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.5_8.tar.gz"
+   },
+   {
+      "version":"17.0.5",
+      "vendor":"Eclipse Temurin",
+      "os":"MAC64",
+      "href":"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_mac_hotspot_17.0.5_8.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"Eclipse Temurin",
+      "os":"WIN64",
+      "href":"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_windows_hotspot_17.0.5_8.zip"
     },
     {
-      "version":"8.0.332",
+      "version":"17.0.5",
+      "vendor":"Eclipse Temurin",
+      "os":"WIN32",
+      "href":"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x86-32_windows_hotspot_17.0.5_8.zip"
+    },
+    {
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"MAC64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-macosx_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-macosx_x64.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"LINUX64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-linux_x64.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-linux_x64.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"LINUX32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-linux_i686.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-linux_i686.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"WIN64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-win_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-win_x64.zip"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"WIN32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-win_i686.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-win_i686.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"MAC64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-macosx_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-macosx_x64.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"WIN64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-win_x64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-win_x64.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"WIN32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-win_i686.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-win_i686.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"LINUX64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-linux_x64.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-linux_x64.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"LINUX32",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-linux_i686.tar.gz"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-linux_i686.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"MAC64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-macosx_x64.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"LINUX64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-linux_x64.tar.gz"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"LINUX32",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-linux_i686.tar.gz"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"WIN64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-win_x64.zip"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"WIN32",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-win_i686.zip"
+    },
+    {
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"MAC64",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-macos-amd64-full.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-macos-amd64-full.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"LINUX64",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-linux-amd64-full.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-linux-amd64-full.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"LINUX32",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-linux-i586-full.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-linux-i586-full.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"WIN64",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-windows-amd64-full.zip"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-windows-amd64-full.zip"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"WIN32",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-windows-i586-full.zip"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-windows-i586-full.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"MAC64",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-macos-amd64-full.zip"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-macos-amd64.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"WIN64",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-windows-amd64-full.zip"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-windows-amd64-full.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"WIN32",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-windows-i586-full.zip"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-windows-i586-full.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"LINUX64",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-linux-amd64-full.tar.gz"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-linux-amd64-full.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"LINUX32",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-linux-i586.tar.gz"
+      "href":" https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-linux-i586.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"MAC64",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-macos-amd64-full.tar.gz"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"LINUX64",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-linux-amd64-full.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"LINUX32",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-linux-i586.tar.gz"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"WIN64",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-windows-amd64-full.zip"
+    },
+    {
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"WIN32",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-windows-i586.zip"
     }
   ],
   "runtimes_1.6":
   [
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Eclipse Temurin",
       "os":"MACARM64",
-      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_aarch64_mac_hotspot_11.0.15_10.tar.gz"
+      "href":"https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.17%2B8/OpenJDK11U-jdk_aarch64_mac_hotspot_11.0.17_8.tar.gz"
     },
-    {
-      "version":"8.0.332",
+	{
+      "version":"17.0.5",
+      "vendor":"Eclipse Temurin",
+      "os":"MACARM64",
+      "href":"https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.5_8.tar.gz"
+    },
+	{
+      "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"MACARM64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu8.62.0.19-ca-fx-jdk8.0.332-macosx_aarch64.zip"
+      "href":" https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-macosx_aarch64.zip"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"Zulu Community Edition",
       "os":"MACARM64",
-      "href":"https://cdn.azul.com/zulu/bin/zulu11.56.19-ca-fx-jdk11.0.15-macosx_aarch64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jdk11.0.17-macosx_aarch64.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"Zulu Community Edition",
+      "os":"MACARM64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu17.38.21-ca-fx-jdk17.0.5-macosx_aarch64.tar.gz"
     },
     {
-      "version":"8.0.332",
+      "version":"8.0.352",
       "vendor":"BellSoft Liberica",
       "os":"MACARM64",
-      "href":"https://download.bell-sw.com/java/8u332+9/bellsoft-jdk8u332+9-macos-amd64-full.tar.gz"
+      "href":"https://download.bell-sw.com/java/8u352+8/bellsoft-jdk8u352+8-macos-aarch64-full.tar.gz"
     },
     {
-      "version":"11.0.15",
+      "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"MACARM64",
-      "href":"https://download.bell-sw.com/java/11.0.15+10/bellsoft-jdk11.0.15+10-macos-aarch64-full.zip"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-macos-aarch64-full.tar.gz"
+    },
+	{
+      "version":"17.0.5",
+      "vendor":"BellSoft Liberica",
+      "os":"MACARM64",
+      "href":"https://download.bell-sw.com/java/17.0.5+8/bellsoft-jdk17.0.5+8-macos-aarch64-full.tar.gz"
     }
   ]
 }
