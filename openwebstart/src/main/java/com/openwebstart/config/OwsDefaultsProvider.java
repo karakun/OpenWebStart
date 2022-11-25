@@ -54,6 +54,7 @@ public class OwsDefaultsProvider implements DefaultsProvider {
 
     public static final String SHORTCUT_UPDATE_STRATEGY = "ows.shortcut.update.strategy";
     public static final ShortcutUpdateStrategy DEFAULT_SHORTCUT_UPDATE_STRATEGY = ShortcutUpdateStrategy.OVERWRITE;
+    public static final String ENABLE_CLIENT_CERT_IMPORT = "ows.security.enableClientCertImport";
 
     @Override
     public List<Setting> getDefaults() {
@@ -203,6 +204,11 @@ public class OwsDefaultsProvider implements DefaultsProvider {
                                         .map(Enum::name)
                                         .toArray(String[]::new)
                         )
+                ),
+                Setting.createDefault(
+                        ENABLE_CLIENT_CERT_IMPORT,
+                        Boolean.FALSE.toString(),
+                        ValidatorFactory.createBooleanValidator()
                 )
         );
     }

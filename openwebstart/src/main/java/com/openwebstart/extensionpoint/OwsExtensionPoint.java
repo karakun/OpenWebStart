@@ -76,4 +76,9 @@ public class OwsExtensionPoint implements ExtensionPoint {
             return ExtensionPoint.super.uniqueShortcutSuffix(jnlpFile);
         }
     }
+
+    @Override
+    public boolean enableClientCertImportWithoutPassword() {
+        return Boolean.parseBoolean(JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.ENABLE_CLIENT_CERT_IMPORT));
+    }
 }
