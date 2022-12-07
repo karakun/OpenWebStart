@@ -222,7 +222,7 @@
       "version":"11.0.17",
       "vendor":"BellSoft Liberica",
       "os":"LINUX32",
-      "href":" https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-linux-i586.tar.gz"
+      "href":"https://download.bell-sw.com/java/11.0.17+7/bellsoft-jdk11.0.17+7-linux-i586.tar.gz"
     },
 	{
       "version":"17.0.5",
@@ -273,7 +273,7 @@
       "version":"8.0.352",
       "vendor":"Zulu Community Edition",
       "os":"MACARM64",
-      "href":" https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-macosx_aarch64.zip"
+      "href":"https://cdn.azul.com/zulu/bin/zulu8.66.0.15-ca-fx-jdk8.0.352-macosx_aarch64.zip"
     },
     {
       "version":"11.0.17",
