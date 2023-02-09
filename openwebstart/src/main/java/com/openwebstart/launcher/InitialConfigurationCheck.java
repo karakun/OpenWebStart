@@ -50,6 +50,8 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_SECURITY_POLICY;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_SECURITY_POLICY_CHECK;
 import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
 
 class InitialConfigurationCheck {
@@ -93,6 +95,8 @@ class InitialConfigurationCheck {
             KEY_HTTPCONNECTION_CONNECT_TIMEOUT,
             KEY_HTTPCONNECTION_READ_TIMEOUT,
             SHORTCUT_UPDATE_STRATEGY,
+            KEY_USER_SECURITY_POLICY,
+            KEY_USER_SECURITY_POLICY_CHECK,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
