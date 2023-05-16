@@ -116,6 +116,7 @@ public class PacFileEvaluator {
     String getProxies(final URI uri) {
         final String cachedResult = cache.getFromCache(uri);
         if (cachedResult != null) {
+            LOG.debug("Cached PAC result for url '{}' -> '{}'", uri, cachedResult);
             return cachedResult;
         }
         // pacUrl.openConnection() must not be called in constructor, otherwise it will initialize HttpURLConnection.userAgent
