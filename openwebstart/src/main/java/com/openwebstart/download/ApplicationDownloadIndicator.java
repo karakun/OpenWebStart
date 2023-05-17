@@ -74,6 +74,7 @@ public class ApplicationDownloadIndicator implements DownloadIndicator {
                     dialog.close();
                     dialog = null;
                 }
+            } catch (Exception e) {
             } finally {
                 lock.unlock();
             }
