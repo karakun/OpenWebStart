@@ -41,7 +41,7 @@ This is a precautionary measure as we regularly update this bundled JRE, and we 
 
 ==== Which Java versions can be used to run my JNLP applications?
 
-Your JNLP applications can be run with either Java 8 and 11.
+Your JNLP applications can be run with a version of Java such as 8, 11, or 17.
 We have not run any tests with higher versions of Java yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.

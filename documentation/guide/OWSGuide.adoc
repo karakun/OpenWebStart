@@ -573,8 +573,8 @@ While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
 The version number specified can either end with a number, and asterisk or a plus sign.
 
     1.8 would mean the version must be 1.8.
-    1.7* means anything at or higher than 1.7 but less than 1.8 (like 1.7.1).
-    1.7+ means anything 1.7 or higher (including 1.8, 9 or 11).
+    1.8* means anything at or higher than 1.8 but less than 9 (like 1.8.x).
+    1.8+ means anything 1.8 or higher (such as 11, 17).
 
 OWS maintains a hardcoded list of secure JVM arguments as specified at:
 
