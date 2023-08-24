@@ -28,6 +28,7 @@ public class Vendor {
     public static final Vendor BELLSOFT = new Vendor("BellSoft");
     public static final Vendor AZUL = new Vendor("Azul Systems, Inc.", "Azul");
     public static final Vendor ECLIPSE = new Vendor("Eclipse Adoptium", "Adoptium");
+    public static final Vendor SAP = new Vendor("SAP SE", "SAP");
 
     private static final List<VendorResolver> resolver;
 
