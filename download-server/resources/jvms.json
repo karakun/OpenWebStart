@@ -164,6 +164,24 @@
       "os":"WIN32",
       "href":"https://cdn.azul.com/zulu/bin/zulu17.42.19-ca-fx-jdk17.0.7-win_i686.zip"
     },
+	{
+      "version":"21.0.0",
+      "vendor":"Zulu Community Edition",
+      "os":"MAC64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-fx-jre21.0.0-macosx_x64.tar.gz"
+    },
+    {
+      "version":"21.0.0",
+      "vendor":"Zulu Community Edition",
+      "os":"LINUX64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-fx-jre21.0.0-linux_x64.tar.gz"
+    },
+    {
+      "version":"21.0.0",
+      "vendor":"Zulu Community Edition",
+      "os":"WIN64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-fx-jre21.0.0-win_x64.zip"
+    },
     {
       "version":"8.0.372",
       "vendor":"BellSoft Liberica",
@@ -253,6 +271,36 @@
       "vendor":"BellSoft Liberica",
       "os":"WIN32",
       "href":"https://download.bell-sw.com/java/17.0.7+7/bellsoft-jdk17.0.7+7-windows-i586-full.zip"
+    },
+	{
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"MAC64",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-macos-amd64-full.tar.gz"
+    },
+    {
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"LINUX64",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-linux-amd64-full.tar.gz"
+    },
+	{
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"LINUX32",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-linux-i586.tar.gz"
+    },
+    {
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"WIN64",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-windows-amd64-full.zip"
+    },
+    {
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"WIN32",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-windows-i586-full.zip"
     }
   ],
   "runtimes_1.6":
@@ -288,6 +336,12 @@
       "href":"https://cdn.azul.com/zulu/bin/zulu17.42.19-ca-fx-jdk17.0.7-macosx_aarch64.tar.gz"
     },
     {
+      "version":"21.0.0",
+      "vendor":"Zulu Community Edition",
+      "os":"MACARM64",
+      "href":"https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-fx-jre21.0.0-macosx_aarch64.tar.gz"
+    },
+    {
       "version":"8.0.372",
       "vendor":"BellSoft Liberica",
       "os":"MACARM64",
@@ -304,6 +358,12 @@
       "vendor":"BellSoft Liberica",
       "os":"MACARM64",
       "href":"https://download.bell-sw.com/java/17.0.7+7/bellsoft-jdk17.0.7+7-macos-aarch64-full.tar.gz"
+    },
+	{
+      "version":"21.0.0",
+      "vendor":"BellSoft Liberica",
+      "os":"MACARM64",
+      "href":"https://download.bell-sw.com/java/21+37/bellsoft-jdk21+37-macos-aarch64-full.tar.gz"
     }
   ]
 }
