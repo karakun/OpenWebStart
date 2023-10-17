@@ -40,7 +40,7 @@ import static com.openwebstart.download.ApplicationDownloadState.VALIDATING;
 
 public class ApplicationDownloadDialog extends ModalDialog implements DownloadServiceListener {
 
-    private final Map<URL, ApplicationDownloadResourceState> resourceStates;
+    private final Map<String, ApplicationDownloadResourceState> resourceStates;
 
     private final Lock resourceStatesLock = new ReentrantLock();
 
@@ -169,11 +169,11 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
         resourceStatesLock.lock();
         try {
-            ApplicationDownloadResourceState lastState = resourceStates.get(url);
+            ApplicationDownloadResourceState lastState = resourceStates.get(url.toString());
             if (lastState == null
                     || resourceState.getPercentage() != lastState.getPercentage()
                     || resourceState.getDownloadState() != lastState.getDownloadState()) {
-                resourceStates.put(url, resourceState);
+                resourceStates.put(url.toString(), resourceState);
                 SwingUtilities.invokeLater(() -> updateUi(resourceState));
             }
         } finally {
