@@ -574,7 +574,7 @@ The version number specified can either end with a number, and asterisk or a plu
 
     1.8 would mean the version must be 1.8.
     1.8* means anything at or higher than 1.8 but less than 9 (like 1.8.x).
-    1.8+ means anything 1.8 or higher (such as 11, 17).
+    1.8+ means anything 1.8 or higher (such as 11, 17, 21).
 
 OWS maintains a hardcoded list of secure JVM arguments as specified at:
 
