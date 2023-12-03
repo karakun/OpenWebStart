@@ -264,7 +264,7 @@ public class RemoteRuntimeManagerTest {
         RemoteRuntimeList result = RemoteRuntimeManager.getInstance().parseRemoteRuntimeJson(json);
 
         // then
-        assertEquals(50, result.getRuntimes().size());
+        assertEquals(59, result.getRuntimes().size());
     }
 
     private String getJvmJsonContent() throws IOException {
