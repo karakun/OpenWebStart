@@ -1,8 +1,8 @@
 {
     "cacheTimeInMillis": 5000,
-    "runtimes":
-    [
-        {
+    "runtimes":[
+    {
+
             "version": "8.0.392",
             "vendor": "Eclipse Temurin",
             "os": "LINUX64",
@@ -201,6 +201,24 @@
             "href": "https://cdn.azul.com/zulu/bin/zulu21.30.15-ca-fx-jdk21.0.1-win_x64.zip"
         },
 
+        {
+            "version": "21.0.1",
+            "vendor": "Zulu Community Edition",
+            "os": "MAC64",
+            "href": "https://cdn.azul.com/zulu/bin/zulu21.30.15-ca-fx-jdk21.0.1-macosx_x64.tar.gz"
+        },
+        {
+            "version": "21.0.1",
+            "vendor": "Zulu Community Edition",
+            "os": "LINUX64",
+            "href": "https://cdn.azul.com/zulu/bin/zulu21.30.15-ca-fx-jdk21.0.1-linux_x64.tar.gz"
+        },
+        {
+            "version": "21.0.1",
+            "vendor": "Zulu Community Edition",
+            "os": "WIN64",
+            "href": "https://cdn.azul.com/zulu/bin/zulu21.30.15-ca-fx-jdk21.0.1-win_x64.zip"
+        },
         {
             "version": "8.0.392",
             "vendor": "BellSoft Liberica",
