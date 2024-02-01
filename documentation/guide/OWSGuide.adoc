@@ -328,7 +328,7 @@ The executable is located in the installation directory and is named `itw-settin
 Various life-cycle aspects of your JNLP applications can be configured, such as download and update strategy or caching behavior.
 You can configure the JVM vendor and version that should be used to launch your JNLP application as well as proxy settings, security settings, certificates and server whitelists.
 
-image::OWS_configuration.png[title="Configuring OWS Settings" width="80%"]
+image::OWS_Configuration.png[title="Configuring OWS Settings" width="80%"]
 
 === Configuration Lookup Lifecycle
 When loading the configuration during the start of OpenWebStart the following steps are executed:
@@ -874,6 +874,9 @@ The options for when a shortcut is created are:
 * _Ask user_: Shows a dialog to ask user
 * _Ask if hinted_: Ask user if hinted in jnlp file
 * _Always if hinted_: Always create when hinted in jnlp file
+
+You may also specify `deployment.javaws.shortcut` property in the `deployment.properties` file with values
+`NEVER`, `ALWAYS`. `ASK_USER`, `ASK_IF_HINTED` (default) and `ALWAYS_IF_HINTED`.
 
 The names of the shortcuts depend on the title or the name of the jnlp file.
 This may lead to overwriting of the shortcut of one application by the shortcut of another application with the same title or jnlp file name.
