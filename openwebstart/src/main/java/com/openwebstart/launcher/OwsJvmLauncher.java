@@ -66,6 +66,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
     private static final VersionString JAVA_18_OR_GREATER = VersionString.fromString("18+");
+    public static final String OWS_JNLP_SPECIFIC_JVMARGS = "ows.jnlp-specific.jvmargs";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
@@ -139,7 +140,12 @@ public class OwsJvmLauncher implements JvmLauncher {
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>();
         getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
-        vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs());
+        final List<String> jnlpSpecificVMArgs = getJnlpSpecificVMArgs(jnlpFile);
+        if (jnlpSpecificVMArgs.size() > 0) {
+            vmArgs.addAll(jnlpSpecificVMArgs);
+        } else {
+            vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs());
+        }
         vmArgs.addAll(extractVmArgs(jnlpFile));
         vmArgs.addAll(vmArgumentsFromEnv());
 
@@ -174,6 +180,32 @@ public class OwsJvmLauncher implements JvmLauncher {
             return JvmUtils.parseArguments(args);
         } catch (Exception e) {
             LOG.warn("Ignoring {} due to illegal Property {}", JAVAWS_VM_ARGS, e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    private List<String> getJnlpSpecificVMArgs(JNLPFile jnlpFile) {
+        final String currJnlpFile = jnlpFile.getFileLocation().getFile();
+        final String currJnlpFileName = currJnlpFile.substring(currJnlpFile.lastIndexOf('/')+1);
+        Optional<String> jnlpVmArgs = JNLPRuntime.getConfiguration().getAllPropertyNames().stream()
+                .filter(pname -> pname.startsWith(OWS_JNLP_SPECIFIC_JVMARGS))
+                .map(pname -> (String)JNLPRuntime.getConfiguration().getProperty(pname))
+                .filter(val -> val.contains(currJnlpFileName))
+                .map(val -> val.split("=", 2))
+                .map(tok -> tok[1])
+                .findFirst();
+
+        if (!jnlpVmArgs.isPresent()) {
+            LOG.info("Did not find Jnlp Specific Vm args for: {}", currJnlpFileName);
+            return Collections.emptyList();
+        }
+
+        LOG.info("For {} found, specific vm args ", currJnlpFileName,  jnlpVmArgs.get());
+        try {
+            JvmUtils.checkVMArgs(jnlpVmArgs.get());
+            return JvmUtils.parseArguments(jnlpVmArgs.get());
+        } catch (Exception e) {
+            LOG.warn("Ignoring {} due to illegal Property {}", "vm args from " + currJnlpFile, e.getMessage());
             return Collections.emptyList();
         }
     }
