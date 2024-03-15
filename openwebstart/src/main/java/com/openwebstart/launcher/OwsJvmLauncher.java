@@ -24,6 +24,7 @@ import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.xmlparser.ParseException;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
+import net.sourceforge.jnlp.runtime.ApplicationInstance;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 
@@ -136,17 +137,19 @@ public class OwsJvmLauncher implements JvmLauncher {
     ) throws Exception {
         final RuntimeInfo runtimeInfo = getLocalJavaRuntimeOrExit(jnlpFile);
         LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
-
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>();
         getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
-        final List<String> jnlpSpecificVMArgs = getJnlpSpecificVMArgs(jnlpFile);
-        if (jnlpSpecificVMArgs.size() > 0) {
-            vmArgs.addAll(jnlpSpecificVMArgs);
-        } else {
-            vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs());
+
+        vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs()); // java-vm-args in jnlp
+        vmArgs.addAll(extractVmArgs(jnlpFile)); // <property name=".." value=".."/> in jnlp
+
+        final String currJnlpFile = jnlpFile.getFileLocation().getFile();
+        final String currJnlpFileName = currJnlpFile.substring(currJnlpFile.lastIndexOf('/') + 1);
+        final List<String> vmArgsFromDeploymentProp = getVMargsFromDeploymentProp(currJnlpFileName); // jnlp specific VM args from deployment.properties
+        if (vmArgsFromDeploymentProp.size() > 0) {
+            vmArgs.addAll(vmArgsFromDeploymentProp);
         }
-        vmArgs.addAll(extractVmArgs(jnlpFile));
         vmArgs.addAll(vmArgumentsFromEnv());
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
@@ -184,30 +187,18 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
-    private List<String> getJnlpSpecificVMArgs(JNLPFile jnlpFile) {
-        final String currJnlpFile = jnlpFile.getFileLocation().getFile();
-        final String currJnlpFileName = currJnlpFile.substring(currJnlpFile.lastIndexOf('/')+1);
-        Optional<String> jnlpVmArgs = JNLPRuntime.getConfiguration().getAllPropertyNames().stream()
-                .filter(pname -> pname.startsWith(OWS_JNLP_SPECIFIC_JVMARGS))
-                .map(pname -> (String)JNLPRuntime.getConfiguration().getProperty(pname))
-                .filter(val -> val.contains(currJnlpFileName))
-                .map(val -> val.split("=", 2))
-                .map(tok -> tok[1])
-                .findFirst();
-
-        if (!jnlpVmArgs.isPresent()) {
-            LOG.info("Did not find Jnlp Specific Vm args for: {}", currJnlpFileName);
-            return Collections.emptyList();
+    private List<String> getVMargsFromDeploymentProp(String currJnlpFileName) {
+        final String depPropVMArgs = JNLPRuntime.getConfiguration().getProperty("ows.jvmargs.for." + currJnlpFileName);
+        LOG.debug("For {} found, specific vm args {}", currJnlpFileName, depPropVMArgs);
+        if (depPropVMArgs != null) {
+            try {
+                return JvmUtils.parseArguments(depPropVMArgs);
+            } catch (Exception e) {
+                LOG.debug("For {}, error while parsings vmargs {}", currJnlpFileName, e.getMessage());
+                return Collections.emptyList();
+            }
         }
-
-        LOG.info("For {} found, specific vm args ", currJnlpFileName,  jnlpVmArgs.get());
-        try {
-            JvmUtils.checkVMArgs(jnlpVmArgs.get());
-            return JvmUtils.parseArguments(jnlpVmArgs.get());
-        } catch (Exception e) {
-            LOG.warn("Ignoring {} due to illegal Property {}", "vm args from " + currJnlpFile, e.getMessage());
-            return Collections.emptyList();
-        }
+        return Collections.emptyList();
     }
 
     private void checkForJava9Arg(final List<String> javawsArgs) {
@@ -256,6 +247,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         env.put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
         env.put(LOG_PREFIX_ENV, getLogFileNamePrefix());
         env.put(LOG_POSTFIX_ENV, "ows-stage2");
+        env.put(ApplicationInstance.IGNORE_JNLP_RESOURCE_PROPERTIES, "true");
 
         final Process p = pb
                 .command(commands)
