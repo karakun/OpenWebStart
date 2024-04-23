@@ -67,7 +67,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
     private static final VersionString JAVA_18_OR_GREATER = VersionString.fromString("18+");
-    public static final String OWS_JNLP_SPECIFIC_JVMARGS = "ows.jnlp-specific.jvmargs";
+    public static final String JVMARGS_FOR_CURRENT_JNLPFILE = "ows.jvmargs.for.";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
 
@@ -188,13 +188,13 @@ public class OwsJvmLauncher implements JvmLauncher {
     }
 
     private List<String> getVMargsFromDeploymentProp(String currJnlpFileName) {
-        final String depPropVMArgs = JNLPRuntime.getConfiguration().getProperty("ows.jvmargs.for." + currJnlpFileName);
+        final String depPropVMArgs = JNLPRuntime.getConfiguration().getProperty(JVMARGS_FOR_CURRENT_JNLPFILE + currJnlpFileName);
         LOG.debug("For {} found, specific vm args {}", currJnlpFileName, depPropVMArgs);
         if (depPropVMArgs != null) {
             try {
                 return JvmUtils.parseArguments(depPropVMArgs);
             } catch (Exception e) {
-                LOG.debug("For {}, error while parsings vmargs {}", currJnlpFileName, e.getMessage());
+                LOG.debug("For {}, error while parsing vmargs {}", currJnlpFileName, e.getMessage());
                 return Collections.emptyList();
             }
         }
