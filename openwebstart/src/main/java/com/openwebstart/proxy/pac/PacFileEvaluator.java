@@ -165,6 +165,7 @@ public class PacFileEvaluator {
         p.add(new RuntimePermission(JAVASCRIPT_RUNTIME_PERMISSION_NAME));
         p.add(new SocketPermission("*", "resolve"));
         p.add(new PropertyPermission(VM_NAME, PROPERTY_READ_ACTION));
+        p.add(new PropertyPermission("rhino.stack.style", PROPERTY_READ_ACTION));
 
         final ProtectionDomain pd = new ProtectionDomain(null, p);
         final AccessControlContext context = new AccessControlContext(new ProtectionDomain[]{pd});
