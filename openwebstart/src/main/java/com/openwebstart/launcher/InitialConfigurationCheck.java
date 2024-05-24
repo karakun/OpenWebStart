@@ -38,6 +38,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGG
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_CONNECT_TIMEOUT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_READ_TIMEOUT;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_REQUEST_INTERVAL;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPS_DONT_ENFORCE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_JVM_ARGS_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_AUTO_CONFIG_URL;
@@ -94,6 +95,7 @@ class InitialConfigurationCheck {
             KEY_CREATE_DESKTOP_SHORTCUT,
             KEY_HTTPCONNECTION_CONNECT_TIMEOUT,
             KEY_HTTPCONNECTION_READ_TIMEOUT,
+            KEY_HTTPCONNECTION_REQUEST_INTERVAL,
             SHORTCUT_UPDATE_STRATEGY,
             KEY_USER_SECURITY_POLICY,
             KEY_USER_SECURITY_POLICY_CHECK,
