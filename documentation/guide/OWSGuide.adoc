@@ -644,6 +644,57 @@ There is the possiblity to advise OpenWebStart to use the 32-bit JVM on a 64-bit
 <java version="1.8*" require-32bit="true" ... />
 ----
 
+===== Jnlp specific  JVM Arguments
+
+Sometimes there is a need to add to or override the java vm arguments specified in an unmodifable legacy JNLP file. OWS enables you to specify jnlp specific java vm args
+in the _deployment.properties_ file.
+
+Suppose you have the following JNLP files for which you want to add to or overide java vm args and properties:
+
+[source]
+----
+vm_args_1.jnlp:
+ 	<j2se version="1.8*"  java-vm-args=" -Xmx512m -Xms256m -Djnlp.ccc=jnlp"/>
+        <jar href="generated-jars/jvm_args.jar"/>
+        <property name="http.agent" value="jnlp"/>
+        <property name="javaws.xyz" value="jnlp"/>
+        <property name="sun.java2d.dpiaware" value="true"/>
+        <property name="my.prop" value="jnlp"/>
+        <property name="jnlp.prop" value="jnlp"/>
+    </resources>
+
+jvm_args_2.jnlp :
+	<resources>
+		<java version="1.8+"	java-vm-args="-Xmx512M -Xms256M  -Djnlp.ccc=jnlp -Dmy.prop=jnlp --add-modules=java.sql"/>
+		<jar href="generated-jars/jvm_args.jar"/>
+		<property name="sun.awt.disableMixing" value="true"/>
+		<property name="http.agent" value="Blah"/>
+		<property name="javaws.xyz" value="jnlp"/>
+		<property name="sun.java2d.dpiaware" value="true"/>
+		<property name="jnlp.prop" value="jnlp"/>
+	</resources>
+----
+
+In the _deployment.properties_ file specify the vm args that will be merged with the vm args specified in the jnlp file:
+
+----
+ows.jvmargs.for.jvm_args_1.jnlp=-Xmx2048m -Xms512m -Dabc\=dep -Ddepprop=dep -Dmy.prop\=depprop -Djavaws.xyz\=dep -Djnlp.ccc\=dep -Dsun.java2d.dpiaware\=false -Dhttp.agent\=BBBB
+
+ows.jvmargs.for.jvm_args_2.jnlp=-Xmx1024m -Ddepprop=dep -Xms512m -Dsun.java2d.dpiawared\=false -Dmy.prop\=depprop -Djavaws.xyz\=dep -Djnlp.ccc\=dep -Dsun.java2d.dpiaware\=false -Dhttp.agent\="BBBB"
+--add-opens\=java.desktop/sun.print\=ALL-UNNAMED --add-exports\=java.desktop/sun.print\=ALL-UNNAMED --add-modules\=java.sql
+----
+
+Now, when you run the above jnlp files with OWS, you will find that the vm args specified in the _deployment.properties_ for those jnlp files
+will be appended to the "java-vm-args" and "property" resources specified in that jnlp.
+
+For example, for the given jnlp file _jvm_args_1.jnlp_, the resulting vm args passed to the JVM that runs the application will be:
+
+----
+-Xmx512m, -Xms256m, -Djnlp.ccc=jnlp, -Djavaws.xyz=jnlp, -Dsun.java2d.dpiaware=true, -Djnlp.prop=jnlp, -Dhttp.agent=jnlp, -Xmx2048m, -Xms512m, -Dabc=dep, -Ddepprop=dep, -Dmy.prop=depprop, -Djavaws.xyz=dep, -Djnlp.ccc=dep, -Dsun.java2d.dpiaware=false, -Dhttp.agent=BBBB
+----
+
+The final vm args will be a union of vm args from Jnlp and deployment.properties. Since the vm args from _deployment.properties_ come later, the common properties like _-Xmx, -Xms, http.agent, my.prop_ will have the values from _ows.jvmargs.for.jvm_args_1.jnlp_ at runtime.
+
 === Cache Management
 
 OWS downloads the resources like jars and images specified in the JNLP file from the specified server(s).
