@@ -33,6 +33,8 @@ public class VendorManagerTest {
         checkCall.accept(BELLSOFT, "Bellsoft LIBERICA");
         checkCall.accept(BELLSOFT, "BELLsoFT");
         checkCall.accept(KARAKUN, "Karakun");
+        checkCall.accept(SAP, "sap");
+        checkCall.accept(SAP, "SAP");
 
         checkCall.accept(ORACLE, "oracle ");
         checkCall.accept(ORACLE, "     Oracle");
@@ -44,6 +46,8 @@ public class VendorManagerTest {
         checkCall.accept(BELLSOFT, "    Bellsoft LIBERICA    ");
         checkCall.accept(BELLSOFT, "   BELLsoFT   ");
         checkCall.accept(KARAKUN, "     Karakun     ");
+        checkCall.accept(SAP, "sap ");
+        checkCall.accept(SAP, "     SAP");
     }
 
     @Test
@@ -66,6 +70,8 @@ public class VendorManagerTest {
         checkCall.accept(BELLSOFT, "Bellsoft LIBERICA");
         checkCall.accept(BELLSOFT, "BELLsoFT");
         checkCall.accept(KARAKUN, "Karakun");
+        checkCall.accept(SAP, "sap");
+        checkCall.accept(SAP, "SAP");
 
         checkCall.accept(ORACLE, "oracle ");
         checkCall.accept(ORACLE, "     Oracle");
@@ -77,5 +83,7 @@ public class VendorManagerTest {
         checkCall.accept(BELLSOFT, "    Bellsoft LIBERICA    ");
         checkCall.accept(BELLSOFT, "   BELLsoFT   ");
         checkCall.accept(KARAKUN, "     Karakun     ");
+        checkCall.accept(SAP, "sap ");
+        checkCall.accept(SAP, "     SAP");
     }
 }
