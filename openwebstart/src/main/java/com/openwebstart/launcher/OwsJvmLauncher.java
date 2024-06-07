@@ -247,7 +247,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         env.put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
         env.put(LOG_PREFIX_ENV, getLogFileNamePrefix());
         env.put(LOG_POSTFIX_ENV, "ows-stage2");
-        env.put(ApplicationInstance.IGNORE_JNLP_RESOURCE_PROPERTIES, "true");
+        env.put(ApplicationInstance.IGNORE_HTTP_AGENT_PROPERTY, "true");
 
         final Process p = pb
                 .command(commands)
