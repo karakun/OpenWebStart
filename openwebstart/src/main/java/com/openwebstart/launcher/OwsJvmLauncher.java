@@ -157,18 +157,29 @@ public class OwsJvmLauncher implements JvmLauncher {
 
         LocalRuntimeManager.touch(javaRuntime);
 
+        String blackListedJnlpProperties = getPropertyNames(vmArgsFromDeploymentProp);
+
         if (JAVA_1_8.contains(version)) {
             checkForJava9Arg(vmArgs);
-            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs, blackListedJnlpProperties);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
             if (JAVA_18_OR_GREATER.contains(version)) {
                 mergedVMArgs.add("-Djava.security.manager=allow");
             }
-            launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs);
+            launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs, blackListedJnlpProperties);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
         }
+    }
+
+    private static String getPropertyNames(List<String> vmArgsFromDeploymentProp) {
+        return vmArgsFromDeploymentProp.stream()
+                .filter(k -> k.startsWith("-D"))
+                .filter(k -> k.contains("="))
+                .map(k -> k.substring(2))
+                .map(k -> k.substring(0, k.indexOf('=')))
+                .collect(Collectors.joining(ApplicationInstance.BLACKLISTED_PROPERTIES_SEPARATOR));
     }
 
     private List<String> vmArgumentsFromEnv() {
@@ -229,7 +240,8 @@ public class OwsJvmLauncher implements JvmLauncher {
             final String pathToJavaBinary,
             final String pathToJar,
             final List<String> vmArgs,
-            final List<String> javawsArgs
+            final List<String> javawsArgs,
+            final String blackListedJnlpProperties
     ) throws IOException {
         final List<String> commands = new LinkedList<>();
 
@@ -247,7 +259,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         env.put(ICEDTEA_WEB_SPLASH, NO_SPLASH);
         env.put(LOG_PREFIX_ENV, getLogFileNamePrefix());
         env.put(LOG_POSTFIX_ENV, "ows-stage2");
-        env.put(ApplicationInstance.IGNORE_HTTP_AGENT_PROPERTY, "true");
+        env.put(ApplicationInstance.BLACKLIST_FOR_JNLP_PROPERTIES, blackListedJnlpProperties);
 
         final Process p = pb
                 .command(commands)
