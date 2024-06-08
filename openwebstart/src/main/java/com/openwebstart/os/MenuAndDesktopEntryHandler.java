@@ -4,6 +4,8 @@ import com.openwebstart.config.OwsDefaultsProvider;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.InformationDesc;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.ShortcutDesc;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.runtime.MenuAndDesktopIntegration;
@@ -20,6 +22,7 @@ import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_ASK_USER_
 import static net.sourceforge.jnlp.util.ShortcutCreationOptions.CREATE_NEVER;
 
 public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
+    static final Logger LOG = LoggerFactory.getLogger(MenuAndDesktopEntryHandler.class);
 
     @Override
     public void addMenuAndDesktopEntries(final JNLPFile jnlpFile) {
@@ -39,11 +42,14 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
         final boolean hasMenu = factory.existsMenuEntry(jnlpFile);
         final boolean hasDesktop = factory.existsDesktopEntry(jnlpFile);
 
+        LOG.debug("Application {} hasMenu {} hasDesktop {}", appName, hasMenu, hasDesktop);
+
         final Optional<ShortcutDesc> shortcutDesc = Optional.ofNullable(jnlpFile.getInformation()).map(InformationDesc::getShortcut);
 
         final boolean jnlpWantsMenu = shortcutDesc.map(ShortcutDesc::toMenu).orElse(false);
         final boolean jnlpWantsDesktop = shortcutDesc.map(ShortcutDesc::onDesktop).orElse(false);
 
+        LOG.debug("Jnlp file {} wantsMenu {} wantsDesktop {}", jnlpFile.getSourceLocation().toString(), jnlpWantsMenu, jnlpWantsDesktop);
 
         if (hasMenu || hasDesktop) {
             ShortcutUpdateStrategy strategy = ShortcutUpdateStrategy.get(JNLPRuntime.getConfiguration().getProperty(OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY));
@@ -71,6 +77,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
         getNonDaemonExecutorService().execute(() -> {
             if (updateMenu) {
                 try {
+                    LOG.debug("Update menu entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
                     factory.updateMenuEntry(jnlpFile);
                 } catch (Exception e) {
                     DialogFactory.showErrorDialog("Can not update menu entry for app", e);
@@ -79,6 +86,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
             if (updateDesktop) {
                 try {
+                    LOG.debug("Update desktop entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
                     factory.updateDesktopEntry(jnlpFile);
                 } catch (Exception e) {
                     DialogFactory.showErrorDialog("Can not update desktop entry for app", e);
@@ -91,6 +99,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
         getNonDaemonExecutorService().execute(() -> {
             if (addMenu) {
                 try {
+                    LOG.debug("Create menu entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
                     factory.createMenuEntry(jnlpFile);
                 } catch (Exception e) {
                     DialogFactory.showErrorDialog("Can not create menu entry for app", e);
@@ -98,6 +107,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
             }
             if (addDesktop) {
                 try {
+                    LOG.debug("Create desktop entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
                     factory.createDesktopEntry(jnlpFile);
                 } catch (Exception e) {
                     DialogFactory.showErrorDialog("Can not create desktop entry for app", e);
