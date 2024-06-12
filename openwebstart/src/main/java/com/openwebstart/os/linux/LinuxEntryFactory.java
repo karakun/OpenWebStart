@@ -55,6 +55,7 @@ public class LinuxEntryFactory implements MenuAndDesktopEntriesFactory {
         RestrictedFileUtils.createRestrictedFile(shortcutFile);
         FileUtils.saveFileUtf8(getContent(file, false, iconLocation), shortcutFile);
 
+        LOG.debug("Creating Desktop Entry at {}", shortcutFile.getCanonicalPath());
         final ProcessBuilder pb = new ProcessBuilder("xdg-desktop-icon", "install", "--novendor",
                 shortcutFile.getCanonicalPath());
 

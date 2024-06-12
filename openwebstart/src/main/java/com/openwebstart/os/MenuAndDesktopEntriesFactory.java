@@ -27,6 +27,7 @@ public interface MenuAndDesktopEntriesFactory {
 
     static Optional<MenuAndDesktopEntriesFactory> forCurrentOs() {
         final OperationSystem localSystem = OperationSystem.getLocalSystem();
+        LOG.debug("Choosing MenuAndDesktopEntriesFactory  for OS {}", localSystem.toString());
         if (OperationSystem.MAC64 == localSystem || OperationSystem.MACARM64 == localSystem ) {
             LOG.debug("Choosing MacEntryFactory  for shortcuts");
             return Optional.of(new MacEntryFactory());
@@ -39,6 +40,7 @@ public interface MenuAndDesktopEntriesFactory {
             LOG.debug("Using LinuxEntryFactory for shortcuts");
             return Optional.of(new LinuxEntryFactory());
         }
+        LOG.debug("Could not find MenuAndDesktopEntriesFactory");
         return Optional.empty();
     }
 

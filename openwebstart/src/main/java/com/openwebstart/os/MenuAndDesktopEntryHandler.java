@@ -30,10 +30,12 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
     }
 
     private void addMenuAndDesktopEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile) {
+        LOG.debug("AddMenuAndDesktopEntries using factory {} and Jnlp file {}", factory != null ? factory.getClass().getName() : "null", jnlpFile.getSourceLocation().toString());
         final String property = JNLPRuntime.getConfiguration().getProperty(KEY_CREATE_DESKTOP_SHORTCUT);
         final ShortcutCreationOptions shortcutCreationOptions = ShortcutCreationOptions.forConfigName(property).orElse(CREATE_NEVER);
 
         if (shortcutCreationOptions == CREATE_NEVER) {
+            LOG.debug("Shortcut creation option {}", shortcutCreationOptions.name());
             return;
         }
 
@@ -75,6 +77,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
     private void updateEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile, final boolean updateMenu, final boolean updateDesktop) {
         getNonDaemonExecutorService().execute(() -> {
+            LOG.debug("Updating Menu and Desktop Entries");
             if (updateMenu) {
                 try {
                     LOG.debug("Update menu entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
@@ -97,6 +100,7 @@ public class MenuAndDesktopEntryHandler implements MenuAndDesktopIntegration {
 
     private void addEntries(final MenuAndDesktopEntriesFactory factory, final JNLPFile jnlpFile, final boolean addMenu, final boolean addDesktop) {
         getNonDaemonExecutorService().execute(() -> {
+            LOG.debug("Adding Menu and Desktop Entries");
             if (addMenu) {
                 try {
                     LOG.debug("Create menu entry for Jnlp file {}", jnlpFile.getSourceLocation().toString());
