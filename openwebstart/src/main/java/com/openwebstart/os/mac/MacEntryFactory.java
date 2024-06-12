@@ -5,6 +5,8 @@ import com.openwebstart.os.MenuAndDesktopEntriesFactory;
 import com.openwebstart.os.linux.FavIcon;
 import net.adoptopenjdk.icedteaweb.Assert;
 import net.adoptopenjdk.icedteaweb.jnlp.element.information.IconKind;
+import net.adoptopenjdk.icedteaweb.logging.Logger;
+import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.sourceforge.jnlp.JNLPFile;
 import net.sourceforge.jnlp.config.PathsAndFiles;
 
@@ -25,6 +27,8 @@ import static com.openwebstart.os.mac.ScriptFactory.createSimpleStartScriptForMa
 
 public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MacEntryFactory.class);
+
     @Override
     public void updateDesktopEntry(final JNLPFile file) throws Exception {
         createDesktopEntry(file);
@@ -35,7 +39,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         final String name = file.getShortcutName();
         final String script = createSimpleStartScriptForMac(file);
         final String[] icons = getIcons(file);
-
+        LOG.debug("Creating Mac desktop entry {}", name);
         AppFactory.createDesktopLink(name, script, icons);
     }
 
@@ -54,7 +58,7 @@ public class MacEntryFactory implements MenuAndDesktopEntriesFactory {
         final String name = file.getShortcutName();
         final String script = createSimpleStartScriptForMac(file);
         final String[] icons = getIcons(file);
-
+        LOG.debug("Creating Mac menu entry {}", name);
         AppFactory.createApp(name, script, icons);
     }
 
