@@ -17,7 +17,9 @@ import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_INDICATOR;
@@ -45,10 +47,15 @@ public class ControlPanelLauncher {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart ControlPanel {}", v));
 
         Translator.addBundle("i18n");
-        final DeploymentConfiguration config = new DeploymentConfiguration();
+        final DeploymentConfiguration config = new DeploymentConfiguration();;
 
         try {
-            config.load();
+            Optional<File> owsUserPropertiesFile = getOwsUserPropertiesfile();
+            if (owsUserPropertiesFile.isPresent()) {
+                config.load(owsUserPropertiesFile.get());
+            } else {
+                config.load();
+            }
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
             JNLPRuntime.exit(-1);
@@ -85,5 +92,16 @@ public class ControlPanelLauncher {
             final ControlPanel editor = new ControlPanel(config);
             editor.setVisible(true);
         });
+    }
+
+    public static Optional<File> getOwsUserPropertiesfile() {
+        if (Install4JUtils.installationDirectory().isPresent()) {
+            File[] owsUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("ows.properties"));
+            if (owsUserPropertiesFile.length > 0) {
+                System.setProperty("owsUserPropertiesFilename", owsUserPropertiesFile[0].getAbsolutePath());
+                return Optional.of(owsUserPropertiesFile[0]);
+            }
+        }
+        return Optional.empty();
     }
 }

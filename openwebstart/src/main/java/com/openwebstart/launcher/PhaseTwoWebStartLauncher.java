@@ -14,9 +14,11 @@ import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
@@ -51,7 +53,12 @@ public class PhaseTwoWebStartLauncher {
 
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {
-            config.load();
+            Optional<File> owsUserPropertiesFile = getOwsUserPropertiesfile();
+            if (owsUserPropertiesFile.isPresent()) {
+                config.load(owsUserPropertiesFile.get());
+            } else {
+                config.load();
+            }
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
             JNLPRuntime.exit(-1);
@@ -103,5 +110,16 @@ public class PhaseTwoWebStartLauncher {
         LOG.debug("RelevantJavawsArgs: '{}'", relevantJavawsArgs);
 
         return relevantJavawsArgs;
+    }
+
+    public static Optional<File> getOwsUserPropertiesfile() {
+        if (Install4JUtils.installationDirectory().isPresent()) {
+            File[] owsUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("ows.properties"));
+            if (owsUserPropertiesFile.length > 0) {
+                System.setProperty("owsUserPropertiesFilename", owsUserPropertiesFile[0].getAbsolutePath());
+                return Optional.of(owsUserPropertiesFile[0]);
+            }
+        }
+        return Optional.empty();
     }
 }
