@@ -140,8 +140,10 @@ public class OwsJvmLauncher implements JvmLauncher {
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>();
         getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
-        PhaseTwoWebStartLauncher.getOwsUserPropertiesfile().ifPresent((file -> vmArgs.add(propertyString("owsUserPropertiesFilename", file.getAbsolutePath()))));
-
+        final String owsUserPropertiesFilePath = System.getProperty("owsUserPropertiesFilePath");
+        if (owsUserPropertiesFilePath != null) {
+            vmArgs.add(propertyString("owsUserPropertiesFilePath", owsUserPropertiesFilePath));
+        }
         vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs()); // java-vm-args in jnlp
         vmArgs.addAll(extractVmArgs(jnlpFile)); // <property name=".." value=".."/> in jnlp
 
