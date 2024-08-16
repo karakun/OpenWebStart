@@ -43,7 +43,7 @@ public class OpenWebStartLauncher {
     public static void main(String... args) {
         final List<String> arguments = new ArrayList<>(Arrays.asList(args));
         if (!InstallerUtil.isMacOS()) {
-            LOG.info("OWS main args {}.", arguments);
+            LOG.info("Starting OWS from dir {} with main args {}.", Install4JUtils.installationDirectory(), arguments);
             PhaseTwoWebStartLauncher.main(arguments.toArray(new String[0]));
         } else {
             Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart MacLauncher {}", v));

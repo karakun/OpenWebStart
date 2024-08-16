@@ -50,7 +50,7 @@ public class ControlPanelLauncher {
         final DeploymentConfiguration config = new DeploymentConfiguration();;
 
         try {
-            checkForOwsUserPropertiesFile();
+            checkForLocalUserPropertiesFile();
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
@@ -90,11 +90,11 @@ public class ControlPanelLauncher {
         });
     }
 
-    public static void checkForOwsUserPropertiesFile() {
+    public static void checkForLocalUserPropertiesFile() {
         if (Install4JUtils.installationDirectory().isPresent()) {
-            File[] owsUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("ows.properties"));
-            if (owsUserPropertiesFile != null && owsUserPropertiesFile.length > 0) {
-                System.setProperty("owsUserPropertiesFilePath", owsUserPropertiesFile[0].getAbsolutePath());
+            File[] localUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("deployment.properties"));
+            if (localUserPropertiesFile != null && localUserPropertiesFile.length > 0) {
+                System.setProperty("localUserPropertiesFilePath", localUserPropertiesFile[0].getAbsolutePath());
             }
         }
     }

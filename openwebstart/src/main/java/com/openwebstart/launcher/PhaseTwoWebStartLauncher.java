@@ -18,7 +18,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
@@ -53,7 +52,7 @@ public class PhaseTwoWebStartLauncher {
 
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {
-            checkForOwsUserPropertiesFile();
+            checkForLocalUserPropertiesFile();
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
@@ -108,11 +107,11 @@ public class PhaseTwoWebStartLauncher {
         return relevantJavawsArgs;
     }
 
-    public static void checkForOwsUserPropertiesFile() {
+    public static void checkForLocalUserPropertiesFile() {
         if (Install4JUtils.installationDirectory().isPresent()) {
-            File[] owsUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("ows.properties"));
-            if (owsUserPropertiesFile != null && owsUserPropertiesFile.length > 0) {
-                System.setProperty("owsUserPropertiesFilePath", owsUserPropertiesFile[0].getAbsolutePath());
+            File[] localUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("deployment.properties"));
+            if (localUserPropertiesFile != null && localUserPropertiesFile.length > 0) {
+                System.setProperty("localUserPropertiesFilePath", localUserPropertiesFile[0].getAbsolutePath());
             }
         }
     }
