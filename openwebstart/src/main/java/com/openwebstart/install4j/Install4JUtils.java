@@ -49,4 +49,17 @@ public class Install4JUtils {
                 .getInstallerVariableAsString(INSTALLATION_DIR_VARIABLE_NAME);
     }
 
+    public static Optional<String> executableName() {
+        String value = null;
+        try {
+            value = Variables.getCompilerVariable("executableName");
+            if (value == null) {
+                LOG.debug("No executable name defined");
+            }
+        } catch (Exception e) {
+            LOG.debug("Can not get executable name ", e);
+        }
+        return Optional.ofNullable(value);
+    }
+
 }

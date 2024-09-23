@@ -10,6 +10,7 @@ import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
+import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.EnvironmentPrinter;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
@@ -19,7 +20,6 @@ import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
 import static com.openwebstart.download.ApplicationDownloadIndicator.DOWNLOAD_INDICATOR;
@@ -47,10 +47,10 @@ public class ControlPanelLauncher {
         Install4JUtils.applicationVersion().ifPresent(v -> LOG.info("Starting OpenWebStart ControlPanel {}", v));
 
         Translator.addBundle("i18n");
-        final DeploymentConfiguration config = new DeploymentConfiguration();;
+        final DeploymentConfiguration config = new DeploymentConfiguration();
 
         try {
-            checkForLocalUserPropertiesFile();
+            checkForLocalDeploymentPropertiesFile();
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
@@ -90,11 +90,11 @@ public class ControlPanelLauncher {
         });
     }
 
-    public static void checkForLocalUserPropertiesFile() {
+    public static void checkForLocalDeploymentPropertiesFile() {
         if (Install4JUtils.installationDirectory().isPresent()) {
-            File[] localUserPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase("deployment.properties"));
-            if (localUserPropertiesFile != null && localUserPropertiesFile.length > 0) {
-                System.setProperty("localUserPropertiesFilePath", localUserPropertiesFile[0].getAbsolutePath());
+            File[] localDeploymentPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase(ConfigurationConstants.DEPLOYMENT_PROPERTIES));
+            if (localDeploymentPropertiesFile != null && localDeploymentPropertiesFile.length > 0) {
+                System.setProperty(DeploymentConfiguration.LOCAL_DEPLOYMENT_PROPERTIES_FILE_PATH, localDeploymentPropertiesFile[0].getAbsolutePath());
             }
         }
     }
