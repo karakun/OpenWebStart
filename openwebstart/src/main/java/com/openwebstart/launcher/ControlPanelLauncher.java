@@ -10,6 +10,7 @@ import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
 import net.adoptopenjdk.icedteaweb.ui.swing.SwingUtils;
+import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.EnvironmentPrinter;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
@@ -17,6 +18,7 @@ import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
 import javax.swing.UIManager;
+import java.io.File;
 import java.util.Arrays;
 
 import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
@@ -48,6 +50,7 @@ public class ControlPanelLauncher {
         final DeploymentConfiguration config = new DeploymentConfiguration();
 
         try {
+            checkForLocalDeploymentPropertiesFile();
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
@@ -85,5 +88,14 @@ public class ControlPanelLauncher {
             final ControlPanel editor = new ControlPanel(config);
             editor.setVisible(true);
         });
+    }
+
+    public static void checkForLocalDeploymentPropertiesFile() {
+        if (Install4JUtils.installationDirectory().isPresent()) {
+            File[] localDeploymentPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase(ConfigurationConstants.DEPLOYMENT_PROPERTIES));
+            if (localDeploymentPropertiesFile != null && localDeploymentPropertiesFile.length > 0) {
+                System.setProperty(DeploymentConfiguration.LOCAL_DEPLOYMENT_PROPERTIES_FILE_PATH, localDeploymentPropertiesFile[0].getAbsolutePath());
+            }
+        }
     }
 }

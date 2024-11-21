@@ -139,8 +139,14 @@ public class OwsJvmLauncher implements JvmLauncher {
         LOG.info("using java runtime at '{}' for launching managed application", runtimeInfo.runtime.getJavaHome());
         final LocalJavaRuntime javaRuntime = runtimeInfo.runtime;
         final List<String> vmArgs = new ArrayList<>();
-        getOwsExecutablePath().ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
-
+        final String localDeploymentPropertiesFilePath = System.getProperty(DeploymentConfiguration.LOCAL_DEPLOYMENT_PROPERTIES_FILE_PATH);
+        if (localDeploymentPropertiesFilePath != null) {
+            Install4JUtils.executableName().ifPresent(exeName ->
+                getOwsExecutablePath(exeName).ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path))));
+            vmArgs.add(propertyString(DeploymentConfiguration.LOCAL_DEPLOYMENT_PROPERTIES_FILE_PATH, localDeploymentPropertiesFilePath));
+        } else {
+            getOwsExecutablePath(JAVAWS).ifPresent(path -> vmArgs.add(propertyString(ITW_BIN_LOCATION, path)));
+        }
         vmArgs.addAll(runtimeInfo.jreDesc.getAllVmArgs()); // java-vm-args in jnlp
         vmArgs.addAll(extractVmArgs(jnlpFile)); // <property name=".." value=".."/> in jnlp
 
@@ -269,7 +275,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         ProcessUtils.waitForSafely(p);
     }
 
-    private Optional<String> getOwsExecutablePath() {
+    private Optional<String> getOwsExecutablePath(final String exeName) {
         final List<Optional<String>> possibleExeDirs = asList(
                 Optional.ofNullable(System.getProperty(INSTALL_4_J_EXE_DIR)),
                 Optional.ofNullable(System.getProperty(INSTALL_4_J_APP_DIR)),
@@ -279,19 +285,19 @@ public class OwsJvmLauncher implements JvmLauncher {
         return possibleExeDirs.stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .filter(this::containsJavaws)
+                .filter(dir -> containsJavawsExe(dir, exeName))
                 .findFirst()
-                .map(path -> Paths.get(path, JAVAWS).toAbsolutePath().toString());
+                .map(path -> Paths.get(path, exeName).toAbsolutePath().toString());
     }
 
-    private boolean containsJavaws(String dir) {
+    private boolean containsJavawsExe(String dir, String exeName) {
         try {
-            final Path unixPath = Paths.get(dir, JAVAWS);
+            final Path unixPath = Paths.get(dir, exeName);
             if (Files.isExecutable(unixPath)) {
                 return true;
             }
 
-            final Path windowsPath = Paths.get(dir, JAVAWS + ".exe");
+            final Path windowsPath = Paths.get(dir, exeName + ".exe");
             if (Files.isExecutable(windowsPath)) {
                 return true;
             }

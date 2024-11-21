@@ -8,12 +8,14 @@ import net.adoptopenjdk.icedteaweb.commandline.CommandLineOptions;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 import net.adoptopenjdk.icedteaweb.logging.Logger;
 import net.adoptopenjdk.icedteaweb.logging.LoggerFactory;
+import net.sourceforge.jnlp.config.ConfigurationConstants;
 import net.sourceforge.jnlp.config.DeploymentConfiguration;
 import net.sourceforge.jnlp.runtime.Boot;
 import net.sourceforge.jnlp.runtime.JNLPRuntime;
 import net.sourceforge.jnlp.util.logging.FileLog;
 
 import javax.naming.ConfigurationException;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -51,6 +53,7 @@ public class PhaseTwoWebStartLauncher {
 
         final DeploymentConfiguration config = new DeploymentConfiguration();
         try {
+            checkForLocalDeploymentPropertiesFile();
             config.load();
         } catch (final ConfigurationException e) {
             DialogFactory.showErrorDialog(Translator.getInstance().translate("error.loadConfig"), e);
@@ -103,5 +106,14 @@ public class PhaseTwoWebStartLauncher {
         LOG.debug("RelevantJavawsArgs: '{}'", relevantJavawsArgs);
 
         return relevantJavawsArgs;
+    }
+
+    public static void checkForLocalDeploymentPropertiesFile() {
+        if (Install4JUtils.installationDirectory().isPresent()) {
+            File[] localDeploymentPropertiesFile = new File(Install4JUtils.installationDirectory().get()).listFiles(file -> file.getName().equalsIgnoreCase(ConfigurationConstants.DEPLOYMENT_PROPERTIES));
+            if (localDeploymentPropertiesFile != null && localDeploymentPropertiesFile.length > 0) {
+                System.setProperty(DeploymentConfiguration.LOCAL_DEPLOYMENT_PROPERTIES_FILE_PATH, localDeploymentPropertiesFile[0].getAbsolutePath());
+            }
+        }
     }
 }
