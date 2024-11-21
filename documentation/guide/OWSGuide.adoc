@@ -322,6 +322,11 @@ It is possible to define an update strategy on every `start`, `daily`, `weekly`,
 
 == Configuration
 
+OWS can be configured locally using the local `deployment.properties` file. By default, the `deployment.properties` is
+located in the `USER_HOME/.config/icedtea-web` directory. However, the user may also place the `deployment.properties` file
+in the OWS installation directory. In this case, the `deployment.properties` in the OWS installation directory will take
+precedence over the default `<USER_HOME>/.config/icedtea-web/deployment.properties`.
+
 The standard way to configure OpenWebStart is to use the OpenWebStart Settings application.
 The executable is located in the installation directory and is named `itw-settings`.
 
@@ -1189,12 +1194,17 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.log
 |-
 |X
-|If set to true debug logging is enabled. Default is false
+|If set to true debug logging is enabled. Default is false.
 
 |deployment.log.file
 |-
 |X
-|If set to true log is outputted to file. Default is false
+|If set to true log is outputted to file. Default is false.
+
+|deployment.log.jnlpFileContent
+|-
+|X
+|If set to true log the contents of Jnlp file. Default is false.
 
 |ows.update.activated
 |X
@@ -1230,5 +1240,23 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |
 |X
 |Please see <<Desktop Integration>>
+
+|deployment.console.startup.mode
+|
+|X
+|SHOW, HIDE or DISABLE console. Default is HIDE.
+
+|deployment.user.cachedir , deployment.user.logdir
+|
+|X
+|User defined directory for OWS cache and OWS logs. The path for directory can have a placeholder \#USER_HOME_DIR#
+which will be replaced by the path to the user's home directory on the system. For example:
+deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log
+
+|deployment.security.itw.disablerestrictedfiles
+|
+|X
+|Create regular files instead of restricted files if true. Default if false.
+
 
 |===

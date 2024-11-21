@@ -32,8 +32,10 @@ import static com.openwebstart.config.OwsDefaultsProvider.SEARCH_FOR_LOCAL_JVM_O
 import static com.openwebstart.config.OwsDefaultsProvider.SHORTCUT_UPDATE_STRATEGY;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE_STEM_IN_CODEBASE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_MANIFEST_ATTRIBUTES_CHECK;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_HTTPCONNECTION_CONNECT_TIMEOUT;
@@ -50,7 +52,10 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_PORT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_DISABLE_RESTRICTED_FILES;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_CACHE_DIR;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_LOG_DIR;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_SECURITY_POLICY;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_SECURITY_POLICY_CHECK;
 import static net.sourceforge.jnlp.runtime.JNLPRuntime.getConfiguration;
@@ -99,6 +104,11 @@ class InitialConfigurationCheck {
             SHORTCUT_UPDATE_STRATEGY,
             KEY_USER_SECURITY_POLICY,
             KEY_USER_SECURITY_POLICY_CHECK,
+            KEY_USER_CACHE_DIR,
+            KEY_USER_LOG_DIR,
+            KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT,
+            KEY_SECURITY_DISABLE_RESTRICTED_FILES,
+            KEY_CONSOLE_STARTUP_MODE,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
