@@ -1244,7 +1244,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.console.startup.mode
 |
 |X
-|SHOW, HIDE or DISABLE console. Default is HIDE.
+|SHOW, HIDE or DISABLE console. Default is DISABLE.
 
 |deployment.user.cachedir , deployment.user.logdir
 |

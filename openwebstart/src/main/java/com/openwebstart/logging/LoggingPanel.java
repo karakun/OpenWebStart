@@ -45,29 +45,30 @@ public class LoggingPanel extends FormPanel {
         showLogWindowCombobox.setSelectedItem(LogWindowModes.getForConfigValue(config.getProperty(ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE)));
         addRow(row++, showLogWindowLabel, showLogWindowCombobox);
 
-
         final JCheckBox activateDebugLoggingCheckbox = new JCheckBox(translator.translate("loggingPanel.activateDebug.text"));
         activateDebugLoggingCheckbox.setToolTipText(translator.translate("loggingPanel.activateDebug.description"));
         bindToSettings(config, activateDebugLoggingCheckbox, ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING);
         addEditorRow(row++, activateDebugLoggingCheckbox);
-
 
         final JCheckBox logJnlpContentCheckbox = new JCheckBox(translator.translate("loggingPanel.logJnlpContent.text"));
         logJnlpContentCheckbox.setToolTipText(translator.translate("loggingPanel.logJnlpContent.description"));
         bindToSettings(config, logJnlpContentCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT);
         addEditorRow(row++, logJnlpContentCheckbox);
 
-
         final JCheckBox logToStandardOutCheckbox = new JCheckBox(translator.translate("loggingPanel.logToStandardOut.text"));
         logToStandardOutCheckbox.setToolTipText(translator.translate("loggingPanel.logToStandardOut.description"));
         bindToSettings(config, logToStandardOutCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_TOSTREAMS);
         addEditorRow(row++, logToStandardOutCheckbox);
 
-
         final JCheckBox logInFileCheckbox = new JCheckBox(translator.translate("loggingPanel.logInFile.text"));
         logInFileCheckbox.setToolTipText(translator.translate("loggingPanel.logInFile.description"));
         bindToSettings(config, logInFileCheckbox, ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE);
         addEditorRow(row++, logInFileCheckbox);
+
+        final JCheckBox logClientApplicationToConsoleCheckbox = new JCheckBox(translator.translate("loggingPanel.logAppToConsole.text"));
+        logInFileCheckbox.setToolTipText(translator.translate("loggingPanel.logAppToConsole.description"));
+        bindToSettings(config, logClientApplicationToConsoleCheckbox, ConfigurationConstants.KEY_ENABLE_APPLICATION_LOGGING_TOCONSOLE);
+        addEditorRow(row++, logClientApplicationToConsoleCheckbox);
 
 
         final JLabel logFolderLabel = new JLabel(translator.translate("loggingPanel.logFolder.text") + ":");
