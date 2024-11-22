@@ -34,6 +34,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ASSUME_FILE
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CACHE_MAX_SIZE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CONSOLE_STARTUP_MODE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_CREATE_DESKTOP_SHORTCUT;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_APPLICATION_LOGGING_TOCONSOLE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_DEBUG_LOGGING;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_ENABLE_LOGGING_TOFILE;
@@ -109,6 +110,7 @@ class InitialConfigurationCheck {
             KEY_ENABLE_LOGGING_OF_JNLP_FILE_CONTENT,
             KEY_SECURITY_DISABLE_RESTRICTED_FILES,
             KEY_CONSOLE_STARTUP_MODE,
+            KEY_ENABLE_APPLICATION_LOGGING_TOCONSOLE,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,

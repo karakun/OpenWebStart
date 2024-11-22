@@ -1244,7 +1244,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.console.startup.mode
 |
 |X
-|SHOW, HIDE or DISABLE console. Default is HIDE.
+|SHOW, HIDE or DISABLE console. Default is DISABLE.
 
 |deployment.user.cachedir , deployment.user.logdir
 |
@@ -1257,6 +1257,12 @@ deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log
 |
 |X
 |Create regular files instead of restricted files if true. Default if false.
+
+|deployment.log.console.clientapp
+|
+|X
+|Log client application''s outputs to console if true. Default if false.
+If true, may lead to memory leak in console if the application output's large volume of text.
 
 
 |===
