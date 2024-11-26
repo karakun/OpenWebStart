@@ -87,10 +87,6 @@
 
     <repositories>
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-        <repository>
             <id>EJ-Technologies Repository</id>
             <url>https://maven.ej-technologies.com/repository/</url>
         </repository>
