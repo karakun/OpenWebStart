@@ -128,6 +128,29 @@ Another possibility is to select the option `Always trust content from this publ
 
 image::OWS_trust_publisher.png[title="Always trust this publisher" width="50%"]
 
+
+==== Why does my JNLP application not launch directly since macOS Sequoia 15.0?
+
+The recent macOS 15.0 gatekeeper update prevents users to open a .jnlp file directly. When double click or right-click and "Open" resp. "Open with" always ends up in the following error:
+
+image::MacOS_Sequoia15_1.png[title="macOS Gatekeeper JNLP Opening Error" width="50%"]
+
+In this situation you have to go to `System Settings > Privacy&Security`, scroll to the very bottom and select "Open Anyway" to let OpenWebStart launch your .jnlp application:
+
+image::MacOS_Sequoia15_2.png[title="macOS System Settings" width="80%"]
+
+When you press "Open Anyway", you will see the following dialog. Here you have to select "Open Anyway" again:
+
+image::MacOS_Sequoia15_3.png[title="macOS Gatekeeper JNLP Confirmation Dialog" width="50%"]
+
+After that you will see the authentication dialog, where you have to enter your user credentials. Finally, your application will launch successfully.
+
+Therfore it is highly recommended that you enable shortcut handling in OpenWebStart Settings:
+
+image::MacOS_Sequoia15_4.png[title="OpenWebStart Settings Desktop Integration" width="100%"]
+
+This creates you a desktop shortcut as well as an entry in the Launchpad. This allows you to launch your application the next time directly without any gatekeeper roundtrip.
+
 == Functionality
 
 ==== Does OpenWebStart support Applets?
