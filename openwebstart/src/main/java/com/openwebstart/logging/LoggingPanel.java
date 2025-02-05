@@ -66,7 +66,7 @@ public class LoggingPanel extends FormPanel {
         addEditorRow(row++, logInFileCheckbox);
 
         final JCheckBox logClientApplicationToConsoleCheckbox = new JCheckBox(translator.translate("loggingPanel.logAppToConsole.text"));
-        logInFileCheckbox.setToolTipText(translator.translate("loggingPanel.logAppToConsole.description"));
+        logClientApplicationToConsoleCheckbox.setToolTipText(translator.translate("loggingPanel.logAppToConsole.description"));
         bindToSettings(config, logClientApplicationToConsoleCheckbox, ConfigurationConstants.KEY_ENABLE_APPLICATION_LOGGING_TOCONSOLE);
         addEditorRow(row++, logClientApplicationToConsoleCheckbox);
 
