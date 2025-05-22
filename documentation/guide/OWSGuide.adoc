@@ -59,11 +59,12 @@ Instead of walking through the graphical installer of OWS on every machine your 
 
 1. Open the ZIP-file.
 1. Run the installer.
-1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Accept the license
+1. Click *Next*  and choose whether to install for the current user or for all users.
 1. Click *Next* to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
-Windows default: `C:\Program Files\OpenWebStart`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+   Windows default: `C:\Program Files\OpenWebStart`
+1. Select the checkbox to associate the .JNLP and .JNLPX suffixes with OpenWebStart, and click *Next*.
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click *Finish* on the completion screen to close the wizard.
 
@@ -71,24 +72,28 @@ Windows default: `C:\Program Files\OpenWebStart`
 
 1. Open the OpenWebStart disk image (DMG file) to mount it.
 1. Run the `Open Web Start Installer.app`.
-1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Accept the license
+1. Click *Next*  and choose whether to install for the current user or for all users.
 1. Click *Next* to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
    Default: `/Applications/Open Web Start`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+1. The installer automatically adds to info.plist file of OpenWebStart javaws the associations for .JNLP and .JNLPX suffixes. +
+   In case .JNLP is associated with Oracle javaws, you may have to manually make the association ot OWS javaws: +
+   Open Finder, find a .jnlp file, choose it, press cmd+shift+i to open File Info, change "Open with" to OpenWebStart, press "Change all"
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click *Finish* on the completion screen to close the wizard.
+1. Please also check the https://openwebstart.com/docs/FAQ.html#_why_does_my_jnlp_application_not_launch_directly_since_macos_sequoia_15_0[https://openwebstart.com/docs/FAQ.html][FAQ]
 
 ==== Linux
 
 1. Go to the directory where the installer (DEB file) is stored and run the file from the terminal +
    `sudo dpkg -i OpenWebStart_linux_1_1_8.deb`
 1. Enter your root password.
-1. Choose a language and click OK to open the OpenWebStart Setup wizard.
+1. Accept the license
 1. Click Next to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click Next. +
    Default: `/opt/openwebstart`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click Next.
+1. Enable the checkbox to associate the .JNLP and .JNLPX suffixes with OpenWebStart, and click Next.
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click Finish on the completion screen to close the wizard.
 
