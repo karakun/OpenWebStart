@@ -42,7 +42,7 @@ public class WindowsProxyUtils {
             if (proxyEnabledValue) {
                 final String proxyServerValue = queryResult.getValue(PROXY_SERVER_REGISTRY_VAL);
                 if (proxyServerValue != null) {
-                    LOG.debug("Proxy server(s) defined ( registry value '" + PROXY_SERVER_REGISTRY_VAL + "'). Will use configured proxy.");
+                    LOG.debug("Proxy server(s) defined ( registry value '" + PROXY_SERVER_REGISTRY_VAL + "' = " + proxyServerValue + " ). Will use configured proxy.");
                     final ProxyConfigurationImpl proxyConfiguration = getProxyConfiguration(queryResult.getValue(PROXY_SERVER_REGISTRY_VAL), queryResult.getValue(PROXY_SERVER_OVERRIDE_VAL));
                     return new ConfigBasedProvider(proxyConfiguration);
                 } else {
@@ -77,14 +77,28 @@ public class WindowsProxyUtils {
             proxyConfiguration.setUseHttpForHttpsAndFtp(true);
             proxyConfiguration.setUseHttpForSocks(true);
 
-            final String[] split = hosts.get(0).split(Pattern.quote(":"), 2);
-            if (split.length == 1) {
-                //TODO: Default port??
-                throw new IllegalStateException("No port defined!");
-            } else {
-                //TODO: We need to check port behavior on win
-                proxyConfiguration.setHttpHost(split[0]);
-                proxyConfiguration.setHttpPort(Integer.parseInt(split[1]));
+            String proxyString = hosts.get(0);
+            try {
+                if (!proxyString.contains("://")) {
+                    proxyString = "http://" + proxyString;
+                }
+
+                URL url = new URL(proxyString);
+                String protocol = url.getProtocol();
+                String host = url.getHost();
+                int port = url.getPort();
+
+                if (port == -1) {
+                    LOG.debug("Port missing in Proxy " + hosts.get(0));
+                    throw new IllegalStateException("Port missing in Proxy " + hosts.get(0));
+                }
+
+                proxyConfiguration.setHttpHost(host);
+                proxyConfiguration.setHttpPort(port);
+                LOG.debug("Using proxy " + proxyString);
+            } catch (Exception e) {
+                LOG.debug("Malformed Proxy " + hosts.get(0));
+                throw new IllegalStateException("Malformed Proxy " + hosts.get(0));
             }
         } else if (hosts.size() == 0) {
             //TODO: How does windows behave???
