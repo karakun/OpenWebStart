@@ -14,6 +14,7 @@ public class ModalDialog extends JDialog {
     private Container currentContentPane;
 
     public ModalDialog() {
+        super((JDialog)null);
         setModal(true);
         setModalityType(ModalityType.APPLICATION_MODAL);
 
