@@ -17,7 +17,7 @@ public class DialogWithDetails extends ModalDialog {
 
     public DialogWithDetails(final String title, final ImageIcon icon, final String message, final JComponent detailsContent) {
         setTitle(title);
-
+        setAlwaysOnTop(true);
         final Translator translator = Translator.getInstance();
         final IconComponent downloadIcon = new IconComponent(icon);
         final JLabel messageLabel = new JLabel(message);

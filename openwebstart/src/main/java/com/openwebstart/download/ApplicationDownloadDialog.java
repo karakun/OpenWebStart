@@ -60,6 +60,7 @@ public class ApplicationDownloadDialog extends ModalDialog implements DownloadSe
 
     public ApplicationDownloadDialog(final String applicationName) {
         setApplicationName(applicationName);
+        setAlwaysOnTop(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setVisible(false);
 
