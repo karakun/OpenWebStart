@@ -54,6 +54,7 @@ import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_HTTP_
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_SAME;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_PROXY_TYPE;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_DISABLE_RESTRICTED_FILES;
+import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_NOSECURITY;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_SECURITY_SERVER_WHITELIST;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_CACHE_DIR;
 import static net.sourceforge.jnlp.config.ConfigurationConstants.KEY_USER_LOG_DIR;
@@ -111,6 +112,7 @@ class InitialConfigurationCheck {
             KEY_SECURITY_DISABLE_RESTRICTED_FILES,
             KEY_CONSOLE_STARTUP_MODE,
             KEY_ENABLE_APPLICATION_LOGGING_TOCONSOLE,
+            KEY_NOSECURITY,
 
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_PARAM_NAME,
             UpdatePanelConfigConstants.CHECK_FOR_UPDATED_NOW_PARAM_NAME,
