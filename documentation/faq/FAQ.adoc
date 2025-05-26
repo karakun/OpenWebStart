@@ -52,8 +52,8 @@ Note that this list might be subject of change in the future.
 If your preferred JVM is not provided by the default download server, you can either add locally installed JVMs to your JVM manager's list or https://openwebstart.com/docs/OWSGuide.html#_setup_a_custom_download_server[setup a custom download server].
 
 ==== Is there an MSI installer for OpenWebStart?
-Currently, we do not provide an MSI installer.
-More details on the reasons can be found at https://github.com/karakun/OpenWebStart/issues/98.
+Currently, we do not provide an MSI installer out-of-the-box.
+However, a custom installer can be provided on demand. In case you need such support please write a mail to openwebstart@karakun.com.
 
 ==== Can I install Oracle Java Web Start and OpenWebStart in parallel?
 This is possible but might lead to potential conflicts you have to take into consideration.

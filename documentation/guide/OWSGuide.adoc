@@ -59,11 +59,12 @@ Instead of walking through the graphical installer of OWS on every machine your 
 
 1. Open the ZIP-file.
 1. Run the installer.
-1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Accept the license
+1. Click *Next*  and choose whether to install for the current user or for all users.
 1. Click *Next* to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
-Windows default: `C:\Program Files\OpenWebStart`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+   Windows default: `C:\Program Files\OpenWebStart`
+1. Select the checkbox to associate the .JNLP and .JNLPX suffixes with OpenWebStart, and click *Next*.
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click *Finish* on the completion screen to close the wizard.
 
@@ -71,24 +72,28 @@ Windows default: `C:\Program Files\OpenWebStart`
 
 1. Open the OpenWebStart disk image (DMG file) to mount it.
 1. Run the `Open Web Start Installer.app`.
-1. Choose a language and click *OK* to open the OpenWebStart Setup wizard.
+1. Accept the license
+1. Click *Next*  and choose whether to install for the current user or for all users.
 1. Click *Next* to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click *Next*. +
    Default: `/Applications/Open Web Start`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click *Next*.
+1. The installer automatically adds to info.plist file of OpenWebStart javaws the associations for .JNLP and .JNLPX suffixes. +
+   In case .JNLP is associated with Oracle javaws, you may have to manually make the association ot OWS javaws: +
+   Open Finder, find a .jnlp file, choose it, press cmd+shift+i to open File Info, change "Open with" to OpenWebStart, press "Change all"
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click *Finish* on the completion screen to close the wizard.
+1. Please also check the https://openwebstart.com/docs/FAQ.html#_why_does_my_jnlp_application_not_launch_directly_since_macos_sequoia_15_0[https://openwebstart.com/docs/FAQ.html][FAQ]
 
 ==== Linux
 
 1. Go to the directory where the installer (DEB file) is stored and run the file from the terminal +
    `sudo dpkg -i OpenWebStart_linux_1_1_8.deb`
 1. Enter your root password.
-1. Choose a language and click OK to open the OpenWebStart Setup wizard.
+1. Accept the license
 1. Click Next to start the OpenWebStart installation.
 1. Browse to the directory where to install OpenWebStart, and click Next. +
    Default: `/opt/openwebstart`
-1. Enable the checkbox to associate the .JNLP suffix with OpenWebStart, and click Next.
+1. Enable the checkbox to associate the .JNLP and .JNLPX suffixes with OpenWebStart, and click Next.
 1. Please wait for OpenWebStart to be installed on your computer.
 1. Click Finish on the completion screen to close the wizard.
 
@@ -642,7 +647,7 @@ This policy prevents that the JNLP file vendor details get precedence over OWS S
 
 ===== Specify 32-bit JVM in JNLP file
 
-There is the possiblity to advise OpenWebStart to use the 32-bit JVM on a 64-bit machine by specifying the `require-32bit` attribute in the JNLP file as follows:
+There is the possibility to advise OpenWebStart to use the 32-bit JVM on a 64-bit machine by specifying the `require-32bit` attribute in the JNLP file as follows:
 
 [source]
 ----
@@ -1058,7 +1063,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.cache.cleanup
 |X
 |X
-|Allows to disable the cleanup of the local JVMs. Default is true. The benefit of disabling this is to avoid race conditions if two instances of OWS are launched at exactly the same time.
+|Allows to disable the cleanup of the local JVMs. Default is _true_. The benefit of disabling this is to avoid race conditions if two instances of OWS are launched at exactly the same time.
 
 |ows.jvm.manager.server.default
 |X
@@ -1083,7 +1088,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.vendor.allowFromJnlp
 |X
 |X
-|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. If a specific JVM vendor is defined, this is false i.e. the vendor from the settings has precedence by default. If "Any Vendor" is selected in OWS Settings, this property is true to take the vendor hint of the JNLP file into consideration.
+|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. If a specific JVM vendor is defined, this is false i.e. the vendor from the settings has precedence by default. If "Any Vendor" is selected in OWS Settings, this property is _true_ to take the vendor hint of the JNLP file into consideration.
 
 |ows.jvm.manager.updateStrategy
 |X
@@ -1104,12 +1109,12 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |ows.jvm.manager.searchLocalAtStartup
 |X
 |X
-|If set to true OpenWebStart will search for new local JVMs at every start. Default is false.
+|If set to _true_ OpenWebStart will search for new local JVMs at every start. Default is _false_.
 
 |ows.jvm.manager.excludeDefaultSearchLocation
 |X
 |X
-|If set to true OpenWebStart will exclude the default locations when searching for JVMs. Default is false.
+|If set to _true_ OpenWebStart will exclude the default locations when searching for JVMs. Default is _false_.
 
 |ows.jvm.manager.customSearchLocation
 |X
@@ -1139,7 +1144,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.proxy.bypass.local
 |X
 |X
-|All local hosts should be bypassed. Default is false.
+|All local hosts should be bypassed. Default is _false_.
 
 |deployment.proxy.bypass.list
 |X
@@ -1159,7 +1164,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.proxy.same
 |X
 |X
-|If true use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is false.
+|If _true_ use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is _false_.
 
 |deployment.cache.max.size
 |X
@@ -1169,7 +1174,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.https.noenforce
 |X
 |X
-|If set to true http urls are not converted to https. Default is false.
+|If set to _true_ http urls are not converted to https. Default is _false_.
 
 |deployment.assumeFileSystemInCodebase
 |X
@@ -1194,17 +1199,17 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.log
 |-
 |X
-|If set to true debug logging is enabled. Default is false.
+|If set to _true_ debug logging is enabled. Default is _false_.
 
 |deployment.log.file
 |-
 |X
-|If set to true log is outputted to file. Default is false.
+|If set to _true_ log is outputted to file. Default is _false_.
 
 |deployment.log.jnlpFileContent
 |-
 |X
-|If set to true log the contents of Jnlp file. Default is false.
+|If set to _true_ log the contents of Jnlp file. Default is _false_.
 
 |ows.update.activated
 |X
@@ -1251,18 +1256,24 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |X
 |User defined directory for OWS cache and OWS logs. The path for directory can have a placeholder \#USER_HOME_DIR#
 which will be replaced by the path to the user's home directory on the system. For example:
-deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log
+_deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log_
 
 |deployment.security.itw.disablerestrictedfiles
 |
 |X
-|Create regular files instead of restricted files if true. Default if false.
+|Create regular files instead of restricted files if _true_. Default if _false_.
 
 |deployment.log.console.clientapp
 |
 |X
-|Log client application''s outputs to console if true. Default if false.
-If true, may lead to memory leak in console if the application output's large volume of text.
+|Log client application''s outputs to console if _true_. Default if _false_.
+If _true_, may lead to memory leak in console if the application output's large volume of text.
+
+|deployment.nosecurity
+|
+|X
+|Disable security in OWS. Default is _false_, i.e., security is enabled by default.
+If _true_ then _java.lang.SecurityManger_ and _java.secutity.Policy_ are NOT set by OWS.
 
 
 |===
