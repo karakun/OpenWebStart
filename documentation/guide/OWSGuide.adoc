@@ -647,7 +647,7 @@ This policy prevents that the JNLP file vendor details get precedence over OWS S
 
 ===== Specify 32-bit JVM in JNLP file
 
-There is the possiblity to advise OpenWebStart to use the 32-bit JVM on a 64-bit machine by specifying the `require-32bit` attribute in the JNLP file as follows:
+There is the possibility to advise OpenWebStart to use the 32-bit JVM on a 64-bit machine by specifying the `require-32bit` attribute in the JNLP file as follows:
 
 [source]
 ----
@@ -1063,7 +1063,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.cache.cleanup
 |X
 |X
-|Allows to disable the cleanup of the local JVMs. Default is true. The benefit of disabling this is to avoid race conditions if two instances of OWS are launched at exactly the same time.
+|Allows to disable the cleanup of the local JVMs. Default is _true_. The benefit of disabling this is to avoid race conditions if two instances of OWS are launched at exactly the same time.
 
 |ows.jvm.manager.server.default
 |X
@@ -1088,7 +1088,7 @@ NOTE: The properties marked in the column LK are lockable. The properties marked
 |ows.jvm.manager.vendor.allowFromJnlp
 |X
 |X
-|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. If a specific JVM vendor is defined, this is false i.e. the vendor from the settings has precedence by default. If "Any Vendor" is selected in OWS Settings, this property is true to take the vendor hint of the JNLP file into consideration.
+|Defines if a vendor attribute in a java/j2se tag of the JNLP file should be respected. If a specific JVM vendor is defined, this is false i.e. the vendor from the settings has precedence by default. If "Any Vendor" is selected in OWS Settings, this property is _true_ to take the vendor hint of the JNLP file into consideration.
 
 |ows.jvm.manager.updateStrategy
 |X
@@ -1109,12 +1109,12 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |ows.jvm.manager.searchLocalAtStartup
 |X
 |X
-|If set to true OpenWebStart will search for new local JVMs at every start. Default is false.
+|If set to _true_ OpenWebStart will search for new local JVMs at every start. Default is _false_.
 
 |ows.jvm.manager.excludeDefaultSearchLocation
 |X
 |X
-|If set to true OpenWebStart will exclude the default locations when searching for JVMs. Default is false.
+|If set to _true_ OpenWebStart will exclude the default locations when searching for JVMs. Default is _false_.
 
 |ows.jvm.manager.customSearchLocation
 |X
@@ -1144,7 +1144,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.proxy.bypass.local
 |X
 |X
-|All local hosts should be bypassed. Default is false.
+|All local hosts should be bypassed. Default is _false_.
 
 |deployment.proxy.bypass.list
 |X
@@ -1164,7 +1164,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.proxy.same
 |X
 |X
-|If true use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is false.
+|If _true_ use the same web server and port for https and ftp as is configured for http. (This is only valid if deployment.proxy.type = 1 (manual proxy). Default is _false_.
 
 |deployment.cache.max.size
 |X
@@ -1174,7 +1174,7 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.https.noenforce
 |X
 |X
-|If set to true http urls are not converted to https. Default is false.
+|If set to _true_ http urls are not converted to https. Default is _false_.
 
 |deployment.assumeFileSystemInCodebase
 |X
@@ -1199,17 +1199,17 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |deployment.log
 |-
 |X
-|If set to true debug logging is enabled. Default is false.
+|If set to _true_ debug logging is enabled. Default is _false_.
 
 |deployment.log.file
 |-
 |X
-|If set to true log is outputted to file. Default is false.
+|If set to _true_ log is outputted to file. Default is _false_.
 
 |deployment.log.jnlpFileContent
 |-
 |X
-|If set to true log the contents of Jnlp file. Default is false.
+|If set to _true_ log the contents of Jnlp file. Default is _false_.
 
 |ows.update.activated
 |X
@@ -1256,18 +1256,24 @@ AUTOMATICALLY_DOWNLOAD (check and install for newest JVM)
 |X
 |User defined directory for OWS cache and OWS logs. The path for directory can have a placeholder \#USER_HOME_DIR#
 which will be replaced by the path to the user's home directory on the system. For example:
-deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log
+_deployment.user.logdir=\#USER_HOME_DIR#\\.config\\ows\\log_
 
 |deployment.security.itw.disablerestrictedfiles
 |
 |X
-|Create regular files instead of restricted files if true. Default if false.
+|Create regular files instead of restricted files if _true_. Default if _false_.
 
 |deployment.log.console.clientapp
 |
 |X
-|Log client application''s outputs to console if true. Default if false.
-If true, may lead to memory leak in console if the application output's large volume of text.
+|Log client application''s outputs to console if _true_. Default if _false_.
+If _true_, may lead to memory leak in console if the application output's large volume of text.
+
+|deployment.nosecurity
+|
+|X
+|Disable security in OWS. Default is _false_, i.e., security is enabled by default.
+If _true_ then _java.lang.SecurityManger_ and _java.secutity.Policy_ are NOT set by OWS.
 
 
 |===
