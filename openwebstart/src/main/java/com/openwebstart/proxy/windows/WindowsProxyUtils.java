@@ -47,11 +47,11 @@ public class WindowsProxyUtils {
                     return new ConfigBasedProvider(proxyConfiguration);
                 } else {
                     //TODO: is this correct?
-                    LOG.debug("No proxy server defined ( registry value '" + PROXY_SERVER_REGISTRY_VAL + "'). Will use direct proxy.");
+                    LOG.debug("No proxy server defined ( registry value '" + PROXY_SERVER_REGISTRY_VAL + "' = " + proxyServerValue + " ). Will use direct proxy.");
                     return DirectProxyProvider.getInstance();
                 }
             } else {
-                LOG.debug("Proxy disabled ( registry value '" + PROXY_ENABLED_VAL + "'). Will use direct proxy.");
+                LOG.debug("Proxy disabled ( registry value '" + PROXY_ENABLED_VAL + "' = " + proxyEnabledValue + " ). Will use direct proxy.");
                 return DirectProxyProvider.getInstance();
             }
         }
@@ -89,15 +89,15 @@ public class WindowsProxyUtils {
                 int port = url.getPort();
 
                 if (port == -1) {
-                    LOG.debug("Port missing in Proxy " + hosts.get(0));
+                    LOG.error("Port missing in Proxy " + hosts.get(0));
                     throw new IllegalStateException("Port missing in Proxy " + hosts.get(0));
                 }
 
                 proxyConfiguration.setHttpHost(host);
                 proxyConfiguration.setHttpPort(port);
-                LOG.debug("Using proxy " + proxyString);
+                LOG.debug("Using proxy " + hosts.get(0));
             } catch (Exception e) {
-                LOG.debug("Malformed Proxy " + hosts.get(0));
+                LOG.error("Malformed Proxy " + hosts.get(0));
                 throw new IllegalStateException("Malformed Proxy " + hosts.get(0));
             }
         } else if (hosts.size() == 0) {
