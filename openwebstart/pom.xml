@@ -108,6 +108,18 @@
                                     <pattern>org.apache.commons.compress</pattern>
                                     <shadedPattern>com.openwebstart.apache.commons.compress</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.lang3</pattern>
+                                    <shadedPattern>com.openwebstart.apache.commons.lang3</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.io</pattern>
+                                    <shadedPattern>com.openwebstart.apache.commons.io</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.codec</pattern>
+                                    <shadedPattern>com.openwebstart.apache.commons.codec</shadedPattern>
+                                </relocation>
                             </relocations>
                             <transformers>
                                 <transformer implementation="com.openwebstart.maven.OwsManifestResourceTransformer">
