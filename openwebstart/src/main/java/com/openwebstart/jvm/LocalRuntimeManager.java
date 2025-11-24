@@ -350,7 +350,7 @@ public final class LocalRuntimeManager {
                 try {
                     FileUtils.recursiveDelete(runtimeDir.toFile(), cacheBaseDir());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    LOG.warn("Error while removing JVM: " + e.getMessage(), e);
                 }
             }
 
