@@ -772,7 +772,17 @@ It is not possible to delegate the responsibility directly to the OS.
 Therefore, the behavior of OWS may diverge from the behavior of your OS if _System Proxy_ is selected.
 One known limitation is on Windows, where there is currently no support for wildcards in the list of excepted servers.
 
-==== PAC Proxy
+====  Proxy Auto-Configuration (PAC)
+
+You can specify a PAC proxy. A PAC file is a small JavaScript file that defines rules for choosing the appropriate
+proxy server for a given URL or request.
+
+OWS uses Mozilla Rhino, an open‑source JavaScript engine, to run the PAC JavaScript.
+Sometimes, while processing a complex PAC script, the Rhino Engine may run out of its internal stack memory.
+This can be avoided by specifying a JVM argument `-Xss`, e.g. `-Xss2048k`, for the JVM used in Stages 1 and 2 of OWS.
+For the Stage 1 JVM, specify the JVM argument in the javaws.vmoptions file in the OWS Install directory
+For the Stage 2 JVM, specify the JVM argument in either the JNLP file, or the `JAVAWS_VM_ARGS` environment variable, or
+in the `deployment.properties` file using property for JNLP specific JVM arguments `ows.jvmargs.for`.
 
 === Security Settings
 
