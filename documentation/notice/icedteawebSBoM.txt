@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<root>
+    <licenses/>
+    <dependencies>
+        <dependency name="common">
+            <description>Common</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-common/pom.xml</file>
+        </dependency>
+        <dependency name="core">
+            <description>Core</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-core/pom.xml</file>
+        </dependency>
+        <dependency name="fokprojects-mslinks">
+            <description>FOKProjects MSLinks</description>
+            <url>https://github.com/vatbub/mslinks</url>
+            <version>1.0.5</version>
+            <file>META-INF/maven/com.github.vatbub/mslinks/pom.xml</file>
+        </dependency>
+        <dependency name="jnlp-api">
+            <description>JNLP API</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/jnlp-api/pom.xml</file>
+        </dependency>
+        <dependency name="xml-parser">
+            <description>XML Parser</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-xml-parser/pom.xml</file>
+        </dependency>
+    </dependencies>
+</root>
