@@ -529,7 +529,7 @@ This json file must contain the following data:
 
 cacheTimeInMillis:: The time which needs to elapse before a client is allowed to contact the server again. Usually the server is accessed once per application startup.
 
-os:: Possible values are: MAC64, MAC32, LINUX64, LINUX32, WIN64, WIN32
+os:: Possible values are: MAC64, MAC32, MACARM64, LINUX64, LINUX32, WIN64, WIN32
 
 ===== Allowing JVM Server in JNLP and defining a JVM Server Whitelist
 
@@ -558,7 +558,7 @@ It is possible to specify wildcards in the URLs specified in the whitelist. Plea
 OpenWebStart can search for already installed JVMs on your local file system.
 This is done by checking in a few default locations.
 The list of default locations is by no means exhaustive.
-Thus it is possible that OpenWebStart will not find all JVMs on the local file system.
+Thus, it is possible that OpenWebStart will not find all JVMs on the local file system.
 
 There are a few settings which can be used to configure the search for local JVMs.
 See <<Configuration Properties Overview>> for a detailed description of the properties.
@@ -570,10 +570,8 @@ ows.jvm.manager.excludeDefaultSearchLocation=true
 ows.jvm.manager.customSearchLocation=c\:/path/to/jvm,c:\\path\\to\\other\\jvm
 ----
 
-===== Whitelist for JVM Arguments
-
-OWS starts the JNLP application with the JVM that best matches the JVM in the JNLP file.
-While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
+===== Choosing the JVM version
+OWS starts the JNLP application with the JVM that best matches the JVM specified in the JNLP file.
 
 [source]
 ----
@@ -586,36 +584,12 @@ The version number specified can either end with a number, and asterisk or a plu
     1.8* means anything at or higher than 1.8 but less than 9 (like 1.8.x).
     1.8+ means anything 1.8 or higher (such as 11, 17, 21).
 
-OWS maintains a hardcoded list of secure JVM arguments as specified at:
+===== Specify a specific  JVM vendor in the JNLP file
 
-* https://docs.oracle.com/javase/8/docs/technotes/guides/javaws/developersguide/syntax.html#secure-property
-* https://docs.oracle.com/javase/9/tools/java.htm#JSWOR624
-* https://news.kynosarges.org/2019/03/24/swing-high-dpi-properties/
-
-OWS allows only those JVM args that are in the above lists.
-However, sometimes with new versions of JREs new JVM arguments are introduced.
-Also, some desired arguments are not included in the above lists.
-In such cases it is possible for the user to specify additional JVM arguments in the `deployment.properties` for OWS to allow them to be passed to the JVM:
-
-[source]
-----
-deployment.jvm.arguments.whitelist=-Dnew_jvm_arg1, -Dnew_jvm_arg2
-----
-
-Subsequently the JNLP file can include the above JVM args:
-
-[source]
-----
-<java version="x"  java-vm-args="-Dnew_jvm_arg1=value1 -Dnew_jvm_arg2=value2"/>
-----
-
-Note: The whitelist should only contain the name of the JVM argument and not the value as can be seen in the example above.
-
-===== Specify a specific vendor in the JNLP file
-
-As illustrated above in figure 4, you can specify the vendor that should be taken into consideration for selecting the JVM that launches your JNLP application.
+As illustrated above in figure 4, you can specify a particular vendor that should be taken into consideration for selecting the JVM that launches your JNLP application.
 
 In addition to that, it is possible to specify a JVM vendor in the JNLP file itself:
+
 [source]
 ----
 <java version="1.8*" vendor="AdoptOpenJDK" ... />
@@ -632,7 +606,7 @@ You can use one of the following vendor names/alias as value for the vendor attr
 "Oracle Corporation", "Oracle"
 ----
 
-The asterix is the same as if you skip the vendor attribute. It means "any vendor" will be fine. This is the default.
+The asterix ("*") is the same as if you skip the vendor attribute. It means "any vendor" will be fine. This is the default.
 
 If there is no specific vendor specified in the OWS Settings UI (i.e. "Any Vendor" selected), the vendor attribute specified in the JNLP file will be considered by default.
 If no vendor hint is set in OWS Settings and the JNLP does not contain any vendor information, the first JVM is taken that is found in the `jvms.json` of the download server.
@@ -654,7 +628,49 @@ There is the possibility to advise OpenWebStart to use the 32-bit JVM on a 64-bi
 <java version="1.8*" require-32bit="true" ... />
 ----
 
-===== Jnlp specific  JVM Arguments
+===== Whitelist for JVM Arguments
+
+While starting the JVM, OWS passes the JVM arguments specified in the JNLP file:
+
+[source]
+----
+<java version="1.8+"  *java-vm-args=" -Xmx512m -Xms128m -XX:SurvivorRatio=6 -XX:NewSize=96m -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=30"*/>
+----
+
+Moreover, using the environment variable `JAVAWS_VM_ARGS`, you can specify JVM arguments that will be applied to all JNLP files in addition to those specified in a JNLP file:
+
+[source]
+----
+set JAVAWS_VM_ARGS=-Xss2048k -Xmx4096m
+----
+
+OWS maintains a hardcoded list of secure JVM arguments as specified at:
+
+* https://docs.oracle.com/javase/8/docs/technotes/guides/javaws/developersguide/syntax.html#secure-property
+* https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html
+* https://docs.oracle.com/javase/9/tools/java.htm#JSWOR624
+* Java Swing high dpi properties jvm arguments
+
+OWS allows only those JVM args that are in the above lists.
+However, sometimes with new versions of JREs new JVM arguments are introduced.
+Also, some desired arguments are not included in the above lists.
+In such cases it is possible for the user to specify additional JVM arguments in the `deployment.properties` for OWS to allow them to be passed to the JVM:
+
+[source]
+----
+deployment.jvm.arguments.whitelist=-Dnew_jvm_arg1, -Dnew_jvm_arg2
+----
+
+Subsequently, the JNLP file and the environment variable `JAVAWS_VM_ARGS` can include the whitelisted JVM args:
+
+[source]
+----
+<java version="x"  java-vm-args="-Dnew_jvm_arg1=value1 -Dnew_jvm_arg2=value2"/>
+----
+
+Note: The whitelist should only contain the name of the JVM argument and not the value as can be seen in the example above.
+
+===== JNLP file specific JVM Arguments
 
 Sometimes there is a need to add to or override the java vm arguments specified in an unmodifable legacy JNLP file. OWS enables you to specify jnlp specific java vm args
 in the _deployment.properties_ file.
@@ -663,7 +679,7 @@ Suppose you have the following JNLP files for which you want to add to or overid
 
 [source]
 ----
-vm_args_1.jnlp:
+jvm_args_1.jnlp:
  	<j2se version="1.8*"  java-vm-args=" -Xmx512m -Xms256m -Djnlp.ccc=jnlp"/>
         <jar href="generated-jars/jvm_args.jar"/>
         <property name="http.agent" value="jnlp"/>
@@ -720,7 +736,6 @@ The OWS cache can be configured and managed:
 
 image::OWS_cache_mgmt.png[title="Configuring Cache Management" width="80%"]
 
-
 === Application Management
 
 An experimental feature has been provided to manage applications downloaded by OWS.
@@ -748,14 +763,16 @@ As a consequence the proxy will also be effective for any connection the applica
 
 image::OWS_proxy_mgmt.png[title="Proxy Settings" width="80%"]
 
-The _System Proxy_ option is trying to imitate the behavior of your operation system and the proxy settings which are defined there.
+The _System Proxy_ option is trying to imitate the behavior of your operating system (OS) and the proxy settings which are defined there.
 E.g. for Windows the settings are read from the registry and then converted into a java.net proxy.
 MacOS and Linux are working in a similar way.
 
 NOTE::
 It is not possible to delegate the responsibility directly to the OS.
-Therefore the behavior of OWS may diverge from the behavior of your OS if _System Proxy_ is selected.
+Therefore, the behavior of OWS may diverge from the behavior of your OS if _System Proxy_ is selected.
 One known limitation is on Windows, where there is currently no support for wildcards in the list of excepted servers.
+
+==== PAC Proxy
 
 === Security Settings
 
