@@ -19,11 +19,11 @@ OpenWebStart is an open source reimplementation of the Java Web Start technology
 
 ==== Under which license does OpenWebStart come?
 
-OpenWebStart is released under the GPL with Classpath Exception.
+OpenWebStart is released under the GNU GPL2 with Classpath Exception license.
 
 == Installation
 
-==== Do I have to install a Java on my system to run OWS?
+==== Do I have to install a Java JVM on my system to run OWS?
 There is no need to have any JVM installed on your system to run OWS. OWS bundles its own JVM.
 OWS has a JVM Manager which can find local JREs or download JREs (from the Internet) to run your Jnlp application..
 
@@ -42,7 +42,8 @@ This is a precautionary measure as we regularly update this bundled JRE, and we 
 ==== Which Java versions can be used to run my JNLP applications?
 
 Your JNLP applications can be run with a version of Java such as 8, 11, 17, or 21.
-We have not run any tests with higher versions of Java yet but from the experience collected while adding support for Java 11 we do not expect any big obstacles.
+We have not run any tests with higher versions of Java yet,
+but from the experience collected while adding support for Java 11, 17, 21 we do not expect any big obstacles.
 
 OpenWebStart JVM Manager will download and manage JVMs as they are requested by an application.
 Currently, we provide access to long-term support (LTS) versions of JDKs from various vendors by our default download server.
@@ -53,7 +54,7 @@ If your preferred JVM is not provided by the default download server, you can ei
 
 ==== Is there an MSI installer for OpenWebStart?
 Currently, we do not provide an MSI installer out-of-the-box.
-However, a custom installer can be provided on demand. In case you need such support please write a mail to openwebstart@karakun.com.
+However, a custom installer can be provided on demand. In case you need such support, please write to openwebstart@karakun.com.
 
 ==== Can I install Oracle Java Web Start and OpenWebStart in parallel?
 This is possible but might lead to potential conflicts you have to take into consideration.
@@ -343,7 +344,7 @@ public class FXApp extends Application {
 }
 ....
 
-==== Is there a way to advice OpenWebstart to use a 32-bit JVM on a 64-bit machine?
+==== Is there a way to advise OpenWebstart to use a 32-bit JVM on a 64-bit machine?
 
 It is possible to set the `require-32bit` attribute in the JNLP file as follows:
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<root>
+    <licenses>
+        <license name="Apache-2.0">
+            <description>Apache License 2.0</description>
+            <file>Apache-2.0.txt</file>
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency name="apache-commons-codec">
+            <description>Apache Commons Codec</description>
+            <url>https://commons.apache.org/proper/commons-codec/</url>
+            <version>1.17.1</version>
+            <file>META-INF/maven/commons-codec/commons-codec/pom.xml</file>
+        </dependency>
+        <dependency name="apache-commons-compress">
+            <description>Apache Commons Compress</description>
+            <url>https://commons.apache.org/proper/commons-compress/</url>
+            <version>1.27.1</version>
+            <file>META-INF/maven/org.apache.commons/commons-compress/pom.xml</file>
+        </dependency>
+        <dependency name="apache-commons-io">
+            <description>Apache Commons IO</description>
+            <url>https://commons.apache.org/proper/commons-io/</url>
+            <version>2.16.1</version>
+            <file>META-INF/maven/commons-io/commons-io/pom.xml</file>
+        </dependency>
+        <dependency name="apache-commons-lang">
+            <description>Apache Commons Lang</description>
+            <url>https://commons.apache.org/proper/commons-lang/</url>
+            <version>3.16.0</version>
+            <file>META-INF/maven/org.apache.commons/commons-lang3/pom.xml</file>
+        </dependency>
+        <dependency name="common">
+            <description>Common</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-common/pom.xml</file>
+        </dependency>
+        <dependency name="core">
+            <description>Core</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-core/pom.xml</file>
+        </dependency>
+        <dependency name="fokprojects-mslinks">
+            <description>FOKProjects MSLinks</description>
+            <url>https://github.com/vatbub/mslinks</url>
+            <version>1.0.5</version>
+            <file>META-INF/maven/com.github.vatbub/mslinks/pom.xml</file>
+        </dependency>
+        <dependency name="gson">
+            <description>Gson</description>
+            <version>unknown</version>
+            <file>META-INF/maven/com.google.code.gson/gson/pom.xml</file>
+            <license>Apache-2.0</license>
+        </dependency>
+        <dependency name="jnlp-api">
+            <description>JNLP API</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/jnlp-api/pom.xml</file>
+        </dependency>
+        <dependency name="openwebstart">
+            <description>OpenWebStart</description>
+            <version>unknown</version>
+            <file>META-INF/maven/com.openwebstart/openwebstart/pom.xml</file>
+        </dependency>
+        <dependency name="xml-parser">
+            <description>XML Parser</description>
+            <version>unknown</version>
+            <file>META-INF/maven/net.adoptopenjdk/icedtea-web-xml-parser/pom.xml</file>
+        </dependency>
+    </dependencies>
+</root>

@@ -227,6 +227,18 @@ public class OwsJvmLauncher implements JvmLauncher {
         }
     }
 
+    /**
+     * Extracts properties specified as <property name=".." value=".."/> from the specified JNLP file.
+     * This method checks the security permissions of the JNLP file,
+     * and if the permission level is set to {@code ApplicationPermissionLevel.ALL},
+     * it retrieves and processes the properties as JVM arguments, e.g. -Dproperty=value.
+     * Only valid secure properties are included in the resulting list.
+     * The properties that are not secure are set as System properties in Stage 2 by ApplicationInstance.setSystemPropertiesFromJnlp()
+     *
+     * @param jnlpFile the {@link JNLPFile} from which <property name=".." value=".."/> for JVM arguments are extracted.
+     * @return a list of JVM arguments as {@link String}, or an empty list if the application
+     *         permission level is not {@code ApplicationPermissionLevel.ALL}.
+     */
     private List<String> extractVmArgs(final JNLPFile jnlpFile) {
         if (jnlpFile.getSecurity().getApplicationPermissionLevel() == ApplicationPermissionLevel.ALL) {
             final List<String> result = new ArrayList<>();
