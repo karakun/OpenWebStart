@@ -67,6 +67,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
     private static final VersionString JAVA_18_OR_GREATER = VersionString.fromString("18+");
+    private static final VersionId JAVA_24 = VersionId.fromString("24");
     public static final String JVMARGS_FOR_CURRENT_JNLPFILE = "ows.jvmargs.for.";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
@@ -170,9 +171,13 @@ public class OwsJvmLauncher implements JvmLauncher {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs, blackListedJnlpProperties);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
-            if (JAVA_18_OR_GREATER.contains(version)) {
+            if (JAVA_18_OR_GREATER.contains(version) && version.compareTo(JAVA_24) < 0) {
+                LOG.info("Allow security manager.");
                 mergedVMArgs.add("-Djava.security.manager=allow");
+            } else {
+                LOG.info("No need to allow security manager.");
             }
+            
             launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs, blackListedJnlpProperties);
         } else {
             throw new RuntimeException("Java " + version + " is not supported");
