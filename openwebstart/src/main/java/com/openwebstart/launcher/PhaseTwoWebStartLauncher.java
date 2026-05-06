@@ -43,7 +43,9 @@ public class PhaseTwoWebStartLauncher {
     private static final List<String> optionsToSkip = Arrays.asList(CommandLineOptions.NOFORK.getOption(), CommandLineOptions.VIEWER.getOption(), consoleOption);
 
     public static void main(final String... args) {
-        // to allow install4j update behind proxy with auth
+        // to enable https connection to tunnel through proxy with auth.
+        // Applies to install4j update check via a proxy with authentication.
+        // https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
         // https://stackoverflow.com/questions/41806422/java-web-start-unable-to-tunnel-through-proxy-since-java-8-update-111
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
 

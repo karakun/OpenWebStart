@@ -157,6 +157,10 @@ public class OwsJvmLauncher implements JvmLauncher {
             vmArgs.addAll(vmArgsFromDeploymentProp);
         }
         vmArgs.addAll(vmArgumentsFromEnv());
+        // to allow https connection to tunnel through proxy with auth
+        // https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
+        // https://stackoverflow.com/questions/41806422/java-web-start-unable-to-tunnel-through-proxy-since-java-8-update-111
+        vmArgs.add("-Djdk.http.auth.tunneling.disabledSchemes=\"\"");
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
