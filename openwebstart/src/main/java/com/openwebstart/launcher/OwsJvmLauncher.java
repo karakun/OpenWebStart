@@ -67,6 +67,7 @@ public class OwsJvmLauncher implements JvmLauncher {
     private static final VersionString JAVA_1_8 = VersionString.fromString("1.8*");
     private static final VersionString JAVA_9_OR_GREATER = VersionString.fromString("9+");
     private static final VersionString JAVA_18_OR_GREATER = VersionString.fromString("18+");
+    private static final VersionString JAVA_24_OR_GREATER = VersionString.fromString("24+");
     public static final String JVMARGS_FOR_CURRENT_JNLPFILE = "ows.jvmargs.for.";
 
     private final JavaRuntimeProvider javaRuntimeProvider;
@@ -160,7 +161,7 @@ public class OwsJvmLauncher implements JvmLauncher {
         // to allow https connection to tunnel through proxy with auth
         // https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
         // https://stackoverflow.com/questions/41806422/java-web-start-unable-to-tunnel-through-proxy-since-java-8-update-111
-        vmArgs.add("-Djdk.http.auth.tunneling.disabledSchemes=\"\"");
+        vmArgs.add("-Djdk.http.auth.tunneling.disabledSchemes=");
 
         final String pathToJavaBinary = JavaExecutableFinder.findJavaExecutable(javaRuntime.getJavaHome());
         final VersionId version = javaRuntime.getVersion();
@@ -174,7 +175,7 @@ public class OwsJvmLauncher implements JvmLauncher {
             launchExternal(pathToJavaBinary, webstartJar.getPath(), vmArgs, javawsArgs, blackListedJnlpProperties);
         } else if (JAVA_9_OR_GREATER.contains(version)) {
             List<String> mergedVMArgs = JvmUtils.mergeJavaModulesVMArgs(vmArgs);
-            if (JAVA_18_OR_GREATER.contains(version)) {
+            if (JAVA_18_OR_GREATER.contains(version) && !JAVA_24_OR_GREATER.contains(version) ) {
                 mergedVMArgs.add("-Djava.security.manager=allow");
             }
             launchExternal(pathToJavaBinary, webstartJar.getPath(), mergedVMArgs, javawsArgs, blackListedJnlpProperties);
