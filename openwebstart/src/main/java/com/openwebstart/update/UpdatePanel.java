@@ -87,12 +87,15 @@ public class UpdatePanel extends FormPanel {
             });
         });
 
+        final JLabel updatesPanelLabel = new JLabel(translator.translate("updatesPanel.info"));
+
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        addEditorRow(0, checkForUpdatesCheckbox);
-        addRow(1, updateStrategyForSettingsLabel, updateStrategyForSettingsComboBox);
-        addRow(2, updateStrategyForLaunchLabel, updateStrategyForLaunchComboBox);
-        addEditorRow(3, checkForUpdateButton);
-        addFlexibleRow(4);
+        addRow(0, checkForUpdatesCheckbox);
+        addRow(1, updatesPanelLabel);
+        addRow(2, updateStrategyForSettingsLabel, updateStrategyForSettingsComboBox);
+        addRow(3, updateStrategyForLaunchLabel, updateStrategyForLaunchComboBox);
+        addEditorRow(4, checkForUpdateButton);
+        addFlexibleRow(5);
     }
 
     private void save() {
