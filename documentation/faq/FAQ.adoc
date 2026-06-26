@@ -30,7 +30,7 @@ OWS has a JVM Manager which can find local JREs or download JREs (from the Inter
 Don't worry if no JVMs are shown in JVM Manager after installation of OWS.
 If you wish you can use _Find local_ or _Add local..._ to detect and add an existing Java instance on your client device to the JVM Manager or simply start the JNLP file and the JVM Manager will download an appropriate JRE for your application.
 
-The downloaded JREs are stored in %userhome%/.cache/icedtea-web/
+The downloaded JREs are stored in %userhome%/.cache/icedtea-web/jvm-cache
 
 ==== I saw there is a bundled JRE installed together with OWS, can I use it?
 There is a bundled JRE installed together with OpenWebStart (OWS).
@@ -41,7 +41,7 @@ This is a precautionary measure as we regularly update this bundled JRE, and we 
 
 ==== Which Java versions can be used to run my JNLP applications?
 
-Your JNLP applications can be run with a version of Java such as 8, 11, 17, or 21.
+Your JNLP applications can be run with a  long-term support (LTS) version of Java such as 8, 11, 17, or 21.
 We have not run any tests with higher versions of Java yet,
 but from the experience collected while adding support for Java 11, 17, 21 we do not expect any big obstacles.
 
@@ -58,7 +58,7 @@ However, a custom installer can be provided on demand. In case you need such sup
 
 ==== Can I install Oracle Java Web Start and OpenWebStart in parallel?
 This is possible but might lead to potential conflicts you have to take into consideration.
-When JWS is installed, the `.jnlp` MIME type might be associated already, so that OWS could not associated when installed at a later point in time.
+When JWS is installed, the `.jnlp` MIME type might have associated with it already and so OWS, when installed subsequently, may not be associated with it.
 In this case the `.jnlp` mime type is reserved by JWS and OWS offers you the possibility to use `*.jnlpx*` as an alternative to associate your applications directly with OWS.
 
 Please be aware that `.jnlpx` files in some browsers, such as Chrome, opens as text instead of getting saved after download.
@@ -66,8 +66,7 @@ The reason is that Content-Type returned by server is text/Plain.
 You can solve this by configuring the Web server so that all files with the .jnlpx file extension are set to a `application/x-java-jnlpx-file` MIME type.
 
 It is possible to specify separate `System Configuration` for JWS and OWS.
-Please see the section `OWS specific System Configuration` in
-the OWS Guide.
+Please see the section `OWS specific System Configuration` in the OWS Guide.
 
 == Debugging and Error Reporting
 
@@ -88,27 +87,27 @@ By default this should be
 Note that logging has to be activated using the OWS Settings application by checking "Activate debug logging" and "Log to file" on the "Logging" tab.
 
 NOTE: The `.config` folder in the user home can be hidden in file explorers in your operation system.
-Information how to view hidden folder and files can be found at https://www.howtogeek.com/194671/how-to-hide-files-and-folders-on-every-operating-system/[this external link].
+Information on "how to view hidden folder and files" can be found at https://www.howtogeek.com/194671/how-to-hide-files-and-folders-on-every-operating-system/[this external link].
 
 == Download
 
 ==== How to set up the resource server to facilitate caching by OWS
 
-To find out whether a resource has been modified since the last download, OWS sends a _HTTP HEAD_ request to the server and expects to receive the last modified timestamp of the resource on the server.
-In order to facilitate caching of resources by OWS it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_ request.
+To find out whether a resource has been modified since the last download, OWS sends an _HTTP HEAD_ request to the server and expects to receive the last modified timestamp of the resource on the server.
+To facilitate caching of resources by OWS, it is necessary that the server from where the resources are downloaded is configured to respond to _HTTP HEAD_ request.
 In case the server is not configured to respond to _HTTP HEAD_ request, OWS will not be able to determine the last modified timestamp of the resource and will go ahead and download the resource.
 
 == Security
 
 ==== What to do when my JNLP application complains about missing certificates in the trust store?
 
-Sometimes OpenWebStart signals that the application's digital signature cannot be verified when launching an applications with signed jars.
+Sometimes OpenWebStart signals that the application's digital signature cannot be verified when launching an application with signed jars.
 
 OpenWebStart does not maintain a curated collection of certificates by itself.
 Rather it relies on the JVM which brings a default set of certificates.
 
 In this context it is helpful to distinguish between the bundled JVM, used to run OpenWebStart itself, and the custom-selected JVM used to launch the JNLP applications.
-While the bundled JVM cannot customized or replaced by an OpenWebStart user, the JVM used to run the JNLP application is determined by the definition in the JNLP file and by the configuration of the OpenWebStart JVM Manager.
+While the bundled JVM cannot be customized or replaced by an OpenWebStart user, the JVM used to run the JNLP application is determined by the definition in the JNLP file and by the configuration of the OpenWebStart JVM Manager.
 
 With its half-yearly releases (spring and fall) we update the bundled JVM.
 This has an impact on the certificates included in the internal JVM.
@@ -129,6 +128,13 @@ Another possibility is to select the option `Always trust content from this publ
 
 image::OWS_trust_publisher.png[title="Always trust this publisher" width="50%"]
 
+==== Password protection for the truststores
+
+The OWS truststores in the directory `<UserHome>/.config/icedtea-web/security` are protected by the default password "changeit" which is same as that used for the JVMs trustores.
+OWS uses the default password (null) for the load (read) operation and the password ("changeit") for the store (write) operations on the truststores. However, it is possible that a user may have changed the password to ensure the integrity of the truststore.
+In this case, OWS will prompt the user to enter the password for the truststore when a user tries to import a certificate in itw-settings or when a user selects "always trust" while running OWS.
+
+image::OWS_truststore_password_prompt.png[title="Prompt for Truststore Password" width="80%"]
 
 ==== Why does my JNLP application not launch directly since macOS Sequoia 15.0?
 
@@ -155,7 +161,7 @@ This creates you a desktop shortcut as well as an entry in the Launchpad. This a
 == Functionality
 
 ==== Does OpenWebStart support Applets?
-Applets are not supported and there are no plans to support them in the future.
+Applets are not supported, and there are no plans to support them in the future. Almost all browsers have stopped support for the Java Plugin and hence the applets.
 We also do not consider this as a deviation from the JNLP-standard as this is an optional feature according to the JSR-56 specs.
 
 ==== How to start a Jnlp application in Offline mode with OpenWebStart?
@@ -362,14 +368,18 @@ It is possible to set the `require-32bit` attribute in the JNLP file as follows:
 
 == Subscription and Premium Support
 
+Karakun maintains OpenWebStart as an open‑source project for the benefit of the wider community. Keeping the software compatible with newer versions of Java requires
+continuous effort and resources. We therefore warmly encourage community members and organizations to support OWS — whether through contributions, sponsorship, paid support -
+so that OWS can continue to thrive and evolve for everyone's benefit.
+
 ==== Is there a subscription for OpenWebStart?
 Basic subscription provided by Karakun is the cost-effective way to support OpenWebStart.
-With this option you may report bugs using a dedicated communication channel (support forum) and your bug reports will have a higher priority.
+With this option you may report bugs using a dedicated communication channel on the https://board.karakun.com[support forum] and your bug reports will have a higher priority.
 If you wish, we will add your company logo to our sponsor page for free.
 Plus, you'll get a 10% discount for development of individual features.
 
 ==== Is there a premium support for OpenWebStart?
-With premium support provided by Karakun you may report bugs or issues using the premium communication channel (via support forum).
+With premium support provided by Karakun you may report bugs or issues using the premium communication channel on the (via https://board.karakun.com[support forum]).
 Your bug reports will have the highest priority.
 Karakun will guarantee service levels depending on the severity of the bug (during business hours).
 After a bug is fixed, a corresponding release will be provided.
@@ -378,5 +388,5 @@ Upon your wish, your company logo will be listed as a premium sponsor on our web
 
 ==== What are the costs for subscription and premium support?
 
-Please contact openwebstart@karakun.com to figure out which support model fits your needs best.
+Please contact openwebstart@karakun.com to find out which support model fits your needs best.
 
