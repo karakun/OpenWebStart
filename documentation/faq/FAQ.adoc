@@ -130,9 +130,13 @@ image::OWS_trust_publisher.png[title="Always trust this publisher" width="50%"]
 
 ==== Password protection for the truststores
 
-The OWS truststores in the directory `<UserHome>/.config/icedtea-web/security` are protected by the default password "changeit" which is same as that used for the JVMs trustores.
-OWS uses the default password (null) for the load (read) operation and the password ("changeit") for the store (write) operations on the truststores. However, it is possible that a user may have changed the password to ensure the integrity of the truststore.
-In this case, OWS will prompt the user to enter the password for the truststore when a user tries to import a certificate in itw-settings or when a user selects "always trust" while running OWS.
+The OWS truststores in the directory `<UserHome>/.config/icedtea-web/security` are protected by the default password "changeit"
+which is same as that used for the JVMs trustores.
+OWS uses the default password ("changeit") for the load (read) operation and the store (write) operations on the truststores.
+However, it is possible that a user may have changed the password to ensure the integrity of the truststore. In such a case, OWS will prompt the
+user to enter the password for the truststore. The prompt dialog will be displayed while loading the truststore and also while storing to a truststore
+when a user tries to remove or import a certificate in itw-settings or selects "always trust the certificate" in the jar certificate verification
+warning while running OWS.
 
 image::OWS_truststore_password_prompt.png[title="Prompt for Truststore Password" width="80%"]
 
