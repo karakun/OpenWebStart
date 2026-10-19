@@ -13,6 +13,7 @@ import net.sourceforge.jnlp.config.DeploymentConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +55,7 @@ public class JdkFinder {
 
         if (Files.isDirectory(searchRoot)) {
             try {
-                return Files.find(searchRoot, 5, JdkFinder::isJavaHome)
+                return Files.find(searchRoot, 5, JdkFinder::isJavaHome, FileVisitOption.FOLLOW_LINKS)
                         .map(Path::toAbsolutePath)
                         .map(Path::normalize)
                         .distinct()

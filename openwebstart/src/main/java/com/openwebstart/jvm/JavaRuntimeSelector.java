@@ -27,6 +27,12 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRuntimeSelector.class);
 
+    /**
+     * System property that forces the use of the managed runtime with the given java home,
+     * regardless of the version requested in the JNLP file.
+     */
+    public static final String FORCED_JAVA_HOME_PROPERTY = "ows.forced.javahome";
+
     private final BiConsumer<RemoteJavaRuntime, DownloadInputStream> downloadHandler;
 
     private final Predicate<RemoteJavaRuntime> askForUpdateFunction;
@@ -41,6 +47,18 @@ class JavaRuntimeSelector implements JavaRuntimeProvider {
     @Override
     public Optional<LocalJavaRuntime> getJavaRuntime(final VersionString versionString, final Vendor vendorFromJnlp, final URL serverEndpointFromJnlp, final boolean require32bit) {
         Assert.requireNonNull(versionString, "versionString");
+
+        final String forcedJavaHome = System.getProperty(FORCED_JAVA_HOME_PROPERTY);
+        if (forcedJavaHome != null) {
+            final Optional<LocalJavaRuntime> forced = LocalRuntimeManager.getInstance().getAll().stream()
+                    .filter(r -> r.getJavaHome().toString().equals(forcedJavaHome))
+                    .findFirst();
+            if (forced.isPresent()) {
+                LOG.debug("Using forced runtime {}", forced.get());
+                return forced;
+            }
+            LOG.warn("Forced java home '{}' is not known to the runtime manager, falling back to default selection", forcedJavaHome);
+        }
 
         LOG.debug("requested: JRE with version string '{}' and vendor '{}', require 32 bit = {}, from {}", versionString, vendorFromJnlp, require32bit, serverEndpointFromJnlp);
 

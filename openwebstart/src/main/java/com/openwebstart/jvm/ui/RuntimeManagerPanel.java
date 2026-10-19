@@ -24,11 +24,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -71,6 +73,9 @@ public final class RuntimeManagerPanel extends JPanel {
         final JButton addLocalRuntimesButton = new JButton(translator.translate("jvmManager.action.addLocal.text"));
         addLocalRuntimesButton.addActionListener(e -> onAddLocalRuntime());
 
+        final JButton downloadButton = new JButton(translator.translate("jvmManager.action.download.text"));
+        downloadButton.addActionListener(e -> onDownload());
+
         setLayout(LayoutFactory.createBorderLayout(12, 12));
 
         add(new JScrollPane(runtimeListComponent), BorderLayout.CENTER);
@@ -80,6 +85,7 @@ public final class RuntimeManagerPanel extends JPanel {
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(removeAllRuntimes);
         buttonPanel.add(refreshButton);
+        buttonPanel.add(downloadButton);
         buttonPanel.add(addLocalRuntimesButton);
         buttonPanel.add(findLocalRuntimesButton);
         buttonPanel.add(configureButton);
@@ -95,6 +101,15 @@ public final class RuntimeManagerPanel extends JPanel {
         localRuntimeManager.addRuntimeUpdatedListener((oldValue, newValue) -> SwingUtilities.invokeLater(() -> listModel.replaceItem(oldValue, newValue)));
 
         listModel.replaceData(localRuntimeManager.getAll());
+    }
+
+    private void onDownload() {
+        // the added-listener of the list model shows the downloaded runtime automatically
+        final JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(this), translator.translate("jvmManager.action.download.text"), Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setContentPane(new JavaDownloadPanel(runtime -> { }));
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }
 
     private void onRemoveAll() {
