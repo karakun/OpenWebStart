@@ -60,6 +60,10 @@ public class ImportedApp {
         return javaLabel;
     }
 
+    public ImportedApp withName(final String newName) {
+        return new ImportedApp(id, newName, file, type, javaHome, javaLabel);
+    }
+
     public ImportedApp withJava(final String newJavaHome, final String newJavaLabel) {
         return new ImportedApp(id, name, file, type, newJavaHome, newJavaLabel);
     }

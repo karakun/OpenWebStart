@@ -92,6 +92,7 @@ public class ImportedAppsPanel extends JPanel {
         final JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         buttons.add(button("importedApps.action.add", this::addFiles));
         buttons.add(Box.createHorizontalStrut(12));
+        buttons.add(button("importedApps.action.rename", this::rename));
         buttons.add(button("importedApps.action.changeJava", this::changeJava));
         buttons.add(button("importedApps.action.run", this::run));
         buttons.add(button("importedApps.action.shortcut", this::createShortcut));
@@ -174,6 +175,22 @@ public class ImportedAppsPanel extends JPanel {
             }
         }
     };
+
+    private void rename() {
+        selected().ifPresent(app -> {
+            final String input = (String) JOptionPane.showInputDialog(this, t("importedApps.rename.prompt"), t("importedApps.action.rename"),
+                    JOptionPane.PLAIN_MESSAGE, null, null, app.getName());
+            if (input == null || input.trim().isEmpty() || input.trim().equals(app.getName())) {
+                return;
+            }
+            try {
+                ImportedAppStore.getInstance().save(app.withName(input.trim()));
+                reload();
+            } catch (final Exception e) {
+                DialogFactory.showErrorDialog(t("importedApps.error.save"), e);
+            }
+        });
+    }
 
     private void changeJava() {
         selected().ifPresent(app -> {
