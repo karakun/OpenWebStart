@@ -1,0 +1,123 @@
+name: Release installers
+
+# Builds OpenWebStart from source and creates native installers
+# (Windows .exe, macOS .dmg, Linux .deb) with jpackage.
+# Push a tag like v1.15.0 to publish a GitHub release with all installers attached,
+# or start the workflow manually to only get the installers as build artifacts.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version for the installers (e.g. 1.15.0)'
+        required: true
+        default: '1.15.0'
+
+permissions:
+  contents: write
+
+jobs:
+  installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            type: exe
+          - os: macos-latest
+            type: dmg
+          - os: ubuntu-latest
+            type: deb
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            V="${{ github.event.inputs.version }}"
+          else
+            V="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      # The project and its IcedTea-Web dependency are compiled with Java 8
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '8'
+
+      - name: Build IcedTea-Web (dependency of OpenWebStart)
+        run: |
+          git clone --depth 1 https://github.com/AdoptOpenJDK/IcedTea-Web "$RUNNER_TEMP/IcedTea-Web"
+          cd "$RUNNER_TEMP/IcedTea-Web"
+          mvn -B -q install -Dmaven.test.skip=true -pl artifact-all-dependencies -am
+
+      - name: Build OpenWebStart
+        run: |
+          mvn -B -q -pl openwebstart -am package -DskipTests
+          mkdir -p staging
+          JAR=$(find openwebstart/target -maxdepth 1 -name 'openwebstart-*.jar' ! -name '*sources*' ! -name 'original-*' | head -n 1)
+          echo "Using $JAR"
+          # OpenWebStart looks for a class path entry named openwebstart.jar when it starts applications
+          cp "$JAR" staging/openwebstart.jar
+
+      # The installers bundle a Java 17 runtime. jpackage normally removes bin/java from it,
+      # but OpenWebStart starts applications with that java executable, so keep it (jlink-options below)
+      # and include all modules.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Create installer
+        run: |
+          EXTRA=()
+          if [ "${{ matrix.type }}" = "exe" ]; then
+            EXTRA+=(--win-menu --win-shortcut --win-dir-chooser --win-per-user-install)
+          fi
+          jpackage \
+            --type "${{ matrix.type }}" \
+            --name OpenWebStart \
+            --app-version "${{ steps.version.outputs.version }}" \
+            --vendor "OpenWebStart" \
+            --input staging \
+            --main-jar openwebstart.jar \
+            --main-class com.openwebstart.launcher.ControlPanelLauncher \
+            --add-modules ALL-MODULE-PATH \
+            --jlink-options "--strip-debug --no-man-pages --no-header-files --compress=2" \
+            --dest installers \
+            "${EXTRA[@]}"
+          ls -l installers
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: installers/*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: installer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ls -l installers
+          # replace an existing release of the same tag (e.g. when the tag was moved to a newer commit)
+          gh release delete "$GITHUB_REF_NAME" --yes || true
+          gh release create "$GITHUB_REF_NAME" installers/* \
+            --title "OpenWebStart $GITHUB_REF_NAME" \
+            --notes-file .github/release-notes.md
