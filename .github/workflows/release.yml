@@ -68,7 +68,9 @@ jobs:
           # OpenWebStart looks for a class path entry named openwebstart.jar when it starts applications
           cp "$JAR" staging/openwebstart.jar
 
-      # The installers bundle a Java 17 runtime
+      # The installers bundle a Java 17 runtime. jpackage normally removes bin/java from it,
+      # but OpenWebStart starts applications with that java executable, so keep it (jlink-options below)
+      # and include all modules.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -88,6 +90,7 @@ jobs:
             --input staging \
             --main-jar openwebstart.jar \
             --main-class com.openwebstart.launcher.ControlPanelLauncher \
+            --jlink-options "--add-modules ALL-MODULE-PATH --strip-debug --no-man-pages --no-header-files --compress=2" \
             --dest installers \
             "${EXTRA[@]}"
           ls -l installers
@@ -112,6 +115,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls -l installers
+          # replace an existing release of the same tag (e.g. when the tag was moved to a newer commit)
+          gh release delete "$GITHUB_REF_NAME" --yes || true
           gh release create "$GITHUB_REF_NAME" installers/* \
             --title "OpenWebStart $GITHUB_REF_NAME" \
             --notes-file .github/release-notes.md
