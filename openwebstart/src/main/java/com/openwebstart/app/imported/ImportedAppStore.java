@@ -33,6 +33,13 @@ public class ImportedAppStore {
         return new File(base, "ows-imported-apps.properties");
     }
 
+    /**
+     * File that receives the output of an imported application, helpful to find out why it does not start.
+     */
+    public static File logFile(final String appId) {
+        return new File(storeFile().getParentFile(), "ows-imported-app-" + appId + ".log");
+    }
+
     public synchronized List<ImportedApp> getAll() {
         final Properties p = load();
         final List<ImportedApp> result = new ArrayList<>();

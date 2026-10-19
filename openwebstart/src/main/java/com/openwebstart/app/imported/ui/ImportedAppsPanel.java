@@ -9,6 +9,8 @@ import com.openwebstart.jvm.runtimes.LocalJavaRuntime;
 import com.openwebstart.jvm.ui.dialogs.DialogFactory;
 import net.adoptopenjdk.icedteaweb.i18n.Translator;
 
+import static com.openwebstart.concurrent.ThreadPoolHolder.getNonDaemonExecutorService;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -21,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import java.awt.BorderLayout;
@@ -32,6 +35,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -213,12 +217,37 @@ public class ImportedAppsPanel extends JPanel {
 
     private void run() {
         selected().ifPresent(app -> {
+            final File log = ImportedAppStore.logFile(app.getId());
             try {
-                new ProcessBuilder(ImportedAppLauncher.commandFor(app)).inheritIO().start();
+                final Process process = new ProcessBuilder(ImportedAppLauncher.commandFor(app))
+                        .redirectErrorStream(true)
+                        .redirectOutput(ProcessBuilder.Redirect.appendTo(log))
+                        .start();
+                // an application that ends within a few seconds with an error did not start: tell the user
+                getNonDaemonExecutorService().execute(() -> {
+                    try {
+                        if (process.waitFor(8, TimeUnit.SECONDS) && process.exitValue() != 0) {
+                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this,
+                                    t("importedApps.error.run") + " (exit code " + process.exitValue() + ")\n" + t("importedApps.error.log") + "\n" + log + "\n\n" + tail(log),
+                                    t("importedApps.error.run"), JOptionPane.ERROR_MESSAGE));
+                        }
+                    } catch (final InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
             } catch (final Exception e) {
                 DialogFactory.showErrorDialog(t("importedApps.error.run"), e);
             }
         });
+    }
+
+    private static String tail(final File file) {
+        try {
+            final List<String> lines = java.nio.file.Files.readAllLines(file.toPath(), java.nio.charset.StandardCharsets.UTF_8);
+            return String.join("\n", lines.subList(Math.max(0, lines.size() - 8), lines.size()));
+        } catch (final Exception e) {
+            return "";
+        }
     }
 
     private void createShortcut() {

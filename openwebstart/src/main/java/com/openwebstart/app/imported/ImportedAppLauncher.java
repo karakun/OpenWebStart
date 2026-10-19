@@ -14,7 +14,24 @@ import java.util.List;
  */
 public class ImportedAppLauncher {
 
-    public static void main(final String... args) throws IOException {
+    public static void main(final String... args) {
+        try {
+            start(args);
+        } catch (final Throwable t) {
+            // there is no console when started from a shortcut: write the reason to the log file
+            if (args.length == 1) {
+                try (java.io.PrintWriter w = new java.io.PrintWriter(new java.io.FileWriter(ImportedAppStore.logFile(args[0]), true))) {
+                    t.printStackTrace(w);
+                } catch (final IOException ignored) {
+                    // nothing more we can do
+                }
+            }
+            t.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    private static void start(final String[] args) throws IOException {
         if (args.length != 1) {
             System.err.println("Usage: ImportedAppLauncher <appId>");
             System.exit(2);
@@ -35,7 +52,10 @@ public class ImportedAppLauncher {
             cmd.add(javaExecutable(app.getJavaHome() != null ? app.getJavaHome() : System.getProperty("java.home")));
             cmd.add("-jar");
             cmd.add(app.getFile().getAbsolutePath());
-            new ProcessBuilder(cmd).directory(app.getFile().getParentFile()).inheritIO().start();
+            new ProcessBuilder(cmd).directory(app.getFile().getParentFile())
+                    .redirectErrorStream(true)
+                    .redirectOutput(ProcessBuilder.Redirect.appendTo(ImportedAppStore.logFile(app.getId())))
+                    .start();
         } else {
             if (app.getJavaHome() != null) {
                 System.setProperty(JavaRuntimeSelectorAccess.FORCED_JAVA_HOME_PROPERTY, app.getJavaHome());
