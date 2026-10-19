@@ -90,7 +90,8 @@ jobs:
             --input staging \
             --main-jar openwebstart.jar \
             --main-class com.openwebstart.launcher.ControlPanelLauncher \
-            --jlink-options "--add-modules ALL-MODULE-PATH --strip-debug --no-man-pages --no-header-files --compress=2" \
+            --add-modules ALL-MODULE-PATH \
+            --jlink-options "--strip-debug --no-man-pages --no-header-files --compress=2" \
             --dest installers \
             "${EXTRA[@]}"
           ls -l installers
