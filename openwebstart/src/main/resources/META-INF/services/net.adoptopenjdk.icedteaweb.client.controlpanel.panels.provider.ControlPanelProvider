@@ -6,3 +6,4 @@ com.openwebstart.app.ui.ApplicationManagerPanelProvider
 com.openwebstart.logging.LoggingPanelProvider
 com.openwebstart.proxy.ui.ProxyConfigPanelProvider
 com.openwebstart.debug.DebugPanelProvider
+com.openwebstart.app.imported.ui.ImportedAppsPanelProvider
