@@ -97,7 +97,11 @@ public class PhaseTwoWebStartLauncher {
         LOG.info("Calling ITW Boot with args {}.", bootArgs);
         Boot.main(bootArgs.toArray(new String[0]));
 
-        System.exit(0);
+        // Unlike forked JNLP applications, applets may run in the launcher JVM.
+        // Keep that JVM alive until the applet completes its own lifecycle.
+        if (!Boot.hasRunningInProcessApplet()) {
+            System.exit(0);
+        }
     }
 
     private static List<String> skipNotRelevantArgs(final String[] args) {
